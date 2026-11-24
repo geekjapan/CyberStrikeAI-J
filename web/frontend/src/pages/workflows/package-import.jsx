@@ -1,10 +1,10 @@
-/** 工作流包导入：选择/粘贴包 → 预检 → 冲突处理 → 导入结果。 */
+/** Workflow package import: choose/paste package -> precheck -> conflict handling -> import result. */
 import { useEffect, useMemo, useState } from 'react';
 import {
     Banner, Button, Checkbox, Input, Radio, RadioGroup, Space, Tag, TextArea, Typography
 } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { Drawer, KeyValueList, toastSuccess } from '../../components/ui';
 import { formatDateTime } from '../../lib/format';
 import {
@@ -17,7 +17,7 @@ const MAX_BYTES = 10 * 1024 * 1024;
 
 function base64ToFile(text) {
     const clean = String(text || '').replace(/^data:[^;]+;base64,/, '').replace(/\s+/g, '');
-    if (!clean) throw new Error('粘贴内容为空');
+    if (!clean) throw new Error(translate('ui.workflowsPackageImport.pasteEmpty', null, 'The pasted content is empty'));
     const binary = atob(clean);
     const bytes = new Uint8Array(binary.length);
     for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
@@ -69,14 +69,14 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
         try {
             const next = base64ToFile(pasteText);
             if (next.size > MAX_BYTES) {
-                setPasteError(t('workflows.package.errors.fileTooLarge', null, '文件超过 10 MiB 限制，请选择更小的本地包。'));
+                setPasteError(t('workflows.package.errors.fileTooLarge', null, 'The file exceeds the 10 MiB limit. Choose a smaller local package.'));
                 return;
             }
             setFile(next);
             setInspection(null);
             setResult(null);
         } catch (decodeError) {
-            setPasteError(`Base64 解码失败：${errText(decodeError, '')}`);
+            setPasteError(t('ui.workflowsPackageImport.base64DecodeFailed', { detail: errText(decodeError, '') }, 'Base64 decoding failed: {{detail}}'));
         }
     };
 
@@ -91,7 +91,7 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
             return;
         }
         if (picked.size > MAX_BYTES) {
-            setPasteError(t('workflows.package.errors.fileTooLarge', null, '文件超过 10 MiB 限制，请选择更小的本地包。'));
+            setPasteError(t('workflows.package.errors.fileTooLarge', null, 'The file exceeds the 10 MiB limit. Choose a smaller local package.'));
             setFile(null);
             return;
         }
@@ -100,7 +100,7 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
 
     const inspect = async () => {
         if (!file) {
-            setPasteError(t('workflows.package.errors.fileRequired', null, '请选择本地工作流包后再预检。'));
+            setPasteError(t('workflows.package.errors.fileRequired', null, 'Choose a local workflow package before preflight.'));
             return;
         }
         setInspecting(true);
@@ -125,24 +125,24 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
 
     const applyImport = async () => {
         if (!inspection?.id) {
-            setError(t('workflows.package.resolution.needInspection', null, '请先选择本地包并完成预检。'));
+            setError(t('workflows.package.resolution.needInspection', null, 'Choose a local package and complete preflight first.'));
             return;
         }
         if (!action) {
-            setError(t('workflows.package.errors.invalidAction', null, '导入处理方式无效，请重新选择。'));
+            setError(t('workflows.package.errors.invalidAction', null, 'The import resolution is invalid. Choose it again.'));
             return;
         }
         if (action === 'rename' && !newId.trim()) {
-            setError(t('workflows.package.errors.invalidRenameId', null, '请输入可用的新工作流 ID。'));
+            setError(t('workflows.package.errors.invalidRenameId', null, 'Enter an available new workflow ID.'));
             return;
         }
         if (action === 'overwrite' && !overwriteConfirmed) {
-            setError(t('workflows.package.errors.overwriteConfirmationRequired', null, '请勾选确认后再覆盖本地工作流。'));
+            setError(t('workflows.package.errors.overwriteConfirmationRequired', null, 'Confirm the overwrite before replacing the local workflow.'));
             return;
         }
         const key = createIdempotencyKey();
         if (!key) {
-            setError(t('workflows.package.errors.idempotencyKeyRequired', null, '浏览器无法生成导入请求标识，请刷新页面后重试。'));
+            setError(t('workflows.package.errors.idempotencyKeyRequired', null, 'The browser cannot create an import request identifier. Refresh and try again.'));
             return;
         }
         setImporting(true);
@@ -157,7 +157,7 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                 confirm_overwrite: action === 'overwrite'
             }, { headers: { 'Idempotency-Key': key } });
             setResult(payload?.import || null);
-            toastSuccess(t('workflows.package.result.complete', null, '导入已完成。'));
+            toastSuccess(t('workflows.package.result.complete', null, 'Import completed.'));
             onImported?.(payload?.import || null);
         } catch (importError) {
             setError(packageErrorText(importError, t));
@@ -167,11 +167,11 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
     };
 
     const conflictHint = conflictState === 'identical'
-        ? t('workflows.package.conflict.identical', null, '检测到同 ID 且内容相同的本地工作流；本次将跳过导入。')
+        ? t('workflows.package.conflict.identical', null, 'A local workflow with the same ID and content was found; import will be skipped.')
         : conflictState === 'id_conflict'
-            ? t('workflows.package.conflict.idConflict', null, '检测到同 ID 但内容不同的本地工作流。默认保留本地版本。')
+            ? t('workflows.package.conflict.idConflict', null, 'A local workflow with the same ID but different content was found. The local version will be kept by default.')
             : conflictState === 'none'
-                ? t('workflows.package.conflict.none', null, '未发现同 ID 的本地工作流，可创建导入。')
+                ? t('workflows.package.conflict.none', null, 'No local workflow with the same ID was found. A new workflow can be created.')
                 : '';
 
     const workflow = inspection?.workflow;
@@ -179,13 +179,13 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
     return (
         <Drawer
             visible={visible}
-            title={t('workflows.package.title', null, '导入本地包')}
+            title={t('workflows.package.title', null, 'Import local package')}
             onCancel={onCancel}
             width={760}
             maskClosable={!inspecting && !importing}
             footer={(
                 <Space>
-                    <Button onClick={onCancel}>{t('common.close', null, '关闭')}</Button>
+                    <Button onClick={onCancel}>{t('common.close', null, 'Close')}</Button>
                     <Button
                         type="primary"
                         loading={inspecting}
@@ -193,8 +193,8 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                         onClick={inspect}
                     >
                         {inspecting
-                            ? t('workflows.package.inspecting', null, '正在安全预检…')
-                            : t('workflows.package.inspect', null, '上传并预检')}
+                            ? t('workflows.package.inspecting', null, 'Running safe preflight…')
+                            : t('workflows.package.inspect', null, 'Upload and preflight')}
                     </Button>
                     <Button
                         type="primary"
@@ -202,45 +202,45 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                         disabled={!inspection || Boolean(result) || !action}
                         onClick={applyImport}
                     >
-                        {t('workflows.package.confirmImport', null, '确认导入')}
+                        {t('workflows.package.confirmImport', null, 'Confirm import')}
                     </Button>
                 </Space>
             )}
         >
             <Paragraph type="tertiary" size="small">
-                {t('workflows.package.preflightHint', null, '先检查包内容与冲突，再由你确认是否导入')}
+                {t('workflows.package.preflightHint', null, 'Review package contents and conflicts before you approve the import')}
                 {' · '}
-                {t('workflows.package.fileHint', null, '仅支持单个 .csapkg.zip，文件不得超过 10 MiB。')}
+                {t('workflows.package.fileHint', null, 'One .csapkg.zip package only, up to 10 MiB.')}
             </Paragraph>
 
             <div className="workflow-package-block">
-                <Text strong size="small">{t('workflows.package.stepInspection', null, '上传与预检')}</Text>
+                <Text strong size="small">{t('workflows.package.stepInspection', null, 'Upload and preflight')}</Text>
                 <div className="workflow-package-file-row">
                     <input
                         type="file"
                         accept=".zip,application/zip"
                         className="workflow-file-input"
                         onChange={pickFile}
-                        aria-label={t('workflows.package.selectFile', null, '选择本地包')}
+                        aria-label={t('workflows.package.selectFile', null, 'Choose local package')}
                     />
                     <Text type="tertiary" size="small">
-                        {file ? `${file.name} · ${(file.size / 1024).toFixed(1)} KiB` : t('workflows.package.noFile', null, '未选择文件')}
+                        {file ? `${file.name} · ${(file.size / 1024).toFixed(1)} KiB` : t('workflows.package.noFile', null, 'No file selected')}
                     </Text>
                     {file ? (
                         <Button size="small" theme="borderless" onClick={() => { setFile(null); setInspection(null); setResult(null); }}>
-                            {t('workflows.package.removeFile', null, '移除文件')}
+                            {t('workflows.package.removeFile', null, 'Remove file')}
                         </Button>
                     ) : null}
                 </div>
                 <TextArea
                     value={pasteText}
                     rows={3}
-                    placeholder="或粘贴工作流包 base64（.csapkg.zip）"
+                    placeholder={t('ui.workflowsPackageImport.pastePlaceholder', null, 'Or paste the workflow package as base64 (.csapkg.zip)')}
                     onChange={value => setPasteText(value)}
                 />
                 <Space>
                     <Button size="small" onClick={usePaste} disabled={!pasteText.trim()}>
-                        使用粘贴内容
+                        {t('ui.workflowsPackageImport.usePaste', null, 'Use pasted content')}
                     </Button>
                     {pasteError ? <Text type="danger" size="small">{pasteError}</Text> : null}
                 </Space>
@@ -253,8 +253,8 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
             {inspection ? (
                 <div className="workflow-package-block">
                     <div className="workflow-package-summary-head">
-                        <Text strong size="small">{t('workflows.package.summary.title', null, '预检结果')}</Text>
-                        <Tag size="small" color="green">{t('workflows.package.summary.passed', null, '校验通过')}</Tag>
+                        <Text strong size="small">{t('workflows.package.summary.title', null, 'Preflight result')}</Text>
+                        <Tag size="small" color="green">{t('workflows.package.summary.passed', null, 'Checks passed')}</Tag>
                     </div>
                     <Banner
                         type={conflictState === 'id_conflict' ? 'warning' : 'success'}
@@ -266,19 +266,19 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                     <KeyValueList
                         columns={2}
                         items={[
-                            { label: t('workflows.package.summary.workflowName', null, '工作流名称'), value: workflow?.name || '—' },
-                            { label: t('workflows.package.summary.sourceId', null, '源工作流 ID'), value: <code>{workflow?.source_id || '—'}</code> },
-                            { label: t('workflows.package.summary.sourceRevision', null, '源版本'), value: workflow?.source_revision ?? '—' },
+                            { label: t('workflows.package.summary.workflowName', null, 'Workflow name'), value: workflow?.name || '—' },
+                            { label: t('workflows.package.summary.sourceId', null, 'Source workflow ID'), value: <code>{workflow?.source_id || '—'}</code> },
+                            { label: t('workflows.package.summary.sourceRevision', null, 'Source revision'), value: workflow?.source_revision ?? '—' },
                             {
-                                label: t('workflows.package.summary.graphSize', null, '图规模'),
-                                value: `${workflow?.node_count || 0} 节点 · ${workflow?.edge_count || 0} 连线`
+                                label: t('workflows.package.summary.graphSize', null, 'Graph size'),
+                                value: t('ui.workflowsPackageImport.graphSizeValue', { nodes: workflow?.node_count || 0, edges: workflow?.edge_count || 0 }, '{{nodes}} nodes · {{edges}} edges')
                             },
-                            { label: t('workflows.package.summary.contentHash', null, '内容摘要'), value: shortHash(workflow?.content_hash) },
-                            { label: t('workflows.package.summary.expiresAt', null, '预检有效期'), value: formatDateTime(inspection.expires_at) }
+                            { label: t('workflows.package.summary.contentHash', null, 'Content hash'), value: shortHash(workflow?.content_hash) },
+                            { label: t('workflows.package.summary.expiresAt', null, 'Preflight expires'), value: formatDateTime(inspection.expires_at) }
                         ]}
                     />
 
-                    <Text strong size="small">{t('workflows.package.resolutionTitle', null, '处理方式')}</Text>
+                    <Text strong size="small">{t('workflows.package.resolutionTitle', null, 'Resolution')}</Text>
                     <RadioGroup
                         value={action}
                         onChange={event => { setAction(event.target.value); setOverwriteConfirmed(false); }}
@@ -297,7 +297,7 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                     {action === 'rename' ? (
                         <Input
                             value={newId}
-                            placeholder={t('workflows.package.resolution.newWorkflowIdPlaceholder', null, '例如：web-scan-basic-copy')}
+                            placeholder={t('workflows.package.resolution.newWorkflowIdPlaceholder', null, 'For example: web-scan-basic-copy')}
                             onChange={value => setNewId(value)}
                         />
                     ) : null}
@@ -308,13 +308,13 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                                 type="warning"
                                 bordered
                                 closeIcon={null}
-                                description={t('workflows.package.overwriteWarning', null, '覆盖将替换名称、描述、图定义和启用状态。本期不提供回滚。')}
+                                description={t('workflows.package.overwriteWarning', null, 'This replaces the name, description, graph, and enabled state. Rollback is not available in this release.')}
                             />
                             <Checkbox
                                 checked={overwriteConfirmed}
                                 onChange={event => setOverwriteConfirmed(event.target.checked)}
                             >
-                                {t('workflows.package.overwriteCheck', null, '我已确认覆盖当前本地工作流')}
+                                {t('workflows.package.overwriteCheck', null, 'I confirm overwriting the current local workflow')}
                             </Checkbox>
                         </div>
                     ) : null}
@@ -327,7 +327,7 @@ export default function PackageImportModal({ visible, onCancel, onImported }) {
                     bordered
                     closeIcon={null}
                     className="workflow-package-banner"
-                    description={t(RESULT_MESSAGE[result.result] || 'workflows.package.result.complete', null, '导入已完成。')}
+                    description={t(RESULT_MESSAGE[result.result] || 'workflows.package.result.complete', null, 'Import completed.')}
                 />
             ) : null}
         </Drawer>

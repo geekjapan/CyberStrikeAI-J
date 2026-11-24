@@ -1,4 +1,4 @@
-/* C2 六个页面共享的布局样式（类名统一 c2- 前缀）。 */
+/* Layout styles shared by the six C2 pages (class names use the c2- prefix). */
 
 .c2-page {
     display: flex;

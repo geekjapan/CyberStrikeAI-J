@@ -1,4 +1,13 @@
-/** 信息收集 provider 配置：默认字段、字段模板与查询示例（与后端 fofa.go 对齐）。 */
+/** Recon provider config: default fields, field templates and query examples (aligned with backend fofa.go). */
+import { translate } from '../../../lib/i18n';
+
+/** Preset [label, value]: the label is resolved in the current language when read (array destructuring also triggers the getter). */
+function presetLabel(key, fallback, value) {
+    const preset = [null, value];
+    Object.defineProperty(preset, 0, { enumerable: true, get: () => translate(key, null, fallback) });
+    return preset;
+}
+
 export const INFO_PROVIDERS = {
     fofa: {
         label: 'FOFA',
@@ -6,15 +15,15 @@ export const INFO_PROVIDERS = {
         defaultFields: 'host,ip,port,domain,title,protocol,country,region,city,server',
         placeholder: 'app="Apache" && country="CN"',
         fieldPresets: [
-            ['最小字段', 'host,ip,port,domain'],
-            ['Web 常用', 'host,title,ip,port,domain,protocol,server,icp,country,region,city'],
-            ['情报增强', 'host,ip,port,domain,title,protocol,country,region,city,server,asn,org,icp,header,banner']
+            presetLabel('ui.infoProviders.fieldMinimal', 'Minimal fields', 'host,ip,port,domain'),
+            presetLabel('ui.infoProviders.fieldWebCommon', 'Common web fields', 'host,title,ip,port,domain,protocol,server,icp,country,region,city'),
+            presetLabel('ui.infoProviders.fieldIntel', 'Enriched intelligence', 'host,ip,port,domain,title,protocol,country,region,city,server,asn,org,icp,header,banner')
         ],
         queryPresets: [
-            ['Apache + 中国', 'app="Apache" && country="CN"'],
-            ['登录页 + 中国', 'title="登录" && country="CN"'],
-            ['指定域名', 'domain="example.com"'],
-            ['指定 IP', 'ip="1.1.1.1"']
+            presetLabel('ui.infoProviders.queryApacheChina', 'Apache + China', 'app="Apache" && country="CN"'),
+            presetLabel('ui.infoProviders.queryLoginChina', 'Login pages + China', 'title="登录" && country="CN"'),
+            presetLabel('ui.infoProviders.queryDomain', 'Specific domain', 'domain="example.com"'),
+            presetLabel('ui.infoProviders.queryIp', 'Specific IP', 'ip="1.1.1.1"')
         ],
         supportsFull: true
     },
@@ -24,15 +33,15 @@ export const INFO_PROVIDERS = {
         defaultFields: 'ip,port,domain,hostname,title,service,app,country,city',
         placeholder: 'app="Apache" && country="CN"',
         fieldPresets: [
-            ['最小字段', 'ip,port,domain,hostname'],
-            ['Web 常用', 'ip,port,domain,hostname,title,service,app,country,city'],
-            ['情报增强', 'ip,port,domain,hostname,title,service,app,country,city,org,isp,ssl']
+            presetLabel('ui.infoProviders.fieldMinimal', 'Minimal fields', 'ip,port,domain,hostname'),
+            presetLabel('ui.infoProviders.fieldWebCommon', 'Common web fields', 'ip,port,domain,hostname,title,service,app,country,city'),
+            presetLabel('ui.infoProviders.fieldIntel', 'Enriched intelligence', 'ip,port,domain,hostname,title,service,app,country,city,org,isp,ssl')
         ],
         queryPresets: [
-            ['Apache + 中国', 'app="Apache" && country="CN"'],
-            ['SSH 服务', 'service="ssh"'],
-            ['指定域名', 'domain="example.com"'],
-            ['指定 IP', 'ip="1.1.1.1"']
+            presetLabel('ui.infoProviders.queryApacheChina', 'Apache + China', 'app="Apache" && country="CN"'),
+            presetLabel('ui.infoProviders.querySsh', 'SSH service', 'service="ssh"'),
+            presetLabel('ui.infoProviders.queryDomain', 'Specific domain', 'domain="example.com"'),
+            presetLabel('ui.infoProviders.queryIp', 'Specific IP', 'ip="1.1.1.1"')
         ],
         supportsFull: false
     },
@@ -42,15 +51,15 @@ export const INFO_PROVIDERS = {
         defaultFields: 'ip,port,domain,service.name,service.http.title,location.country_cn,location.province_cn,location.city_cn',
         placeholder: 'service.name:"http" AND country_cn:"中国"',
         fieldPresets: [
-            ['最小字段', 'ip,port,domain'],
-            ['Web 常用', 'ip,port,domain,service.name,service.http.title,location.country_cn,location.city_cn'],
-            ['情报增强', 'ip,port,domain,service.name,service.http.title,service.http.server,location.country_cn,location.province_cn,location.city_cn,asn']
+            presetLabel('ui.infoProviders.fieldMinimal', 'Minimal fields', 'ip,port,domain'),
+            presetLabel('ui.infoProviders.fieldWebCommon', 'Common web fields', 'ip,port,domain,service.name,service.http.title,location.country_cn,location.city_cn'),
+            presetLabel('ui.infoProviders.fieldIntel', 'Enriched intelligence', 'ip,port,domain,service.name,service.http.title,service.http.server,location.country_cn,location.province_cn,location.city_cn,asn')
         ],
         queryPresets: [
-            ['HTTP + 中国', 'service.name:"http" AND country_cn:"中国"'],
-            ['443 端口', 'port:443'],
-            ['指定域名', 'domain:"example.com"'],
-            ['指定 IP', 'ip:"1.1.1.1"']
+            presetLabel('ui.infoProviders.queryHttpChina', 'HTTP + China', 'service.name:"http" AND country_cn:"中国"'),
+            presetLabel('ui.infoProviders.queryPort443', 'Port 443', 'port:443'),
+            presetLabel('ui.infoProviders.queryDomain', 'Specific domain', 'domain:"example.com"'),
+            presetLabel('ui.infoProviders.queryIp', 'Specific IP', 'ip:"1.1.1.1"')
         ],
         supportsFull: true
     },
@@ -60,14 +69,14 @@ export const INFO_PROVIDERS = {
         defaultFields: 'ip_str,port,hostnames,domains,org,isp,location.country_name,location.city,product,transport',
         placeholder: 'product:nginx country:CN',
         fieldPresets: [
-            ['最小字段', 'ip_str,port,hostnames,domains'],
-            ['Web 常用', 'ip_str,port,hostnames,domains,product,org,location.country_name,location.city'],
-            ['情报增强', 'ip_str,port,hostnames,domains,org,isp,asn,location.country_name,location.city,product,transport,ssl.cert.subject.cn']
+            presetLabel('ui.infoProviders.fieldMinimal', 'Minimal fields', 'ip_str,port,hostnames,domains'),
+            presetLabel('ui.infoProviders.fieldWebCommon', 'Common web fields', 'ip_str,port,hostnames,domains,product,org,location.country_name,location.city'),
+            presetLabel('ui.infoProviders.fieldIntel', 'Enriched intelligence', 'ip_str,port,hostnames,domains,org,isp,asn,location.country_name,location.city,product,transport,ssl.cert.subject.cn')
         ],
         queryPresets: [
-            ['Nginx + 中国', 'product:nginx country:CN'],
-            ['SSH 服务', 'port:22'],
-            ['证书域名', 'ssl.cert.subject.cn:example.com'],
+            presetLabel('ui.infoProviders.queryNginxChina', 'Nginx + China', 'product:nginx country:CN'),
+            presetLabel('ui.infoProviders.querySsh', 'SSH service', 'port:22'),
+            presetLabel('ui.infoProviders.queryCertDomain', 'Certificate domain', 'ssl.cert.subject.cn:example.com'),
             ['Amazon 443', 'org:"Amazon" port:443']
         ],
         supportsFull: false
@@ -95,7 +104,7 @@ export function defaultVisibleFields(fields, limit = 5) {
     return [...picked, ...rest].slice(0, limit);
 }
 
-/** 从结果行推断目标地址（host/域名/IP）。 */
+/** Infer the target address (host/domain/IP) from a result row. */
 export function inferTarget(row, fields) {
     if (!row || typeof row !== 'object') return '';
     const pick = names => {

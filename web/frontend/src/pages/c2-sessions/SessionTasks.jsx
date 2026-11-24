@@ -1,5 +1,5 @@
 /**
- * C2 会话任务列表：查看结果、取消与删除单条任务。
+ * C2 session task list: view results, cancel and delete single tasks.
  */
 import { useState } from 'react';
 import { Button, Space, Tag } from '@douyinfe/semi-ui';
@@ -24,7 +24,7 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
     const cancel = async task => {
         try {
             await c2.cancelTask(task.id);
-            toastSuccess(t('c2.tasks.toastCancelled', null, '任务已取消'));
+            toastSuccess(t('c2.tasks.toastCancelled', null, 'Task cancelled'));
             reload({ silent: true });
             onChanged?.();
         } catch (err) {
@@ -34,12 +34,12 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
 
     const remove = task => {
         confirmAction({
-            title: t('c2.tasks.deleteOne', null, '删除任务'),
-            content: t('c2.tasks.confirmDeleteOne', null, '确定从服务器删除该任务记录吗？此操作不可恢复。'),
+            title: t('c2.tasks.deleteOne', null, 'Delete task'),
+            content: t('c2.tasks.confirmDeleteOne', null, 'Delete this task record from the server? This cannot be undone.'),
             onOk: async () => {
                 try {
                     await c2.deleteTasks([task.id]);
-                    toastSuccess(t('c2.tasks.toastDeleted', null, '已删除 {{n}} 条').replace('{{n}}', '1'));
+                    toastSuccess(t('c2.tasks.toastDeleted', null, 'Deleted {{n}} task(s)').replace('{{n}}', '1'));
                     reload({ silent: true });
                     onChanged?.();
                 } catch (err) {
@@ -50,9 +50,9 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
     };
 
     const columns = [
-        { title: t('c2.tasks.colType', null, '类型'), dataIndex: 'taskType', width: 120 },
+        { title: t('c2.tasks.colType', null, 'Type'), dataIndex: 'taskType', width: 120 },
         {
-            title: t('c2.tasks.colCommand', null, '命令'),
+            title: t('c2.tasks.colCommand', null, 'Command'),
             dataIndex: 'payload',
             render: value => {
                 const command = value?.command || value?.path || '';
@@ -60,30 +60,30 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
             }
         },
         {
-            title: t('c2.tasks.colStatus', null, '状态'),
+            title: t('c2.tasks.colStatus', null, 'Status'),
             dataIndex: 'status',
             width: 110,
             render: status => <Tag size="small" color={TASK_STATUS_COLOR[status] || 'grey'}>{t(`c2.tasks.${status || 'queued'}`, null, status || '—')}</Tag>
         },
         {
-            title: t('c2.tasks.colDuration', null, '耗时'),
+            title: t('c2.tasks.colDuration', null, 'Duration'),
             dataIndex: 'durationMs',
             width: 100,
             render: value => formatDurationMs(value)
         },
-        { title: t('c2.tasks.colCreated', null, '创建时间'), dataIndex: 'createdAt', width: 140, render: value => <TimeText value={value} /> },
+        { title: t('c2.tasks.colCreated', null, 'Created'), dataIndex: 'createdAt', width: 140, render: value => <TimeText value={value} /> },
         {
-            title: t('c2.tasks.colActions', null, '操作'),
+            title: t('c2.tasks.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 200,
             render: (_, task) => (
                 <Space spacing={4} wrap>
-                    <Button size="small" theme="borderless" onClick={() => setDetail(task)}>{t('c2.tasks.view', null, '查看')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setDetail(task)}>{t('c2.tasks.view', null, 'View')}</Button>
                     {['queued', 'sent', 'running'].includes(task.status) && (
-                        <Button size="small" theme="borderless" onClick={() => cancel(task)}>{t('c2.tasks.cancelBtn', null, '取消')}</Button>
+                        <Button size="small" theme="borderless" onClick={() => cancel(task)}>{t('c2.tasks.cancelBtn', null, 'Cancel')}</Button>
                     )}
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove(task)}>
-                        {t('c2.tasks.deleteBtn', null, '删除')}
+                        {t('c2.tasks.deleteBtn', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -100,15 +100,15 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
                 loading={loading}
                 onRefresh={() => reload()}
                 pagination={{ pageSize: 10 }}
-                emptyText={t('c2.tasks.emptySession', null, '该会话暂无任务')}
+                emptyText={t('c2.tasks.emptySession', null, 'No tasks for this session')}
             />
 
             <Drawer
                 visible={Boolean(detail)}
-                title={t('c2.tasks.modalTitle', null, '任务详情')}
+                title={t('c2.tasks.modalTitle', null, 'Task details')}
                 width={720}
                 onCancel={() => setDetail(null)}
-                footer={<Button onClick={() => setDetail(null)}>{t('c2.tasks.close', null, '关闭')}</Button>}
+                footer={<Button onClick={() => setDetail(null)}>{t('c2.tasks.close', null, 'Close')}</Button>}
             >
                 {detail && (
                     <div className="c2-task-detail">
@@ -117,16 +117,16 @@ export default function SessionTasks({ session, canDelete, onChanged }) {
                             <Tag size="small" color={TASK_STATUS_COLOR[detail.status] || 'grey'}>{detail.status}</Tag>
                             <span className="c2-muted">{formatDateTime(detail.createdAt)}</span>
                         </div>
-                        {detail.payload && <JsonViewer title={t('c2.tasks.labelPayload', null, '参数')} value={detail.payload} collapsed />}
+                        {detail.payload && <JsonViewer title={t('c2.tasks.labelPayload', null, 'Payload')} value={detail.payload} collapsed />}
                         {detail.resultText && (
                             <>
-                                <div className="c2-field-label">{t('c2.tasks.labelResult', null, '输出')}</div>
+                                <div className="c2-field-label">{t('c2.tasks.labelResult', null, 'Output')}</div>
                                 <pre className="c2-pre">{detail.resultText}</pre>
                             </>
                         )}
                         {detail.error && (
                             <>
-                                <div className="c2-field-label">{t('c2.tasks.labelError', null, '错误')}</div>
+                                <div className="c2-field-label">{t('c2.tasks.labelError', null, 'Error')}</div>
                                 <pre className="c2-pre c2-pre-error">{detail.error}</pre>
                             </>
                         )}

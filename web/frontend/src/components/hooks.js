@@ -1,4 +1,4 @@
-/** 通用异步数据装载：统一 loading / error / reload 语义。 */
+/** Generic async data loader: unified loading / error / reload semantics. */
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export function useResource(loader, deps = [], { initial = null, skip = false } = {}) {

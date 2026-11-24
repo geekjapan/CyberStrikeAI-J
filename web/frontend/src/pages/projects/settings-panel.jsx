@@ -1,8 +1,8 @@
-/** 项目设置：元数据、测试范围 JSON、归档/恢复与删除。 */
+/** Project settings: metadata, test scope JSON, archive/restore and delete. */
 import { useEffect, useState } from 'react';
 import { Button, Divider, Input, Select, Space, Switch, TextArea, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { SectionCard, confirmAction, toastError, toastSuccess } from '../../components/ui';
 import { PROJECT_STATUS, errText } from './helpers';
 
@@ -11,7 +11,7 @@ const { Text } = Typography;
 const SCOPE_EXAMPLE = {
     targets: ['https://example.com'],
     exclude: ['*.cdn.example.com'],
-    notes: '仅授权 Web 应用层测试'
+    get notes() { return translate('ui.projectsSettings.scopeExampleNotes', null, 'Authorized for web application layer testing only'); }
 };
 
 export default function SettingsPanel({ project, canWrite, canDelete, onChanged, onDeleted }) {
@@ -38,7 +38,7 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
         try {
             update({ scope_json: JSON.stringify(JSON.parse(raw), null, 2) });
         } catch (error) {
-            toastError(t('projects.invalidJson', null, 'JSON 格式无效') + '：' + errText(error, ''));
+            toastError(t('projects.invalidJson', null, 'Invalid JSON format') + '：' + errText(error, ''));
         }
     };
 
@@ -47,7 +47,7 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
     const save = async () => {
         const name = form.name.trim();
         if (!name) {
-            toastError(t('projects.enterProjectName', null, '请输入项目名称'));
+            toastError(t('projects.enterProjectName', null, 'Please enter project name'));
             return;
         }
         const scopeRaw = form.scope_json.trim();
@@ -55,7 +55,7 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
             try {
                 JSON.parse(scopeRaw);
             } catch (error) {
-                toastError(t('projects.invalidScopeJson', null, '测试范围 JSON 无效，请先修正或点击「格式化」'));
+                toastError(t('projects.invalidScopeJson', null, 'Invalid scope JSON, please fix it first or click Format'));
                 return;
             }
         }
@@ -68,10 +68,10 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
                 status: form.status,
                 pinned: Boolean(form.pinned)
             });
-            toastSuccess(t('projects.saved', null, '已保存'));
+            toastSuccess(t('projects.saved', null, 'Saved'));
             onChanged?.();
         } catch (error) {
-            toastError(errText(error, t('projects.saveFailed', null, '保存失败')));
+            toastError(errText(error, t('projects.saveFailed', null, 'Save failed')));
         } finally {
             setSaving(false);
         }
@@ -81,19 +81,19 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
 
     const toggleArchive = () => {
         confirmAction({
-            title: archived ? t('projects.restoreProjectActive', null, '恢复为进行中') : t('projects.archiveProject', null, '归档'),
+            title: archived ? t('projects.restoreProjectActive', null, 'Restore to active') : t('projects.archiveProject', null, 'Archive'),
             content: archived
-                ? t('projects.confirmRestoreProjectActive', null, '恢复为 active？')
-                : t('projects.confirmArchiveProject', null, '归档后默认不再出现在活跃列表，是否继续？'),
-            okText: t('common.confirm', null, '确认'),
+                ? t('projects.confirmRestoreProjectActive', null, 'Restore to active?')
+                : t('projects.confirmArchiveProject', null, 'After archiving, this project is hidden from active list by default. Continue?'),
+            okText: t('common.confirm', null, 'Confirm'),
             danger: !archived,
             onOk: async () => {
                 try {
                     await api.put(`/projects/${project.id}`, { status: archived ? 'active' : 'archived' });
-                    toastSuccess(t('projects.saved', null, '已保存'));
+                    toastSuccess(t('projects.saved', null, 'Saved'));
                     onChanged?.();
                 } catch (error) {
-                    toastError(errText(error, t('projects.operationFailed', null, '操作失败')));
+                    toastError(errText(error, t('projects.operationFailed', null, 'Operation failed')));
                 }
             }
         });
@@ -101,16 +101,16 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
 
     const remove = () => {
         confirmAction({
-            title: t('projects.deleteProject', null, '删除项目'),
-            content: t('projects.confirmDeleteProject', null, '确定删除该项目？事实将一并删除，对话将解除绑定。'),
-            okText: t('common.delete', null, '删除'),
+            title: t('projects.deleteProject', null, 'Delete project'),
+            content: t('projects.confirmDeleteProject', null, 'Delete this project? Facts will be deleted and conversations unbound.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/projects/${project.id}`);
-                    toastSuccess(t('projects.deleteProject', null, '删除项目'));
+                    toastSuccess(t('projects.deleteProject', null, 'Delete project'));
                     onDeleted?.(project.id);
                 } catch (error) {
-                    toastError(errText(error, t('projects.deleteFailed', null, '删除失败')));
+                    toastError(errText(error, t('projects.deleteFailed', null, 'Delete failed')));
                 }
             }
         });
@@ -118,30 +118,30 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
 
     if (!project) {
         return (
-            <SectionCard title={t('projects.tabSettings', null, '设置')}>
-                <Text type="tertiary">{t('projects.selectOrCreateTitle', null, '选择或创建项目')}</Text>
+            <SectionCard title={t('projects.tabSettings', null, 'Settings')}>
+                <Text type="tertiary">{t('projects.selectOrCreateTitle', null, 'Select or create a project')}</Text>
             </SectionCard>
         );
     }
 
     return (
         <SectionCard
-            title={t('projects.settingsIntroTitle', null, '项目设置')}
-            description={t('projects.settingsIntroHint', null, '配置项目元数据与 Agent 授权边界，保存后即时生效于绑定对话。')}
+            title={t('projects.settingsIntroTitle', null, 'Project settings')}
+            description={t('projects.settingsIntroHint', null, 'Configure project metadata and Agent authorization boundary; takes effect immediately for bound conversations after saving.')}
             extra={(
                 <Button type="primary" loading={saving} disabled={!canWrite} onClick={save}>
-                    {t('projects.saveSettings', null, '保存更改')}
+                    {t('projects.saveSettings', null, 'Save changes')}
                 </Button>
             )}
         >
             <div className="project-form-grid">
                 <div className="project-form-field">
-                    <Text strong size="small">{t('projects.projectName', null, '项目名称')}</Text>
+                    <Text strong size="small">{t('projects.projectName', null, 'Project name')}</Text>
                     <Input value={form.name} disabled={!canWrite} onChange={value => update({ name: value })} />
-                    <Text type="tertiary" size="small">{t('projects.saveChangesHint', null, '修改后请点击保存以同步到服务器')}</Text>
+                    <Text type="tertiary" size="small">{t('projects.saveChangesHint', null, 'Click save to sync changes to server')}</Text>
                 </div>
                 <div className="project-form-field">
-                    <Text strong size="small">{t('projects.status', null, '状态')}</Text>
+                    <Text strong size="small">{t('projects.status', null, 'Status')}</Text>
                     <Select
                         value={form.status}
                         disabled={!canWrite}
@@ -151,31 +151,31 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
                     />
                     <div className="project-switch-row">
                         <Switch checked={form.pinned} disabled={!canWrite} onChange={checked => update({ pinned: checked })} />
-                        <Text size="small">{t('projects.pinProject', null, '置顶项目（列表优先显示）')}</Text>
+                        <Text size="small">{t('projects.pinProject', null, 'Pin project (show first in list)')}</Text>
                     </div>
                 </div>
             </div>
 
             <div className="project-form-field">
-                <Text strong size="small">{t('projects.projectDescription', null, '项目描述')}</Text>
+                <Text strong size="small">{t('projects.projectDescription', null, 'Project description')}</Text>
                 <TextArea
                     value={form.description}
                     rows={3}
                     maxCount={4000}
                     disabled={!canWrite}
-                    placeholder={t('projects.editDescriptionPlaceholder', null, '客户/任务备注、协作说明、联系人…')}
+                    placeholder={t('projects.editDescriptionPlaceholder', null, 'Client/task notes, contacts, collaboration…')}
                     onChange={value => update({ description: value })}
                 />
             </div>
 
             <div className="project-form-field">
                 <Space>
-                    <Text strong size="small">{t('projects.scopeJsonLabel', null, '范围 JSON')}</Text>
+                    <Text strong size="small">{t('projects.scopeJsonLabel', null, 'Scope JSON')}</Text>
                     <Button size="small" theme="borderless" disabled={!canWrite} onClick={formatScope}>
-                        {t('projects.formatJson', null, '格式化')}
+                        {t('projects.formatJson', null, 'Format')}
                     </Button>
                     <Button size="small" theme="borderless" disabled={!canWrite} onClick={insertExample}>
-                        {t('projects.example', null, '示例')}
+                        {t('projects.example', null, 'Example')}
                     </Button>
                 </Space>
                 <TextArea
@@ -186,26 +186,26 @@ export default function SettingsPanel({ project, canWrite, canDelete, onChanged,
                     onChange={value => update({ scope_json: value })}
                 />
                 <Text type="tertiary" size="small">
-                    {t('projects.scopeFootnote', null, '支持 targets、exclude、notes 等字段，留空表示不限制范围。')}
+                    {t('projects.scopeFootnote', null, 'Supports targets, exclude, notes and more. Empty means no scope limit.')}
                 </Text>
             </div>
 
             <Divider margin="12px" />
             <div className="project-danger-zone">
                 <div>
-                    <Text strong>{t('projects.dangerZoneTitle', null, '危险操作')}</Text>
+                    <Text strong>{t('projects.dangerZoneTitle', null, 'Danger zone')}</Text>
                     <div>
                         <Text type="tertiary" size="small">
-                            {t('projects.dangerZoneHint', null, '归档后需在列表勾选「显示已归档」才能查看；删除将清除全部事实且不可恢复。')}
+                            {t('projects.dangerZoneHint', null, 'Archived projects are hidden unless \'Show archived\' is enabled; deletion removes all facts permanently.')}
                         </Text>
                     </div>
                 </div>
                 <Space>
                     <Button disabled={!canWrite} onClick={toggleArchive}>
-                        {archived ? t('projects.restoreProjectActive', null, '恢复为进行中') : t('projects.archiveProject', null, '归档')}
+                        {archived ? t('projects.restoreProjectActive', null, 'Restore to active') : t('projects.archiveProject', null, 'Archive')}
                     </Button>
                     <Button type="danger" disabled={!canDelete} onClick={remove}>
-                        {t('projects.deleteProject', null, '删除项目')}
+                        {t('projects.deleteProject', null, 'Delete project')}
                     </Button>
                 </Space>
             </div>

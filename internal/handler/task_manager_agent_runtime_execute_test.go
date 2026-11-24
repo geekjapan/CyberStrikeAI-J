@@ -22,7 +22,7 @@ func TestAbortActiveAgentExecute(t *testing.T) {
 		close(done)
 	}()
 
-	if !m.AbortActiveAgentExecute(conv, "跳过域名收集") {
+	if !m.AbortActiveAgentExecute(conv, "skip domain enumeration") {
 		t.Fatal("expected abort to succeed")
 	}
 	select {
@@ -30,8 +30,8 @@ func TestAbortActiveAgentExecute(t *testing.T) {
 	case <-time.After(2 * time.Second):
 		t.Fatal("execute cancel did not propagate")
 	}
-	if got := m.TakeAgentExecuteAbortNote(conv); got != "跳过域名收集" {
-		t.Fatalf("abort note = %q, want 跳过域名收集", got)
+	if got := m.TakeAgentExecuteAbortNote(conv); got != "skip domain enumeration" {
+		t.Fatalf("abort note = %q, want skip domain enumeration", got)
 	}
 	m.UnregisterActiveAgentExecute(conv)
 	if m.AbortActiveAgentExecute(conv, "") {

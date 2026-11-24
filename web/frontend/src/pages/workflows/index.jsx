@@ -1,4 +1,4 @@
-/** 工作流：列表、统计、新建/编辑/删除、详情抽屉、运行历史与包导入导出。 */
+/** Workflows: list, stats, create/edit/delete, detail drawer, run history and package import/export. */
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Input, Space, Switch, Tabs, Tag, Typography } from '@douyinfe/semi-ui';
@@ -78,18 +78,18 @@ export default function WorkflowsPage() {
     const enabledCount = workflows.filter(item => item.enabled).length;
 
     const metrics = [
-        { id: 'total', label: t('workflows.processLibrary', null, '工作流列表'), value: workflows.length, loading: overview.loading },
-        { id: 'enabled', label: t('workflows.statusEnabled', null, '启用'), value: enabledCount, tone: 'success', loading: overview.loading },
+        { id: 'total', label: t('workflows.processLibrary', null, 'Workflows'), value: workflows.length, loading: overview.loading },
+        { id: 'enabled', label: t('workflows.statusEnabled', null, 'Enabled'), value: enabledCount, tone: 'success', loading: overview.loading },
         {
             id: 'invalid',
-            label: t('workflows.statusInvalid', null, '校验未通过'),
+            label: t('workflows.statusInvalid', null, 'Invalid workflow'),
             value: invalidCount,
             tone: invalidCount ? 'danger' : undefined,
             loading: overview.loading
         },
         {
             id: 'pending',
-            label: t('workflows.runsPending', null, '待审批运行'),
+            label: t('workflows.runsPending', null, 'Runs pending approval'),
             value: pendingRuns.length,
             tone: pendingRuns.length ? 'warning' : undefined,
             loading: overview.loading
@@ -99,31 +99,31 @@ export default function WorkflowsPage() {
     const exportPackage = async (record) => {
         try {
             await downloadFile(`/workflows/${encodeURIComponent(record.id)}/package`, { filename: `${record.id}.csapkg.zip` });
-            toastSuccess(t('workflows.package.export', null, '导出'));
+            toastSuccess(t('workflows.package.export', null, 'Export'));
         } catch (error) {
-            toastError(errText(error, t('workflows.package.errors.exportFailed', null, '导出失败，请稍后重试。')));
+            toastError(errText(error, t('workflows.package.errors.exportFailed', null, 'Export failed. Try again later.')));
         }
     };
 
     const removeWorkflow = (record) => confirmAction({
-        title: t('workflows.deleteWorkflow', null, '删除工作流'),
-        content: t('workflows.confirmDelete', { id: record.id }, `确定删除工作流 ${record.id}？`),
-        okText: t('common.delete', null, '删除'),
+        title: t('workflows.deleteWorkflow', null, 'Delete workflow'),
+        content: t('workflows.confirmDelete', { id: record.id }, 'Delete workflow {{id}}?'),
+        okText: t('common.delete', null, 'Delete'),
         onOk: async () => {
             try {
                 await api.del(`/workflows/${encodeURIComponent(record.id)}`);
-                toastSuccess(t('workflows.deleted', null, '工作流已删除'));
+                toastSuccess(t('workflows.deleted', null, 'Workflow deleted'));
                 if (selectedId === record.id) navigate(undefined, tab);
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('workflows.deleteFailed', null, '删除工作流失败')));
+                toastError(errText(error, t('workflows.deleteFailed', null, 'Failed to delete workflow')));
             }
         }
     });
 
     const columns = [
         {
-            title: t('workflows.metaName', null, '名称'),
+            title: t('workflows.metaName', null, 'Name'),
             dataIndex: 'name',
             render: (value, record) => {
                 const summary = graphSummary(record.graph_json);
@@ -134,51 +134,53 @@ export default function WorkflowsPage() {
                         onClick={() => navigate(record.id, 'list')}
                         title={record.id}
                     >
-                        <span className="workflow-name-text">{value || t('workflows.untitled', null, '未命名工作流')}</span>
+                        <span className="workflow-name-text">{value || t('workflows.untitled', null, 'Untitled workflow')}</span>
                         <span className="workflow-name-sub">
                             <code>{record.id}</code>
                             {' · '}
-                            {summary.error ? '图解析失败' : `${summary.nodes.length} 节点 / ${summary.edges.length} 连线`}
+                            {summary.error
+                                ? t('ui.workflowsIndex.graphParseFailed', null, 'Graph parse failed')
+                                : t('ui.workflowsIndex.nodeEdgeCount', { nodes: summary.nodes.length, edges: summary.edges.length }, '{{nodes}} nodes / {{edges}} edges')}
                         </span>
                     </button>
                 );
             }
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'enabled',
             width: 150,
             render: (value, record) => (
                 <Space spacing={4} wrap>
                     <Tag size="small" color={value ? 'green' : 'grey'}>
-                        {value ? t('workflows.statusEnabled', null, '启用') : t('workflows.statusDisabled', null, '禁用')}
+                        {value ? t('workflows.statusEnabled', null, 'Enabled') : t('workflows.statusDisabled', null, 'Disabled')}
                     </Tag>
                     {record.validation_error
-                        ? <Tag size="small" color="red">{t('workflows.statusInvalid', null, '校验未通过')}</Tag>
+                        ? <Tag size="small" color="red">{t('workflows.statusInvalid', null, 'Invalid workflow')}</Tag>
                         : null}
                 </Space>
             )
         },
         {
-            title: '版本',
+            title: t('ui.workflowsIndex.version', null, 'Version'),
             dataIndex: 'version',
             width: 80,
             render: value => <Text size="small">v{value ?? 0}</Text>
         },
         {
-            title: t('projects.updated', null, '更新'),
+            title: t('projects.updated', null, 'Updated'),
             dataIndex: 'updated_at',
             width: 165,
             render: value => <Text type="tertiary" size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 260,
             render: (value, record) => (
                 <Space spacing={2} wrap>
                     <Button size="small" theme="borderless" onClick={() => navigate(record.id, 'list')}>
-                        {t('projects.details', null, '详情')}
+                        {t('projects.details', null, 'Details')}
                     </Button>
                     <Button
                         size="small"
@@ -186,13 +188,13 @@ export default function WorkflowsPage() {
                         disabled={!canWrite}
                         onClick={() => setFormState({ visible: true, workflow: record })}
                     >
-                        {t('common.edit', null, '编辑')}
+                        {t('common.edit', null, 'Edit')}
                     </Button>
                     <Button size="small" theme="borderless" onClick={() => exportPackage(record)}>
-                        {t('workflows.package.export', null, '导出')}
+                        {t('workflows.package.export', null, 'Export')}
                     </Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => removeWorkflow(record)}>
-                        {t('common.delete', null, '删除')}
+                        {t('common.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -202,18 +204,18 @@ export default function WorkflowsPage() {
     return (
         <div className="workflow-page">
             <PageHeader
-                title={t('workflows.title', null, '工作流')}
-                description={t('workflows.processLibraryHint', null, '工作流定义由节点与连线组成，可被角色或对话按需触发。')}
+                title={t('workflows.title', null, 'Workflows')}
+                description={t('workflows.processLibraryHint', null, 'A workflow definition is made of nodes and edges and can be triggered on demand by a role or a conversation.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} theme="borderless" loading={overview.loading} onClick={refresh}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button disabled={!canWrite} onClick={() => setImportVisible(true)}>
-                            {t('workflows.package.importLocal', null, '导入本地包')}
+                            {t('workflows.package.importLocal', null, 'Import local package')}
                         </Button>
                         <Button type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setFormState({ visible: true, workflow: null })}>
-                            {t('workflows.newGraph', null, '新建工作流')}
+                            {t('workflows.newGraph', null, 'New workflow')}
                         </Button>
                     </Space>
                 )}
@@ -227,8 +229,8 @@ export default function WorkflowsPage() {
                 activeKey={tab}
                 onChange={key => navigate(undefined, key)}
                 tabList={[
-                    { itemKey: 'list', tab: t('workflows.processLibrary', null, '工作流列表') },
-                    { itemKey: 'runs', tab: t('workflows.runsPending', null, '运行历史') }
+                    { itemKey: 'list', tab: t('workflows.processLibrary', null, 'Workflows') },
+                    { itemKey: 'runs', tab: t('workflows.runsHistory', null, 'Run history') }
                 ]}
                 className="workflow-tabs"
             />
@@ -237,8 +239,8 @@ export default function WorkflowsPage() {
                 <RunsPanel canExecute={canExecute} />
             ) : (
                 <SectionCard
-                    title={t('workflows.processLibrary', null, '工作流列表')}
-                    description={t('workflows.metaIdHint', null, '创建后不可修改，用于 API 与角色绑定')}
+                    title={t('workflows.processLibrary', null, 'Workflows')}
+                    description={t('workflows.metaIdHint', null, 'Cannot be changed after creation; used for API and role binding')}
                     extra={<Text type="tertiary" size="small">{filtered.length} / {workflows.length}</Text>}
                 >
                     <div className="workflow-toolbar">
@@ -246,13 +248,13 @@ export default function WorkflowsPage() {
                             prefix={<IconSearch />}
                             value={search}
                             showClear
-                            placeholder={t('workflows.searchPlaceholder', null, '搜索工作流…')}
+                            placeholder={t('workflows.searchPlaceholder', null, 'Search workflows…')}
                             onChange={value => setSearch(value)}
                             style={{ width: 260 }}
                         />
                         <Space spacing={6}>
                             <Switch checked={includeDisabled} onChange={setIncludeDisabled} size="small" />
-                            <Text size="small">显示已禁用</Text>
+                            <Text size="small">{t('ui.workflowsIndex.showDisabled', null, 'Show disabled')}</Text>
                         </Space>
                     </div>
                     <DataTable
@@ -261,7 +263,7 @@ export default function WorkflowsPage() {
                         rowKey="id"
                         loading={overview.loading}
                         pagination={{ pageSize: 10 }}
-                        emptyText={t('workflows.emptyList', null, '暂无工作流')}
+                        emptyText={t('workflows.emptyList', null, 'No workflows yet')}
                     />
                 </SectionCard>
             )}

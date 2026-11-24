@@ -1,4 +1,4 @@
-/** 工作流新建 / 编辑：元数据 + graph JSON 文本域（校验、格式化、模板）。 */
+/** Workflow create / edit: metadata + graph JSON textarea (validate, format, template). */
 import { useEffect, useMemo, useState } from 'react';
 import { Banner, Button, Checkbox, Input, InputNumber, Space, TextArea, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
@@ -33,7 +33,7 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
             let graphText = workflow.graph_json || '';
             try {
                 graphText = JSON.stringify(JSON.parse(graphText), null, 2);
-            } catch (error) { /* 保留原始文本，交给校验提示 */ }
+            } catch (error) { /* Keep the original text and leave it to the validation hint */ }
             setForm({
                 id: workflow.id || '',
                 name: workflow.name || '',
@@ -56,7 +56,7 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
             update({ graph: JSON.stringify(JSON.parse(form.graph), null, 2) });
             setCheck(null);
         } catch (error) {
-            toastError(`${t('projects.invalidJson', null, 'JSON 格式无效')}：${errText(error, '')}`);
+            toastError(`${t('projects.invalidJson', null, 'Invalid JSON format')}: ${errText(error, '')}`);
         }
     };
 
@@ -67,23 +67,23 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
 
     const validate = async () => {
         if (!form.graph.trim()) {
-            setCheck({ type: 'danger', text: t('workflows.validation.serverFailed', null, '图定义不能为空') });
+            setCheck({ type: 'danger', text: t('workflows.validation.serverFailed', null, 'Server graph validation failed') });
             return;
         }
         let parsed;
         try {
             parsed = JSON.parse(form.graph);
         } catch (error) {
-            setCheck({ type: 'danger', text: `JSON 解析失败：${errText(error, '')}` });
+            setCheck({ type: 'danger', text: t('ui.workflowsForm.jsonParseFailed', { detail: errText(error, '') }, 'Failed to parse JSON: {{detail}}') });
             return;
         }
         setValidating(true);
         setCheck(null);
         try {
             await api.post('/workflows/validate', { graph: parsed });
-            setCheck({ type: 'success', text: '结构校验通过' });
+            setCheck({ type: 'success', text: t('ui.workflowsForm.validationPassed', null, 'Structure validation passed') });
         } catch (error) {
-            setCheck({ type: 'danger', text: errText(error, t('workflows.validation.serverFailed', null, '后端图校验失败')) });
+            setCheck({ type: 'danger', text: errText(error, t('workflows.validation.serverFailed', null, 'Server graph validation failed')) });
         } finally {
             setValidating(false);
         }
@@ -93,18 +93,18 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
         const id = (editing ? workflow.id : form.id).trim();
         const name = form.name.trim();
         if (!id || !name) {
-            toastError(t('workflows.idNameRequired', null, '工作流 ID 和名称不能为空'));
+            toastError(t('workflows.idNameRequired', null, 'Workflow ID and name are required'));
             return;
         }
         if (!editing && !ID_PATTERN.test(id)) {
-            toastError('工作流 ID 必须以字母或数字开头，仅含字母、数字、下划线、连字符');
+            toastError(t('ui.workflowsForm.invalidId', null, 'The workflow ID must start with a letter or digit and contain only letters, digits, underscores and hyphens'));
             return;
         }
         if (form.graph.trim()) {
             try {
                 JSON.parse(form.graph);
             } catch (error) {
-                toastError(`graph 必须是合法 JSON：${errText(error, '')}`);
+                toastError(t('ui.workflowsForm.graphInvalidJson', { detail: errText(error, '') }, 'graph must be valid JSON: {{detail}}'));
                 return;
             }
         }
@@ -121,10 +121,10 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
             const saved = editing
                 ? await api.put(`/workflows/${encodeURIComponent(id)}`, body)
                 : await api.post('/workflows', body);
-            toastSuccess(t('workflows.saved', null, '工作流已保存'));
+            toastSuccess(t('workflows.saved', null, 'Workflow saved'));
             onSaved?.(saved?.workflow || null);
         } catch (error) {
-            toastError(errText(error, t('workflows.saveFailed', null, '保存工作流失败')));
+            toastError(errText(error, t('workflows.saveFailed', null, 'Failed to save workflow')));
         } finally {
             setSaving(false);
         }
@@ -133,11 +133,11 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
     return (
         <Drawer
             visible={visible}
-            title={editing ? t('workflows.metaModalTitle', null, '工作流信息') : t('workflows.newGraph', null, '新建工作流')}
+            title={editing ? t('workflows.metaModalTitle', null, 'Workflow details') : t('workflows.newGraph', null, 'New workflow')}
             onCancel={onCancel}
             onOk={submit}
-            okText={t('common.save', null, '保存')}
-            cancelText={t('common.cancel', null, '取消')}
+            okText={t('common.save', null, 'Save')}
+            cancelText={t('common.cancel', null, 'Cancel')}
             confirmLoading={saving}
             width={860}
         >
@@ -150,13 +150,13 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
                         placeholder="web-scan-basic"
                         onChange={value => update({ id: value })}
                     />
-                    <Text type="tertiary" size="small">{t('workflows.metaIdHint', null, '创建后不可修改，用于 API 与角色绑定')}</Text>
+                    <Text type="tertiary" size="small">{t('workflows.metaIdHint', null, 'Cannot be changed after creation; used for API and role binding')}</Text>
                 </div>
                 <div className="workflow-form-field">
-                    <Text strong size="small">{t('workflows.metaName', null, '名称')}</Text>
+                    <Text strong size="small">{t('workflows.metaName', null, 'Name')}</Text>
                     <Input
                         value={form.name}
-                        placeholder={t('workflows.namePlaceholder', null, '基础 Web 扫描')}
+                        placeholder={t('workflows.namePlaceholder', null, 'Basic Web scan')}
                         onChange={value => update({ name: value })}
                     />
                 </div>
@@ -164,16 +164,16 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
 
             <div className="workflow-form-grid">
                 <div className="workflow-form-field">
-                    <Text strong size="small">{t('workflows.metaDescription', null, '描述')}</Text>
+                    <Text strong size="small">{t('workflows.metaDescription', null, 'Description')}</Text>
                     <Input
                         value={form.description}
-                        placeholder={t('workflows.descriptionPlaceholder', null, '可选')}
+                        placeholder={t('workflows.descriptionPlaceholder', null, 'Optional')}
                         onChange={value => update({ description: value })}
                     />
                 </div>
                 <div className="workflow-form-grid workflow-form-grid--tight">
                     <div className="workflow-form-field">
-                        <Text strong size="small">版本</Text>
+                        <Text strong size="small">{t('ui.workflowsForm.version', null, 'Version')}</Text>
                         <InputNumber
                             value={form.version}
                             min={0}
@@ -182,9 +182,9 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
                         />
                     </div>
                     <div className="workflow-form-field">
-                        <Text strong size="small">{t('workflows.metaEnabled', null, '启用')}</Text>
+                        <Text strong size="small">{t('workflows.metaEnabled', null, 'Enabled')}</Text>
                         <Checkbox checked={form.enabled} onChange={event => update({ enabled: event.target.checked })}>
-                            {t('workflows.metaEnabledHint', null, '禁用后无法被角色自动触发')}
+                            {t('workflows.metaEnabledHint', null, 'Disabled workflows cannot be auto-triggered by roles')}
                         </Checkbox>
                     </div>
                 </div>
@@ -195,8 +195,8 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
                     <Text strong size="small">graph JSON</Text>
                     <Text type="tertiary" size="small">
                         {summary.error
-                            ? `解析失败：${summary.error}`
-                            : `${summary.nodes.length} 个节点 · ${summary.edges.length} 条连线`}
+                            ? t('ui.workflowsForm.parseFailed', { detail: summary.error }, 'Parse failed: {{detail}}')
+                            : t('ui.workflowsForm.nodeEdgeCount', { nodes: summary.nodes.length, edges: summary.edges.length }, '{{nodes}} nodes · {{edges}} edges')}
                     </Text>
                 </Space>
                 <TextArea
@@ -208,19 +208,19 @@ export default function WorkflowFormModal({ visible, workflow, onCancel, onSaved
                     onChange={value => { update({ graph: value }); setCheck(null); }}
                 />
                 <Space wrap>
-                    <Button size="small" onClick={format}>{t('projects.formatJson', null, '格式化')}</Button>
-                    <Button size="small" onClick={insertTemplate}>插入最小模板</Button>
+                    <Button size="small" onClick={format}>{t('projects.formatJson', null, 'Format')}</Button>
+                    <Button size="small" onClick={insertTemplate}>{t('ui.workflowsForm.insertTemplate', null, 'Insert minimal template')}</Button>
                     <Button
                         size="small"
                         loading={validating}
                         disabled={!canValidate}
-                        title={canValidate ? '' : '需要 workflow:execute 权限'}
+                        title={canValidate ? '' : t('ui.workflowsForm.needExecutePermission', null, 'Requires the workflow:execute permission')}
                         onClick={validate}
                     >
-                        {t('workflows.validate', null, '校验图定义')}
+                        {t('workflows.validate', null, 'Validate graph definition')}
                     </Button>
                     <Text type="tertiary" size="small">
-                        节点类型：{NODE_TYPES.map(item => item.label).join(' / ')}
+                        {t('ui.workflowsForm.nodeTypes', { types: NODE_TYPES.map(item => item.label).join(' / ') }, 'Node types: {{types}}')}
                     </Text>
                 </Space>
             </div>

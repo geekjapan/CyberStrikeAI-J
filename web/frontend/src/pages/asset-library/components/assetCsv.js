@@ -1,10 +1,12 @@
 /**
- * 资产 CSV/JSON 导入解析与 CSV 导出。
- * 旧版支持 .xlsx/.csv；新前端不引入表格库，改为 CSV/JSON 文本与文件上传统一解析。
+ * Asset CSV/JSON import parsing and CSV export.
+ * The legacy page supported .xlsx/.csv; the new frontend ships no spreadsheet library and parses CSV/JSON text and file uploads the same way.
+ * Import accepts headers and enum labels written in any loaded UI language (translateAll); export uses the current language.
  */
+import { translate, translateAll } from '../../../lib/i18n';
 import {
-    CRITICALITY_LABELS, ENVIRONMENT_LABELS, EXPORT_COLUMNS, IMPORT_COLUMNS,
-    IMPORT_HEADER_ALIASES, MAX_IMPORT_ROWS, STATUS_LABELS,
+    CRITICALITY_LABELS, ENVIRONMENT_LABELS, EXPORT_COLUMNS,
+    IMPORT_COLUMNS, IMPORT_HEADER_ALIASES, MAX_IMPORT_ROWS, STATUS_LABELS,
     criticalityLabel, environmentLabel, riskLabel, statusLabel
 } from './assetConstants';
 import {
@@ -28,11 +30,14 @@ function normalizeHeader(value) {
 export function columnForHeader(value) {
     const normalized = normalizeHeader(value);
     if (!normalized) return '';
-    return IMPORT_COLUMNS.find(column => (IMPORT_HEADER_ALIASES[column] || [])
-        .some(alias => normalizeHeader(alias) === normalized)) || '';
+    return IMPORT_COLUMNS.find(column => {
+        const headerKey = EXPORT_COLUMNS.find(([name]) => name === column)?.[1];
+        return [...(IMPORT_HEADER_ALIASES[column] || []), ...(headerKey ? translateAll(headerKey) : [])]
+            .some(alias => normalizeHeader(alias) === normalized);
+    }) || '';
 }
 
-/** RFC4180 风格 CSV 解析（支持引号、转义引号、CRLF/BOM）。 */
+/** RFC 4180-style CSV parsing (quotes, escaped quotes, CRLF/BOM). */
 export function parseCsv(text) {
     const source = String(text ?? '').replace(/^\uFEFF/, '');
     const rows = [];
@@ -75,13 +80,14 @@ export function parseCsv(text) {
     return rows.filter(columns => columns.some(value => String(value ?? '').trim() !== ''));
 }
 
-function localizedEnum(value, labels, fallback = '') {
+// Accepts the code or the enum label written in any loaded UI language; null means unrecognized.
+function localizedEnum(value, labels, prefix, fallback = '') {
     const raw = String(value ?? '').trim();
     if (!raw) return fallback;
     const lower = raw.toLowerCase();
     if (labels[lower]) return lower;
-    const matched = Object.entries(labels).find(([, label]) => label === raw);
-    return matched ? matched[0] : null;
+    const matched = Object.keys(labels).find(code => labels[code] === raw || translateAll(`${prefix}.${code}`).includes(raw));
+    return matched ?? null;
 }
 
 function resolveProject(value, projects) {
@@ -90,14 +96,14 @@ function resolveProject(value, projects) {
     const lower = raw.toLowerCase();
     const project = (projects || []).find(item => String(item.id).toLowerCase() === lower
         || String(item.name || '').trim().toLowerCase() === lower);
-    if (!project) return { projectId: '', projectName: '', error: `项目不存在或无权访问：${raw}` };
+    if (!project) return { projectId: '', projectName: '', error: translate('ui.assetCsv.projectNotFound', { value: raw }, 'Project not found or access denied: {{value}}') };
     return { projectId: project.id, projectName: project.name, error: '' };
 }
 
 function buildRecord(values, rowNumber, { projects, projectId, source }) {
     const fail = message => ({ rowNumber, values, asset: null, error: message });
     const target = values.target || values.host || values.domain || values.ip || '';
-    if (!target) return fail('缺少目标地址');
+    if (!target) return fail(translate('ui.assetCsv.missingTarget', null, 'Target address is missing'));
     let parsed;
     try {
         parsed = parseAssetTarget(target);
@@ -106,26 +112,26 @@ function buildRecord(values, rowNumber, { projects, projectId, source }) {
     }
     const rawPort = String(values.port ?? '').trim();
     const port = rawPort === '' ? Number(parsed.port || 0) : Number(rawPort);
-    if (!Number.isInteger(port) || port < 0 || port > 65535) return fail('端口必须在 0–65535 之间');
+    if (!Number.isInteger(port) || port < 0 || port > 65535) return fail(translate('ui.assetCsv.portRange', null, 'Port must be between 0 and 65535'));
     const ip = String(values.ip || parsed.ip || '').trim().toLowerCase();
-    if (ip && !isIPv4(ip) && !isIPv6(ip)) return fail('IP 地址格式无效');
+    if (ip && !isIPv4(ip) && !isIPv6(ip)) return fail(translate('ui.assetCsv.ipInvalid', null, 'Invalid IP address format'));
     const rawDomain = String(values.domain || parsed.domain || '').trim();
     const domain = rawDomain ? normalizeDomain(rawDomain) : '';
-    if (rawDomain && !domain) return fail('域名格式无效');
+    if (rawDomain && !domain) return fail(translate('ui.assetCsv.domainInvalid', null, 'Invalid domain format'));
     const protocol = String(values.protocol || parsed.protocol || '').trim().toLowerCase();
-    if (protocol && !/^[a-z][a-z0-9+.-]{0,31}$/.test(protocol)) return fail('协议格式无效');
-    const status = localizedEnum(values.status, STATUS_LABELS, 'active');
-    if (!status) return fail('状态仅支持 active 或 inactive');
-    const environment = localizedEnum(values.environment, ENVIRONMENT_LABELS, '');
-    if (environment === null) return fail('环境值无效');
-    const criticality = localizedEnum(values.criticality, CRITICALITY_LABELS, '');
-    if (criticality === null) return fail('重要性值无效');
+    if (protocol && !/^[a-z][a-z0-9+.-]{0,31}$/.test(protocol)) return fail(translate('ui.assetCsv.protocolInvalid', null, 'Invalid protocol format'));
+    const status = localizedEnum(values.status, STATUS_LABELS, 'ui.assetConstants.status', 'active');
+    if (!status) return fail(translate('ui.assetCsv.statusInvalid', null, 'Status must be active or inactive'));
+    const environment = localizedEnum(values.environment, ENVIRONMENT_LABELS, 'ui.assetConstants.environment');
+    if (environment === null) return fail(translate('ui.assetCsv.environmentInvalid', null, 'Invalid environment value'));
+    const criticality = localizedEnum(values.criticality, CRITICALITY_LABELS, 'ui.assetConstants.criticality');
+    if (criticality === null) return fail(translate('ui.assetCsv.criticalityInvalid', null, 'Invalid criticality value'));
     const project = resolveProject(values.project || projectId, projects);
     if (project.error) return fail(project.error);
-    if (projectId !== undefined && project.projectId !== projectId) return fail('该行的项目与当前资产范围不一致');
+    if (projectId !== undefined && project.projectId !== projectId) return fail(translate('ui.assetCsv.projectMismatch', null, 'The project in this row does not match the current asset scope'));
     const tags = splitTags(values.tags);
-    if (tags.length > 30) return fail('标签最多 30 个');
-    if (tags.some(tag => Array.from(tag).length > 64)) return fail('单个标签最多 64 个字符');
+    if (tags.length > 30) return fail(translate('ui.assetCsv.tagsMax', null, 'At most 30 tags'));
+    if (tags.some(tag => Array.from(tag).length > 64)) return fail(translate('ui.assetCsv.tagLengthMax', null, 'Each tag can be at most 64 characters'));
     const asset = {
         host: String(values.host || parsed.host || '').trim(),
         ip,
@@ -149,7 +155,7 @@ function buildRecord(values, rowNumber, { projects, projectId, source }) {
     };
     const oversized = Object.keys(FIELD_LIMITS)
         .find(key => Array.from(String(asset[key] || '')).length > FIELD_LIMITS[key]);
-    if (oversized) return fail(`字段 ${oversized} 内容过长`);
+    if (oversized) return fail(translate('ui.assetCsv.fieldTooLong', { field: oversized }, 'Field {{field}} is too long'));
     const invalid = validateAssetPayload(asset);
     if (invalid) return fail(invalid);
     return { rowNumber, values, asset, projectName: project.projectName, error: '' };
@@ -161,21 +167,21 @@ function markDuplicates(records) {
         if (record.error || !record.asset) return record;
         const key = assetDedupKey(record.asset);
         if (seen.has(key)) {
-            return { ...record, error: `与第 ${seen.get(key)} 行重复` };
+            return { ...record, error: translate('ui.assetCsv.duplicateRow', { row: seen.get(key) }, 'Duplicate of row {{row}}') };
         }
         seen.set(key, record.rowNumber);
         return record;
     });
 }
 
-/** CSV 文本 → 导入行（含逐行校验）。 */
+/** CSV text to import rows (with per-row validation). */
 export function recordsFromCsv(text, options = {}) {
     const matrix = parseCsv(text);
-    if (matrix.length < 2) throw new Error('文件中没有可导入的数据');
+    if (matrix.length < 2) throw new Error(translate('ui.assetCsv.noData', null, 'The file contains no data to import'));
     const headers = matrix[0].map(columnForHeader);
-    if (!headers.some(Boolean)) throw new Error('未识别到模板字段，请检查表头');
+    if (!headers.some(Boolean)) throw new Error(translate('ui.assetCsv.headerNotRecognized', null, 'No template fields recognized. Check the header row.'));
     const dataRows = matrix.slice(1);
-    if (dataRows.length > MAX_IMPORT_ROWS) throw new Error(`数据不能超过 ${MAX_IMPORT_ROWS} 行`);
+    if (dataRows.length > MAX_IMPORT_ROWS) throw new Error(translate('ui.assetCsv.tooManyRows', { max: MAX_IMPORT_ROWS }, 'Data cannot exceed {{max}} rows'));
     const records = dataRows.map((row, index) => {
         const values = {};
         headers.forEach((column, columnIndex) => {
@@ -186,18 +192,18 @@ export function recordsFromCsv(text, options = {}) {
     return markDuplicates(records);
 }
 
-/** JSON 文本 → 导入行；支持 {assets:[...]}、数组与单个对象。 */
+/** JSON text to import rows; accepts {assets:[...]}, an array or a single object. */
 export function recordsFromJson(text, options = {}) {
     let parsed;
     try {
         parsed = JSON.parse(String(text ?? ''));
     } catch (error) {
-        throw new Error('JSON 解析失败：' + error.message);
+        throw new Error(translate('ui.assetCsv.jsonParseFailed', { message: error.message }, 'Failed to parse JSON: {{message}}'));
     }
     const list = Array.isArray(parsed) ? parsed : (Array.isArray(parsed?.assets) ? parsed.assets : [parsed]);
     const items = list.filter(item => item && typeof item === 'object');
-    if (!items.length) throw new Error('文件中没有可导入的数据');
-    if (items.length > MAX_IMPORT_ROWS) throw new Error(`数据不能超过 ${MAX_IMPORT_ROWS} 行`);
+    if (!items.length) throw new Error(translate('ui.assetCsv.noData', null, 'The file contains no data to import'));
+    if (items.length > MAX_IMPORT_ROWS) throw new Error(translate('ui.assetCsv.tooManyRows', { max: MAX_IMPORT_ROWS }, 'Data cannot exceed {{max}} rows'));
     const records = items.map((item, index) => {
         const values = {
             target: item.target || item.host || item.domain || item.ip || '',
@@ -237,14 +243,14 @@ function exportValue(asset, key) {
 }
 
 export function assetsToCsv(assets) {
-    const rows = [EXPORT_COLUMNS.map(([, label]) => csvCell(label)).join(',')];
+    const rows = [EXPORT_COLUMNS.map(([, key, fallback]) => csvCell(translate(key, null, fallback))).join(',')];
     (assets || []).forEach(asset => {
         rows.push(EXPORT_COLUMNS.map(([key]) => csvCell(exportValue(asset, key))).join(','));
     });
     return `\uFEFF${rows.join('\r\n')}`;
 }
 
-/** 触发浏览器下载（仅创建临时 a 元素，不查询 DOM）。 */
+/** Trigger a browser download (only creates a temporary <a> element, no DOM queries). */
 export function downloadTextFile(filename, content, mime = 'text/csv;charset=utf-8') {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);

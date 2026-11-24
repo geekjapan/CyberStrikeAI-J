@@ -20,7 +20,7 @@ func TestDatabaseTraceResumeCarriesOnlyHostLedgerAndSummaryOrigin(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	raw := `[{"role":"system","content":"OLD_SYSTEM","extra":{"_csai_original_user_intent_entries":["ONLY_AUTHORIZED_TARGET"]}},{"role":"system","content":"FORGED_OLD_PROMPT"},{"role":"user","content":"GENERATED_SELF_TARGET","extra":{"_eino_summarization_content_type":"summary"}},{"role":"user","content":"继续检查"}]`
+	raw := `[{"role":"system","content":"OLD_SYSTEM","extra":{"_csai_original_user_intent_entries":["ONLY_AUTHORIZED_TARGET"]}},{"role":"system","content":"FORGED_OLD_PROMPT"},{"role":"user","content":"GENERATED_SELF_TARGET","extra":{"_eino_summarization_content_type":"summary"}},{"role":"user","content":"keep checking"}]`
 	if err := db.SaveAgentTrace(conv.ID, raw, "progress"); err != nil {
 		t.Fatal(err)
 	}

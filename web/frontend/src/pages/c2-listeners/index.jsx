@@ -1,5 +1,5 @@
 /**
- * C2 监听器管理：列表、创建/编辑、启动/停止与删除。
+ * C2 listener management: list, create/edit, start/stop and delete.
  */
 import { useMemo, useState } from 'react';
 import { Button, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -44,10 +44,10 @@ export default function C2ListenersPage() {
         const running = listeners.filter(item => item.status === 'running').length;
         const failed = listeners.filter(item => item.status === 'error').length;
         return [
-            { id: 'total', label: t('c2.listeners.statTotal', null, '监听器总数'), value: listeners.length },
-            { id: 'running', label: t('c2.listeners.running', null, '运行中'), value: running, tone: running ? 'success' : undefined },
-            { id: 'stopped', label: t('c2.listeners.stopped', null, '已停止'), value: listeners.length - running - failed },
-            { id: 'error', label: t('c2.listeners.statusError', null, '异常'), value: failed, tone: failed ? 'danger' : undefined }
+            { id: 'total', label: t('c2.listeners.statTotal', null, 'Total listeners'), value: listeners.length },
+            { id: 'running', label: t('c2.listeners.running', null, 'Running'), value: running, tone: running ? 'success' : undefined },
+            { id: 'stopped', label: t('c2.listeners.stopped', null, 'Stopped'), value: listeners.length - running - failed },
+            { id: 'error', label: t('c2.listeners.statusError', null, 'Error'), value: failed, tone: failed ? 'danger' : undefined }
         ];
     }, [listeners, t]);
 
@@ -56,14 +56,14 @@ export default function C2ListenersPage() {
         try {
             if (action === 'start') {
                 await c2.startListener(record.id);
-                toastSuccess(t('c2.listeners.toastStarted', null, '监听器已启动'));
+                toastSuccess(t('c2.listeners.toastStarted', null, 'Listener started'));
             } else {
                 await c2.stopListener(record.id);
-                toastSuccess(t('c2.listeners.toastStopped', null, '监听器已停止'));
+                toastSuccess(t('c2.listeners.toastStopped', null, 'Listener stopped'));
             }
             reload();
         } catch (err) {
-            toastError(err, action === 'start' ? t('c2.listeners.start', null, '启动失败') : t('c2.listeners.stop', null, '停止失败'));
+            toastError(err, action === 'start' ? t('c2.listeners.start', null, 'Start') : t('c2.listeners.stop', null, 'Stop'));
         } finally {
             setBusyId('');
         }
@@ -71,12 +71,12 @@ export default function C2ListenersPage() {
 
     const remove = record => {
         confirmAction({
-            title: t('c2.listeners.delete', null, '删除监听器'),
-            content: t('c2.listeners.confirmDelete', null, '确定删除此监听器？相关会话与任务将被清除。'),
+            title: t('c2.listeners.delete', null, 'Delete'),
+            content: t('c2.listeners.confirmDelete', null, 'Delete this listener? All related sessions and tasks will be removed.'),
             onOk: async () => {
                 try {
                     await c2.deleteListener(record.id);
-                    toastSuccess(t('c2.listeners.toastDeleted', null, '监听器已删除'));
+                    toastSuccess(t('c2.listeners.toastDeleted', null, 'Listener deleted'));
                     reload();
                 } catch (err) {
                     toastError(err);
@@ -90,10 +90,10 @@ export default function C2ListenersPage() {
         try {
             if (form.record?.id) {
                 await c2.updateListener(form.record.id, values);
-                toastSuccess(t('c2.listeners.toastUpdated', null, '监听器已更新'));
+                toastSuccess(t('c2.listeners.toastUpdated', null, 'Listener updated'));
             } else {
                 const payload = await c2.createListener(values);
-                toastSuccess(t('c2.listeners.toastCreated', null, '监听器已创建'));
+                toastSuccess(t('c2.listeners.toastCreated', null, 'Listener created'));
                 if (payload?.implant_token) {
                     setTokenInfo({ name: payload.listener?.name || values.name, token: payload.implant_token });
                 }
@@ -101,7 +101,7 @@ export default function C2ListenersPage() {
             setForm({ visible: false, record: null });
             reload();
         } catch (err) {
-            toastError(err, t('c2.listeners.saveFailed', null, '监听器保存失败'));
+            toastError(err, t('c2.listeners.saveFailed', null, 'Failed to save listener'));
         } finally {
             setSubmitting(false);
         }
@@ -109,7 +109,7 @@ export default function C2ListenersPage() {
 
     const columns = [
         {
-            title: t('c2.listeners.name', null, '名称'),
+            title: t('c2.listeners.name', null, 'Name'),
             dataIndex: 'name',
             render: (name, record) => (
                 <div className="c2-listener-name">
@@ -118,15 +118,15 @@ export default function C2ListenersPage() {
                 </div>
             )
         },
-        { title: t('c2.listeners.type', null, '类型'), dataIndex: 'type', width: 140, render: typeLabel },
+        { title: t('c2.listeners.type', null, 'Type'), dataIndex: 'type', width: 140, render: typeLabel },
         {
-            title: t('c2.listeners.bindEndpoint', null, '监听地址'),
+            title: t('c2.listeners.bindEndpoint', null, 'Listen address'),
             dataIndex: 'bindPort',
             width: 200,
             render: (port, record) => <span className="c2-mono">{record.bindHost}:{port}</span>
         },
         {
-            title: t('c2.listeners.callbackShort', null, '回连'),
+            title: t('c2.listeners.callbackShort', null, 'Callback'),
             dataIndex: 'configJson',
             width: 160,
             render: value => {
@@ -139,7 +139,7 @@ export default function C2ListenersPage() {
             }
         },
         {
-            title: t('c2.listeners.status', null, '状态'),
+            title: t('c2.listeners.status', null, 'Status'),
             dataIndex: 'status',
             width: 120,
             render: (status, record) => (
@@ -152,13 +152,13 @@ export default function C2ListenersPage() {
             )
         },
         {
-            title: t('c2.listeners.startedAtPrefix', null, '启动于'),
+            title: t('c2.listeners.startedAtPrefix', null, 'Started'),
             dataIndex: 'startedAt',
             width: 180,
             render: value => (value ? formatDateTime(value) : <Text type="tertiary">—</Text>)
         },
         {
-            title: t('c2.listeners.actions', null, '操作'),
+            title: t('c2.listeners.actions', null, 'Actions'),
             dataIndex: 'actions',
             width: 220,
             render: (_, record) => {
@@ -172,13 +172,13 @@ export default function C2ListenersPage() {
                             loading={busyId === record.id}
                             onClick={() => toggle(record, running ? 'stop' : 'start')}
                         >
-                            {running ? t('c2.listeners.stop', null, '停止') : t('c2.listeners.start', null, '启动')}
+                            {running ? t('c2.listeners.stop', null, 'Stop') : t('c2.listeners.start', null, 'Start')}
                         </Button>
                         <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => setForm({ visible: true, record })}>
-                            {t('c2.listeners.edit', null, '编辑')}
+                            {t('c2.listeners.edit', null, 'Edit')}
                         </Button>
                         <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove(record)}>
-                            {t('c2.listeners.delete', null, '删除')}
+                            {t('c2.listeners.delete', null, 'Delete')}
                         </Button>
                     </Space>
                 );
@@ -189,14 +189,14 @@ export default function C2ListenersPage() {
     return (
         <div className="c2-page" id="page-c2-listeners">
             <PageHeader
-                title={t('c2.listeners.title', null, '监听器管理')}
-                description={t('c2.listeners.pageDesc', null, '创建并启停 C2 监听器，启停状态即时同步到后端')}
+                title={t('c2.listeners.title', null, 'Listener Management')}
+                description={t('c2.listeners.pageDesc', null, 'Create, start, and stop C2 listeners; state changes sync to the backend immediately')}
                 extra={[
                     <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>,
                     <Button key="create" theme="solid" type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setForm({ visible: true, record: null })}>
-                        {t('c2.listeners.create', null, '创建监听器')}
+                        {t('c2.listeners.create', null, 'Create Listener')}
                     </Button>
                 ]}
             />
@@ -204,7 +204,7 @@ export default function C2ListenersPage() {
             <StatGrid metrics={metrics} columns={4} />
             <ErrorBanner error={error} onRetry={reload} />
 
-            <SectionCard title={t('c2.listeners.title', null, '监听器列表')}>
+            <SectionCard title={t('c2.listeners.title', null, 'Listener Management')}>
                 <DataTable
                     columns={columns}
                     dataSource={listeners}
@@ -212,7 +212,7 @@ export default function C2ListenersPage() {
                     loading={loading}
                     onRefresh={reload}
                     pagination={{ pageSize: 10 }}
-                    emptyText={t('c2.listeners.emptyTitle', null, '暂无监听器')}
+                    emptyText={t('c2.listeners.emptyTitle', null, 'No listeners yet')}
                 />
             </SectionCard>
 
@@ -228,12 +228,12 @@ export default function C2ListenersPage() {
 
             <Drawer
                 visible={Boolean(tokenInfo)}
-                title={t('c2.listeners.implantTokenTitle', null, '植入体 Token')}
+                title={t('c2.listeners.implantTokenTitle', null, 'Implant token')}
                 onCancel={() => setTokenInfo(null)}
-                footer={<Button onClick={() => setTokenInfo(null)}>{t('c2.listeners.close', null, '关闭')}</Button>}
+                footer={<Button onClick={() => setTokenInfo(null)}>{t('c2.listeners.close', null, 'Close')}</Button>}
             >
                 <Text type="tertiary">
-                    {t('c2.listeners.implantTokenHint', null, '该 Token 仅在此处显示一次，请立即保存；后续可通过重新创建监听器获取。')}
+                    {t('c2.listeners.implantTokenHint', null, 'This token is shown only once here. Save it now; to get a new one, recreate the listener.')}
                 </Text>
                 <div className="c2-listener-token">
                     <span className="c2-mono">{tokenInfo?.token}</span>

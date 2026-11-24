@@ -35,7 +35,7 @@ func (u AIChannelUpdate) merge(cfg *config.Config) (*config.AIConfig, error) {
 	}
 	ch, ok := ai.Channels[id]
 	if !ok || id == "" {
-		return nil, fmt.Errorf("通道已不存在，请刷新配置后重试")
+		return nil, fmt.Errorf("Channel no longer exists, please refresh the configuration and try again")
 	}
 	if u.ImageInput != nil {
 		switch strings.TrimSpace(*u.ImageInput) {
@@ -44,7 +44,7 @@ func (u AIChannelUpdate) merge(cfg *config.Config) (*config.AIConfig, error) {
 		case "enabled", "disabled":
 			ch.ImageInput = strings.TrimSpace(*u.ImageInput)
 		default:
-			return nil, fmt.Errorf("图片输入模式无效")
+			return nil, fmt.Errorf("Invalid image input mode")
 		}
 	} else if (u.Model != nil && strings.TrimSpace(*u.Model) != ch.Model) ||
 		(u.BaseURL != nil && strings.TrimSpace(*u.BaseURL) != ch.BaseURL) ||
@@ -74,7 +74,7 @@ func (u AIChannelUpdate) merge(cfg *config.Config) (*config.AIConfig, error) {
 	} {
 		if field.value != nil {
 			if *field.value < 0 {
-				return nil, fmt.Errorf("%s 不能为负数", field.name)
+				return nil, fmt.Errorf("%s cannot be negative", field.name)
 			}
 			*field.target = *field.value
 		}

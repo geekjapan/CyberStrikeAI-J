@@ -1,4 +1,4 @@
-/** 新建/编辑漏洞：字段与 CreateVulnerabilityRequest / UpdateVulnerabilityRequest 对齐。 */
+/** Create/edit vulnerability: fields aligned with CreateVulnerabilityRequest / UpdateVulnerabilityRequest. */
 import { useEffect, useId, useRef, useState } from 'react';
 import { Form, Spin, Typography } from '@douyinfe/semi-ui';
 import { api, errorMessage } from '../../lib/http';
@@ -59,7 +59,7 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
     const [saving, setSaving] = useState(false);
     const [loadError, setLoadError] = useState(null);
     const [initial, setInitial] = useState({ ...EMPTY_VALUES });
-    // 记录 initial 属于哪条记录：切换记录时先渲染 Spin，避免旧表单值闪现。
+    // Track which record initial belongs to: render a Spin first when switching records so stale form values do not flash.
     const [loadedFor, setLoadedFor] = useState('');
 
     useEffect(() => {
@@ -113,7 +113,7 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
                 : await api.post('/vulnerabilities', body);
             onSaved?.(saved);
         } catch (error) {
-            toastError(error, t('vulnerabilityPage.saveFailed', null, '保存失败'));
+            toastError(error, t('vulnerabilityPage.saveFailed', null, 'Save failed'));
         } finally {
             setSaving(false);
         }
@@ -122,18 +122,18 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
     return (
         <Drawer
             title={editing
-                ? t('vulnerability.editVuln', null, '编辑漏洞')
-                : t('vulnerability.addVuln', null, '添加漏洞')}
+                ? t('vulnerability.editVuln', null, 'Edit vulnerability')
+                : t('vulnerability.addVuln', null, 'Add vulnerability')}
             visible={visible}
             onCancel={onClose}
             formId={ready && !loadError ? formId : undefined}
             confirmLoading={saving}
-            okText={t('common.save', null, '保存')}
-            cancelText={t('common.cancel', null, '取消')}
+            okText={t('common.save', null, 'Save')}
+            cancelText={t('common.cancel', null, 'Cancel')}
             width={780}
         >
             {!visible ? null : loadError ? (
-                <Text type="danger">{errorMessage(loadError, t('vulnerabilityPage.fetchFailed', null, '获取漏洞失败'))}</Text>
+                <Text type="danger">{errorMessage(loadError, t('vulnerabilityPage.fetchFailed', null, 'Failed to fetch vulnerability'))}</Text>
             ) : !ready ? (
                 <div className="vulnerability-modal-loading"><Spin size="large" /></div>
             ) : (
@@ -149,9 +149,9 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.Input
                                 field="title"
-                                label={t('vulnerabilityModal.title', null, '标题')}
-                                placeholder={t('vulnerabilityModal.titlePlaceholder', null, '/api/login 存在 SQL 注入')}
-                                rules={[{ required: true, message: t('vulnerabilityModal.titleRequired', null, '请填写漏洞标题') }]}
+                                label={t('vulnerabilityModal.title', null, 'Title')}
+                                placeholder={t('vulnerabilityModal.titlePlaceholder', null, '/api/login is vulnerable to SQL injection')}
+                                rules={[{ required: true, message: t('vulnerabilityModal.titleRequired', null, 'Enter a vulnerability title') }]}
                                 maxLength={500}
                             />
                         </div>
@@ -159,18 +159,18 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
                             <Form.Select
                                 field="severity"
                                 onSelect={commitSelection('severity')}
-                                label={t('vulnerabilityModal.severity', null, '严重程度')}
-                                placeholder={t('vulnerabilityModal.pleaseSelect', null, '请选择')}
+                                label={t('vulnerabilityModal.severity', null, 'Severity')}
+                                placeholder={t('vulnerabilityModal.pleaseSelect', null, 'Please select')}
                                 style={{ width: '100%' }}
                                 optionList={severityOptions(t)}
-                                rules={[{ required: true, message: t('vulnerabilityModal.severityRequired', null, '请选择严重程度') }]}
+                                rules={[{ required: true, message: t('vulnerabilityModal.severityRequired', null, 'Select a severity') }]}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Select
                                 field="status"
                                 onSelect={commitSelection('status')}
-                                label={t('vulnerabilityModal.status', null, '状态')}
+                                label={t('vulnerabilityModal.status', null, 'Status')}
                                 style={{ width: '100%' }}
                                 optionList={statusOptions(t)}
                             />
@@ -178,103 +178,103 @@ export default function EditModal({ visible, vulnId, t, projectOptions, onClose,
                         <div className="vulnerability-field">
                             <Form.Input
                                 field="target"
-                                label={t('vulnerabilityModal.target', null, '目标')}
-                                placeholder={t('vulnerabilityModal.targetPlaceholder', null, '精确到 URL/IP:端口/接口路径/参数名')}
+                                label={t('vulnerabilityModal.target', null, 'Target')}
+                                placeholder={t('vulnerabilityModal.targetPlaceholder', null, 'Be specific: URL, IP:port, endpoint path, and parameter name.')}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Input
                                 field="type"
-                                label={t('vulnerabilityModal.type', null, '漏洞类型')}
-                                placeholder={t('vulnerabilityModal.typePlaceholder', null, '如：SQL注入、XSS、CSRF等')}
+                                label={t('vulnerabilityModal.type', null, 'Vulnerability type')}
+                                placeholder={t('vulnerabilityModal.typePlaceholder', null, 'e.g. SQL injection, XSS, CSRF')}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Select
                                 field="project_id"
                                 onSelect={commitSelection('project_id')}
-                                label={t('vulnerabilityModal.project', null, '所属项目')}
-                                placeholder={t('vulnerabilityModal.projectNone', null, '（未绑定）')}
+                                label={t('vulnerabilityModal.project', null, 'Project')}
+                                placeholder={t('vulnerabilityModal.projectNone', null, '(Unbound)')}
                                 style={{ width: '100%' }}
                                 filter
-                                optionList={[{ value: '', label: t('vulnerabilityModal.projectNone', null, '（未绑定）') }, ...projectOptions]}
+                                optionList={[{ value: '', label: t('vulnerabilityModal.projectNone', null, '(Unbound)') }, ...projectOptions]}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Input
                                 field="conversation_id"
-                                label={t('vulnerabilityModal.conversationId', null, '会话ID')}
-                                placeholder={t('vulnerabilityModal.conversationIdPlaceholder', null, '可选：输入已有会话ID，留空可独立添加漏洞')}
+                                label={t('vulnerabilityModal.conversationId', null, 'Conversation ID')}
+                                placeholder={t('vulnerabilityModal.conversationIdPlaceholder', null, 'Optional: enter an existing conversation ID, or leave blank for a standalone finding')}
                                 disabled={editing}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Input
                                 field="conversation_tag"
-                                label={t('vulnerabilityModal.conversationTag', null, '对话标签')}
-                                placeholder={t('vulnerabilityModal.conversationTagPlaceholder', null, '如：红队演练A、客户A周报')}
+                                label={t('vulnerabilityModal.conversationTag', null, 'Conversation tag')}
+                                placeholder={t('vulnerabilityModal.conversationTagPlaceholder', null, 'e.g. engagement A, weekly report')}
                             />
                         </div>
                         <div className="vulnerability-field">
                             <Form.Input
                                 field="task_tag"
-                                label={t('vulnerabilityModal.taskTag', null, '任务标签')}
-                                placeholder={t('vulnerabilityModal.taskTagPlaceholder', null, '如：批量扫描Q2、专项复测')}
+                                label={t('vulnerabilityModal.taskTag', null, 'Task tag')}
+                                placeholder={t('vulnerabilityModal.taskTagPlaceholder', null, 'e.g. batch scan Q2, retest')}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="description"
-                                label={t('vulnerabilityModal.description', null, '描述')}
-                                placeholder={t('vulnerabilityModal.descriptionPlaceholder', null, '说明漏洞摘要、触发点、异常现象和为什么可被利用。')}
+                                label={t('vulnerabilityModal.description', null, 'Description')}
+                                placeholder={t('vulnerabilityModal.descriptionPlaceholder', null, 'Describe the summary, trigger point, observed abnormal behavior, and why it is exploitable.')}
                                 autosize={{ minRows: 3, maxRows: 8 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="preconditions"
-                                label={t('vulnerabilityModal.preconditions', null, '前置条件')}
-                                placeholder={t('vulnerabilityModal.preconditionsPlaceholder', null, '登录状态、权限、账号、Header/Cookie、特定数据、环境/版本；无则写无。')}
+                                label={t('vulnerabilityModal.preconditions', null, 'Preconditions')}
+                                placeholder={t('vulnerabilityModal.preconditionsPlaceholder', null, 'Login state, permissions, account, headers/cookies, required data, environment/version; write none if not needed.')}
                                 autosize={{ minRows: 2, maxRows: 6 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="reproduction_steps"
-                                label={t('vulnerabilityModal.reproductionSteps', null, '复现步骤')}
-                                placeholder={t('vulnerabilityModal.reproductionStepsPlaceholder', null, '按 1/2/3 编号，写清入口、参数、payload、执行命令、观察点。')}
+                                label={t('vulnerabilityModal.reproductionSteps', null, 'Reproduction steps')}
+                                placeholder={t('vulnerabilityModal.reproductionStepsPlaceholder', null, 'Number the steps and include entry point, parameter, payload, command, and observation point.')}
                                 autosize={{ minRows: 3, maxRows: 10 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="evidence"
-                                label={t('vulnerabilityModal.evidence', null, '证据 / POC')}
-                                placeholder={t('vulnerabilityModal.evidencePlaceholder', null, '原始请求/响应、curl/工具命令、截图说明、日志、回连记录等。')}
+                                label={t('vulnerabilityModal.evidence', null, 'Evidence / POC')}
+                                placeholder={t('vulnerabilityModal.evidencePlaceholder', null, 'Raw request/response, curl/tool command, screenshot notes, logs, DNSLog/callback records, database results, file paths, timestamps, etc.')}
                                 autosize={{ minRows: 3, maxRows: 10 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="impact"
-                                label={t('vulnerabilityModal.impact', null, '影响')}
-                                placeholder={t('vulnerabilityModal.impactPlaceholder', null, '结合已验证事实说明实际影响，例如越权读取哪些数据。')}
+                                label={t('vulnerabilityModal.impact', null, 'Impact')}
+                                placeholder={t('vulnerabilityModal.impactPlaceholder', null, 'Describe the verified real-world impact, such as which data can be read or changed.')}
                                 autosize={{ minRows: 2, maxRows: 6 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="recommendation"
-                                label={t('vulnerabilityModal.recommendation', null, '修复建议')}
-                                placeholder={t('vulnerabilityModal.recommendationPlaceholder', null, '写具体修复点和复测标准。')}
+                                label={t('vulnerabilityModal.recommendation', null, 'Recommendation')}
+                                placeholder={t('vulnerabilityModal.recommendationPlaceholder', null, 'Write the concrete fix and retest criteria.')}
                                 autosize={{ minRows: 2, maxRows: 8 }}
                             />
                         </div>
                         <div className="vulnerability-field vulnerability-field--full">
                             <Form.TextArea
                                 field="retest_notes"
-                                label={t('vulnerabilityModal.retestNotes', null, '复测方式')}
-                                placeholder={t('vulnerabilityModal.retestNotesPlaceholder', null, '修复后如何验证漏洞已关闭，包括应返回的状态码、错误信息或访问控制结果。')}
+                                label={t('vulnerabilityModal.retestNotes', null, 'Retest method')}
+                                placeholder={t('vulnerabilityModal.retestNotesPlaceholder', null, 'How to verify the fix, including expected status code, error message, or access-control result.')}
                                 autosize={{ minRows: 2, maxRows: 6 }}
                             />
                         </div>

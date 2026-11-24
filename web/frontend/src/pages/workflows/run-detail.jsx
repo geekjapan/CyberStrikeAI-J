@@ -1,4 +1,4 @@
-/** 运行详情：run + nodeRuns、replay 轨迹与审批通过/拒绝。 */
+/** Run detail: run + nodeRuns, replay trace and approve/reject. */
 import { useEffect, useState } from 'react';
 import { Button, SideSheet, Space, Tag, TextArea, Timeline, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
@@ -42,23 +42,23 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
     const steps = replay.data?.steps || [];
 
     const decide = (approved) => confirmAction({
-        title: approved ? '通过审批' : '拒绝审批',
+        title: approved ? t('ui.workflowsRunDetail.approveTitle', null, 'Approve') : t('ui.workflowsRunDetail.rejectTitle', null, 'Reject'),
         content: approved
-            ? '确认通过该工作流的审批节点并继续执行？'
-            : '确认拒绝该工作流的审批节点？运行将以失败结束。',
-        okText: t('common.confirm', null, '确认'),
+            ? t('ui.workflowsRunDetail.approveConfirm', null, 'Approve this workflow approval node and continue the run?')
+            : t('ui.workflowsRunDetail.rejectConfirm', null, 'Reject this workflow approval node? The run will end as failed.'),
+        okText: t('common.confirm', null, 'Confirm'),
         danger: !approved,
         onOk: async () => {
             setBusy(true);
             try {
                 await api.post(`/workflows/runs/${encodeURIComponent(runId)}/resume`, { approved, comment });
-                toastSuccess(approved ? '已通过审批' : '已拒绝审批');
+                toastSuccess(approved ? t('ui.workflowsRunDetail.approved', null, 'Approved') : t('ui.workflowsRunDetail.rejected', null, 'Rejected'));
                 setComment('');
                 detail.reload({ silent: true });
                 replay.reload({ silent: true });
                 onChanged?.();
             } catch (error) {
-                toastError(errText(error, '审批提交失败'));
+                toastError(errText(error, t('ui.workflowsRunDetail.decideFailed', null, 'Failed to submit the approval decision')));
             } finally {
                 setBusy(false);
             }
@@ -69,7 +69,7 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
         <SideSheet
             visible={visible}
             width={820}
-            title={t('workflows.dryRunTrace', null, '运行轨迹')}
+            title={t('workflows.dryRunTrace', null, 'Dry-run trace')}
             onCancel={onClose}
             footer={(
                 <Space>
@@ -78,15 +78,15 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
                             <TextArea
                                 value={comment}
                                 rows={1}
-                                placeholder="审批备注（可选）"
+                                placeholder={t('ui.workflowsRunDetail.commentPlaceholder', null, 'Approval note (optional)')}
                                 onChange={value => setComment(value)}
                                 style={{ width: 240 }}
                             />
-                            <Button type="primary" loading={busy} onClick={() => decide(true)}>通过</Button>
-                            <Button type="danger" loading={busy} onClick={() => decide(false)}>拒绝</Button>
+                            <Button type="primary" loading={busy} onClick={() => decide(true)}>{t('ui.workflowsRunDetail.approve', null, 'Approve')}</Button>
+                            <Button type="danger" loading={busy} onClick={() => decide(false)}>{t('ui.workflowsRunDetail.reject', null, 'Reject')}</Button>
                         </>
                     ) : null}
-                    <Button onClick={onClose}>{t('common.close', null, '关闭')}</Button>
+                    <Button onClick={onClose}>{t('common.close', null, 'Close')}</Button>
                 </Space>
             )}
         >
@@ -96,28 +96,28 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
                     <div className="workflow-detail-tags">
                         {statusTag(run.status)}
                         <Text type="tertiary" size="small">
-                            运行 <code>{shortHash(run.id, 16)}</code>
+                            {t('ui.workflowsRunDetail.run', null, 'Run')} <code>{shortHash(run.id, 16)}</code>
                         </Text>
                     </div>
 
                     <KeyValueList
                         columns={2}
                         items={[
-                            { label: '工作流', value: <code>{run.workflow_id}</code> },
-                            { label: '版本', value: run.workflow_version ?? '—' },
-                            { label: '会话', value: run.conversation_id || '—' },
-                            { label: '项目', value: run.project_id || '—' },
-                            { label: '开始时间', value: formatDateTime(run.started_at) },
-                            { label: '结束时间', value: formatDateTime(run.finished_at) },
+                            { label: t('ui.workflowsRunDetail.workflow', null, 'Workflow'), value: <code>{run.workflow_id}</code> },
+                            { label: t('ui.workflowsRunDetail.version', null, 'Version'), value: run.workflow_version ?? '—' },
+                            { label: t('ui.workflowsRunDetail.conversation', null, 'Conversation'), value: run.conversation_id || '—' },
+                            { label: t('ui.workflowsRunDetail.project', null, 'Project'), value: run.project_id || '—' },
+                            { label: t('ui.workflowsRunDetail.startedAt', null, 'Started at'), value: formatDateTime(run.started_at) },
+                            { label: t('ui.workflowsRunDetail.finishedAt', null, 'Finished at'), value: formatDateTime(run.finished_at) },
                             run.pending_hitl_node_id
-                                ? { label: '待审批节点', value: <code>{run.pending_hitl_node_id}</code> }
+                                ? { label: t('ui.workflowsRunDetail.pendingNode', null, 'Pending approval node'), value: <code>{run.pending_hitl_node_id}</code> }
                                 : null,
-                            run.error ? { label: '错误', value: <Text type="danger" size="small">{run.error}</Text> } : null
+                            run.error ? { label: t('ui.workflowsRunDetail.error', null, 'Error'), value: <Text type="danger" size="small">{run.error}</Text> } : null
                         ]}
                     />
 
                     <div>
-                        <Text strong>节点执行记录（{nodeRuns.length}）</Text>
+                        <Text strong>{t('ui.workflowsRunDetail.nodeRuns', { count: nodeRuns.length }, 'Node runs ({{count}})')}</Text>
                         <Timeline className="workflow-timeline">
                             {nodeRuns.length ? nodeRuns.map(node => (
                                 <Timeline.Item
@@ -135,12 +135,12 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
                                             : null}
                                     </div>
                                 </Timeline.Item>
-                            )) : <Text type="tertiary" size="small">暂无节点执行记录</Text>}
+                            )) : <Text type="tertiary" size="small">{t('ui.workflowsRunDetail.noNodeRuns', null, 'No node run records')}</Text>}
                         </Timeline>
                     </div>
 
                     <div>
-                        <Text strong>{t('workflows.dryRunTrace', null, '回放轨迹')}（{steps.length} 步）</Text>
+                        <Text strong>{t('ui.workflowsRunDetail.replayTrace', { count: steps.length }, 'Replay trace ({{count}} steps)')}</Text>
                         <Timeline className="workflow-timeline">
                             {steps.length ? steps.map(step => (
                                 <Timeline.Item
@@ -156,7 +156,7 @@ export default function RunDetailDrawer({ runId, visible, canExecute, onClose, o
                                         <JsonViewer value={{ input: step.input, output: step.output }} title="step" collapsed />
                                     </div>
                                 </Timeline.Item>
-                            )) : <Text type="tertiary" size="small">{t('workflows.dryRunNoTrace', null, '暂无轨迹')}</Text>}
+                            )) : <Text type="tertiary" size="small">{t('workflows.dryRunNoTrace', null, 'No trace')}</Text>}
                         </Timeline>
                     </div>
 

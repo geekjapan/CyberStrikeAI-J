@@ -7,13 +7,13 @@ import (
 	"strings"
 )
 
-// expandEnvVar 展开字符串中的 ${VAR} 和 ${VAR:-default} 环境变量引用。
-// 与官方 MCP 配置格式一致（Claude Desktop / Cursor / VS Code 均支持此语法）。
+// expandEnvVar expands ${VAR} and ${VAR:-default} environment variable references in a string.
+// Consistent with the official MCP config format (Claude Desktop / Cursor / VS Code all support this syntax).
 func expandEnvVar(s string) string {
 	var b strings.Builder
 	i := 0
 	for i < len(s) {
-		// 查找 ${
+		// Find ${
 		idx := strings.Index(s[i:], "${")
 		if idx < 0 {
 			b.WriteString(s[i:])
@@ -22,17 +22,17 @@ func expandEnvVar(s string) string {
 		b.WriteString(s[i : i+idx])
 		i += idx + 2 // skip ${
 
-		// 查找对应的 }
+		// Find the matching }
 		end := strings.IndexByte(s[i:], '}')
 		if end < 0 {
-			// 没有 }，原样保留
+			// No }, keep as-is
 			b.WriteString("${")
 			continue
 		}
 		expr := s[i : i+end]
 		i += end + 1 // skip }
 
-		// 解析 VAR:-default
+		// Parse VAR:-default
 		varName := expr
 		defaultVal := ""
 		hasDefault := false
@@ -51,8 +51,8 @@ func expandEnvVar(s string) string {
 	return b.String()
 }
 
-// ExpandConfigEnv 展开 ExternalMCPServerConfig 中所有支持环境变量的字段。
-// 展开范围：Command、Args、Env values、URL、Headers values。
+// ExpandConfigEnv expands all environment-variable-capable fields in ExternalMCPServerConfig.
+// Expansion scope: Command, Args, Env values, URL, Headers values.
 func ExpandConfigEnv(cfg *ExternalMCPServerConfig) {
 	// Config structs are passed by value to background MCP connections. Their
 	// slices and maps still share storage; expansion must not mutate that storage.
@@ -72,8 +72,8 @@ func ExpandConfigEnv(cfg *ExternalMCPServerConfig) {
 	}
 }
 
-// ExpandHeaderMap 返回 headers 的副本，并展开其中的 ${VAR} / ${VAR:-default} 引用。
-// 与 MCP 配置的 Headers 展开规则保持一致。
+// ExpandHeaderMap returns a copy of headers with ${VAR} / ${VAR:-default} references expanded.
+// Kept consistent with the header expansion rules of the MCP config.
 func ExpandHeaderMap(headers map[string]string) map[string]string {
 	if len(headers) == 0 {
 		return nil

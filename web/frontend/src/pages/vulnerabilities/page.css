@@ -1,4 +1,4 @@
-/* 漏洞管理页私有样式：仅布局与排版，颜色统一取 Semi 变量。 */
+/* Private styles for the vulnerability management page: layout and typography only, colors from Semi variables. */
 
 .vulnerability-page { min-width: 0; }
 
@@ -11,10 +11,6 @@
         color-mix(in srgb, var(--vulnerability-stat-accent) 9%, transparent),
         transparent 64px
     );
-}
-
-.vulnerability-page > .cs-stat-grid > .cs-stat-card:dir(rtl) {
-    --vulnerability-stat-fade-direction: to left;
 }
 
 .vulnerability-page > .cs-stat-grid > .cs-stat-card.semi-button[aria-pressed="true"] {
@@ -134,7 +130,7 @@
 
 .vulnerability-group-badges { flex-wrap: wrap; }
 
-/* ── 筛选栏 ───────────────────────────────────────────── */
+/* ── Filter bar ───────────────────────────────────────────── */
 .vulnerability-filter-bar {
     display: flex;
     flex-wrap: wrap;
@@ -161,7 +157,7 @@
     gap: 8px;
 }
 
-/* ── 表格工具栏与单元格 ───────────────────────────────── */
+/* ── Table toolbar and cells ───────────────────────────────── */
 .vulnerability-toolbar-left {
     display: flex;
     align-items: center;
@@ -244,7 +240,7 @@
     flex-wrap: nowrap;
 }
 
-/* ── 详情抽屉 ─────────────────────────────────────────── */
+/* ── Detail drawer ─────────────────────────────────────────── */
 .vulnerability-detail-drawer .semi-sidesheet-header {
     border-bottom: 1px solid var(--semi-color-border);
 }
@@ -362,7 +358,7 @@
     gap: 6px;
 }
 
-/* 下载面板 */
+/* Download panel */
 .vulnerability-download-panel {
     display: flex;
     flex-direction: column;
@@ -371,7 +367,7 @@
     padding: 4px 0;
 }
 
-/* ── 新建/编辑表单 ───────────────────────────────────── */
+/* ── Create/edit form ───────────────────────────────────── */
 .vulnerability-form-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -1,4 +1,4 @@
-/** 待审批停靠区：把内联审批卡堆在发送区上方，随流式事件与轮询刷新。 */
+/** Pending-approval dock: stacks inline approval cards above the composer, refreshed by stream events and polling. */
 import { Button, Typography } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
 import HitlCard from './HitlCard';
@@ -13,7 +13,7 @@ export default function HitlDock({ items, busyId, readOnly, onRefresh, onDecide,
     return (
         <div className="chat-hitl-dock">
             <div className="chat-hitl-dock-head">
-                <Text strong>{t('chat.pendingApprovals', { count: list.length }, `待审批 ${list.length}`)}</Text>
+                <Text strong>{t('chat.pendingApprovals', { count: list.length }, 'Pending approvals: {{count}}')}</Text>
                 <Button size="small" theme="borderless" icon={<IconRefresh />} onClick={onRefresh} />
             </div>
             {list.map(item => (

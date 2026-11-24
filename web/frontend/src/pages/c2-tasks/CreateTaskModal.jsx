@@ -1,5 +1,5 @@
 /**
- * C2 任务下发：POST /c2/tasks，按任务类型组织 payload。
+ * C2 task dispatch: POST /c2/tasks, organizes the payload by task type.
  */
 import { useState } from 'react';
 import { Button, Form, Space, Typography } from '@douyinfe/semi-ui';
@@ -48,12 +48,12 @@ export default function CreateTaskModal({ visible, defaultSessionId, onCancel, o
     return (
         <Drawer
             visible={visible}
-            title={t('c2.tasks.createTitle', null, '下发任务')}
+            title={t('c2.tasks.createTitle', null, 'Send task')}
             footer={(
                 <Space>
-                    <Button onClick={onCancel}>{t('c2.tasks.cancelFilters', null, '取消')}</Button>
+                    <Button onClick={onCancel}>{t('c2.tasks.cancelFilters', null, 'Cancel')}</Button>
                     <Button theme="solid" type="primary" loading={submitting} onClick={() => formApi?.submitForm()}>
-                        {t('c2.tasks.createSubmit', null, '下发')}
+                        {t('c2.tasks.createSubmit', null, 'Send')}
                     </Button>
                 </Space>
             )}
@@ -70,22 +70,22 @@ export default function CreateTaskModal({ visible, defaultSessionId, onCancel, o
             >
                 <Form.Input
                     field="session_id"
-                    label={t('c2.tasks.labelSession', null, '会话')}
+                    label={t('c2.tasks.labelSession', null, 'Session')}
                     placeholder="s_xxxxxxxx"
-                    rules={[{ required: true, message: t('c2.tasks.labelSession', null, '请填写会话 ID') }]}
+                    rules={[{ required: true, message: t('c2.tasks.labelSession', null, 'Session') }]}
                 />
-                <Form.Select field="task_type" label={t('c2.tasks.labelType', null, '类型')} optionList={TASK_TYPES} style={{ width: '100%' }} />
+                <Form.Select field="task_type" label={t('c2.tasks.labelType', null, 'Type')} optionList={TASK_TYPES} style={{ width: '100%' }} />
                 <Form.Input
                     field="command"
-                    label={COMMAND_TYPES.has(taskType) ? t('c2.tasks.labelCommand', null, '命令') : t('c2.tasks.labelPath', null, '路径')}
+                    label={COMMAND_TYPES.has(taskType) ? t('c2.tasks.labelCommand', null, 'Command') : t('c2.tasks.labelPath', null, 'Path')}
                     placeholder={COMMAND_TYPES.has(taskType) ? 'whoami' : '/etc/passwd'}
                 />
                 {COMMAND_TYPES.has(taskType) && (
-                    <Form.Input field="timeout_seconds" label={t('c2.tasks.labelTimeout', null, '超时（秒）')} placeholder="60" />
+                    <Form.Input field="timeout_seconds" label={t('c2.tasks.labelTimeout', null, 'Timeout (seconds)')} placeholder="60" />
                 )}
-                <Form.Input field="extra" label={t('c2.tasks.labelExtraPayload', null, '附加参数（JSON，可选）')} placeholder='{"key":"value"}' />
+                <Form.Input field="extra" label={t('c2.tasks.labelExtraPayload', null, 'Extra parameters (JSON, optional)')} placeholder='{"key":"value"}' />
                 <Text type="tertiary" size="small">
-                    {t('c2.tasks.createHint', null, '任务入队后由植入体在下次心跳拉取；危险类型可能需要人机协同审批。')}
+                    {t('c2.tasks.createHint', null, 'A queued task is fetched by the implant at its next check-in. Dangerous task types may require human-in-the-loop approval.')}
                 </Text>
             </Form>
         </Drawer>

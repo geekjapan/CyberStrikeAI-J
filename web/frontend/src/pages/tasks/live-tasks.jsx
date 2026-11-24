@@ -1,9 +1,9 @@
-/** 运行中任务（Agent Loop）：只读视图 + 自动刷新 + 跳转会话。 */
+/** Running tasks (Agent Loop): read-only view + auto refresh + jump to conversation. */
 import { useNavigate } from 'react-router-dom';
 import { Button, Space, Tag, Typography } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
 import { api } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { useInterval, useResource } from '../../components/hooks';
 import { DataTable, ErrorBanner, SectionCard } from '../../components/ui';
 import { formatDateTime } from '../../lib/format';
@@ -12,9 +12,9 @@ import { durationText, errorProp } from './helpers';
 const { Text } = Typography;
 
 const RUN_STATUS = {
-    running: { label: '执行中', color: 'blue' },
-    cancelling: { label: '取消中', color: 'amber' },
-    cleaning: { label: '清理中', color: 'amber' }
+    running: { get label() { return translate('ui.tasksLive.running', null, 'Running'); }, color: 'blue' },
+    cancelling: { get label() { return translate('ui.tasksLive.cancelling', null, 'Cancelling'); }, color: 'amber' },
+    cleaning: { get label() { return translate('ui.tasksLive.cleaning', null, 'Cleaning up'); }, color: 'amber' }
 };
 
 export default function LiveTasks() {
@@ -28,19 +28,19 @@ export default function LiveTasks() {
 
     const columns = [
         {
-            title: t('tasks.title', null, '任务'),
+            title: t('tasks.title', null, 'Task Management'),
             dataIndex: 'title',
             render: (value, record) => (
                 <div className="task-live-title">
                     <span className="task-cell-message" title={value || record.message}>
-                        {value || record.message || t('tasks.unnamedTask', null, '未命名任务')}
+                        {value || record.message || t('tasks.unnamedTask', null, 'Unnamed task')}
                     </span>
                     <Text type="tertiary" size="small"><code>{record.runId || '—'}</code></Text>
                 </div>
             )
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'status',
             width: 110,
             render: value => {
@@ -49,25 +49,25 @@ export default function LiveTasks() {
             }
         },
         {
-            title: t('tasks.conversationIdLabel', null, '对话ID'),
+            title: t('tasks.conversationIdLabel', null, 'Conversation ID'),
             dataIndex: 'conversationId',
             width: 230,
             render: value => <Text type="tertiary" size="small"><code>{value || '—'}</code></Text>
         },
         {
-            title: t('tasks.startedAt', null, '开始时间'),
+            title: t('tasks.startedAt', null, 'Started at'),
             dataIndex: 'startedAt',
             width: 165,
             render: value => <Text size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('tasks.duration', null, '执行时长'),
+            title: t('tasks.duration', null, 'Duration'),
             dataIndex: 'startedAt',
             width: 110,
             render: value => <Text size="small">{durationText(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'conversationId',
             width: 110,
             render: value => (
@@ -78,7 +78,7 @@ export default function LiveTasks() {
                         disabled={!value}
                         onClick={() => navigate(`/chat?conversation=${encodeURIComponent(value)}`)}
                     >
-                        {t('tasks.viewConversation', null, '查看对话')}
+                        {t('tasks.viewConversation', null, 'View conversation')}
                     </Button>
                 </Space>
             )
@@ -87,11 +87,11 @@ export default function LiveTasks() {
 
     return (
         <SectionCard
-            title={`${t('tasks.runningLabel', null, '执行中')}任务（Agent Loop）`}
-            description="当前进程中正在执行的 Agent 任务；每 6 秒自动刷新。"
+            title={t('ui.tasksLive.title', null, 'Running tasks (Agent Loop)')}
+            description={t('ui.tasksLive.description', null, 'Agent tasks currently running in this process. Refreshes automatically every 6 seconds.')}
             extra={(
                 <Button icon={<IconRefresh />} theme="borderless" loading={tasks.loading} onClick={() => tasks.reload()}>
-                    {t('common.refresh', null, '刷新')}
+                    {t('common.refresh', null, 'Refresh')}
                 </Button>
             )}
         >
@@ -102,7 +102,7 @@ export default function LiveTasks() {
                 rowKey={record => record.runId || record.conversationId || 'unknown-task'}
                 loading={tasks.loading}
                 pagination={{ pageSize: 10 }}
-                emptyText={t('tasks.noMatchingTasks', null, '当前没有符合条件的任务')}
+                emptyText={t('tasks.noMatchingTasks', null, 'No matching tasks')}
             />
         </SectionCard>
     );

@@ -10,7 +10,7 @@ func TestIsEmptyResponseResult(t *testing.T) {
 	if !IsEmptyResponseResult(empty) {
 		t.Fatal("expected empty placeholder response")
 	}
-	ok := &RunResult{Response: "扫描完成，发现 2 个开放端口。"}
+	ok := &RunResult{Response: "Scan complete; found 2 open ports."}
 	if IsEmptyResponseResult(ok) {
 		t.Fatalf("expected real response, got placeholder match")
 	}

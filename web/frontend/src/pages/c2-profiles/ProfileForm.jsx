@@ -1,5 +1,5 @@
 /**
- * C2 流量伪装 Profile 表单：UA、URI、请求/响应头与 Jitter 范围。
+ * C2 traffic disguise Profile form: UA, URI, request/response headers and Jitter range.
  */
 import { useState } from 'react';
 import { Button, Form, Space, Typography } from '@douyinfe/semi-ui';
@@ -31,7 +31,7 @@ function parseHeaders(text, t) {
         }
         return parsed;
     } catch (error) {
-        toastWarning(t('c2.profiles.toastInvalidHeadersJson', null, '响应头 JSON 无效'));
+        toastWarning(t('c2.profiles.toastInvalidHeadersJson', null, 'Invalid JSON in response headers'));
         return null;
     }
 }
@@ -44,7 +44,7 @@ export default function ProfileForm({ visible, record, submitting, onCancel, onS
         const min = Number(values.jitter_min);
         const max = Number(values.jitter_max);
         if (!Number.isInteger(min) || !Number.isInteger(max) || min < 0 || max < min) {
-            toastWarning(t('c2.profiles.toastInvalidJitter', null, 'Jitter 必须为整数，且满足 0 <= 最小值 <= 最大值'));
+            toastWarning(t('c2.profiles.toastInvalidJitter', null, 'Jitter must use integers with 0 <= min <= max'));
             return;
         }
         const requestHeaders = parseHeaders(values.request_headers, t);
@@ -66,12 +66,12 @@ export default function ProfileForm({ visible, record, submitting, onCancel, onS
     return (
         <Drawer
             visible={visible}
-            title={record ? t('c2.profiles.editTitle', null, '编辑 Profile') : t('c2.profiles.modalCreateTitle', null, '创建 Malleable Profile')}
+            title={record ? t('c2.profiles.editTitle', null, 'Edit profile') : t('c2.profiles.modalCreateTitle', null, 'Create Malleable Profile')}
             footer={(
                 <Space>
-                    <Button onClick={onCancel}>{t('c2.common.cancel', null, '取消')}</Button>
+                    <Button onClick={onCancel}>{t('c2.common.cancel', null, 'Cancel')}</Button>
                     <Button theme="solid" type="primary" loading={submitting} onClick={() => formApi?.submitForm()}>
-                        {record ? t('c2.profiles.save', null, '保存') : t('c2.profiles.submitCreate', null, '创建')}
+                        {record ? t('c2.profiles.save', null, 'Save') : t('c2.profiles.submitCreate', null, 'Create')}
                     </Button>
                 </Space>
             )}
@@ -87,40 +87,40 @@ export default function ProfileForm({ visible, record, submitting, onCancel, onS
             >
                 <Form.Input
                     field="name"
-                    label={t('c2.profiles.profileNameLabel', null, 'Profile 名称')}
-                    placeholder={t('c2.profiles.placeholderProfileName', null, '例如 cdn-fronting')}
-                    rules={[{ required: true, message: t('c2.profiles.toastNameRequired', null, '请填写 Profile 名称') }]}
+                    label={t('c2.profiles.profileNameLabel', null, 'Profile name')}
+                    placeholder={t('c2.profiles.placeholderProfileName', null, 'e.g. cdn-fronting')}
+                    rules={[{ required: true, message: t('c2.profiles.toastNameRequired', null, 'Profile name is required') }]}
                 />
                 <Form.Input field="user_agent" label={t('c2.profiles.userAgent', null, 'User-Agent')} placeholder="Mozilla/5.0 ..." />
                 <Form.TextArea
                     field="uris"
-                    label={t('c2.profiles.labelBeaconUris', null, 'Beacon URI（每行一个）')}
+                    label={t('c2.profiles.labelBeaconUris', null, 'Beacon URIs (one per line)')}
                     placeholder="/api/v1/ping"
                     autosize={{ minRows: 2, maxRows: 5 }}
                 />
                 <div className="c2-form-row">
-                    <Form.Input field="jitter_min" label={t('c2.profiles.labelJitterMin', null, 'Jitter 最小值 (ms)')} placeholder="0" />
-                    <Form.Input field="jitter_max" label={t('c2.profiles.labelJitterMax', null, 'Jitter 最大值 (ms)')} placeholder="0" />
+                    <Form.Input field="jitter_min" label={t('c2.profiles.labelJitterMin', null, 'Jitter min (ms)')} placeholder="0" />
+                    <Form.Input field="jitter_max" label={t('c2.profiles.labelJitterMax', null, 'Jitter max (ms)')} placeholder="0" />
                 </div>
                 <Form.TextArea
                     field="request_headers"
-                    label={t('c2.profiles.requestHeadersJson', null, '自定义请求头 (JSON)')}
+                    label={t('c2.profiles.requestHeadersJson', null, 'Custom request headers (JSON)')}
                     placeholder='{"X-Forwarded-For":"127.0.0.1"}'
                     autosize={{ minRows: 2, maxRows: 6 }}
                 />
                 <Form.TextArea
                     field="response_headers"
-                    label={t('c2.profiles.labelRespHeaders', null, '自定义响应头 (JSON)')}
+                    label={t('c2.profiles.labelRespHeaders', null, 'Custom response headers (JSON)')}
                     placeholder='{"Server":"nginx"}'
                     autosize={{ minRows: 2, maxRows: 6 }}
                 />
                 <Form.TextArea
                     field="body_template"
-                    label={t('c2.profiles.bodyTemplate', null, '响应体模板')}
+                    label={t('c2.profiles.bodyTemplate', null, 'Response body template')}
                     placeholder='{"status":"ok"}'
                     autosize={{ minRows: 2, maxRows: 6 }}
                 />
-                <Text type="tertiary" size="small">{t('c2.profiles.hintHeaders', null, '用于伪装为合法服务的 HTTP 响应头')}</Text>
+                <Text type="tertiary" size="small">{t('c2.profiles.hintHeaders', null, 'HTTP response headers to mimic a legitimate server')}</Text>
             </Form>
         </Drawer>
     );

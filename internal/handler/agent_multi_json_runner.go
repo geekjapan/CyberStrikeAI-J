@@ -59,9 +59,9 @@ func (h *AgentHandler) runMultiJSON(taskCtx, baseCtx context.Context, cancelWith
 			if shouldPersistAgentAgentTraceAfterRunError(baseCtx) {
 				h.persistAgentAgentTraceForResume(prep.ConversationID, result)
 			}
-			h.logger.Error("Agent DeepAgent 执行失败", zap.Error(runErr))
+			h.logger.Error("Agent DeepAgent execution failed", zap.Error(runErr))
 			clientErr := multiagent.ClientRunErrorMessage(runErr)
-			errMsg := "执行失败: " + clientErr
+			errMsg := "Execution failed: " + clientErr
 			if prep.AssistantMessageID != "" {
 				_, _ = h.db.Exec("UPDATE messages SET content = ?, updated_at = ? WHERE id = ?", errMsg, time.Now(), prep.AssistantMessageID)
 			}
@@ -87,7 +87,7 @@ func (h *AgentHandler) runMultiJSON(taskCtx, baseCtx context.Context, cancelWith
 
 	if result.LastAgentTraceInput != "" || result.LastAgentTraceOutput != "" {
 		if err := h.db.SaveAgentTrace(prep.ConversationID, result.LastAgentTraceInput, result.LastAgentTraceOutput); err != nil {
-			h.logger.Warn("保存代理轨迹失败", zap.Error(err))
+			h.logger.Warn("Failed to save agent trace", zap.Error(err))
 		}
 	}
 

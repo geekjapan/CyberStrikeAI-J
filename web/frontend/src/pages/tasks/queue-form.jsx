@@ -1,4 +1,4 @@
-/** 新建批量任务队列：任务列表、角色、项目、代理模式、审批策略、调度与并发。 */
+/** New batch task queue: task list, role, project, agent mode, approval policy, scheduling and concurrency. */
 import { useEffect, useState } from 'react';
 import { Checkbox, Input, Select, TextArea, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
@@ -68,16 +68,16 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
     const submit = async () => {
         const tasks = form.tasksText.split('\n').map(line => line.trim()).filter(Boolean);
         if (!tasks.length) {
-            toastError(t('tasks.noValidTask', null, '没有有效的任务'));
+            toastError(t('tasks.noValidTask', null, 'No valid tasks'));
             return;
         }
         if (form.scheduleMode === 'cron') {
             if (!form.cronExpr.trim()) {
-                toastError(t('batchImportModal.cronExprRequired', null, '请选择 Cron 调度后填写 Cron 表达式'));
+                toastError(t('batchImportModal.cronExprRequired', null, 'Please fill in a Cron expression when Cron schedule is selected'));
                 return;
             }
             if (!CRON_PATTERN.test(form.cronExpr.trim())) {
-                toastError(t('batchImportModal.cronExprInvalid', null, 'Cron 表达式格式错误，需要 5 段（分 时 日 月 周）'));
+                toastError(t('batchImportModal.cronExprInvalid', null, 'Invalid Cron expression format. Must have 5 fields (minute hour day month weekday), e.g.: 0 */2 * * *'));
                 return;
             }
         }
@@ -98,10 +98,10 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
                 concurrency,
                 executeNow: Boolean(form.executeNow)
             });
-            toastSuccess(t('tasks.batchQueueTitle', null, '批量任务队列'));
+            toastSuccess(t('tasks.batchQueueTitle', null, 'Batch task queue'));
             onCreated?.(payload);
         } catch (error) {
-            toastError(errText(error, t('tasks.createBatchQueueFailed', null, '创建批量任务队列失败')));
+            toastError(errText(error, t('tasks.createBatchQueueFailed', null, 'Failed to create batch task queue')));
         } finally {
             setSaving(false);
         }
@@ -110,84 +110,86 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
     return (
         <Drawer
             visible={visible}
-            title={t('batchImportModal.title', null, '新建任务')}
+            title={t('batchImportModal.title', null, 'New task')}
             onCancel={onCancel}
             onOk={submit}
-            okText={t('batchImportModal.createQueue', null, '创建队列')}
-            cancelText={t('common.cancel', null, '取消')}
+            okText={t('batchImportModal.createQueue', null, 'Create queue')}
+            cancelText={t('common.cancel', null, 'Cancel')}
             confirmLoading={saving}
             width={760}
             maskClosable={false}
         >
             <div className="task-form-grid">
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.queueTitle', null, '任务标题')}</Text>
+                    <Text strong size="small">{t('batchImportModal.queueTitle', null, 'Queue title')}</Text>
                     <Input
                         value={form.title}
                         maxLength={200}
-                        placeholder={t('batchImportModal.queueTitlePlaceholder', null, '请输入任务标题（可选，用于标识和筛选）')}
+                        placeholder={t('batchImportModal.queueTitlePlaceholder', null, 'Enter queue title (optional, for identification and filtering)')}
                         onChange={value => update({ title: value })}
                     />
                 </div>
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.role', null, '角色')}</Text>
+                    <Text strong size="small">{t('batchImportModal.role', null, 'Role')}</Text>
                     <Select
                         value={form.role}
                         style={{ width: '100%' }}
-                        optionList={[{ value: '', label: t('batchImportModal.defaultRole', null, '默认') },
+                        optionList={[{ value: '', label: t('batchImportModal.defaultRole', null, 'Default') },
                             ...roles.map(item => ({ value: item.name, label: item.name }))]}
                         onChange={value => update({ role: value })}
                     />
-                    <Text type="tertiary" size="small">{t('batchImportModal.roleHint', null, '选择一个角色，所有任务将使用该角色的配置（提示词和工具）执行。')}</Text>
+                    <Text type="tertiary" size="small">{t('batchImportModal.roleHint', null, 'Select a role; all tasks will be executed using that role\'s configuration (prompt and tools).')}</Text>
                 </div>
             </div>
 
             <div className="task-form-grid">
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.project', null, '所属项目')}</Text>
+                    <Text strong size="small">{t('batchImportModal.project', null, 'Project')}</Text>
                     <Select
                         value={form.projectId}
                         style={{ width: '100%' }}
-                        optionList={[{ value: '', label: t('batchImportModal.projectNone', null, '（未绑定）') },
+                        optionList={[{ value: '', label: t('batchImportModal.projectNone', null, '(Unbound)') },
                             ...projects.map(item => ({ value: item.id, label: item.name || item.id }))]}
                         onChange={value => update({ projectId: value || '' })}
                     />
                 </div>
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.agentMode', null, '代理模式')}</Text>
+                    <Text strong size="small">{t('batchImportModal.agentMode', null, 'Agent mode')}</Text>
                     <Select
                         value={form.agentMode}
                         style={{ width: '100%' }}
                         optionList={AGENT_MODES}
                         onChange={value => update({ agentMode: value })}
                     />
-                    <Text type="tertiary" size="small">{t('batchImportModal.agentModeHint', null, '与对话页一致：Pi 单代理，或 Deep / Plan-Execute / Supervisor（后三种需已启用多代理）。')}</Text>
+                    <Text type="tertiary" size="small">{t('batchImportModal.agentModeHint', null, 'Same as chat: Pi single-agent (ADK), or Deep / Plan-Execute / Supervisor (last three require multi_agent.enabled).')}</Text>
                 </div>
             </div>
 
             <div className="task-form-field">
-                <Text strong size="small">资产范围</Text>
+                <Text strong size="small">{t('ui.tasksQueueForm.assetScope', null, 'Asset scope')}</Text>
                 <Text type="tertiary" size="small">
                     {form.projectId
-                        ? (assetTotal == null ? '资产库中该项目的全部资产' : `资产库中该项目的全部资产（${assetTotal}）`)
-                        : '选择项目后，使用资产库里该项目的资产。'}
+                        ? (assetTotal == null
+                            ? t('ui.tasksQueueForm.assetAll', null, 'All assets of this project in the asset library')
+                            : t('ui.tasksQueueForm.assetAllCount', { count: assetTotal }, 'All assets of this project in the asset library ({{count}})'))
+                        : t('ui.tasksQueueForm.assetHint', null, 'After you select a project, the assets of that project in the asset library are used.')}
                 </Text>
             </div>
 
             <div className="task-form-field">
-                <Text strong size="small">{t('batchImportModal.tasksList', null, '任务列表（每行一个任务）')}</Text>
+                <Text strong size="small">{t('batchImportModal.tasksList', null, 'Task list (one task per line)')}</Text>
                 <TextArea
                     value={form.tasksText}
                     rows={7}
-                    placeholder={t('batchImportModal.tasksListPlaceholderExample', null, '请输入任务列表，每行一个任务')}
+                    placeholder={t('batchImportModal.tasksListPlaceholderExample', null, 'Enter task list, one per line, for example:\nScan open ports of 192.168.1.1\nCheck if https://example.com has SQL injection\nEnumerate subdomains of example.com')}
                     onChange={value => update({ tasksText: value })}
                 />
-                <Text type="tertiary" size="small">{t('batchImportModal.tasksListHint', null, '每行输入一个任务指令，系统将按并发池执行这些任务。空行会被自动忽略。')}</Text>
+                <Text type="tertiary" size="small">{t('batchImportModal.tasksListHint', null, 'Enter one task command per line; the system runs them via a concurrency pool. Empty lines are ignored.')}</Text>
             </div>
 
             <div className="task-form-grid">
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.hitlPolicy', null, '工具审批')}</Text>
+                    <Text strong size="small">{t('batchImportModal.hitlPolicy', null, 'Tool approval')}</Text>
                     <Select
                         value={form.hitlPolicy}
                         style={{ width: '100%' }}
@@ -196,7 +198,7 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
                     />
                 </div>
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.concurrency', null, '并发数')}</Text>
+                    <Text strong size="small">{t('batchImportModal.concurrency', null, 'Concurrency')}</Text>
                     <Input
                         type="number"
                         min={1}
@@ -204,13 +206,13 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
                         value={String(form.concurrency)}
                         onChange={value => update({ concurrency: value })}
                     />
-                    <Text type="tertiary" size="small">{t('batchImportModal.concurrencyHint', null, '同时执行的子任务数量（1-8）。默认 1 为串行；含扫描类工具时建议 1-2。')}</Text>
+                    <Text type="tertiary" size="small">{t('batchImportModal.concurrencyHint', null, 'Number of subtasks to run in parallel (1-8). Default 1 is serial; use 1-2 for scan-heavy tasks.')}</Text>
                 </div>
             </div>
 
             <div className="task-form-grid">
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.scheduleMode', null, '调度方式')}</Text>
+                    <Text strong size="small">{t('batchImportModal.scheduleMode', null, 'Schedule mode')}</Text>
                     <Select
                         value={form.scheduleMode}
                         style={{ width: '100%' }}
@@ -219,22 +221,22 @@ export default function QueueFormModal({ visible, onCancel, onCreated }) {
                     />
                 </div>
                 <div className="task-form-field">
-                    <Text strong size="small">{t('batchImportModal.cronExpr', null, 'Cron 表达式')}</Text>
+                    <Text strong size="small">{t('batchImportModal.cronExpr', null, 'Cron expression')}</Text>
                     <Input
                         value={form.cronExpr}
                         disabled={form.scheduleMode !== 'cron'}
-                        placeholder={t('batchImportModal.cronExprPlaceholder', null, '例如：0 */2 * * *（每2小时执行一次）')}
+                        placeholder={t('batchImportModal.cronExprPlaceholder', null, 'e.g. 0 */2 * * * (run every 2 hours)')}
                         onChange={value => update({ cronExpr: value })}
                     />
-                    <Text type="tertiary" size="small">{t('batchImportModal.cronExprHint', null, '采用标准 5 段 Cron：分 时 日 月 周。')}</Text>
+                    <Text type="tertiary" size="small">{t('batchImportModal.cronExprHint', null, 'Use standard 5-field Cron: minute hour day month weekday. Example: `0 2 * * *` runs at 02:00 daily.')}</Text>
                 </div>
             </div>
 
             <div className="task-form-field">
                 <Checkbox checked={form.executeNow} onChange={event => update({ executeNow: event.target.checked })}>
-                    {t('batchImportModal.executeNow', null, '创建后立即执行')}
+                    {t('batchImportModal.executeNow', null, 'Run immediately after creation')}
                 </Checkbox>
-                <Text type="tertiary" size="small">{t('batchImportModal.executeNowHint', null, '默认不立即执行；关闭后队列保持待执行，可在需要时手动开始。')}</Text>
+                <Text type="tertiary" size="small">{t('batchImportModal.executeNowHint', null, 'Default is off. When disabled, the queue stays pending and can be started manually later.')}</Text>
             </div>
         </Drawer>
     );

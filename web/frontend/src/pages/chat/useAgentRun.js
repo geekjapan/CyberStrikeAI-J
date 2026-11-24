@@ -1,6 +1,6 @@
 /**
- * 单轮对话运行：SSE 事件归约、完成/错误/取消收尾、停止请求。
- * 页面只负责选择会话与展示，运行状态全部由这里的 ref + 受控节流刷出。
+ * Single-turn chat run: SSE event reduction, completion/error/cancel wrap-up, stop request.
+ * The page only selects the conversation and renders; all run state is flushed from the refs here with controlled throttling.
  */
 import { useCallback, useRef, useState } from 'react';
 import { api, errorMessage, postStream } from '../../lib/http';
@@ -126,7 +126,7 @@ export function useAgentRun({
             onError(error) {
                 if (run.markedFinished || runRef.current !== run) return;
                 run.live.status = 'error';
-                run.live.error = errorMessage(error, t('chat.streamFailed', null, '流式连接失败'));
+                run.live.error = errorMessage(error, t('chat.streamFailed', null, 'Streaming connection failed'));
                 run.live.endedAt = Date.now();
                 finishRun(run);
             },
@@ -136,7 +136,7 @@ export function useAgentRun({
                 run.live.endedAt = Date.now();
                 if (!run.stopRequested) {
                     run.live.notice = t('chat.streamEndedWithoutDone', null,
-                        '连接提前结束，未收到任务完成信号。任务可能仍在后端执行。');
+                        'The connection ended before a completion signal was received. The task may still be running on the server; check running tasks at the top or refresh this conversation.');
                     toastWarning(run.live.notice);
                 }
                 finishRun(run);
@@ -154,13 +154,13 @@ export function useAgentRun({
             try {
                 await api.post('/agent-loop/cancel', { conversationId: target });
                 if (run) run.stopRequested = true;
-                toastSuccess(t('chat.stopRequested', null, '已请求停止任务'));
+                toastSuccess(t('chat.stopRequested', null, 'Stop requested'));
             } catch (error) {
-                toastWarning(errorMessage(error, t('chat.stopFailed', null, '停止请求失败')));
+                toastWarning(errorMessage(error, t('chat.stopFailed', null, 'Stop request failed')));
             }
         }
         run?.abort?.();
-        // 服务端取消后仍会补写取消说明，稍后再拉一次历史拿到最终落库内容。
+        // After a server-side cancel the cancellation note is still written later; reload the history once more to get the final persisted content.
         setTimeout(() => {
             if (target && conversationRef.current === target) requestDetailReload?.(target, { silent: true });
         }, 900);

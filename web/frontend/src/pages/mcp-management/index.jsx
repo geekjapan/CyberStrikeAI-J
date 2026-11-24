@@ -1,4 +1,4 @@
-/** MCP 管理：外部 MCP 配置 + 工具启用状态。 */
+/** MCP management: external MCP config + tool enabled state. */
 import { useCallback, useState } from 'react';
 import { Button, Space } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
@@ -27,12 +27,12 @@ export default function McpManagementPage() {
     return (
         <div className="mcp-management-page">
             <PageHeader
-                title={t('mcp.managementTitle', null, 'MCP 管理')}
-                description="维护外部 MCP 连接与工具启用状态；改动写入 config.yaml 后立即生效。"
+                title={t('mcp.managementTitle', null, 'MCP Management')}
+                description={t('ui.mcpManagement.description', null, 'Manage external MCP connections and tool enablement. Changes take effect immediately after they are written to config.yaml.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} onClick={reloadStats} loading={stats.loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                     </Space>
                 )}
@@ -43,28 +43,28 @@ export default function McpManagementPage() {
                 metrics={[
                     {
                         id: 'total',
-                        label: t('mcp.totalCount', null, '总数'),
+                        label: t('mcp.totalCount', null, 'Total'),
                         value: stats.error ? '—' : (data.total ?? 0),
-                        detail: t('mcp.externalConfig', null, '外部 MCP 配置'),
+                        detail: t('mcp.externalConfig', null, 'External MCP config'),
                         loading: stats.loading && !stats.data
                     },
                     {
                         id: 'enabled',
-                        label: t('mcp.enabledCount', null, '已启用'),
+                        label: t('mcp.enabledCount', null, 'Enabled'),
                         value: stats.error ? '—' : (data.enabled ?? 0),
                         tone: 'success',
                         loading: stats.loading && !stats.data
                     },
                     {
                         id: 'connected',
-                        label: t('mcp.connectedCount', null, '已连接'),
+                        label: t('mcp.connectedCount', null, 'Connected'),
                         value: stats.error ? '—' : (data.connected ?? 0),
                         tone: data.connected > 0 ? 'success' : undefined,
                         loading: stats.loading && !stats.data
                     },
                     {
                         id: 'disabled',
-                        label: t('mcp.disabledCount', null, '已停用'),
+                        label: t('mcp.disabledCount', null, 'Disabled'),
                         value: stats.error ? '—' : (data.disabled ?? 0),
                         loading: stats.loading && !stats.data
                     }

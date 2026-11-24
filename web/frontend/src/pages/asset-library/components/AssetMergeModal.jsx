@@ -1,4 +1,4 @@
-/** 合并重复资产：选择主资产，POST /assets/merge（后端要求两条资产共享域名/IP/Host）。 */
+/** Merge duplicate assets: pick the primary asset, POST /assets/merge (the backend requires the assets to share a domain/IP/host). */
 import { useEffect, useMemo, useState } from 'react';
 import { Banner, Radio, RadioGroup, Space, Typography } from '@douyinfe/semi-ui';
 import { api, errorMessage } from '../../../lib/http';
@@ -32,11 +32,12 @@ export default function AssetMergeModal({ visible, assets, onClose, onDone }) {
                 asset_ids: list.map(item => item.id),
                 primary_id: primaryId || list[0].id
             });
-            toastSuccess(`已合并 ${Number(result?.merged || list.length)} 个资产`);
+            const merged = Number(result?.merged || list.length);
+            toastSuccess(t('ui.assetMerge.merged', { count: merged }, 'Merged {{count}} assets'));
             onDone?.();
             onClose?.();
         } catch (submitError) {
-            setError(errorMessage(submitError, '合并资产失败'));
+            setError(errorMessage(submitError, t('ui.assetMerge.failed', null, 'Failed to merge assets')));
         } finally {
             setBusy(false);
         }
@@ -45,11 +46,11 @@ export default function AssetMergeModal({ visible, assets, onClose, onDone }) {
     return (
         <Drawer
             visible={visible}
-            title={t('assets.mergeDuplicates', null, '合并重复资产')}
+            title={t('assets.mergeDuplicates', null, 'Merge duplicates')}
             width={560}
             onCancel={onClose}
             onOk={submit}
-            okText={t('assets.merge', null, '合并')}
+            okText={t('assets.merge', null, 'Merge')}
             okButtonProps={{ disabled: list.length < 2 }}
             confirmLoading={busy}
         >
@@ -58,12 +59,12 @@ export default function AssetMergeModal({ visible, assets, onClose, onDone }) {
                     type="warning"
                     bordered
                     closeIcon={null}
-                    description={t('assets.mergeRequiresMultiple', null, '请至少选择两个重复资产')}
+                    description={t('assets.mergeRequiresMultiple', null, 'Select at least two duplicate assets')}
                 />
             ) : (
                 <Space vertical align="start" spacing={8} style={{ width: '100%' }}>
                     <Text type="tertiary">
-                        {t('assets.mergeHint', null, '将保留一个主资产，其余资产的空字段与标签会合并进来，然后删除被合并记录。所选资产必须共享域名、IP 或 Host。')}
+                        {t('assets.mergeHint', null, 'One primary asset is kept. Empty fields and tags from the other assets are merged into it, then the merged records are deleted. The selected assets must share a domain, IP, or host.')}
                     </Text>
                     <RadioGroup value={primaryId} onChange={event => setPrimaryId(event.target.value)}>
                         <Space vertical align="start" spacing={4}>

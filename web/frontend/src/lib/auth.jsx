@@ -1,6 +1,6 @@
 /**
- * 会话与权限：Bearer 令牌保存在 localStorage（与历史版本同一存储键），
- * 启动时调用 /api/auth/validate 刷新角色与权限，401 时整体退出。
+ * Session and permissions: the Bearer token is stored in localStorage (same storage key as earlier versions);
+ * on startup /api/auth/validate refreshes roles and permissions; a 401 signs out entirely.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { api, readStoredAuth, setAuthToken, writeStoredAuth } from './http';
@@ -71,7 +71,7 @@ export function AuthProvider({ children }) {
         try {
             await api.post('/auth/logout', {});
         } catch (error) {
-            /* 令牌已失效也继续清理本地会话 */
+            /* Keep clearing the local session even if the token is already invalid */
         }
         clear();
     }, [clear]);
@@ -114,6 +114,6 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
     const context = useContext(AuthContext);
-    if (!context) throw new Error('useAuth 必须在 AuthProvider 内使用');
+    if (!context) throw new Error('useAuth must be used inside AuthProvider');
     return context;
 }

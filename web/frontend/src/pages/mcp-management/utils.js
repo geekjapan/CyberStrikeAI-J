@@ -1,15 +1,16 @@
-/** MCP 管理页共用展示映射。 */
+/** Shared display mappings for the MCP management page. */
+import { translate } from '../../lib/i18n';
 
 export const CONNECTION_STATUS = {
-    connected: { color: 'green', label: '已连接' },
-    connecting: { color: 'blue', label: '连接中' },
-    disconnected: { color: 'amber', label: '未连接' },
-    disabled: { color: 'grey', label: '已停用' },
-    error: { color: 'red', label: '连接失败' }
+    connected: { color: 'green', get label() { return translate('ui.mcpUtils.connected', null, 'Connected'); } },
+    connecting: { color: 'blue', get label() { return translate('ui.mcpUtils.connecting', null, 'Connecting'); } },
+    disconnected: { color: 'amber', get label() { return translate('ui.mcpUtils.disconnected', null, 'Disconnected'); } },
+    disabled: { color: 'grey', get label() { return translate('ui.mcpUtils.disabled', null, 'Disabled'); } },
+    error: { color: 'red', get label() { return translate('ui.mcpUtils.error', null, 'Connection failed'); } }
 };
 
 export function connectionMeta(status) {
-    return CONNECTION_STATUS[String(status || '').toLowerCase()] || { color: 'grey', label: status || '未知' };
+    return CONNECTION_STATUS[String(status || '').toLowerCase()] || { color: 'grey', label: status || translate('ui.mcpUtils.unknown', null, 'Unknown') };
 }
 
 export function transportOf(config) {
@@ -25,7 +26,9 @@ export function toolKeyOf(tool) {
 
 export function sourceLabel(tool) {
     if (!tool) return '—';
-    return tool.is_external ? `外部 · ${tool.external_mcp || '未知'}` : '内置';
+    return tool.is_external
+        ? translate('ui.mcpUtils.sourceExternal', { name: tool.external_mcp || translate('ui.mcpUtils.unknown', null, 'External · {{name}}') }, 'Unknown')
+        : translate('ui.mcpUtils.sourceBuiltin', null, 'Built-in');
 }
 
 export function parseToolListInput(text) {

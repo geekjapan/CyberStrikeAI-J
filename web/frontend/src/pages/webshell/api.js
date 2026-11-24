@@ -1,10 +1,10 @@
 /**
- * WebShell 页面接口封装：连接管理、状态持久化、命令执行、文件操作与 AI 历史。
- * 所有请求走统一 http 层，不直接使用 fetch。
+ * WebShell page API wrapper: connection management, state persistence, command execution, file operations and AI history.
+ * All requests go through the shared http layer and never use fetch directly.
  */
 import { api } from '../../lib/http';
 
-/** 后端返回口令时使用的掩码，回写时原样提交表示“保持原口令”。 */
+/** Mask the backend returns in place of a password; submitting it back unchanged means "keep the original password". */
 export const MASKED_SECRET = '********';
 
 export function listConnections(query) {
@@ -83,12 +83,12 @@ export async function listProjects() {
     }
 }
 
-/** 探活令牌：随机串，避免固定回显被外层包装误判。 */
+/** Liveness token: a random string so a fixed echo is not misjudged by outer wrappers. */
 export function probeToken() {
     return `__CSAI_PROBE_${Math.random().toString(36).slice(2, 10)}_${Date.now().toString(36)}__`;
 }
 
-/** 通过一次 echo 判定连接是否可用。 */
+/** Decide whether the connection is usable with a single echo. */
 export async function probeConnection(connection) {
     const token = probeToken();
     const result = await execCommand({ connection, command: `echo ${token}` });

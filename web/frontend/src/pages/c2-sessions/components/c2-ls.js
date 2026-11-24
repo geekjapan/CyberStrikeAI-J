@@ -1,6 +1,6 @@
 /**
- * 解析 C2 `ls` 任务输出：优先识别 Beacon 结构化行（type\tmode\tsize\tname），
- * 否则回退到原生 `ls -l` 输出。
+ * Parse C2 `ls` task output: prefer Beacon structured lines (type\tmode\tsize\tname),
+ * otherwise fall back to native `ls -l` output.
  */
 
 export function parseC2Listing(rawOutput) {
@@ -42,7 +42,7 @@ export function parseC2Listing(rawOutput) {
     return items;
 }
 
-/** 规范化远端路径，兼容 Windows 反斜杠与相对路径。 */
+/** Normalize a remote path, compatible with Windows backslashes and relative paths. */
 export function normalizeRemotePath(input) {
     let value = String(input ?? '').trim();
     if (!value) return '.';

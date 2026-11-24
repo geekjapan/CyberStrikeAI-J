@@ -1,6 +1,6 @@
 /**
- * 漏洞管理：统计看板 + 服务端分页列表 + 详情抽屉 + 新建/编辑 + 删除/批量删除/导出。
- * 接口与字段以 internal/handler/vulnerability*.go 为准；筛选/深链接状态落在 hash 查询串。
+ * Vulnerability management: stats dashboard + server-paginated list + detail drawer + create/edit + delete/bulk delete/export.
+ * API and fields follow internal/handler/vulnerability*.go; filter/deep-link state lives in the hash query string.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -42,7 +42,7 @@ export default function VulnerabilitiesPage() {
         project_id: params.get('project_id') || '',
         conversation_tag: params.get('conversation_tag') || '',
         task_tag: params.get('task_tag') || '',
-        // handler 只接受 severity / latest / oldest，非法值会让列表 400。
+        // The handler only accepts severity / latest / oldest; an invalid value makes the list return 400.
         sort: ['severity', 'latest', 'oldest'].includes(params.get('sort')) ? params.get('sort') : ''
     }), [params]);
 
@@ -101,7 +101,7 @@ export default function VulnerabilitiesPage() {
     const openDetail = useCallback(id => patchParams({ id }), [patchParams]);
     const closeDetail = useCallback(() => patchParams({ id: undefined }), [patchParams]);
 
-    // 列表只要摘要字段（handler 的 summary=true），详情/编辑另行按 id 取全量。
+    // The list only needs summary fields (the handler's summary=true); details/edit fetch the full record by id separately.
     const listQuery = {
         ...filterQuery(filters),
         ...groupSearchQuery,
@@ -112,7 +112,7 @@ export default function VulnerabilitiesPage() {
         limit: pageSize
     };
     const listKey = JSON.stringify(listQuery);
-    // 把请求键随响应带回，避免用上一条筛选的响应纠正地址栏页码。
+    // Carry the request key back with the response, so a response for the previous filter does not correct the address-bar page.
     const list = useResource(async () => {
         const payload = await api.get('/vulnerabilities', listQuery);
         return { ...(payload || {}), __requestKey: listKey, __groupView: groupView };
@@ -135,7 +135,7 @@ export default function VulnerabilitiesPage() {
             const payload = await api.get('/projects', { limit: 500 });
             return Array.isArray(payload?.projects) ? payload.projects : [];
         } catch (error) {
-            return []; // 项目名只用于展示，缺权限时回退显示项目 ID
+            return []; // Project names are display-only; without permission fall back to showing the project ID
         }
     }, []);
 
@@ -173,7 +173,7 @@ export default function VulnerabilitiesPage() {
 
     useEffect(() => { setSelection([]); }, [listKey]);
 
-    // 服务端会把越界页码收敛到最后一页，这里同步回地址栏，刷新后仍能恢复。
+    // The server clamps an out-of-range page to the last page; sync it back to the address bar so a refresh restores it.
     useEffect(() => {
         if (!listData) return;
         const patch = {};
@@ -199,7 +199,7 @@ export default function VulnerabilitiesPage() {
 
     const handleSaved = useCallback(() => {
         setEditor({ visible: false, id: '' });
-        toastSuccess(t('vulnerabilityPage.saveSuccess', null, '已保存'));
+        toastSuccess(t('vulnerabilityPage.saveSuccess', null, 'Saved'));
         setDetailVersion(value => value + 1);
         setOptionsVersion(value => value + 1);
         reloadList({ silent: true });
@@ -209,19 +209,19 @@ export default function VulnerabilitiesPage() {
     const handleDelete = useCallback(record => {
         if (!record?.id) return;
         confirmAction({
-            title: t('vulnerabilityPage.deleteTitle', null, '删除漏洞'),
-            content: `${t('vulnerability.deleteConfirm', null, '确定要删除此漏洞吗？')}${record.title ? ` ${record.title}` : ''}`,
-            okText: t('common.delete', null, '删除'),
+            title: t('vulnerabilityPage.deleteTitle', null, 'Delete vulnerability'),
+            content: `${t('vulnerability.deleteConfirm', null, 'Delete this vulnerability?')}${record.title ? ` ${record.title}` : ''}`,
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/vulnerabilities/${encodeURIComponent(record.id)}`);
-                    toastSuccess(t('vulnerabilityPage.deleteSuccess', null, '已删除'));
+                    toastSuccess(t('vulnerabilityPage.deleteSuccess', null, 'Deleted'));
                     if (detailId === record.id) closeDetail();
                     setDetailVersion(value => value + 1);
                     setOptionsVersion(value => value + 1);
                     await Promise.all([reloadList({ silent: true }), reloadStats({ silent: true })]);
                 } catch (error) {
-                    toastError(error, t('vulnerabilityPage.deleteFailed', null, '删除失败'));
+                    toastError(error, t('vulnerabilityPage.deleteFailed', null, 'Delete failed'));
                 }
             }
         });
@@ -231,13 +231,13 @@ export default function VulnerabilitiesPage() {
         if (!selection.length) return;
         const ids = [...selection];
         confirmAction({
-            title: t('vulnerabilityPage.batchDelete', null, '批量删除'),
+            title: t('vulnerabilityPage.batchDelete', null, 'Batch delete'),
             content: t(
                 'vulnerabilityPage.batchDeleteConfirm',
                 { count: ids.length },
-                `确定要删除选中的 ${ids.length} 条漏洞吗？此操作不可恢复。`
+                'Delete {{count}} vulnerability record(s) matching the current filters? This cannot be undone.'
             ),
-            okText: t('common.delete', null, '删除'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 let deleted = 0;
                 let failed = 0;
@@ -253,10 +253,10 @@ export default function VulnerabilitiesPage() {
                     toastWarning(t(
                         'vulnerabilityPage.batchDeletePartial',
                         { deleted, failed },
-                        `已删除 ${deleted} 条，${failed} 条失败`
+                        'Deleted {{deleted}}, {{failed}} failed'
                     ));
                 } else {
-                    toastSuccess(t('vulnerabilityPage.batchDeleteSuccess', { count: deleted }, `成功删除 ${deleted} 条漏洞`));
+                    toastSuccess(t('vulnerabilityPage.batchDeleteSuccess', { count: deleted }, 'Successfully deleted {{count}} vulnerability record(s)'));
                 }
                 setSelection([]);
                 if (ids.includes(detailId)) closeDetail();
@@ -267,44 +267,44 @@ export default function VulnerabilitiesPage() {
         });
     }, [selection, detailId, closeDetail, reloadList, reloadStats, t]);
 
-    // DELETE /vulnerabilities/batch 按筛选条件删除（服务端语义），与逐行多选删除互补。
+    // DELETE /vulnerabilities/batch deletes by filter (server semantics), complementing per-row multi-select deletion.
     const handleDeleteFiltered = useCallback(async () => {
         const query = filterQuery(filters);
         try {
             const head = await api.get('/vulnerabilities', { ...query, page: 1, limit: 1 });
             const total = Number(head?.total) || 0;
             if (!total) {
-                toastWarning(t('vulnerabilityPage.batchDeleteNoResults', null, '当前筛选条件下没有可删除的漏洞'));
+                toastWarning(t('vulnerabilityPage.batchDeleteNoResults', null, 'No vulnerabilities match the current filters to delete'));
                 return;
             }
             confirmAction({
-                title: t('vulnerabilityPage.deleteFilteredTitle', null, '删除当前筛选结果'),
+                title: t('vulnerabilityPage.deleteFilteredTitle', null, 'Delete the current filtered results'),
                 content: t(
                     'vulnerabilityPage.batchDeleteConfirm',
                     { count: total },
-                    `确定要删除当前筛选条件下的 ${total} 条漏洞吗？此操作不可恢复。`
+                    'Delete {{count}} vulnerability record(s) matching the current filters? This cannot be undone.'
                 ),
-                okText: t('common.delete', null, '删除'),
+                okText: t('common.delete', null, 'Delete'),
                 onOk: async () => {
                     try {
                         const result = await api.del('/vulnerabilities/batch', { query });
                         const deleted = Number(result?.deleted) || total;
-                        toastSuccess(t('vulnerabilityPage.batchDeleteSuccess', { count: deleted }, `成功删除 ${deleted} 条漏洞`));
+                        toastSuccess(t('vulnerabilityPage.batchDeleteSuccess', { count: deleted }, 'Successfully deleted {{count}} vulnerability record(s)'));
                         setSelection([]);
                         setDetailVersion(value => value + 1);
                         setOptionsVersion(value => value + 1);
                         await Promise.all([reloadList({ silent: true }), reloadStats({ silent: true })]);
                     } catch (error) {
-                        toastError(error, t('vulnerabilityPage.batchDeleteFailed', null, '批量删除失败'));
+                        toastError(error, t('vulnerabilityPage.batchDeleteFailed', null, 'Batch delete failed'));
                     }
                 }
             });
         } catch (error) {
-            toastError(error, t('vulnerabilityPage.fetchFailed', null, '获取漏洞失败'));
+            toastError(error, t('vulnerabilityPage.fetchFailed', null, 'Failed to fetch vulnerability'));
         }
     }, [filters, reloadList, reloadStats, t]);
 
-    // 导出：GET /vulnerabilities/export 返回 {files:[{filename,content}]}，逐份落盘。
+    // Export: GET /vulnerabilities/export returns {files:[{filename,content}]}; save each file in turn.
     const handleExport = useCallback(async () => {
         if (exporting) return;
         setExporting(true);
@@ -317,7 +317,7 @@ export default function VulnerabilitiesPage() {
             });
             const files = Array.isArray(payload?.files) ? payload.files : [];
             if (!files.length) {
-                toastWarning(t('vulnerabilityPage.exportNoResults', null, '当前筛选条件下无可导出漏洞'));
+                toastWarning(t('vulnerabilityPage.exportNoResults', null, 'No vulnerabilities match the current filters'));
                 return;
             }
             files.forEach((file, index) => {
@@ -327,10 +327,10 @@ export default function VulnerabilitiesPage() {
                 );
             });
             toastSuccess(files.length > 1
-                ? t('vulnerabilityPage.exportStarted', { count: files.length }, `已开始下载 ${files.length} 份报告`)
-                : t('vulnerabilityPage.exportSuccess', null, '报告已开始下载'));
+                ? t('vulnerabilityPage.exportStarted', { count: files.length }, 'Started downloading {{count}} file(s)')
+                : t('vulnerabilityPage.exportSuccess', null, 'Report download started'));
         } catch (error) {
-            toastError(error, t('vulnerabilityPage.exportFailed', null, '导出失败'));
+            toastError(error, t('vulnerabilityPage.exportFailed', null, 'Export failed'));
         } finally {
             setExporting(false);
         }
@@ -341,9 +341,9 @@ export default function VulnerabilitiesPage() {
             const name = await downloadFile(`/vulnerabilities/${encodeURIComponent(record.id)}/download`, {
                 query: { format: 'docx' }
             });
-            toastSuccess(`${t('vulnerabilityPage.downloadOkTitle', null, '下载成功')}${name ? ` · ${name}` : ''}`);
+            toastSuccess(`${t('vulnerabilityPage.downloadOkTitle', null, 'Downloaded')}${name ? ` · ${name}` : ''}`);
         } catch (error) {
-            toastError(error, t('vulnerabilityPage.downloadFailed', null, '下载失败'));
+            toastError(error, t('vulnerabilityPage.downloadFailed', null, 'Download failed'));
         }
     }, [t]);
 
@@ -351,7 +351,7 @@ export default function VulnerabilitiesPage() {
         patchParams({ page: String(nextPage) });
     }, [patchParams]);
 
-    // 与旧版一致：切换每页条数时保持在当前数据位置（Semi 内部也按同一公式换算）。
+    // Same as the legacy page: keep the current data position when the page size changes (Semi converts with the same formula internally).
     const handlePageSizeChange = useCallback(nextSize => {
         if (!nextSize || nextSize === pageSize) return;
         const nextPage = Math.max(1, Math.floor(((page - 1) * pageSize) / nextSize) + 1);
@@ -366,10 +366,10 @@ export default function VulnerabilitiesPage() {
     const metrics = useMemo(() => {
         const totalMetric = {
             id: 'total',
-            label: t('vulnerabilityPage.statTotal', null, '总漏洞数'),
+            label: t('vulnerabilityPage.statTotal', null, 'Total'),
             value: statTotal,
             detail: distinctCount && distinctCount !== statTotal
-                ? t('vulnerabilityPage.distinctCount', { count: distinctCount }, `${distinctCount} 个独立漏洞`)
+                ? t('vulnerabilityPage.distinctCount', { count: distinctCount }, '{{count}} distinct findings')
                 : undefined,
             loading: stats.loading,
             onClick: () => applyFilter('severity', '')
@@ -385,7 +385,7 @@ export default function VulnerabilitiesPage() {
                 severity: code,
                 pressed: active,
                 detail: active
-                    ? `${t('vulnerabilityPage.filterActive', null, '已筛选')} · ${pct}%`
+                    ? `${t('vulnerabilityPage.filterActive', null, 'Filtered')} · ${pct}%`
                     : `${pct}%`,
                 loading: stats.loading,
                 onClick: () => applyFilter('severity', active ? '' : code)
@@ -398,8 +398,8 @@ export default function VulnerabilitiesPage() {
     const rangeStart = totalRecords ? (page - 1) * pageSize + 1 : 0;
     const rangeEnd = totalRecords ? Math.min(page * pageSize, totalRecords) : 0;
     const summaryText = totalRecords
-        ? t('vulnerabilityPage.recordPagination', { start: rangeStart, end: rangeEnd, total: totalRecords }, `显示 ${rangeStart}–${rangeEnd} / 共 ${totalRecords} 条漏洞`)
-        : t('vulnerabilityPage.noRecords', null, '暂无漏洞记录');
+        ? t('vulnerabilityPage.recordPagination', { start: rangeStart, end: rangeEnd, total: totalRecords }, 'Showing {{start}}–{{end}} of {{total}} findings')
+        : t('vulnerabilityPage.noRecords', null, 'No vulnerability records');
 
     const pageError = list.error || stats.error || options.error;
 
@@ -407,7 +407,7 @@ export default function VulnerabilitiesPage() {
         <div className="vulnerability-toolbar-left">
             <Text type="tertiary">
                 {listData && selection.length
-                    ? t('vulnerabilityPage.selectedCount', { count: selection.length }, `已选 ${selection.length} 项`)
+                    ? t('vulnerabilityPage.selectedCount', { count: selection.length }, '{{count}} selected')
                     : summaryText}
             </Text>
             {canDelete && (
@@ -418,12 +418,12 @@ export default function VulnerabilitiesPage() {
                     disabled={!listData || !selection.length}
                     onClick={handleBatchDelete}
                 >
-                    {t('vulnerabilityPage.batchDelete', null, '批量删除')}
+                    {t('vulnerabilityPage.batchDelete', null, 'Batch delete')}
                 </Button>
             )}
             {canDelete && !groupSelection && !groupSearch && hasActiveFilters(filters) && (
                 <Button size="small" type="danger" theme="borderless" onClick={handleDeleteFiltered}>
-                    {t('vulnerabilityPage.deleteFiltered', null, '删除筛选结果')}
+                    {t('vulnerabilityPage.deleteFiltered', null, 'Delete filtered results')}
                 </Button>
             )}
         </div>
@@ -432,19 +432,19 @@ export default function VulnerabilitiesPage() {
     return (
         <div className="vulnerability-page">
             <PageHeader
-                title={t('vulnerability.title', null, '漏洞管理')}
-                description={t('vulnerabilityPage.workspaceSubtitle', null, '资产、上报与处置进展')}
+                title={t('vulnerability.title', null, 'Vulnerability Management')}
+                description={t('vulnerabilityPage.workspaceSubtitle', null, 'Assets, reports and remediation')}
                 extra={(
                     <>
                         <Button icon={<IconRefresh />} onClick={refreshAll} loading={list.loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button onClick={handleExport} loading={exporting}>
                             {t(groupSelection ? 'vulnerabilityPage.exportAllGroups' : 'vulnerabilityPage.batchExport')}
                         </Button>
                         {canWrite && (
                             <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => openEditor(null)}>
-                                {t('vulnerability.addVuln', null, '添加漏洞')}
+                                {t('vulnerability.addVuln', null, 'Add vulnerability')}
                             </Button>
                         )}
                     </>
@@ -457,7 +457,7 @@ export default function VulnerabilitiesPage() {
 
             <SectionCard
                 className="vulnerability-list-card"
-                title={t('vulnerabilityPage.listTitle', null, '漏洞记录')}
+                title={t('vulnerabilityPage.listTitle', null, 'Vulnerability records')}
                 extra={(
                     <RadioGroup
                         aria-label={t('vulnerabilityPage.viewLabel')}

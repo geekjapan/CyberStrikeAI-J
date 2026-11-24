@@ -142,9 +142,7 @@ CyberStrikeAI documentation is organized by user journey. Start with deployment,
 - Examples use placeholders; never commit real credentials or target systems without explicit authorization.
 - Runtime behavior and configuration defaults are authoritative in `config.example.yaml` and the source code. If a document differs, report it as documentation drift.
 
-### Public documentation scope / 公开文档范围
+### Public documentation scope
 
-- 公开文档面向用户和贡献者，保留使用指南、稳定接口与架构说明、兼容性说明和发布记录。内部任务阶段记录、对话确认、一次性核查表和本地验证流水账应保存在仓库外，不作为产品文档提交。
 - Public docs serve users and contributors: usage guides, stable API and architecture references, compatibility notes, and release records. Keep internal task journals, conversation approvals, one-off review sheets, and local verification logs outside the repository.
-- 中文、英文与日文指南使用相同文件名，并提供语言切换链接；各语言索引覆盖对应的全部指南。
 - Chinese, English, and Japanese guides use matching filenames and language-switch links; each locale index covers all guides in that language.

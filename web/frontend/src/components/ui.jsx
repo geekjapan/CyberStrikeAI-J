@@ -1,6 +1,6 @@
 /**
- * 共享展示组件：页面骨架、指标卡、表格、空状态、标签、Markdown 与 JSON 视图。
- * 业务页面统一使用这些组件，避免各页重复写样式。
+ * Shared presentational components: page skeleton, metric card, table, empty state, tag, Markdown and JSON views.
+ * Business pages use these components uniformly to avoid repeating styles.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -9,7 +9,7 @@ import {
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import { IconChevronDown, IconChevronUp, IconCopy, IconInbox, IconRefresh } from '@douyinfe/semi-icons';
-import { useT } from '../lib/i18n';
+import { translate, useT } from '../lib/i18n';
 import { SEVERITY_LABEL, SEVERITY_ORDER, severityColor, statusColor } from '../lib/format';
 import { errorMessage } from '../lib/http';
 
@@ -23,7 +23,7 @@ export function toastWarning(content) {
     Toast.warning({ content, duration: 3 });
 }
 
-export function toastError(error, fallback = '操作失败') {
+export function toastError(error, fallback = translate('ui.uiShared.opFailed', null, 'Operation failed')) {
     Toast.error({ content: errorMessage(error, fallback), duration: 4 });
 }
 
@@ -114,7 +114,7 @@ export function DataTable({
                     <div className="cs-table-toolbar-main">{toolbar}</div>
                     {onRefresh && (
                         <Button icon={<IconRefresh />} theme="borderless" onClick={onRefresh} loading={loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                     )}
                 </div>
@@ -127,7 +127,7 @@ export function DataTable({
                     loading={loading}
                     pagination={mergedPagination}
                     size={size}
-                    empty={<Empty image={<IconInbox size="extra-large" />} title={emptyText || t('common.noData', null, '暂无数据')} description={null} className="cs-table-empty" />}
+                    empty={<Empty image={<IconInbox size="extra-large" />} title={emptyText || t('common.noData', null, 'No data')} description={null} className="cs-table-empty" />}
                     {...rest}
                 />
             </div>
@@ -145,19 +145,20 @@ export function ErrorBanner({ error, onRetry }) {
             closeIcon={null}
             className="cs-error-banner"
             description={<Space wrap>
-                <span>{errorMessage(error, t('common.loadFailed', null, '加载失败'))}</span>
-                {onRetry && <Button size="small" onClick={onRetry}>{t('common.refresh', null, '刷新')}</Button>}
+                <span>{errorMessage(error, t('common.loadFailed', null, 'Load failed'))}</span>
+                {onRetry && <Button size="small" onClick={onRetry}>{t('common.refresh', null, 'Refresh')}</Button>}
             </Space>}
         />
     );
 }
 
 export function SeverityTag({ severity, size = 'small' }) {
+    const t = useT();
     const key = String(severity || '').toLowerCase();
     return (
         <Tag size={size} color={severityColor(key)} shape="circle" className="cs-severity-tag"
             data-severity={SEVERITY_ORDER.includes(key) ? key : undefined}>
-            {SEVERITY_LABEL[key] || severity || '—'}
+            {SEVERITY_LABEL[key] ? t('dashboard.severity' + key[0].toUpperCase() + key.slice(1), null, SEVERITY_LABEL[key]) : severity || '—'}
         </Tag>
     );
 }
@@ -174,13 +175,13 @@ export function CopyButton({ text, label, size = 'default', theme = 'borderless'
             size={size}
             theme={theme}
             icon={<IconCopy />}
-            aria-label={label || t('common.copy', null, '复制')}
+            aria-label={label || t('common.copy', null, 'Copy')}
             onClick={async () => {
                 try {
                     await navigator.clipboard.writeText(String(text ?? ''));
-                    toastSuccess(t('common.copied', null, '已复制'));
+                    toastSuccess(t('common.copied', null, 'Copied'));
                 } catch (error) {
-                    toastError(error, t('common.copyFailed', null, '复制失败'));
+                    toastError(error, t('common.copyFailed', null, 'Copy failed'));
                 }
             }}
         >
@@ -214,7 +215,7 @@ export function JsonViewer({ value, collapsed = false, title }) {
                 <Space spacing={4}>
                     <CopyButton text={text} />
                     <Button theme="borderless" size="small" icon={open ? <IconChevronUp /> : <IconChevronDown />}
-                        aria-expanded={open} aria-label={t(open ? 'common.collapse' : 'common.expand', null, open ? '收起' : '展开')}
+                        aria-expanded={open} aria-label={t(open ? 'common.collapse' : 'common.expand', null, open ? 'Collapse' : 'Expand')}
                         onClick={() => setOpen(current => !current)} />
                 </Space>
             </div>
@@ -236,8 +237,8 @@ export function confirmAction({ title, content, okText, danger = true, onOk }) {
     Modal.confirm({
         title,
         content,
-        okText: okText || '确定',
-        cancelText: '取消',
+        okText: okText || translate('ui.uiShared.ok', null, 'OK'),
+        cancelText: translate('ui.uiShared.cancel', null, 'Cancel'),
         okButtonProps: danger ? { type: 'danger' } : undefined,
         onOk
     });
@@ -322,7 +323,7 @@ export function Drawer({
         <>
             {onCancel && (
                 <Button type="tertiary" onClick={onCancel} {...cancelButtonProps}>
-                    {cancelText || t('common.cancel', null, '取消')}
+                    {cancelText || t('common.cancel', null, 'Cancel')}
                 </Button>
             )}
             <Button
@@ -335,7 +336,7 @@ export function Drawer({
                 form={formId}
                 htmlType={formId ? 'submit' : 'button'}
             >
-                {okText || t('common.ok', null, '确定')}
+                {okText || t('common.ok', null, 'OK')}
             </Button>
         </>
     ) : footer;

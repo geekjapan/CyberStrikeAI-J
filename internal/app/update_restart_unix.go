@@ -98,7 +98,7 @@ func (a *App) updateRestart(root string) func(string) (func(), error) {
 			return nil, err
 		}
 		if !info.Mode().IsRegular() {
-			return nil, fmt.Errorf("不是普通可执行文件：%s", path)
+			return nil, fmt.Errorf("Not a regular executable file: %s", path)
 		}
 		if err := unix.Access(path, unix.X_OK); err != nil {
 			return nil, err
@@ -123,7 +123,7 @@ func (a *App) updateRestart(root string) func(string) (func(), error) {
 							return unix.Exec(path, os.Args, env)
 						}
 					}
-					a.logger.Warn("无法交接登录会话，继续切换版本", zap.Error(err))
+					a.logger.Warn("Unable to hand off the login session, continuing to switch versions", zap.Error(err))
 				}
 				return unix.Exec(path, os.Args, env)
 			}
@@ -134,7 +134,7 @@ func (a *App) updateRestart(root string) func(string) (func(), error) {
 				err = exec(nil)
 			}
 			if err != nil {
-				a.logger.Error("无法启动更新后的二进制", zap.Error(err))
+				a.logger.Error("Failed to start the updated binary", zap.Error(err))
 				_ = a.logger.Sync()
 				os.Exit(1)
 			}

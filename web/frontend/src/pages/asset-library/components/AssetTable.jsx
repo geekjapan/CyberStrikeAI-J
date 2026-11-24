@@ -1,4 +1,4 @@
-/** 资产库表格：7 列以内，长字段截断，行内查看/编辑/删除。 */
+/** Asset library table: at most 7 columns, long fields truncated, inline view/edit/delete. */
 import { Button, Space, Typography } from '@douyinfe/semi-ui';
 import { formatDateTime } from '../../../lib/format';
 import { useT } from '../../../lib/i18n';
@@ -16,18 +16,18 @@ export default function AssetTable({
 
     const handleDelete = record => {
         confirmAction({
-            title: t('assets.deleteConfirm', null, '确定删除该资产吗？'),
+            title: t('assets.deleteConfirm', null, 'Delete this asset?'),
             content: assetTargetLabel(record),
-            okText: t('common.delete', null, '删除'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: () => {
-                Promise.resolve(onDelete(record)).catch(error => toastError(error, t('assets.deleteFailed', null, '删除资产失败')));
+                Promise.resolve(onDelete(record)).catch(error => toastError(error, t('assets.deleteFailed', null, 'Failed to delete asset')));
             }
         });
     };
 
     const columns = [
         {
-            title: t('assets.target', null, '目标'),
+            title: t('assets.target', null, 'Target'),
             dataIndex: 'host',
             width: 260,
             render: (_, record) => (
@@ -40,25 +40,25 @@ export default function AssetTable({
             )
         },
         {
-            title: t('assets.service', null, '服务'),
+            title: t('assets.service', null, 'Service'),
             dataIndex: 'protocol',
             width: 150,
             render: (_, record) => <ProtocolTag protocol={record.protocol} port={record.port} />
         },
         {
-            title: t('assets.project', null, '所属项目'),
+            title: t('assets.project', null, 'Project'),
             dataIndex: 'project_name',
             width: 160,
-            render: (value, record) => <TooltipText text={value || record.project_id || t('assets.scopeUnassigned', null, '未归属项目')} max={18} />
+            render: (value, record) => <TooltipText text={value || record.project_id || t('assets.scopeUnassigned', null, 'Unassigned assets')} max={18} />
         },
         {
-            title: t('assets.source', null, '来源'),
+            title: t('assets.source', null, 'Source'),
             dataIndex: 'source',
             width: 120,
             render: value => <TooltipText text={value} max={14} />
         },
         {
-            title: t('assets.riskLevel', null, '风险等级'),
+            title: t('assets.riskLevel', null, 'Risk'),
             dataIndex: 'risk_level',
             width: 150,
             render: (_, record) => (
@@ -69,28 +69,28 @@ export default function AssetTable({
             )
         },
         {
-            title: t('assets.lastSeen', null, '最近发现'),
+            title: t('assets.lastSeen', null, 'Last seen'),
             dataIndex: 'last_seen_at',
             width: 170,
             render: value => <Text size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 190,
             render: (_, record) => (
                 <Space spacing={4}>
                     <Button theme="borderless" size="small" onClick={() => onView(record)}>
-                        {t('common.view', null, '查看')}
+                        {t('common.view', null, 'View')}
                     </Button>
                     {canWrite && (
                         <Button theme="borderless" size="small" onClick={() => onEdit(record)}>
-                            {t('common.edit', null, '编辑')}
+                            {t('common.edit', null, 'Edit')}
                         </Button>
                     )}
                     {canDelete && (
                         <Button theme="borderless" type="danger" size="small" onClick={() => handleDelete(record)}>
-                            {t('common.delete', null, '删除')}
+                            {t('common.delete', null, 'Delete')}
                         </Button>
                     )}
                 </Space>
@@ -118,7 +118,7 @@ export default function AssetTable({
                 onPageChange,
                 onPageSizeChange
             }}
-            emptyText={t('common.noData', null, '暂无数据')}
+            emptyText={t('common.noData', null, 'No data')}
         />
     );
 }

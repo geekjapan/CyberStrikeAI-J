@@ -91,12 +91,12 @@ export default function PlatformRbacPage() {
             };
             if (roleEditor.role?.id) await api.put(`/rbac/roles/${encodeURIComponent(roleEditor.role.id)}`, payload);
             else await api.post('/rbac/roles', payload);
-            toastSuccess('角色已保存');
+            toastSuccess(t('ui.platformRbac.roleSaved', null, 'Role saved'));
             setRoleEditor(null);
             roles.reload();
             metadata.reload();
         } catch (error) {
-            toastError(error, '保存角色失败');
+            toastError(error, t('ui.platformRbac.roleSaveFailed', null, 'Failed to save role'));
         } finally {
             setSaving(false);
         }
@@ -119,40 +119,40 @@ export default function PlatformRbacPage() {
             } else {
                 await api.post('/rbac/users', { ...payload, username: values.username.trim(), password: values.password });
             }
-            toastSuccess('用户已保存');
+            toastSuccess(t('ui.platformRbac.userSaved', null, 'User saved'));
             setUserEditor(null);
             users.reload();
         } catch (error) {
-            toastError(error, '保存用户失败');
+            toastError(error, t('ui.platformRbac.userSaveFailed', null, 'Failed to save user'));
         } finally {
             setSaving(false);
         }
     };
 
     const removeRole = role => confirmAction({
-        title: `删除角色「${role.name}」？`,
+        title: t('ui.platformRbac.deleteRole', { name: role.name }, 'Delete role "{{name}}"?'),
         onOk: async () => {
             await api.del(`/rbac/roles/${encodeURIComponent(role.id)}`);
-            toastSuccess('已删除');
+            toastSuccess(t('ui.platformRbac.deleted', null, 'Deleted'));
             roles.reload();
         }
     });
 
     const removeUser = user => confirmAction({
-        title: `删除用户「${user.username}」？`,
+        title: t('ui.platformRbac.deleteUser', { username: user.username }, 'Delete user "{{username}}"?'),
         onOk: async () => {
             await api.del(`/rbac/users/${encodeURIComponent(user.id)}`);
-            toastSuccess('已删除');
+            toastSuccess(t('ui.platformRbac.deleted', null, 'Deleted'));
             users.reload();
         }
     });
 
     const removeAssignment = row => confirmAction({
-        title: '删除该资源授权？',
+        title: t('ui.platformRbac.deleteGrant', null, 'Delete this resource grant?'),
         content: `${row.resourceType || ''} ${row.resourceId || ''}`,
         onOk: async () => {
             await api.del(`/rbac/resource-assignments/${encodeURIComponent(row.id)}`);
-            toastSuccess('已删除');
+            toastSuccess(t('ui.platformRbac.deleted', null, 'Deleted'));
             assignments.reload();
         }
     });
@@ -160,26 +160,26 @@ export default function PlatformRbacPage() {
     return (
         <div>
             <PageHeader
-                title={t('auth.rbacTitle', null, '平台权限')}
-                description="平台账号、角色与资源授权；角色决定接口权限键，资源授权决定可见数据范围。"
-                extra={<Button icon={<IconRefresh />} onClick={() => { roles.reload(); users.reload(); assignments.reload(); metadata.reload(); }}>刷新</Button>}
+                title={t('auth.rbacTitle', null, 'Platform Access')}
+                description={t('ui.platformRbac.description', null, 'Platform accounts, roles and resource grants. Roles determine API permission keys; resource grants determine the visible data scope.')}
+                extra={<Button icon={<IconRefresh />} onClick={() => { roles.reload(); users.reload(); assignments.reload(); metadata.reload(); }}>{t('ui.platformRbac.refresh', null, 'Refresh')}</Button>}
             />
             <Tabs type="line" activeKey={tab} onChange={setTab}>
-                <Tabs.TabPane itemKey="roles" tab={`角色权限（${roleRows.length}）`}>
+                <Tabs.TabPane itemKey="roles" tab={t('ui.platformRbac.roleTab', { count: roleRows.length }, 'Role permissions ({{count}})')}>
                     <SectionCard
-                        extra={canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setRoleEditor({ role: null, permissions: [], form: {} })}>新建角色</Button>}
+                        extra={canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setRoleEditor({ role: null, permissions: [], form: {} })}>{t('ui.platformRbac.newRole', null, 'New role')}</Button>}
                     >
                         <ErrorBanner error={roles.error} onRetry={() => roles.reload()} />
                         <DataTable
                             columns={[
-                                { title: '角色', dataIndex: 'name', render: (value, record) => <Space vertical spacing={0} align="start"><Text strong>{value}</Text><Text type="tertiary">{record.description || '—'}</Text></Space> },
-                                { title: '数据范围', dataIndex: 'scope', width: 130, render: value => (value ? <Tag size="small">{value}</Tag> : '—') },
-                                { title: '权限数', dataIndex: 'permissions', width: 100, render: value => (Array.isArray(value) ? value.length : 0) },
-                                { title: '系统内置', dataIndex: 'is_system', width: 100, render: value => (value ? <Tag size="small" color="blue">是</Tag> : '否') },
+                                { title: t('ui.platformRbac.role', null, 'Role'), dataIndex: 'name', render: (value, record) => <Space vertical spacing={0} align="start"><Text strong>{value}</Text><Text type="tertiary">{record.description || '—'}</Text></Space> },
+                                { title: t('ui.platformRbac.scope', null, 'Data scope'), dataIndex: 'scope', width: 130, render: value => (value ? <Tag size="small">{value}</Tag> : '—') },
+                                { title: t('ui.platformRbac.permissionCount', null, 'Permissions'), dataIndex: 'permissions', width: 100, render: value => (Array.isArray(value) ? value.length : 0) },
+                                { title: t('ui.platformRbac.builtIn', null, 'Built-in'), dataIndex: 'is_system', width: 100, render: value => (value ? <Tag size="small" color="blue">{t('ui.platformRbac.yes', null, 'Yes')}</Tag> : t('ui.platformRbac.no', null, 'No')) },
                                 {
-                                    title: '操作', width: 160, render: (_, record) => (
+                                    title: t('ui.platformRbac.actions', null, 'Actions'), width: 160, render: (_, record) => (
                                         <Space>
-                                            {canWrite && !record.is_system && <Button size="small" theme="borderless" icon={<IconEdit />} onClick={() => setRoleEditor({ role: record, permissions: record.permissions || [], form: {} })}>编辑</Button>}
+                                            {canWrite && !record.is_system && <Button size="small" theme="borderless" icon={<IconEdit />} onClick={() => setRoleEditor({ role: record, permissions: record.permissions || [], form: {} })}>{t('ui.platformRbac.edit', null, 'Edit')}</Button>}
                                             {canWrite && !record.is_system && <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => removeRole(record)} />}
                                         </Space>
                                     )
@@ -192,18 +192,18 @@ export default function PlatformRbacPage() {
                         />
                     </SectionCard>
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="users" tab={`平台用户（${userRows.length}）`}>
-                    <SectionCard extra={canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setUserEditor({ user: null, form: {} })}>新建用户</Button>}>
+                <Tabs.TabPane itemKey="users" tab={t('ui.platformRbac.userTab', { count: userRows.length }, 'Platform users ({{count}})')}>
+                    <SectionCard extra={canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setUserEditor({ user: null, form: {} })}>{t('ui.platformRbac.newUser', null, 'New user')}</Button>}>
                         <ErrorBanner error={users.error} onRetry={() => users.reload()} />
                         <DataTable
                             columns={[
-                                { title: '用户名', dataIndex: 'username', render: (value, record) => <Space vertical spacing={0} align="start"><Text strong>{value}</Text><Text type="tertiary">{record.display_name || '—'}</Text></Space> },
-                                { title: '角色', dataIndex: 'roles', width: 260, render: value => (Array.isArray(value) && value.length ? <Space wrap spacing={4}>{value.map(role => <Tag size="small" key={role}>{roleNames.get(role) || role}</Tag>)}</Space> : '—') },
-                                { title: '状态', dataIndex: 'enabled', width: 100, render: value => (value === false ? <Tag size="small" color="grey">停用</Tag> : <Tag size="small" color="green">启用</Tag>) },
+                                { title: t('ui.platformRbac.username', null, 'Username'), dataIndex: 'username', render: (value, record) => <Space vertical spacing={0} align="start"><Text strong>{value}</Text><Text type="tertiary">{record.display_name || '—'}</Text></Space> },
+                                { title: t('ui.platformRbac.role', null, 'Role'), dataIndex: 'roles', width: 260, render: value => (Array.isArray(value) && value.length ? <Space wrap spacing={4}>{value.map(role => <Tag size="small" key={role}>{roleNames.get(role) || role}</Tag>)}</Space> : '—') },
+                                { title: t('ui.platformRbac.status', null, 'Status'), dataIndex: 'enabled', width: 100, render: value => (value === false ? <Tag size="small" color="grey">{t('ui.platformRbac.disabled', null, 'Disabled')}</Tag> : <Tag size="small" color="green">{t('ui.platformRbac.enabled', null, 'Enabled')}</Tag>) },
                                 {
-                                    title: '操作', width: 160, render: (_, record) => (
+                                    title: t('ui.platformRbac.actions', null, 'Actions'), width: 160, render: (_, record) => (
                                         <Space>
-                                            {canWrite && <Button size="small" theme="borderless" icon={<IconEdit />} onClick={() => setUserEditor({ user: record, form: {} })}>编辑</Button>}
+                                            {canWrite && <Button size="small" theme="borderless" icon={<IconEdit />} onClick={() => setUserEditor({ user: record, form: {} })}>{t('ui.platformRbac.edit', null, 'Edit')}</Button>}
                                             {canWrite && <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => removeUser(record)} />}
                                         </Space>
                                     )
@@ -216,17 +216,17 @@ export default function PlatformRbacPage() {
                         />
                     </SectionCard>
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="assignments" tab={`资源授权（${assignmentRows.length}）`}>
-                    <SectionCard extra={canWrite && <Button theme="solid" icon={<IconPlus />} onClick={() => setGrantOpen(true)}>新增资源授权</Button>}>
+                <Tabs.TabPane itemKey="assignments" tab={t('ui.platformRbac.grantTab', { count: assignmentRows.length }, 'Resource grants ({{count}})')}>
+                    <SectionCard extra={canWrite && <Button theme="solid" icon={<IconPlus />} onClick={() => setGrantOpen(true)}>{t('ui.platformRbac.newGrant', null, 'Add resource grant')}</Button>}>
                         <ErrorBanner error={assignments.error} onRetry={() => assignments.reload()} />
                         <DataTable
                             columns={[
-                                { title: '资源类型', dataIndex: 'resourceType', width: 140, render: value => value || '—' },
-                                { title: '资源', dataIndex: 'resourceId', render: (value, record) => record.resourceLabel || value || '—' },
-                                { title: '用户', dataIndex: 'userId', render: value => userNames.get(value) || value || '—' },
-                                { title: '创建时间', dataIndex: 'createdAt', width: 180, render: value => formatDateTime(value) },
+                                { title: t('ui.platformRbac.resourceType', null, 'Resource type'), dataIndex: 'resourceType', width: 140, render: value => value || '—' },
+                                { title: t('ui.platformRbac.resource', null, 'Resource'), dataIndex: 'resourceId', render: (value, record) => record.resourceLabel || value || '—' },
+                                { title: t('ui.platformRbac.user', null, 'User'), dataIndex: 'userId', render: value => userNames.get(value) || value || '—' },
+                                { title: t('ui.platformRbac.createdAt', null, 'Created at'), dataIndex: 'createdAt', width: 180, render: value => formatDateTime(value) },
                                 {
-                                    title: '操作', width: 100, render: (_, record) => (
+                                    title: t('ui.platformRbac.actions', null, 'Actions'), width: 100, render: (_, record) => (
                                         canWrite && <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => removeAssignment(record)} />
                                     )
                                 }
@@ -248,7 +248,7 @@ export default function PlatformRbacPage() {
             )}
 
             <Drawer
-                title={roleEditor?.role ? '编辑角色' : '新建角色'}
+                title={roleEditor?.role ? t('ui.platformRbac.editRole', null, 'Edit role') : t('ui.platformRbac.newRole', null, 'New role')}
                 visible={Boolean(roleEditor)}
                 key={roleEditor?.role?.id || 'new-rbac-role'}
                 onCancel={() => setRoleEditor(null)}
@@ -265,14 +265,14 @@ export default function PlatformRbacPage() {
                             scope: roleEditor.role.scope
                         } : {}}
                     >
-                        <Form.Input field="name" label="角色名称" rules={[{ required: true, message: '请输入角色名称' }]} />
-                        <Form.Input field="description" label="描述" />
+                        <Form.Input field="name" label={t('ui.platformRbac.roleName', null, 'Role name')} rules={[{ required: true, message: t('ui.platformRbac.roleNameRequired', null, 'Enter a role name') }]} />
+                        <Form.Input field="description" label={t('ui.platformRbac.descriptionLabel', null, 'Description')} />
                         <Form.Select
                             field="scope"
-                            label="数据范围"
+                            label={t('ui.platformRbac.scope', null, 'Data scope')}
                             optionList={(metadata.data?.scopes || ['all', 'assigned', 'own']).map(item => ({ value: item, label: item }))}
                         />
-                        <Form.Slot label="权限">
+                        <Form.Slot label={t('ui.platformRbac.permissions', null, 'Permissions')}>
                             <PermissionPicker
                                 value={roleEditor.permissions}
                                 options={permissionKeys}
@@ -284,7 +284,7 @@ export default function PlatformRbacPage() {
             </Drawer>
 
             <Drawer
-                title={userEditor?.user ? '编辑用户' : '新建用户'}
+                title={userEditor?.user ? t('ui.platformRbac.editUser', null, 'Edit user') : t('ui.platformRbac.newUser', null, 'New user')}
                 visible={Boolean(userEditor)}
                 key={userEditor?.user?.id || 'new-rbac-user'}
                 onCancel={() => setUserEditor(null)}
@@ -302,11 +302,11 @@ export default function PlatformRbacPage() {
                             roles: userEditor.user.roles || []
                         } : { enabled: true, roles: [] }}
                     >
-                        <Form.Input field="username" label="用户名" disabled={Boolean(userEditor.user)} rules={[{ required: true, message: '请输入用户名' }]} />
-                        <Form.Input field="display_name" label="显示名称" />
-                        <Form.Input field="password" label={userEditor.user ? '重置密码（留空不修改）' : '密码'} mode="password" rules={userEditor.user ? [] : [{ required: true, min: 8, message: '至少 8 位' }]} />
-                        <Form.Select field="roles" label="角色" multiple optionList={roleOptions} />
-                        <Form.Slot label="启用"><Form.Switch field="enabled" /></Form.Slot>
+                        <Form.Input field="username" label={t('ui.platformRbac.username', null, 'Username')} disabled={Boolean(userEditor.user)} rules={[{ required: true, message: t('ui.platformRbac.usernameRequired', null, 'Enter a username') }]} />
+                        <Form.Input field="display_name" label={t('ui.platformRbac.displayName', null, 'Display name')} />
+                        <Form.Input field="password" label={userEditor.user ? t('ui.platformRbac.resetPassword', null, 'Reset password (leave blank to keep)') : t('ui.platformRbac.password', null, 'Password')} mode="password" rules={userEditor.user ? [] : [{ required: true, min: 8, message: t('ui.platformRbac.passwordMin', null, 'At least 8 characters') }]} />
+                        <Form.Select field="roles" label={t('ui.platformRbac.role', null, 'Role')} multiple optionList={roleOptions} />
+                        <Form.Slot label={t('ui.platformRbac.enabled', null, 'Enabled')}><Form.Switch field="enabled" /></Form.Slot>
                     </Form>
                 )}
             </Drawer>

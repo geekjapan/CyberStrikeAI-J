@@ -79,3 +79,6 @@ Thumbs.db
 desktop.ini
 .idea/
 .vscode/
+
+# Local Go build cache
+.gocache/

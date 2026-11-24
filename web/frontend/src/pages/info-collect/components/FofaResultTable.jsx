@@ -1,4 +1,4 @@
-/** 检索结果表格：目标列 + 最多 5 个可见字段 + 详情，行多选用于入库。 */
+/** Search result table: target column + up to 5 visible fields + details, multi-select rows for import. */
 import { Button, Space, Typography } from '@douyinfe/semi-ui';
 import { useT } from '../../../lib/i18n';
 import { DataTable } from '../../../components/ui';
@@ -37,7 +37,7 @@ export default function FofaResultTable({
 
     const columns = [
         {
-            title: t('assets.target', null, '目标'),
+            title: t('assets.target', null, 'Target'),
             dataIndex: '__target',
             width: 240,
             render: (_, record) => renderTarget(record, fieldList)
@@ -48,12 +48,12 @@ export default function FofaResultTable({
             render: (_, record) => renderCell(record[field])
         })),
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: '__actions',
             width: 90,
             render: (_, record) => (
                 <Button theme="borderless" size="small" onClick={() => onOpenDetail(record)}>
-                    {t('common.view', null, '详情')}
+                    {t('common.view', null, 'View')}
                 </Button>
             )
         }
@@ -72,7 +72,7 @@ export default function FofaResultTable({
                 selectedRowKeys: selectedKeys,
                 onChange: keys => onSelectionChange(keys)
             }}
-            emptyText={t('infoCollect.noResults', null, '暂无结果')}
+            emptyText={t('infoCollect.noResults', null, 'No results')}
         />
     );
 }

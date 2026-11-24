@@ -1,4 +1,4 @@
-/** MCP 状态监控：统计卡、调用趋势、工具排行、执行记录与详情。 */
+/** MCP status monitor: stat cards, call trend, tool ranking, execution records and details. */
 import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Modal, Space, TextArea } from '@douyinfe/semi-ui';
@@ -19,7 +19,7 @@ export default function McpMonitorPage() {
     const t = useT();
     const { hasPermission } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
-    // 终止走 POST /monitor/execution/:id/cancel，RBAC 要求 monitor:write；兼容按 mcp:write 授权。
+    // Cancelling goes through POST /monitor/execution/:id/cancel, RBAC requires monitor:write; mcp:write grants are also accepted.
     const canWrite = hasPermission('monitor:write') || hasPermission('mcp:write');
     const canDelete = hasPermission('monitor:delete');
 
@@ -63,7 +63,7 @@ export default function McpMonitorPage() {
     );
     const avgMs = useMemo(() => averageDurationMs(executions), [executions]);
 
-    // 监控页按旧实现定时刷新；隐藏标签页时跳过，避免无意义请求。
+    // The monitor page refreshes periodically like the old implementation; skip while the tab is hidden to avoid pointless requests.
     useInterval(() => {
         if (typeof document !== 'undefined' && document.hidden) return;
         list.reload({ silent: true });
@@ -112,17 +112,19 @@ export default function McpMonitorPage() {
 
     const requestDelete = useCallback(record => {
         confirmAction({
-            title: t('mcpMonitor.deleteExecTitle', null, '删除此执行记录'),
-            content: `确定删除 ${toolDisplayName(record.toolName) || '该'} 的执行记录？此操作不可恢复。`,
-            okText: t('common.delete', null, '删除'),
+            title: t('mcpMonitor.deleteExecTitle', null, 'Delete this execution record'),
+            content: t('ui.mcpIndex.confirmDeleteOne', {
+                name: toolDisplayName(record.toolName) || t('ui.mcpIndex.thisTool', null, 'this tool')
+            }, 'Delete the execution record of {{name}}? This action cannot be undone.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/monitor/execution/${encodeURIComponent(record.id)}`);
                     setSelected(prev => prev.filter(id => id !== record.id));
-                    toastSuccess(t('mcpMonitor.execDeleted', null, '执行记录已删除'));
+                    toastSuccess(t('mcpMonitor.execDeleted', null, 'Execution record deleted'));
                     reloadAll();
                 } catch (error) {
-                    toastError(error, t('mcpMonitor.deleteExecFailed', null, '删除执行记录失败'));
+                    toastError(error, t('mcpMonitor.deleteExecFailed', null, 'Failed to delete execution record'));
                 }
             }
         });
@@ -130,7 +132,7 @@ export default function McpMonitorPage() {
 
     const batchDelete = useCallback(async () => {
         if (!selected.length) {
-            toastWarning(t('mcpMonitor.selectExecFirst', null, '请先选择要删除的执行记录'));
+            toastWarning(t('mcpMonitor.selectExecFirst', null, 'Please select execution record(s) to delete first'));
             return;
         }
         let names = [];
@@ -140,21 +142,24 @@ export default function McpMonitorPage() {
         } catch (error) {
             names = [];
         }
-        const nameHint = names.length
-            ? `涉及工具：${names.slice(0, 3).join('、')}${names.length > 3 ? ' 等' : ''}。`
-            : '';
+        const contentText = names.length
+            ? t('ui.mcpIndex.confirmDeleteNamed', {
+                names: names.slice(0, 3).join(t('ui.mcpIndex.listSeparator', null, ', ')),
+                more: names.length > 3 ? t('ui.mcpIndex.moreSuffix', null, ' and more') : ''
+            }, 'Tools involved: {{names}}{{more}}. This action cannot be undone.')
+            : t('ui.mcpIndex.irreversible', null, 'This action cannot be undone.');
         confirmAction({
-            title: t('mcpMonitor.batchDeleteConfirm', { count: selected.length }, `确定删除选中的 ${selected.length} 条执行记录？`),
-            content: `${nameHint}此操作不可恢复。`,
-            okText: t('common.delete', null, '删除'),
+            title: t('mcpMonitor.batchDeleteConfirm', { count: selected.length }, 'Are you sure you want to delete the selected {{count}} execution record(s)? This cannot be undone.'),
+            content: contentText,
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del('/monitor/executions', { body: { ids: selected } });
-                    toastSuccess(`已删除 ${selected.length} 条执行记录`);
+                    toastSuccess(t('ui.mcpIndex.deletedCount', { count: selected.length }, 'Deleted {{count}} execution records'));
                     setSelected([]);
                     reloadAll();
                 } catch (error) {
-                    toastError(error, t('mcp.batchDeleteFailed', null, '批量删除执行记录失败'));
+                    toastError(error, t('mcp.batchDeleteFailed', null, 'Batch delete failed'));
                 }
             }
         });
@@ -172,29 +177,29 @@ export default function McpMonitorPage() {
             await api.post(`/monitor/execution/${encodeURIComponent(cancelTarget.id)}/cancel`, {
                 note: cancelNote.trim()
             });
-            toastSuccess(t('mcpDetailModal.abortSuccess', null, '已发送终止请求'));
+            toastSuccess(t('mcpDetailModal.abortSuccess', null, 'Cancellation requested; status will update when the tool returns.'));
             setCancelTarget(null);
             reloadAll();
         } catch (error) {
-            toastError(error, t('mcpDetailModal.abortFailed', null, '终止失败'));
+            toastError(error, t('mcpDetailModal.abortFailed', null, 'Failed to stop tool'));
         } finally {
             setCancelling(false);
         }
     }, [cancelNote, cancelTarget, reloadAll, t]);
 
     const description = retentionDays > 0
-        ? t('mcpMonitor.retentionHint', { days: retentionDays }, `执行记录保留 ${retentionDays} 天，失败与拦截调用单独标记。`)
-        : '统计全部 MCP 工具调用，失败与拦截调用单独标记。';
+        ? t('mcpMonitor.retentionHint', { days: retentionDays }, 'Execution records are kept for {{days}} days, then purged automatically.')
+        : t('ui.mcpIndex.statsAllCalls', null, 'Counts all MCP tool calls; failed and blocked calls are marked separately.');
 
     return (
         <div className="mcp-monitor-page">
             <PageHeader
-                title={t('mcp.monitorTitle', null, 'MCP 状态监控')}
+                title={t('mcp.monitorTitle', null, 'MCP Status Monitor')}
                 description={description}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} onClick={reloadAll} loading={list.loading || stats.loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                     </Space>
                 )}
@@ -224,16 +229,16 @@ export default function McpMonitorPage() {
             />
 
             <SectionCard
-                title={t('mcp.latestExecutions', null, '最新执行记录')}
-                description={t('mcpMonitor.emptyHint', null, '在对话或任务中调用 MCP 工具后，执行记录将显示在此处')}
+                title={t('mcp.latestExecutions', null, 'Latest executions')}
+                description={t('mcpMonitor.emptyHint', null, 'Execution records will appear here after you invoke MCP tools in chat or tasks')}
                 extra={selected.length > 0 ? (
                     <Space spacing={8}>
-                        <span className="mcp-monitor-selected">{t('mcp.selectedCount', { count: selected.length }, `已选择 ${selected.length} 项`)}</span>
+                        <span className="mcp-monitor-selected">{t('mcp.selectedCount', { count: selected.length }, '{{count}} selected')}</span>
                         <Button size="small" disabled={!canDelete} type="danger" onClick={batchDelete}>
-                            {t('mcp.deleteSelected', null, '批量删除')}
+                            {t('mcp.deleteSelected', null, 'Batch delete')}
                         </Button>
                         <Button size="small" theme="borderless" onClick={() => setSelected([])}>
-                            {t('mcpMonitor.deselectAll', null, '取消全选')}
+                            {t('mcpMonitor.deselectAll', null, 'Deselect all')}
                         </Button>
                     </Space>
                 ) : null}
@@ -267,22 +272,22 @@ export default function McpMonitorPage() {
             />
 
             <Modal
-                title={t('mcpMonitor.terminateExecution', null, '终止执行')}
+                title={t('mcpMonitor.terminateExecution', null, 'Stop')}
                 visible={Boolean(cancelTarget)}
                 confirmLoading={cancelling}
                 maskClosable={!cancelling}
-                okText={t('mcpMonitor.terminateExecution', null, '终止')}
-                cancelText={t('common.cancel', null, '取消')}
+                okText={t('mcpMonitor.terminateExecution', null, 'Stop')}
+                cancelText={t('common.cancel', null, 'Cancel')}
                 onCancel={() => setCancelTarget(null)}
                 onOk={submitCancel}
             >
                 <p className="mcp-monitor-cancel-hint">
-                    {t('mcpDetailModal.abortHint', null, '终止仅取消本次工具调用，不会停止整条对话；说明会与工具输出一起交给模型。')}
+                    {t('mcpDetailModal.abortHint', null, 'Stops only this tool call. The conversation / multi-step task continues (unlike stopping the whole task).')}
                 </p>
                 <TextArea
                     rows={4}
                     value={cancelNote}
-                    placeholder={t('mcpDetailModal.abortNotePlaceholder', null, '终止说明（可选），例如：命令执行时间过长，先终止。')}
+                    placeholder={t('mcpDetailModal.abortNotePlaceholder', null, 'e.g. Output is enough—skip waiting and continue…')}
                     onChange={value => setCancelNote(value)}
                 />
             </Modal>

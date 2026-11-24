@@ -1,4 +1,4 @@
-/** 批量编辑：PUT /assets/bulk，仅提交填写的字段，空白保持原值。 */
+/** Bulk edit: PUT /assets/bulk; only filled-in fields are submitted, blank fields keep their value. */
 import { useEffect, useMemo, useState } from 'react';
 import { Banner, Input, Select, Typography } from '@douyinfe/semi-ui';
 import { api, errorMessage } from '../../../lib/http';
@@ -46,18 +46,19 @@ export default function AssetBulkEditModal({ visible, assetIds, onClose, onDone 
         if (addTags.length) body.add_tags = addTags;
         if (removeTags.length) body.remove_tags = removeTags;
         if (Object.keys(body).length === 1) {
-            setError('请至少填写一项需要修改的内容');
+            setError(t('ui.assetBulkEdit.needOneField', null, 'Fill in at least one field to change.'));
             return;
         }
         setBusy(true);
         setError('');
         try {
             const result = await api.put('/assets/bulk', body);
-            toastSuccess(`已更新 ${Number(result?.updated || ids.length)} 个资产`);
+            const updated = Number(result?.updated || ids.length);
+            toastSuccess(t('ui.assetBulkEdit.updated', { count: updated }, 'Updated {{count}} assets'));
             onDone?.();
             onClose?.();
         } catch (submitError) {
-            setError(errorMessage(submitError, '批量编辑失败'));
+            setError(errorMessage(submitError, t('ui.assetBulkEdit.failed', null, 'Bulk edit failed')));
         } finally {
             setBusy(false);
         }
@@ -66,58 +67,58 @@ export default function AssetBulkEditModal({ visible, assetIds, onClose, onDone 
     return (
         <Drawer
             visible={visible}
-            title={t('assets.bulkEdit', null, '批量编辑')}
+            title={t('assets.bulkEdit', null, 'Bulk edit')}
             width={620}
             onCancel={onClose}
             onOk={submit}
             confirmLoading={busy}
         >
-            <Text type="tertiary">将修改 {ids.length} 个资产；空白字段保持原值。</Text>
+            <Text type="tertiary">{t('ui.assetBulkEdit.hint', { count: ids.length }, '{{count}} assets will be changed. Blank fields keep their current values.')}</Text>
             <div className="asset-library-form-grid asset-library-form-grid--bulk">
                 <Select
                     value={values.status || undefined}
-                    placeholder={t('assets.status', null, '状态')}
+                    placeholder={t('assets.status', null, 'Status')}
                     optionList={STATUS_OPTIONS}
                     showClear
                     onChange={value => patch({ status: value || '' })}
                 />
                 <Select
                     value={values.environment || undefined}
-                    placeholder={t('assets.environment', null, '环境')}
+                    placeholder={t('assets.environment', null, 'Environment')}
                     optionList={ENVIRONMENT_OPTIONS}
                     showClear
                     onChange={value => patch({ environment: value || '' })}
                 />
                 <Select
                     value={values.criticality || undefined}
-                    placeholder={t('assets.criticality', null, '重要性')}
+                    placeholder={t('assets.criticality', null, 'Criticality')}
                     optionList={CRITICALITY_OPTIONS}
                     showClear
                     onChange={value => patch({ criticality: value || '' })}
                 />
                 <Input
                     value={values.responsible_person}
-                    placeholder={t('assets.responsiblePerson', null, '负责人')}
+                    placeholder={t('assets.responsiblePerson', null, 'Owner')}
                     onChange={value => patch({ responsible_person: value })}
                 />
                 <Input
                     value={values.department}
-                    placeholder={t('assets.department', null, '部门')}
+                    placeholder={t('assets.department', null, 'Department')}
                     onChange={value => patch({ department: value })}
                 />
                 <Input
                     value={values.business_system}
-                    placeholder={t('assets.businessSystem', null, '业务系统')}
+                    placeholder={t('assets.businessSystem', null, 'Business system')}
                     onChange={value => patch({ business_system: value })}
                 />
                 <Input
                     value={values.add_tags}
-                    placeholder="追加标签（逗号分隔）"
+                    placeholder={t('ui.assetBulkEdit.addTagsPlaceholder', null, 'Tags to add (comma-separated)')}
                     onChange={value => patch({ add_tags: value })}
                 />
                 <Input
                     value={values.remove_tags}
-                    placeholder="移除标签（逗号分隔）"
+                    placeholder={t('ui.assetBulkEdit.removeTagsPlaceholder', null, 'Tags to remove (comma-separated)')}
                     onChange={value => patch({ remove_tags: value })}
                 />
             </div>

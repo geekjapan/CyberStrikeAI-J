@@ -20,8 +20,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// registerC2Tools 注册所有 C2 MCP 工具（合并同类项，减少工具数量以节省上下文 token）。
-// webListenPort 为本进程 Web/API 监听端口（配置 server.port，启动时已加载），用于 MCP 描述中提示勿与 C2 bind_port 冲突。
+// registerC2Tools registers all C2 MCP tools (merges similar items to reduce the tool count and save context tokens).
+// webListenPort is this process's Web/API listening port (server.port from config, loaded at startup); used in the MCP description to warn not to conflict with C2 bind_port.
 func registerC2Tools(mcpServer *mcp.Server, c2Manager *c2.Manager, logger *zap.Logger, webListenPort int) {
 	registerC2ListenerTool(mcpServer, c2Manager, logger, webListenPort)
 	registerC2SessionTool(mcpServer, c2Manager, logger)
@@ -48,7 +48,7 @@ func makeC2Result(data interface{}, err error) (*mcp.ToolResult, error) {
 }
 
 // ============================================================================
-// c2_listener — 监听器统一工具
+// c2_listener - unified listener tool
 // ============================================================================
 
 func registerC2ListenerTool(s *mcp.Server, m *c2.Manager, l *zap.Logger, webListenPort int) {
@@ -231,7 +231,7 @@ tcp_reverse 默认仅接受 CSB1 加密 Beacon（AES-GCM + ImplantToken）才登
 }
 
 // ============================================================================
-// c2_session — 会话统一工具
+// c2_session - unified session tool
 // ============================================================================
 
 func registerC2SessionTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -341,7 +341,7 @@ func registerC2SessionTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
 }
 
 // ============================================================================
-// c2_task — 任务下发统一工具（合并所有 task 类型）
+// c2_task - unified task dispatch tool (merges all task types)
 // ============================================================================
 
 func registerC2TaskTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -438,7 +438,7 @@ func registerC2TaskTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
 }
 
 // ============================================================================
-// c2_task_manage — 任务管理工具（查询/等待/取消）
+// c2_task_manage - task management tool (query/wait/cancel)
 // ============================================================================
 
 func registerC2TaskManageTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -526,7 +526,7 @@ func registerC2TaskManageTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
 }
 
 // ============================================================================
-// c2_payload — Payload 统一工具
+// c2_payload - unified Payload tool
 // ============================================================================
 
 func registerC2PayloadTool(s *mcp.Server, m *c2.Manager, l *zap.Logger, webListenPort int) {
@@ -581,7 +581,7 @@ func registerC2PayloadTool(s *mcp.Server, m *c2.Manager, l *zap.Logger, webListe
 				for i, k := range compatible {
 					names[i] = string(k)
 				}
-				return makeC2Result(nil, fmt.Errorf("监听器类型 %s 不支持 %s，兼容类型: %v", listener.Type, kind, names))
+				return makeC2Result(nil, fmt.Errorf("Listener type %s does not support %s; compatible types: %v", listener.Type, kind, names))
 			}
 			if err := c2.ValidateOnelinerForListener(listener, kind); err != nil {
 				return makeC2Result(nil, err)
@@ -634,7 +634,7 @@ func registerC2PayloadTool(s *mcp.Server, m *c2.Manager, l *zap.Logger, webListe
 }
 
 // ============================================================================
-// c2_event — 事件查询工具
+// c2_event - event query tool
 // ============================================================================
 
 func registerC2EventTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -683,7 +683,7 @@ func c2ToolAccess(ctx context.Context) database.RBACListAccess {
 }
 
 // ============================================================================
-// c2_profile — Malleable Profile 管理工具（新增）
+// c2_profile - Malleable Profile management tool (new)
 // ============================================================================
 
 func registerC2ProfileTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -835,7 +835,7 @@ func registerC2ProfileTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
 }
 
 // ============================================================================
-// c2_file — 文件管理工具（新增）
+// c2_file - file management tool (new)
 // ============================================================================
 
 func registerC2FileTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
@@ -890,7 +890,7 @@ func registerC2FileTool(s *mcp.Server, m *c2.Manager, l *zap.Logger) {
 }
 
 // ============================================================================
-// 工具函数
+// Utility functions
 // ============================================================================
 
 func getString(params map[string]interface{}, key string) string {

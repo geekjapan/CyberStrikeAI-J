@@ -63,7 +63,7 @@ func TestEnsureSchemaCancelsPendingInterruptsAfterRestart(t *testing.T) {
 		Scan(&content, &updatedAt); err != nil {
 		t.Fatalf("query reconciled assistant message: %v", err)
 	}
-	if content != "任务因服务重启已中断，审批已取消。" {
+	if content != "Task interrupted by a service restart; approval cancelled." {
 		t.Fatalf("assistant content=%q, want restart interruption notice", content)
 	}
 	if !updatedAt.Valid {
@@ -94,11 +94,11 @@ func TestEnsureSchemaFinalizesOnlyHistoricalPlaceholdersWithTerminalEvidence(t *
 	if err != nil {
 		t.Fatalf("create superseded conversation: %v", err)
 	}
-	superseded, err := db.AddMessage(supersededConversation.ID, "assistant", "处理中...", nil)
+	superseded, err := db.AddMessage(supersededConversation.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("create superseded placeholder: %v", err)
 	}
-	later, err := db.AddMessage(supersededConversation.ID, "user", "继续", nil)
+	later, err := db.AddMessage(supersededConversation.ID, "user", "continue", nil)
 	if err != nil {
 		t.Fatalf("create later message: %v", err)
 	}
@@ -113,7 +113,7 @@ func TestEnsureSchemaFinalizesOnlyHistoricalPlaceholdersWithTerminalEvidence(t *
 	if err != nil {
 		t.Fatalf("create timeout conversation: %v", err)
 	}
-	timedOut, err := db.AddMessage(timeoutConversation.ID, "assistant", "处理中...", nil)
+	timedOut, err := db.AddMessage(timeoutConversation.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("create timeout placeholder: %v", err)
 	}
@@ -128,7 +128,7 @@ func TestEnsureSchemaFinalizesOnlyHistoricalPlaceholdersWithTerminalEvidence(t *
 	if err != nil {
 		t.Fatalf("create rejected conversation: %v", err)
 	}
-	rejected, err := db.AddMessage(rejectedConversation.ID, "assistant", "处理中...", nil)
+	rejected, err := db.AddMessage(rejectedConversation.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("create rejected placeholder: %v", err)
 	}
@@ -143,11 +143,11 @@ func TestEnsureSchemaFinalizesOnlyHistoricalPlaceholdersWithTerminalEvidence(t *
 	if err != nil {
 		t.Fatalf("create active conversation: %v", err)
 	}
-	earlier, err := db.AddMessage(activeConversation.ID, "user", "开始", nil)
+	earlier, err := db.AddMessage(activeConversation.ID, "user", "Start", nil)
 	if err != nil {
 		t.Fatalf("create preceding message: %v", err)
 	}
-	potentiallyActive, err := db.AddMessage(activeConversation.ID, "assistant", "处理中...", nil)
+	potentiallyActive, err := db.AddMessage(activeConversation.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("create potentially active placeholder: %v", err)
 	}
@@ -177,15 +177,15 @@ func TestEnsureSchemaFinalizesOnlyHistoricalPlaceholdersWithTerminalEvidence(t *
 			t.Fatalf("message %s event=%q, want %q", messageID, eventType, wantEvent)
 		}
 	}
-	assertTerminal(superseded.ID, "任务因服务重启已中断。", "cancelled")
-	assertTerminal(timedOut.ID, "任务等待审批超时，已自动拒绝。", "timeout")
-	assertTerminal(rejected.ID, "任务审批已拒绝，执行已停止。", "cancelled")
+	assertTerminal(superseded.ID, "Task interrupted by a service restart.", "cancelled")
+	assertTerminal(timedOut.ID, "Task timed out waiting for approval and was rejected automatically.", "timeout")
+	assertTerminal(rejected.ID, "Task approval was rejected and execution was stopped.", "cancelled")
 
 	var activeContent string
 	if err := db.QueryRow(`SELECT content FROM messages WHERE id = ?`, potentiallyActive.ID).Scan(&activeContent); err != nil {
 		t.Fatalf("query potentially active message: %v", err)
 	}
-	if activeContent != "处理中..." {
+	if activeContent != "Processing..." {
 		t.Fatalf("potentially active message was rewritten to %q", activeContent)
 	}
 	var terminalCount int

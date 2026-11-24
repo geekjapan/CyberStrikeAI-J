@@ -1,4 +1,4 @@
-/** 新建/编辑资产：Form + 目标自动解析（host/ip/domain/port/protocol 联动）。 */
+/** Create/edit asset: Form plus automatic target parsing (host/ip/domain/port/protocol linked). */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Banner, Button, Form, Space } from '@douyinfe/semi-ui';
 import { api, errorMessage } from '../../../lib/http';
@@ -124,8 +124,8 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
 
     const buildCreatedAssets = () => {
         const targets = splitAssetTargets(formApi.getValue('targets'));
-        if (!targets.length) throw new Error(t('assets.targetRequired', null, '请输入资产地址'));
-        if (targets.length > 200) throw new Error('一次最多添加 200 个地址');
+        if (!targets.length) throw new Error(t('assets.targetRequired', null, 'Enter an asset address'));
+        if (targets.length > 200) throw new Error(t('ui.assetEditor.maxTargets', null, 'You can add up to 200 addresses at a time'));
         const projectID = fixedProject ? defaultProjectId : formApi.getValue('project_id') || '';
         return targets.map(target => {
             const parsed = parseAssetTarget(target);
@@ -164,7 +164,7 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
         try {
             if (editing) {
                 await api.put(`/assets/${encodeURIComponent(asset.id)}`, payload);
-                toastSuccess(t('assets.updatedSuccessfully', null, '资产已更新'));
+                toastSuccess(t('assets.updatedSuccessfully', null, 'Asset updated'));
             } else {
                 const result = await api.post('/assets/import', {
                     assets: createdAssets,
@@ -174,18 +174,18 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                 const updated = Number(result?.updated || 0);
                 const skipped = Number(result?.skipped || 0);
                 if (!created && !updated && skipped) {
-                    throw new Error(t('assets.assetSkipped', null, '资产未保存，可能已存在且你没有更新权限'));
+                    throw new Error(t('assets.assetSkipped', null, 'Asset was not saved; it may exist without update permission'));
                 }
                 const parts = [];
-                if (created) parts.push(`新增 ${created}`);
-                if (updated) parts.push(`合并 ${updated}`);
-                if (skipped) parts.push(`跳过 ${skipped}`);
-                toastSuccess(parts.length ? `已写入资产库：${parts.join('，')}` : t('assets.createdSuccessfully', null, '资产已添加'));
+                if (created) parts.push(t('ui.assetEditor.partCreated', { count: created }, '{{count}} added'));
+                if (updated) parts.push(t('ui.assetEditor.partMerged', { count: updated }, '{{count}} merged'));
+                if (skipped) parts.push(t('ui.assetEditor.partSkipped', { count: skipped }, '{{count}} skipped'));
+                toastSuccess(parts.length ? t('ui.assetEditor.written', { parts: parts.join(t('ui.assetEditor.listSeparator', null, '，')) }, 'Saved to the asset library: {{parts}}') : t('assets.createdSuccessfully', null, ', '));
             }
             onSaved?.();
             onClose?.();
         } catch (submitError) {
-            setError(errorMessage(submitError, t('assets.saveFailed', null, '保存资产失败')));
+            setError(errorMessage(submitError, t('assets.saveFailed', null, 'Failed to save asset')));
         } finally {
             setBusy(false);
         }
@@ -194,11 +194,11 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
     return (
         <Drawer
             visible={visible}
-            title={editing ? t('assets.editAssetTitle', null, '编辑资产') : t('assets.addAssetTitle', null, '新增资产')}
+            title={editing ? t('assets.editAssetTitle', null, 'Edit asset') : t('assets.addAssetTitle', null, 'Add asset')}
             width={editing ? 760 : 520}
             onCancel={onClose}
             onOk={submit}
-            okText={editing ? t('common.save', null, '保存') : t('assets.addAssetAction', null, '添加资产')}
+            okText={editing ? t('common.save', null, 'Save') : t('assets.addAssetAction', null, 'Add asset')}
             confirmLoading={busy}
             closeOnEsc
         >
@@ -215,16 +215,16 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                     <>
                         <Form.TextArea
                             field="targets"
-                            label={t('assets.assetAddress', null, '资产地址')}
+                            label={t('assets.assetAddress', null, 'Asset address')}
                             rows={8}
                             placeholder={'https://example.com/login\nexample.com:443\n1.1.1.1:22'}
-                            helpText="每行一个，或用空格、逗号隔开。直接粘贴 URL、域名或 IP:端口。"
+                            helpText={t('ui.assetEditor.targetsHelp', null, 'One per line, or separated by spaces or commas. Paste URLs, domains, or IP:port directly.')}
                             rules={[{
                                 required: true,
                                 validator: (rule, value, callback) => {
                                     const targets = splitAssetTargets(value);
                                     if (!targets.length) {
-                                        callback(new Error(t('assets.targetRequired', null, '请输入资产地址')));
+                                        callback(new Error(t('assets.targetRequired', null, 'Enter an asset address')));
                                         return;
                                     }
                                     for (const target of targets) {
@@ -241,12 +241,12 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                         />
                         <Form.Select
                             field="project_id"
-                            label={t('assets.project', null, '所属项目')}
+                            label={t('assets.project', null, 'Project')}
                             optionList={projectOptions}
                             disabled={fixedProject}
                             filter
                             showClear={!fixedProject}
-                            placeholder={t('assets.unboundProject', null, '暂不绑定')}
+                            placeholder={t('assets.unboundProject', null, 'Not bound')}
                             style={{ width: '100%' }}
                         />
                     </>
@@ -255,12 +255,12 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                         <div className="asset-library-form-grid asset-library-form-grid--full">
                             <Form.Input
                                 field="target"
-                                label={t('assets.assetAddress', null, '资产地址')}
+                                label={t('assets.assetAddress', null, 'Asset address')}
                                 placeholder="https://example.com:443 / example.com / 1.1.1.1:22"
-                                helpText={t('assets.assetAddressHint', null, '可识别的 URL、域名、IP 和端口会自动解析')}
+                                helpText={t('assets.assetAddressHint', null, 'Any non-empty target is accepted; recognized URLs, domains, IPs, and ports are parsed automatically')}
                                 onBlur={() => applyTarget(true)}
                                 rules={[
-                                    { required: true, message: t('assets.targetRequired', null, '请输入资产地址') },
+                                    { required: true, message: t('assets.targetRequired', null, 'Enter an asset address') },
                                     {
                                         validator: (rule, value, callback) => {
                                             try {
@@ -275,80 +275,80 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                             />
                         </div>
                         <div className="asset-library-form-grid">
-                            <Form.Input field="host" label={t('assets.hostUrl', null, '完整 URL / Host')} />
+                            <Form.Input field="host" label={t('assets.hostUrl', null, 'Full URL / Host')} />
                             <Form.Input
                                 field="ip"
                                 label="IP"
                                 rules={[{
                                     validator: (rule, value, callback) => {
                                         if (!value || isIPv4(value) || isIPv6(value)) callback();
-                                        else callback(new Error(t('assets.ipInvalid', null, 'IP 地址格式无效')));
+                                        else callback(new Error(t('assets.ipInvalid', null, 'Invalid IP address')));
                                     }
                                 }]}
                             />
                             <Form.Input
                                 field="domain"
-                                label={t('assets.domain', null, '域名')}
+                                label={t('assets.domain', null, 'Domain')}
                                 rules={[{
                                     validator: (rule, value, callback) => {
                                         if (!value || (normalizeDomain(value) && !isIPv4(value) && !isIPv6(value))) callback();
-                                        else callback(new Error(t('assets.domainInvalid', null, '域名格式无效')));
+                                        else callback(new Error(t('assets.domainInvalid', null, 'Invalid domain')));
                                     }
                                 }]}
                             />
                             <Form.InputNumber
                                 field="port"
-                                label={t('assets.port', null, '端口')}
+                                label={t('assets.port', null, 'Port')}
                                 min={0}
                                 max={65535}
                                 style={{ width: '100%' }}
                             />
                             <Form.Input
                                 field="protocol"
-                                label={t('assets.protocol', null, '协议')}
+                                label={t('assets.protocol', null, 'Protocol')}
                                 rules={[{
                                     validator: (rule, value, callback) => {
                                         if (!value || /^[a-z][a-z0-9+.-]{0,31}$/.test(String(value).toLowerCase())) callback();
-                                        else callback(new Error(t('assets.protocolInvalid', null, '协议格式无效')));
+                                        else callback(new Error(t('assets.protocolInvalid', null, 'Invalid protocol')));
                                     }
                                 }]}
                             />
-                            <Form.Input field="title" label={t('assets.pageTitle', null, '页面标题')} />
-                            <Form.Input field="server" label={t('assets.serverProduct', null, '服务 / 产品')} />
+                            <Form.Input field="title" label={t('assets.pageTitle', null, 'Page title')} />
+                            <Form.Input field="server" label={t('assets.serverProduct', null, 'Service / product')} />
                             <Form.Select
                                 field="project_id"
-                                label={t('assets.project', null, '所属项目')}
+                                label={t('assets.project', null, 'Project')}
                                 optionList={projectOptions}
                                 filter
                                 showClear
-                                placeholder={t('assets.unboundProject', null, '暂不绑定')}
+                                placeholder={t('assets.unboundProject', null, 'Not bound')}
                             />
-                            <Form.Select field="status" label={t('assets.status', null, '状态')} optionList={STATUS_OPTIONS} />
+                            <Form.Select field="status" label={t('assets.status', null, 'Status')} optionList={STATUS_OPTIONS} />
                             <Form.Select
                                 field="environment"
-                                label={t('assets.environment', null, '环境')}
+                                label={t('assets.environment', null, 'Environment')}
                                 optionList={ENVIRONMENT_OPTIONS}
                                 showClear
                                 placeholder="—"
                             />
                             <Form.Select
                                 field="criticality"
-                                label={t('assets.criticality', null, '重要性')}
+                                label={t('assets.criticality', null, 'Criticality')}
                                 optionList={CRITICALITY_OPTIONS}
                                 showClear
                                 placeholder="—"
                             />
-                            <Form.Input field="country" label={t('assets.country', null, '国家/地区')} />
-                            <Form.Input field="province" label={t('assets.province', null, '省份/州')} />
-                            <Form.Input field="city" label={t('assets.city', null, '城市')} />
-                            <Form.Input field="responsible_person" label={t('assets.responsiblePerson', null, '负责人')} />
-                            <Form.Input field="department" label={t('assets.department', null, '部门')} />
-                            <Form.Input field="business_system" label={t('assets.businessSystem', null, '业务系统')} />
+                            <Form.Input field="country" label={t('assets.country', null, 'Country / region')} />
+                            <Form.Input field="province" label={t('assets.province', null, 'Province / state')} />
+                            <Form.Input field="city" label={t('assets.city', null, 'City')} />
+                            <Form.Input field="responsible_person" label={t('assets.responsiblePerson', null, 'Owner')} />
+                            <Form.Input field="department" label={t('assets.department', null, 'Department')} />
+                            <Form.Input field="business_system" label={t('assets.businessSystem', null, 'Business system')} />
                         </div>
                         <Form.TagInput
                             field="tags"
-                            label={t('assets.tagsLabel', null, '标签')}
-                            placeholder={t('assets.tagsPlaceholder', null, '输入后按回车或逗号')}
+                            label={t('assets.tagsLabel', null, 'Tags')}
+                            placeholder={t('assets.tagsPlaceholder', null, 'Press Enter or comma to add')}
                             max={30}
                             maxLength={64}
                             addOnBlur
@@ -357,7 +357,7 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                         />
                         <Space className="asset-library-editor-actions">
                             <Button theme="borderless" onClick={() => applyTarget(true)}>
-                                {t('assets.parseTarget', null, '解析资产地址')}
+                                {t('assets.parseTarget', null, 'Parse asset address')}
                             </Button>
                         </Space>
                     </>

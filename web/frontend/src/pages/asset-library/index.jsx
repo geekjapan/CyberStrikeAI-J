@@ -1,4 +1,4 @@
-/** 资产库：筛选、分页、行内操作、详情、新建/编辑、批量、导入、合并、绑定项目、导出。 */
+/** Asset library: filters, pagination, row actions, details, create/edit, bulk edit, import, merge, project binding, export. */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { Banner, Button, Space, Typography } from '@douyinfe/semi-ui';
@@ -110,7 +110,7 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
     const total = error ? 0 : Number(data?.total || 0);
     const queryPending = loading || debouncedFilters !== filters;
     const scopeOptions = [
-        { value: 'all', label: t('assets.scopeAll', null, '全部资产') },
+        { value: 'all', label: t('assets.scopeAll', null, 'All assets') },
         ...projects.map(project => ({ value: `project:${project.id}`, label: project.name || project.id }))
     ];
     if (projectId && !scopeOptions.some(option => option.value === scope)) {
@@ -149,7 +149,7 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
             }
             if (!cancelled) resolvedDeep.current = deepId;
         })().catch(detailError => {
-            if (!cancelled) toastError(detailError, t('assets.loadFailed', null, '加载资产失败'));
+            if (!cancelled) toastError(detailError, t('assets.loadFailed', null, 'Failed to load assets'));
         });
         return () => { cancelled = true; };
     }, [assets, canRead, deepId, linkedAsset, scopeQuery, t]);
@@ -218,7 +218,7 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
 
     const deleteAsset = async asset => {
         await api.del(`/assets/${encodeURIComponent(asset.id)}`);
-        toastSuccess(t('assets.deleted', null, '资产已删除'));
+        toastSuccess(t('assets.deleted', null, 'Asset deleted'));
         if (detailAsset?.id === asset.id) closeDetail();
         await afterWrite();
     };
@@ -227,19 +227,20 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
         const ids = selection.keys;
         if (!ids.length) return;
         confirmAction({
-            title: t('assets.deleteConfirm', null, '确定删除所选资产吗？'),
+            title: t('assets.deleteConfirm', null, 'Delete this asset?'),
             content: t('assets.scopedDeleteConfirm', {
                 count: ids.length,
-                project: selection.rows[0]?.project_name || selection.rows[0]?.project_id || t('assets.scopeUnassigned', null, '未归属项目')
-            }, `将永久删除所选的 ${ids.length} 个资产。`),
-            okText: t('common.delete', null, '删除'),
+                project: selection.rows[0]?.project_name || selection.rows[0]?.project_id || t('assets.scopeUnassigned', null, 'Unassigned assets')
+            }, 'Permanently delete {{count}} selected assets from “{{project}}”?'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     const result = await api.post('/assets/batch-delete', { asset_ids: ids });
-                    toastSuccess(`已删除 ${Number(result?.deleted || ids.length)} 个资产`);
+                    const deleted = Number(result?.deleted || ids.length);
+                    toastSuccess(t('ui.assetLibrary.deleted', { count: deleted }, 'Deleted {{count}} assets'));
                     await afterWrite();
                 } catch (deleteError) {
-                    toastError(deleteError, '批量删除失败');
+                    toastError(deleteError, t('ui.assetLibrary.batchDeleteFailed', null, 'Bulk delete failed'));
                 }
             }
         });
@@ -257,9 +258,9 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
             if (revision !== selectionRevision.current) return;
             const rows = Array.isArray(payload?.assets) ? payload.assets : [];
             setSelection({ keys: rows.map(item => item.id), rows });
-            toastSuccess(t('assets.allResultsSelected', { count: rows.length }, `已选择 ${rows.length} 项`));
+            toastSuccess(t('assets.allResultsSelected', { count: rows.length }, 'All {{count}} matching assets selected'));
         } catch (selectionError) {
-            if (revision === selectionRevision.current) toastError(selectionError, '选择全部结果失败');
+            if (revision === selectionRevision.current) toastError(selectionError, t('ui.assetLibrary.selectAllFailed', null, 'Failed to select all results'));
         }
     };
 
@@ -275,14 +276,14 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
                 rows = assets;
             }
             if (!rows.length) {
-                toastWarning('没有可导出的资产');
+                toastWarning(t('ui.assetLibrary.nothingToExport', null, 'No assets to export'));
                 return;
             }
             const stamp = new Date().toISOString().slice(0, 10);
             downloadTextFile(`assets-${stamp}.csv`, assetsToCsv(rows));
-            toastSuccess(`已导出 ${rows.length} 个资产`);
+            toastSuccess(t('ui.assetLibrary.exported', { count: rows.length }, 'Exported {{count}} assets'));
         } catch (exportError) {
-            toastError(exportError, '导出失败');
+            toastError(exportError, t('ui.assetLibrary.exportFailed', null, 'Export failed'));
         } finally {
             setExporting(false);
         }
@@ -300,12 +301,12 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
     if (!canRead) {
         return (
             <div className="asset-library-page">
-                <PageHeader title={t('assets.libraryTitle', null, '资产库')} description="资产列表、批量操作与导入需要资产读取权限。" />
+                <PageHeader title={t('assets.libraryTitle', null, 'Asset Library')} description={t('ui.assetLibrary.readHint', null, 'The asset list, bulk actions, and import require asset read permission.')} />
                 <Banner
                     type="warning"
                     bordered
                     closeIcon={null}
-                    description={t('assets.readDenied', null, '当前账号没有 asset:read 权限，无法读取资产库；请联系管理员授权。')}
+                    description={t('assets.readDenied', null, 'The current account lacks the asset:read permission and cannot read asset data. Contact an administrator for access.')}
                 />
             </div>
         );
@@ -314,26 +315,26 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
     return (
         <div className="asset-library-page">
             <PageHeader
-                title={t('assets.libraryTitle', null, '资产库')}
+                title={t('assets.libraryTitle', null, 'Asset Library')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} onClick={refresh} loading={loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         {canWrite && (
                             <Button icon={<IconCloudUploadStroked />} onClick={() => setImportOpen(true)}>
-                                {t('assets.bulkImport', null, '批量导入')}
+                                {t('assets.bulkImport', null, 'Bulk import')}
                             </Button>
                         )}
                         {canWrite && (
                             <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => openEditor(null)}>
-                                {t('assets.addAsset', null, '新增资产')}
+                                {t('assets.addAsset', null, 'Add asset')}
                             </Button>
                         )}
                     </Space>
                 )}
             />
-            <SectionCard title={t('assets.filterTitle', null, '筛选条件')}>
+            <SectionCard title={t('assets.filterTitle', null, 'Filters')}>
                 <AssetFilterBar
                     scope={{ value: scope, options: scopeOptions, loading: projectsLoading, onChange: changeScope }}
                     filters={filters}
@@ -353,13 +354,13 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
                             disabled={!selectedCount}
                             onClick={clearSelection}
                         >
-                            {t('assets.clearSelection', null, '清除选择')}
+                            {t('assets.clearSelection', null, 'Clear selection')}
                         </Button>
                         <Button theme="borderless" disabled={queryPending || !total} onClick={() => exportCsv(false)} loading={exporting}>
-                            {t('assets.exportCsv', null, '导出 CSV')}
+                            {t('assets.exportCsv', null, 'Export CSV')}
                         </Button>
                         <Button theme="borderless" disabled={queryPending || !total} onClick={() => exportCsv(true)} loading={exporting}>
-                            {t('assets.exportAll', null, '导出全部筛选结果')}
+                            {t('assets.exportAll', null, 'Export all filtered results')}
                         </Button>
                     </Space>
                 )}
@@ -368,39 +369,39 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
                     <Space>
                         <Text type="tertiary">
                             {selectedCount
-                                ? t('assets.selectedCount', { count: selectedCount }, `已选择 ${selectedCount} 项`)
-                                : t('assets.selectedCount', { count: 0 }, '已选择 0 项')}
+                                ? t('assets.selectedCount', { count: selectedCount }, '{{count}} selected')
+                                : t('assets.selectedCount', { count: 0 }, '{{count}} selected')}
                         </Text>
                         <Button theme="borderless" size="small" disabled={queryPending || !total} onClick={selectAllMatching}>
-                            {t('assets.selectAllResults', { count: total }, `选择全部 ${total} 项`)}
+                            {t('assets.selectAllResults', { count: total }, 'Select all {{count}}')}
                         </Button>
                     </Space>
                     <Space>
                         {canWrite && (
                             <Button size="small" disabled={!canChangeSelection || selectedCount < 2 || !canDelete} onClick={() => setMergeOpen(true)}>
-                                {t('assets.mergeDuplicates', null, '合并重复资产')}
+                                {t('assets.mergeDuplicates', null, 'Merge duplicates')}
                             </Button>
                         )}
                         {canWrite && (
                             <Button size="small" disabled={!canChangeSelection} onClick={() => setProjectOpen(true)}>
-                                {t('assets.bindProject', null, '绑定项目')}
+                                {t('assets.bindProject', null, 'Bind project')}
                             </Button>
                         )}
                         {canWrite && (
                             <Button size="small" disabled={!canChangeSelection} onClick={() => setBulkOpen(true)}>
-                                {t('assets.bulkEdit', null, '批量编辑')}
+                                {t('assets.bulkEdit', null, 'Bulk edit')}
                             </Button>
                         )}
                         {canDelete && (
                             <Button size="small" type="danger" disabled={!canChangeSelection} onClick={batchDelete}>
-                                {t('assets.batchDelete', null, '批量删除…')}
+                                {t('assets.batchDelete', null, 'Bulk delete…')}
                             </Button>
                         )}
                     </Space>
                 </div>
                 {mixedProjects && (canWrite || canDelete) && (
                     <Text type="tertiary" size="small">
-                        {t('assets.mixedProjectSelection', null, '批量修改前，请将选择缩小到同一项目或仅选择未归属资产。')}
+                        {t('assets.mixedProjectSelection', null, 'Select assets from one project or only unassigned assets to make bulk changes.')}
                     </Text>
                 )}
 
@@ -430,10 +431,10 @@ function AssetLibraryWorkspace({ projectId, scope, projectResource, linkedAsset,
                 onEdit={asset => { closeDetail(); openEditor(asset); }}
                 onDelete={asset => {
                     confirmAction({
-                        title: t('assets.deleteConfirm', null, '确定删除该资产吗？'),
+                        title: t('assets.deleteConfirm', null, 'Delete this asset?'),
                         content: asset.host || asset.domain || asset.ip,
-                        okText: t('common.delete', null, '删除'),
-                        onOk: () => deleteAsset(asset).catch(deleteError => toastError(deleteError, t('assets.deleteFailed', null, '删除资产失败')))
+                        okText: t('common.delete', null, 'Delete'),
+                        onOk: () => deleteAsset(asset).catch(deleteError => toastError(deleteError, t('assets.deleteFailed', null, 'Failed to delete asset')))
                     });
                 }}
                 canWrite={canWrite}

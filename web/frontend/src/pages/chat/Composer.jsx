@@ -2,7 +2,7 @@ import { useId, useMemo, useRef } from 'react';
 import { Banner, Button, Popover, Select, Tag, TextArea, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconArrowUp, IconChevronDown, IconDesktop, IconFolder, IconPaperclip, IconPlus, IconShield, IconStop, IconUser } from '@douyinfe/semi-icons';
 import { useT } from '../../lib/i18n';
-import { currentLocale } from '../../lib/format';
+import { currentLocale, isDefaultRole } from '../../lib/format';
 import { modelChannelName } from '../../lib/model-channel';
 import { ModelSettings } from './ChatSettings';
 import { reasoningSummary } from './useModelPreferences';
@@ -50,23 +50,23 @@ export default function Composer({
     const modeOptions = useMemo(() => [
         {
             value: 'single',
-            title: t('chat.agentModePiSingle', null, '单代理'),
-            description: t('chat.agentModePiSingleHint', null, '使用设置中选择的 Pi 或兼容运行时执行单代理任务')
+            title: t('chat.agentModePiSingle', null, 'Single agent'),
+            description: t('chat.agentModePiSingleHint', null, 'Run a single agent using the runtime selected in Settings')
         },
         {
             value: 'deep',
             title: t('chat.agentModeDeep', null, 'Deep（DeepAgent）'),
-            description: t('chat.agentModeDeepHint', null, 'Pi 多代理，适合复杂安全测试、多阶段 task 子代理委派与汇总')
+            description: t('chat.agentModeDeepHint', null, 'Pi multi-agent for complex security testing, multi-stage task delegation, and synthesis')
         },
         {
             value: 'plan_execute',
             title: t('chat.agentModePlanExecuteLabel', null, 'Plan-Execute'),
-            description: t('chat.agentModePlanExecuteHint', null, '规划 → 执行 → 重规划（单执行器带工具）')
+            description: t('chat.agentModePlanExecuteHint', null, 'Plan → execute → replan (single executor with tools)')
         },
         {
             value: 'supervisor',
-            title: t('chat.agentModeSupervisorLabel', null, 'Supervisor（专家路由）'),
-            description: t('chat.agentModeSupervisorHint', null, '专家路由场景：监督者通过 transfer 动态分派多个专业子代理')
+            title: t('chat.agentModeSupervisorLabel', null, 'Supervisor (Expert routing)'),
+            description: t('chat.agentModeSupervisorHint', null, 'Expert-routing scenarios: route across multiple specialist sub-agents via transfer')
         }
     ].map(({ value, title, description }) => ({
         value,
@@ -79,41 +79,41 @@ export default function Composer({
         )
     })), [t]);
     const projectOptions = [
-        { value: '', label: t('chat.defaultWorkspace', null, '默认工作区') },
+        { value: '', label: t('chat.defaultWorkspace', null, 'Default workspace') },
         ...(Array.isArray(projects) ? projects : []).map(project => ({
             value: project.id,
-            label: project.name || t('chat.boundProject', null, '已绑定项目')
+            label: project.name || t('chat.boundProject', null, 'Linked project')
         }))
     ];
     if (projectId && !projectOptions.some(option => option.value === projectId)) {
-        projectOptions.push({ value: projectId, label: t('chat.boundProject', null, '已绑定项目') });
+        projectOptions.push({ value: projectId, label: t('chat.boundProject', null, 'Linked project') });
     }
     if (onCreateProject) {
-        projectOptions.push({ value: CREATE_PROJECT, label: `+ ${t('projects.newProject', null, '新建项目')}` });
+        projectOptions.push({ value: CREATE_PROJECT, label: `+ ${t('projects.newProject', null, 'New project')}` });
     }
     const roleOptions = useMemo(() => {
         const list = (Array.isArray(roles) ? roles : []).filter(item => item?.name);
         const named = list
-            .filter(item => item.enabled !== false && item.name !== '默认')
+            .filter(item => item.enabled !== false && !isDefaultRole(item.name))
             .sort((a, b) => a.name.localeCompare(b.name, currentLocale()));
-        const fallback = list.find(item => item.name === '默认');
+        const fallback = list.find(item => isDefaultRole(item.name));
         const toOption = item => ({
-            value: item.name === '默认' ? '' : item.name,
-            name: item.name === '默认' ? t('chat.defaultRole', null, '默认') : item.name,
+            value: isDefaultRole(item.name) ? '' : item.name,
+            name: isDefaultRole(item.name) ? t('chat.defaultRole', null, 'Default') : item.name,
             icon: item.icon || '',
             description: item.description || '',
             label: (
                 <span className="chat-role-option">
                     <span className="chat-role-option-title">
                         {item.icon ? <span className="chat-role-icon" aria-hidden="true">{item.icon}</span> : null}
-                        <span>{item.name === '默认' ? t('chat.defaultRole', null, '默认') : item.name}</span>
+                        <span>{isDefaultRole(item.name) ? t('chat.defaultRole', null, 'Default') : item.name}</span>
                     </span>
                     {item.description ? <span className="chat-role-option-description">{item.description}</span> : null}
                 </span>
             )
         });
         const options = [toOption({
-            name: '默认',
+            name: 'Default',
             icon: fallback?.icon || '',
             description: fallback?.description || ''
         })];
@@ -136,7 +136,7 @@ export default function Composer({
     const channelId = model.channel || model.config.data?.default_channel;
     const channelName = channelId
         ? modelChannelName(channelId, model.config.data?.channels?.[channelId])
-        : t('chat.aiChannelDefaultShort', null, '默认通道');
+        : t('chat.aiChannelDefaultShort', null, 'Default channel');
     const reasoningLabel = model.overrideBlocked
         ? reasoningSummary(t, 'default', '')
         : reasoningSummary(t, model.mode, model.effort);
@@ -158,14 +158,14 @@ export default function Composer({
                     closeIcon={null}
                     className="chat-composer-banner"
                     description={!canWrite
-                        ? t('chat.noWritePermission', null, '当前账号没有对话写入权限（chat:write），发送已禁用。')
-                        : t('chat.noExecutePermission', null, '当前账号没有智能体执行权限（agent:execute），发送已禁用。')}
+                        ? t('chat.noWritePermission', null, 'The current account lacks the conversation write permission (chat:write); sending is disabled.')
+                        : t('chat.noExecutePermission', null, 'The current account lacks the agent execution permission (agent:execute); sending is disabled.')}
                 />
             )}
             <div className="chat-composer-shell">
                 <div className="chat-composer-box">
                     <div className="chat-composer-context">
-                        <span id={modeLabelId} hidden>{t('chat.agentModeSelectAria', null, '选择对话执行模式')}</span>
+                        <span id={modeLabelId} hidden>{t('chat.agentModeSelectAria', null, 'Choose conversation execution mode')}</span>
                         <Select
                             value={mode}
                             optionList={modeOptions}
@@ -180,7 +180,7 @@ export default function Composer({
                             disabled={busy || blocked}
                         />
                         <span className="chat-context-divider" aria-hidden="true" />
-                        <span id={projectLabelId} hidden>{t('chat.chooseWorkspace', null, '选择会话工作区')}</span>
+                        <span id={projectLabelId} hidden>{t('chat.chooseWorkspace', null, 'Choose the conversation workspace')}</span>
                         <Select
                             value={projectId}
                             optionList={projectOptions}
@@ -201,7 +201,7 @@ export default function Composer({
                         {onRoleChange && (
                             <>
                                 <span className="chat-context-divider" aria-hidden="true" />
-                                <span id={roleLabelId} hidden>{t('chat.selectRole', null, '选择角色')}</span>
+                                <span id={roleLabelId} hidden>{t('chat.selectRole', null, 'Select role')}</span>
                                 <Select
                                     value={role || ''}
                                     optionList={roleOptions}
@@ -245,7 +245,7 @@ export default function Composer({
                                     <IconPaperclip size="small" />
                                     <span className="chat-file-name" title={file.fileName}>{file.fileName}</span>
                                     <span className="chat-file-state">
-                                        {file.uploading ? '上传中…' : (file.error ? '上传失败' : '已上传')}
+                                        {file.uploading ? t('ui.composer.uploading', null, 'Uploading…') : (file.error ? t('ui.composer.uploadFailed', null, 'Upload failed') : t('ui.composer.uploaded', null, 'Uploaded'))}
                                     </span>
                                 </Tag>
                             ))}
@@ -259,17 +259,17 @@ export default function Composer({
                         onKeyDown={handleKeyDown}
                         disabled={blocked}
                         autosize={{ minRows: 2, maxRows: 8 }}
-                        aria-label={t('chat.composerLabel', null, '对话内容')}
-                        placeholder={t('chat.composerPlaceholder', null, '描述目标、授权范围与需求，或附上相关材料…')}
+                        aria-label={t('chat.composerLabel', null, 'Message')}
+                        placeholder={t('chat.composerPlaceholder', null, 'Describe the target, authorized scope, and what you need, or attach related material…')}
                     />
                     <div className="chat-composer-toolbar">
                         <div className="chat-composer-controls">
-                            <Tooltip content={t('chat.selectFile', null, '选择附件')}>
+                            <Tooltip content={t('chat.selectFile', null, 'Select file')}>
                                 <Button
                                     icon={<IconPlus />}
                                     theme="borderless"
                                     type="tertiary"
-                                    aria-label={t('chat.attachmentsLabel', null, '附件')}
+                                    aria-label={t('chat.attachmentsLabel', null, 'Attachments')}
                                     disabled={blocked}
                                     onClick={() => fileRef.current?.click()}
                                 />
@@ -279,11 +279,11 @@ export default function Composer({
                                 theme="borderless"
                                 type="tertiary"
                                 className="chat-composer-hitl"
-                                aria-label={t('chat.hitlTitle', null, '人机协同')}
+                                aria-label={t('chat.hitlTitle', null, 'Human-in-the-loop')}
                                 disabled={!onOpenHitl}
                                 onClick={onOpenHitl}
                             >
-                                {t('chat.hitlTitle', null, '人机协同')}
+                                {t('chat.hitlTitle', null, 'Human-in-the-loop')}
                             </Button>
                         </div>
                         <div className="chat-composer-submit">
@@ -298,7 +298,7 @@ export default function Composer({
                                     theme="borderless"
                                     type="tertiary"
                                     className="chat-composer-model"
-                                    aria-label={t('chat.modelSettingsAria', null, '选择 AI 通道、模型与推理设置')}
+                                    aria-label={t('chat.modelSettingsAria', null, 'Choose AI channel, model, and reasoning settings')}
                                     title={`${channelName} · ${reasoningLabel}`}
                                     disabled={busy}
                                 >
@@ -312,17 +312,17 @@ export default function Composer({
                                     type="danger"
                                     className="chat-composer-send"
                                     icon={<IconStop />}
-                                    aria-label={t('chat.stop', null, '停止')}
+                                    aria-label={t('chat.stop', null, 'Stop')}
                                     onClick={onStop}
                                     disabled={!canStop}
                                 />
                             ) : (
-                                <Tooltip content={t('chat.sendHint', null, 'Enter 发送 · Shift+Enter 换行')}>
+                                <Tooltip content={t('chat.sendHint', null, 'Enter to send · Shift+Enter for a new line')}>
                                     <Button
                                         theme="solid"
                                         className="chat-composer-send"
                                         icon={<IconArrowUp />}
-                                        aria-label={t('chat.send', null, '发送')}
+                                        aria-label={t('chat.send', null, 'Send')}
                                         disabled={blocked || checkingRun || roleDisabled || uploadingCount > 0}
                                         onClick={onSend}
                                     />
@@ -332,7 +332,7 @@ export default function Composer({
                     </div>
                     {uploadingCount > 0 && (
                         <Text type="tertiary" size="small" role="status">
-                            {t('chat.waitingAttachmentsUpload', null, '附件上传中…')}
+                            {t('chat.waitingAttachmentsUpload', null, 'Waiting for attachments to finish uploading…')}
                         </Text>
                     )}
                 </div>

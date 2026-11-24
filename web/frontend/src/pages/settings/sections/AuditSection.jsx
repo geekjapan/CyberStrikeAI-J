@@ -1,6 +1,6 @@
 /**
- * 审计日志：GET /audit/logs（分页/筛选）、GET /audit/logs/:id、GET /audit/logs/export、
- * GET /audit/summary、GET /audit/meta。表格 + 详情 SideSheet + JSON/CSV 导出。
+ * Audit log: GET /audit/logs (pagination/filters), GET /audit/logs/:id, GET /audit/logs/export,
+ * GET /audit/summary, GET /audit/meta. Table + detail SideSheet + JSON/CSV export.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -19,7 +19,7 @@ import { LoadingBlock, Mono, PermissionBanner } from './common';
 
 const { Text } = Typography;
 
-/** 与 web/static/js/audit.js 及后端 category/action 取值一致。 */
+/** Matches web/static/js/audit.js and the backend category/action values. */
 const ACTIONS_BY_CATEGORY = {
     auth: ['login', 'logout', 'change_password'],
     config: ['apply', 'update'],
@@ -97,14 +97,14 @@ export default function AuditSection() {
     ), [t]);
 
     const categories = useMemo(() => [
-        { value: '', label: t('settingsAudit.filterAllCategories', null, '全部类别') },
+        { value: '', label: t('settingsAudit.filterAllCategories', null, 'All categories') },
         ...Object.keys(ACTIONS_BY_CATEGORY).map(key => ({ value: key, label: categoryLabel(key) }))
     ], [categoryLabel, t]);
 
     const actions = useMemo(() => {
         const list = draft.category ? (ACTIONS_BY_CATEGORY[draft.category] || []) : [];
         return [
-            { value: '', label: t('settingsAudit.filterAllActions', null, '全部操作') },
+            { value: '', label: t('settingsAudit.filterAllActions', null, 'All actions') },
             ...list.map(key => ({ value: key, label: actionLabel(key) }))
         ];
     }, [actionLabel, draft.category, t]);
@@ -137,16 +137,16 @@ export default function AuditSection() {
                 query: { ...query, format: format === 'csv' ? 'csv' : undefined },
                 filename
             });
-            toastSuccess(t('settingsAudit.exportDone', null, '导出完成'));
+            toastSuccess(t('settingsAudit.exportDone', null, 'Export complete'));
         } catch (error) {
-            toastError(error, t('common.downloadFailed', null, '导出失败'));
+            toastError(error, t('common.downloadFailed', null, 'Export failed'));
         } finally {
             setExporting('');
         }
     };
 
     if (!canRead) {
-        return <PermissionBanner permission="audit:read" label={t('settings.nav.audit', null, '读取审计日志')} />;
+        return <PermissionBanner permission="audit:read" label={t('settings.nav.audit', null, 'Audit logs')} />;
     }
     if (meta.loading && !meta.data) return <LoadingBlock rows={6} />;
 
@@ -156,13 +156,13 @@ export default function AuditSection() {
 
     const columns = [
         {
-            title: t('settingsAudit.colTime', null, '时间'),
+            title: t('settingsAudit.colTime', null, 'Time'),
             dataIndex: 'createdAt',
             width: 180,
             render: value => formatDateTime(value)
         },
         {
-            title: t('settingsAudit.colMessage', null, '说明'),
+            title: t('settingsAudit.colMessage', null, 'Message'),
             dataIndex: 'message',
             render: (value, row) => (
                 <Tooltip content={value || '—'} position="topLeft">
@@ -176,19 +176,19 @@ export default function AuditSection() {
             )
         },
         {
-            title: t('settingsAudit.colCategory', null, '类别'),
+            title: t('settingsAudit.colCategory', null, 'Category'),
             dataIndex: 'category',
             width: 120,
             render: value => <Tag size="small" color="blue">{categoryLabel(value)}</Tag>
         },
         {
-            title: t('settingsAudit.colAction', null, '操作'),
+            title: t('settingsAudit.colAction', null, 'Action'),
             dataIndex: 'action',
             width: 170,
             render: value => <Text type="tertiary">{actionLabel(value)}</Text>
         },
         {
-            title: t('settingsAudit.colResult', null, '结果'),
+            title: t('settingsAudit.colResult', null, 'Result'),
             dataIndex: 'result',
             width: 100,
             render: value => <ResultTag result={value} label={resultLabel(value)} />
@@ -200,7 +200,7 @@ export default function AuditSection() {
             render: value => <Mono>{value || '—'}</Mono>
         },
         {
-            title: t('settingsAudit.colResource', null, '资源 ID'),
+            title: t('settingsAudit.colResource', null, 'Resource ID'),
             dataIndex: 'resourceId',
             width: 200,
             render: (value, row) => (
@@ -220,33 +220,33 @@ export default function AuditSection() {
                     bordered
                     closeIcon={null}
                     className="settings-audit-banner"
-                    description={t('settingsAudit.disabledHint', null, '审计功能已关闭，新操作不会写入审计表。')}
+                    description={t('settingsAudit.disabledHint', null, 'Audit logging is disabled; new actions are not written.')}
                 />
             )}
             <StatGrid
                 columns={4}
                 metrics={[
-                    { id: 'total', label: t('settingsAudit.statTotal', null, '当前筛选'), value: formatNumber(total) },
-                    { id: 'ok', label: t('settingsAudit.statSuccess', null, '成功'), value: formatNumber(Math.max(0, total - failures)) },
-                    { id: 'fail', label: t('settingsAudit.statFailures', null, '失败'), value: formatNumber(failures), tone: failures ? 'danger' : undefined },
-                    { id: 'recent', label: t('settingsAudit.statRecent7d', null, '近 7 天'), value: formatNumber(recent7d) }
+                    { id: 'total', label: t('settingsAudit.statTotal', null, 'Filtered total'), value: formatNumber(total) },
+                    { id: 'ok', label: t('settingsAudit.statSuccess', null, 'Success'), value: formatNumber(Math.max(0, total - failures)) },
+                    { id: 'fail', label: t('settingsAudit.statFailures', null, 'Failures'), value: formatNumber(failures), tone: failures ? 'danger' : undefined },
+                    { id: 'recent', label: t('settingsAudit.statRecent7d', null, 'Last 7 days'), value: formatNumber(recent7d) }
                 ]}
             />
             <ErrorBanner error={summary.error} onRetry={summary.reload} />
 
             <SectionCard
-                title={t('settingsAudit.title', null, '日志审计')}
-                description={t('settingsAudit.description', null, '记录平台管理类操作（登录、配置、删除等），不记录对话正文与每次工具调用。')}
+                title={t('settingsAudit.title', null, 'Audit logs')}
+                description={t('settingsAudit.description', null, 'Platform admin actions (login, config, deletes). Does not log chat content, per-command terminal/WebShell runs, or per-tool invocations.')}
                 extra={(
                     <Space>
                         <Tag size="small" color="grey">
-                            {t('settingsAudit.retentionHint', { days: meta.data?.retention_days ?? 0 }, `审计记录保留 ${meta.data?.retention_days ?? 0} 天`)}
+                            {t('settingsAudit.retentionHint', { days: meta.data?.retention_days ?? 0 }, 'Audit records are kept for {{days}} days, then purged automatically.')}
                         </Tag>
                         <Button loading={exporting === 'json'} onClick={() => exportLogs('json')}>
-                            {t('settingsAudit.exportJson', null, '导出 JSON')}
+                            {t('settingsAudit.exportJson', null, 'Export JSON')}
                         </Button>
                         <Button loading={exporting === 'csv'} onClick={() => exportLogs('csv')}>
-                            {t('settingsAudit.exportCsv', null, '导出 CSV')}
+                            {t('settingsAudit.exportCsv', null, 'Export CSV')}
                         </Button>
                     </Space>
                 )}
@@ -264,8 +264,8 @@ export default function AuditSection() {
                         optionList={actions}
                         disabled={!draft.category}
                         placeholder={draft.category
-                            ? t('settingsAudit.filterAllActions', null, '全部操作')
-                            : t('settingsAudit.filterCascadeHint', null, '选择类别后可筛选具体操作')}
+                            ? t('settingsAudit.filterAllActions', null, 'All actions')
+                            : t('settingsAudit.filterCascadeHint', null, 'Select a category to filter by action')}
                         style={{ width: 170 }}
                     />
                     <Select
@@ -273,16 +273,16 @@ export default function AuditSection() {
                         onChange={value => setDraft(current => ({ ...current, result: value }))}
                         style={{ width: 130 }}
                         optionList={[
-                            { value: '', label: t('settingsAudit.filterAll', null, '全部') },
-                            { value: 'success', label: t('settingsAudit.result.success', null, '成功') },
-                            { value: 'failure', label: t('settingsAudit.result.failure', null, '失败') }
+                            { value: '', label: t('settingsAudit.filterAll', null, 'All') },
+                            { value: 'success', label: t('settingsAudit.result.success', null, 'success') },
+                            { value: 'failure', label: t('settingsAudit.result.failure', null, 'failure') }
                         ]}
                     />
                     <Input
                         prefix={<IconSearch />}
                         value={draft.q}
                         onChange={value => setDraft(current => ({ ...current, q: value }))}
-                        placeholder={t('settingsAudit.filterQueryPlaceholder', null, '消息 / 资源 ID / 操作名')}
+                        placeholder={t('settingsAudit.filterQueryPlaceholder', null, 'Message / resource ID / action')}
                         style={{ width: 240 }}
                         showClear
                     />
@@ -290,24 +290,24 @@ export default function AuditSection() {
                         type="dateTime"
                         value={draft.since || undefined}
                         onChange={value => setDraft(current => ({ ...current, since: value || null }))}
-                        placeholder={t('settingsAudit.filterSince', null, '开始时间')}
+                        placeholder={t('settingsAudit.filterSince', null, 'From')}
                         style={{ width: 200 }}
                     />
                     <DatePicker
                         type="dateTime"
                         value={draft.until || undefined}
                         onChange={value => setDraft(current => ({ ...current, until: value || null }))}
-                        placeholder={t('settingsAudit.filterUntil', null, '结束时间')}
+                        placeholder={t('settingsAudit.filterUntil', null, 'Until')}
                         style={{ width: 200 }}
                     />
                     <Button theme="solid" type="primary" onClick={applyFilters}>
-                        {t('settingsAudit.filterBtn', null, '筛选')}
+                        {t('settingsAudit.filterBtn', null, 'Filter')}
                     </Button>
                     <Button onClick={resetFilters}>
-                        {t('settingsAudit.resetBtn', null, '重置')}
+                        {t('settingsAudit.resetBtn', null, 'Reset')}
                     </Button>
                     <Button icon={<IconRefresh />} theme="borderless" onClick={refreshAll} loading={logs.loading || summary.loading}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>
                 </div>
                 <ErrorBanner error={logs.error} onRetry={logs.reload} />
@@ -316,7 +316,7 @@ export default function AuditSection() {
                     dataSource={Array.isArray(logs.data?.logs) ? logs.data.logs : []}
                     rowKey="id"
                     loading={logs.loading}
-                    emptyText={t('settingsAudit.empty', null, '暂无审计记录')}
+                    emptyText={t('settingsAudit.empty', null, 'No audit records')}
                     onRow={record => ({
                         onClick: () => setDetailId(record.id),
                         style: { cursor: 'pointer' }
@@ -334,7 +334,7 @@ export default function AuditSection() {
             </SectionCard>
 
             <SideSheet
-                title={t('settingsAudit.detailTitle', null, '审计详情')}
+                title={t('settingsAudit.detailTitle', null, 'Audit detail')}
                 visible={Boolean(detailId)}
                 onCancel={() => setDetailId('')}
                 width={640}
@@ -361,35 +361,35 @@ function AuditDetail({ id, categoryLabel, actionLabel, resultLabel }) {
     if (state.loading) return <LoadingBlock rows={6} />;
     if (state.error) return <ErrorBanner error={state.error} />;
     const log = state.log;
-    if (!log) return <Text type="tertiary">{t('settingsAudit.empty', null, '暂无审计记录')}</Text>;
+    if (!log) return <Text type="tertiary">{t('settingsAudit.empty', null, 'No audit records')}</Text>;
 
     return (
         <div className="settings-audit-detail">
             <KeyValueList
                 columns={2}
                 items={[
-                    { label: t('settingsAudit.detailTime', null, '时间'), value: formatDateTime(log.createdAt) },
-                    { label: t('settingsAudit.detailResult', null, '结果'), value: <ResultTag result={log.result} label={resultLabel(log.result)} /> },
-                    { label: t('settingsAudit.detailCategory', null, '类别'), value: categoryLabel(log.category) },
-                    { label: t('settingsAudit.colAction', null, '操作'), value: actionLabel(log.action) },
-                    { label: t('settingsDisplay.actor', null, '操作者'), value: log.actor || '—' },
+                    { label: t('settingsAudit.detailTime', null, 'Time'), value: formatDateTime(log.createdAt) },
+                    { label: t('settingsAudit.detailResult', null, 'Result'), value: <ResultTag result={log.result} label={resultLabel(log.result)} /> },
+                    { label: t('settingsAudit.detailCategory', null, 'Category'), value: categoryLabel(log.category) },
+                    { label: t('settingsAudit.colAction', null, 'Action'), value: actionLabel(log.action) },
+                    { label: t('settingsDisplay.actor', null, 'Actor'), value: log.actor || '—' },
                     { label: t('settingsAudit.colIp', null, 'IP'), value: <Mono>{log.clientIp || '—'}</Mono> },
-                    { label: t('settingsDisplay.level', null, '日志级别'), value: log.level || '—' },
-                    { label: t('settingsDisplay.resourceType', null, '资源类型'), value: log.resourceType || '—' },
-                    { label: t('settingsAudit.resourceIdLabel', null, '资源 ID'), value: <Mono>{log.resourceId || '—'}</Mono> },
+                    { label: t('settingsDisplay.level', null, 'Log level'), value: log.level || '—' },
+                    { label: t('settingsDisplay.resourceType', null, 'Resource type'), value: log.resourceType || '—' },
+                    { label: t('settingsAudit.resourceIdLabel', null, 'Resource ID'), value: <Mono>{log.resourceId || '—'}</Mono> },
                     {
-                        label: t('settingsDisplay.resourceAvailable', null, '资源是否可访问'),
-                        value: log.resourceAvailable == null ? '—' : log.resourceAvailable ? t('common.yes', null, '是') : t('common.no', null, '否')
+                        label: t('settingsDisplay.resourceAvailable', null, 'Resource accessible'),
+                        value: log.resourceAvailable == null ? '—' : log.resourceAvailable ? t('common.yes', null, 'Yes') : t('common.no', null, 'No')
                     },
-                    { label: t('settingsDisplay.session', null, '会话标识'), value: <Mono>{log.sessionHint || '—'}</Mono> },
-                    { label: t('settingsDisplay.userAgent', null, '客户端标识'), value: truncate(log.userAgent || '—', 80) }
+                    { label: t('settingsDisplay.session', null, 'Session ID'), value: <Mono>{log.sessionHint || '—'}</Mono> },
+                    { label: t('settingsDisplay.userAgent', null, 'Client identifier'), value: truncate(log.userAgent || '—', 80) }
                 ]}
             />
             <div className="settings-audit-message-block">
-                <Text type="tertiary" size="small">{t('settingsAudit.detailMessage', null, '说明')}</Text>
+                <Text type="tertiary" size="small">{t('settingsAudit.detailMessage', null, 'Message')}</Text>
                 <Text>{log.message || '—'}</Text>
             </div>
-            {log.detail && <JsonViewer value={log.detail} collapsed title={t('settingsDisplay.details', null, '详情')} />}
+            {log.detail && <JsonViewer value={log.detail} collapsed title={t('settingsDisplay.details', null, 'Details')} />}
         </div>
     );
 }

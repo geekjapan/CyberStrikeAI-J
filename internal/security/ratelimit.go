@@ -8,33 +8,33 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// rateLimitEntry 记录某个 IP 的请求窗口信息
+// rateLimitEntry records the request window information for an IP
 type rateLimitEntry struct {
 	count    int
 	windowAt time.Time
 }
 
-// RateLimiter 基于 IP 的滑动窗口速率限制器
+// RateLimiter is an IP-based sliding-window rate limiter
 type RateLimiter struct {
 	mu      sync.Mutex
 	entries map[string]*rateLimitEntry
-	limit   int           // 窗口内允许的最大请求数
-	window  time.Duration // 窗口时长
+	limit   int           // Maximum number of requests allowed within the window
+	window  time.Duration // Window duration
 }
 
-// NewRateLimiter 创建速率限制器
+// NewRateLimiter creates a rate limiter
 func NewRateLimiter(limit int, window time.Duration) *RateLimiter {
 	rl := &RateLimiter{
 		entries: make(map[string]*rateLimitEntry),
 		limit:   limit,
 		window:  window,
 	}
-	// 后台定期清理过期条目，防止内存泄漏
+	// Periodically clean up expired entries in the background to prevent memory leaks
 	go rl.cleanup()
 	return rl
 }
 
-// cleanup 每分钟清理一次过期条目
+// cleanup removes expired entries once a minute
 func (rl *RateLimiter) cleanup() {
 	ticker := time.NewTicker(1 * time.Minute)
 	defer ticker.Stop()
@@ -50,7 +50,7 @@ func (rl *RateLimiter) cleanup() {
 	}
 }
 
-// allow 检查指定 IP 是否允许通过
+// allow checks whether the given IP is allowed to pass
 func (rl *RateLimiter) allow(ip string) bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
@@ -66,7 +66,7 @@ func (rl *RateLimiter) allow(ip string) bool {
 	return entry.count <= rl.limit
 }
 
-// RateLimitMiddleware 返回 Gin 中间件，对超限请求返回 429
+// RateLimitMiddleware returns Gin middleware that responds with 429 to requests over the limit
 func RateLimitMiddleware(rl *RateLimiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ip := c.ClientIP()

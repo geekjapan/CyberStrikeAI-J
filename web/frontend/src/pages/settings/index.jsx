@@ -1,6 +1,6 @@
 /**
- * 系统设置：Tabs 分区，每个分区自己取数、自己处理错误，互不影响。
- * 深链接 #/settings?section=token-usage（与旧页面一致）。
+ * System settings: tabbed sections; each section fetches its own data and handles its own errors, independently of the others.
+ * Deep link #/settings?section=token-usage (same as the legacy page).
  */
 import { useMemo } from 'react';
 import { useOutletContext, useSearchParams } from 'react-router-dom';
@@ -38,8 +38,8 @@ export default function SettingsPage() {
     return (
         <div className="settings-page">
             <PageHeader
-                title={t('settings.title', null, '系统设置')}
-                description={t('settings.pageDesc', null, '配置、模型探测、Token 用量、存储清理、审计日志与界面偏好；每个分区独立加载，单区失败不影响其他分区。')}
+                title={t('settings.title', null, 'System settings')}
+                description={t('settings.pageDesc', null, 'Configuration, model probing, token usage, storage cleanup, audit log, and interface preferences. Each section loads on its own; a failure in one does not affect the others.')}
             />
             <Tabs
                 type="line"
@@ -50,25 +50,25 @@ export default function SettingsPage() {
                 onChange={change}
                 className="settings-tabs"
             >
-                <Tabs.TabPane itemKey="basic" tab={t('settings.nav.basic', null, '基础配置')}>
+                <Tabs.TabPane itemKey="basic" tab={t('settings.nav.basic', null, 'Basic')}>
                     <BasicSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="models" tab={t('settings.nav.models', null, '模型与工具')}>
+                <Tabs.TabPane itemKey="models" tab={t('settings.nav.models', null, 'Models & tools')}>
                     <ModelsSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="token-usage" tab={t('settings.nav.tokenUsage', null, 'Token 用量')}>
+                <Tabs.TabPane itemKey="token-usage" tab={t('settings.nav.tokenUsage', null, 'Token usage')}>
                     <TokenUsageSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="storage" tab={t('settings.nav.storage', null, '存储清理')}>
+                <Tabs.TabPane itemKey="storage" tab={t('settings.nav.storage', null, 'Storage cleanup')}>
                     <StorageSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="update" tab={t('settings.nav.update', null, '更新状态')}>
+                <Tabs.TabPane itemKey="update" tab={t('settings.nav.update', null, 'One-Click Update')}>
                     <UpdateSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="audit" tab={t('settings.nav.audit', null, '审计日志')}>
+                <Tabs.TabPane itemKey="audit" tab={t('settings.nav.audit', null, 'Audit logs')}>
                     <AuditSection />
                 </Tabs.TabPane>
-                <Tabs.TabPane itemKey="appearance" tab={t('settings.nav.appearance', null, '外观')}>
+                <Tabs.TabPane itemKey="appearance" tab={t('settings.nav.appearance', null, 'Appearance')}>
                     <AppearanceSection />
                 </Tabs.TabPane>
             </Tabs>

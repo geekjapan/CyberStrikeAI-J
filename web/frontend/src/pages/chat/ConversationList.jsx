@@ -1,4 +1,4 @@
-/** 左侧会话列表：搜索、项目过滤、分页、新建/重命名/置顶/删除/批量删除。 */
+/** Left conversation list: search, project filter, pagination, create/rename/pin/delete/bulk delete. */
 import { useEffect, useId, useMemo, useState } from 'react';
 import {
     Button, Checkbox, Empty, Input, List, Pagination, Popconfirm, Select, Skeleton, Tooltip, Typography
@@ -15,13 +15,13 @@ function ConversationRow({
     onSelect, onPin, onDelete, canWrite, canDelete, selected, onToggleSelect, batchMode
 }) {
     const t = useT();
-    const title = String(item.title || t('chat.untitled', null, '未命名对话'));
+    const title = String(item.title || t('chat.untitled', null, 'Untitled conversation'));
     return (
         <div className={`chat-conv-item ${active ? 'is-active' : ''}`}>
             {batchMode && (
                 <Checkbox
                     className="chat-conv-check"
-                    aria-label={`${t('chat.selectConversation', null, '选择对话')}：${title}`}
+                    aria-label={`${t('chat.selectConversation', null, 'Select conversation')}：${title}`}
                     checked={selected}
                     onChange={event => onToggleSelect(item.id, event.target.checked)}
                 />
@@ -30,7 +30,7 @@ function ConversationRow({
                 <div className="chat-conv-edit">
                     <Input
                         size="small"
-                        aria-label={t('chat.renameConversationTitle', null, '重命名')}
+                        aria-label={t('chat.renameConversationTitle', null, 'Rename conversation')}
                         value={editingTitle}
                         autoFocus
                         onChange={onEditingTitle}
@@ -40,8 +40,8 @@ function ConversationRow({
                         }}
                     />
                     <div className="chat-conv-edit-actions">
-                        <Button size="small" theme="solid" onClick={onCommitEdit}>{t('common.save', null, '保存')}</Button>
-                        <Button size="small" theme="borderless" onClick={onCancelEdit}>{t('common.cancel', null, '取消')}</Button>
+                        <Button size="small" theme="solid" onClick={onCommitEdit}>{t('common.save', null, 'Save')}</Button>
+                        <Button size="small" theme="borderless" onClick={onCancelEdit}>{t('common.cancel', null, 'Cancel')}</Button>
                     </div>
                 </div>
             ) : (
@@ -58,17 +58,17 @@ function ConversationRow({
                     {!batchMode && (
                         <div className="chat-conv-actions">
                             {canWrite && (
-                                <Tooltip content={t('chat.renameConversationTitle', null, '重命名')}>
-                                    <Button size="small" theme="borderless" aria-label={t('chat.renameConversationTitle', null, '重命名')} icon={<IconEdit />} onClick={() => onStartEdit(item)} />
+                                <Tooltip content={t('chat.renameConversationTitle', null, 'Rename conversation')}>
+                                    <Button size="small" theme="borderless" aria-label={t('chat.renameConversationTitle', null, 'Rename conversation')} icon={<IconEdit />} onClick={() => onStartEdit(item)} />
                                 </Tooltip>
                             )}
                             {canWrite && (
-                                <Tooltip content={item.pinned ? t('chat.unpin', null, '取消置顶') : t('chat.pin', null, '置顶')}>
+                                <Tooltip content={item.pinned ? t('chat.unpin', null, 'Unpin') : t('chat.pin', null, 'Pin')}>
                                     <Button
                                         size="small"
                                         theme="borderless"
                                         icon={<IconStar />}
-                                        aria-label={item.pinned ? t('chat.unpin', null, '取消置顶') : t('chat.pin', null, '置顶')}
+                                        aria-label={item.pinned ? t('chat.unpin', null, 'Unpin') : t('chat.pin', null, 'Pin')}
                                         type={item.pinned ? 'warning' : 'tertiary'}
                                         onClick={() => onPin(item)}
                                     />
@@ -76,10 +76,10 @@ function ConversationRow({
                             )}
                             {canDelete && (
                                 <Popconfirm
-                                    title={t('chat.deleteConversationConfirm', null, '确认删除该对话？删除后不可恢复。')}
+                                    title={t('chat.deleteConversationConfirm', null, 'Delete this conversation? Chat messages cannot be recovered, but recorded vulnerabilities will remain in the vulnerability library.')}
                                     onConfirm={() => onDelete(item)}
                                 >
-                                    <Button size="small" theme="borderless" type="danger" aria-label={t('chat.deleteConversationTitle', null, '删除对话')} icon={<IconDelete />} />
+                                    <Button size="small" theme="borderless" type="danger" aria-label={t('chat.deleteConversationTitle', null, 'Delete conversation')} icon={<IconDelete />} />
                                 </Popconfirm>
                             )}
                         </div>
@@ -114,7 +114,7 @@ export default function ConversationList({
     }, [page, projectId, search, expandedGroup]);
 
     const projectOptions = useMemo(() => ([
-        { value: '', label: t('chat.filterAllProjects', null, '全部项目') },
+        { value: '', label: t('chat.filterAllProjects', null, 'All projects') },
         ...(Array.isArray(projects) ? projects : []).map(project => ({
             value: project.id,
             label: project.name || project.id
@@ -143,7 +143,7 @@ export default function ConversationList({
             {loading && !list.length && <Skeleton placeholder={<Skeleton.Paragraph rows={6} />} loading />}
             {!loading && !error && !list.length && (
                 <Empty
-                    title={t('chat.noHistoryConversations', null, '暂无历史对话')}
+                    title={t('chat.noHistoryConversations', null, 'No conversation history yet')}
                     description={null}
                     className="chat-sidebar-empty"
                 />
@@ -179,16 +179,16 @@ export default function ConversationList({
     return (
         <div className="chat-sidebar-inner">
             <div className="chat-sidebar-head">
-                <Text strong className="chat-sidebar-title">{t('chat.conversations', null, '会话')}</Text>
+                <Text strong className="chat-sidebar-title">{t('chat.conversations', null, 'Conversations')}</Text>
                 <Button icon={<IconPlus />} theme="borderless" className="chat-new-chat" onClick={onCreate} disabled={!canWrite}>
-                    {t('chat.newChat', null, '新建对话')}
+                    {t('chat.newChat', null, 'New chat')}
                 </Button>
             </div>
             <div className="chat-sidebar-filters">
                 <Input
                     prefix={<IconSearch />}
-                    aria-label={t('chat.searchHistory', null, '搜索历史对话')}
-                    placeholder={t('chat.searchHistory', null, '搜索历史对话')}
+                    aria-label={t('chat.searchHistory', null, 'Search history...')}
+                    placeholder={t('chat.searchHistory', null, 'Search history...')}
                     value={search}
                     onChange={onSearch}
                     showClear
@@ -198,12 +198,12 @@ export default function ConversationList({
                     optionList={projectOptions}
                     onChange={onProjectChange}
                     className="chat-sidebar-project"
-                    aria-label={t('chat.filterByProject', null, '按项目过滤')}
-                    placeholder={t('chat.filterByProject', null, '按项目过滤')}
+                    aria-label={t('chat.filterByProject', null, 'Filter by project')}
+                    placeholder={t('chat.filterByProject', null, 'Filter by project')}
                 />
             </div>
             <div className="chat-sidebar-tools">
-                <Text type="tertiary" size="small">{t('chat.recentConversations', null, '最近对话')} · {groups.reduce((total, group) => total + group.total, 0)}</Text>
+                <Text type="tertiary" size="small">{t('chat.recentConversations', null, 'Recent conversations')} · {groups.reduce((total, group) => total + group.total, 0)}</Text>
                 <div className="chat-sidebar-tools-actions">
                     {canDelete && list.length > 0 && (
                         <Button
@@ -214,14 +214,14 @@ export default function ConversationList({
                                 setSelectedIds([]);
                             }}
                         >
-                            {batchMode ? t('common.cancel', null, '取消') : t('chat.batchManage', null, '批量管理')}
+                            {batchMode ? t('common.cancel', null, 'Cancel') : t('chat.batchManage', null, 'Batch manage')}
                         </Button>
                     )}
                     <Button
                         size="small"
                         theme="borderless"
-                        aria-label={t('chat.refreshConversationList', null, '刷新会话列表')}
-                        title={t('chat.refreshConversationList', null, '刷新会话列表')}
+                        aria-label={t('chat.refreshConversationList', null, 'Refresh conversation list')}
+                        title={t('chat.refreshConversationList', null, 'Refresh conversation list')}
                         icon={<IconRefresh />}
                         onClick={onRetry}
                     />
@@ -236,9 +236,9 @@ export default function ConversationList({
                         disabled={loading || !list.length}
                         onChange={event => setSelectedIds(event.target.checked ? list.map(item => item.id) : [])}
                     >
-                        {t('chat.selectPage', null, '全选本页')}
+                        {t('chat.selectPage', null, 'Select all on this page')}
                     </Checkbox>
-                    <Text size="small">{t('chat.selectedCount', null, '已选')} {selectedIds.length}</Text>
+                    <Text size="small">{t('chat.selectedCount', null, 'Selected')} {selectedIds.length}</Text>
                     <Button
                         size="small"
                         type="danger"
@@ -249,14 +249,14 @@ export default function ConversationList({
                             setBatchMode(false);
                         }}
                     >
-                        {t('chat.batchDelete', null, '批量删除')}
+                        {t('chat.batchDelete', null, 'Delete selected')}
                     </Button>
                 </div>
             )}
             <div className="chat-conv-list">
                 <ErrorBanner error={error} onRetry={onRetry} />
                 {!groups.length && !loading && !error && (
-                    <Empty title={t('chat.noHistoryConversations', null, '暂无历史对话')} description={null} className="chat-sidebar-empty" />
+                    <Empty title={t('chat.noHistoryConversations', null, 'No conversation history yet')} description={null} className="chat-sidebar-empty" />
                 )}
                 {groups.map(group => {
                     const expanded = group.id === expandedGroup;

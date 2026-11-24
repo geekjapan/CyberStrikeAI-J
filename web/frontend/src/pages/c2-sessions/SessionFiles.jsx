@@ -1,5 +1,5 @@
 /**
- * C2 会话文件浏览：通过 ls / download 任务读取远端目录与文件。
+ * C2 session file browsing: read remote directories and files through ls / download tasks.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Input, Space, Typography } from '@douyinfe/semi-ui';
@@ -46,15 +46,15 @@ export default function SessionFiles({ session, canWrite }) {
         try {
             const created = await c2.createTask({ session_id: session.id, task_type: 'ls', payload: { path: target } });
             const taskId = created?.task?.id;
-            if (!taskId) throw new Error(t('c2.files.failed', null, '列目录失败'));
+            if (!taskId) throw new Error(t('c2.files.failed', null, 'Failed'));
             const task = await waitTask(taskId);
             if (!alive.current) return;
             if (!task) {
-                setError(t('c2.files.timeout', null, '加载文件超时'));
+                setError(t('c2.files.timeout', null, 'Timed out loading files'));
                 return;
             }
             if (task.status !== 'success') {
-                setError(task.error || t('c2.files.failed', null, '列目录失败'));
+                setError(task.error || t('c2.files.failed', null, 'Failed'));
                 setItems([]);
                 setRaw(task.resultText || '');
                 return;
@@ -80,22 +80,22 @@ export default function SessionFiles({ session, canWrite }) {
 
     const download = async item => {
         if (!canWrite) {
-            toastWarning(t('c2.files.writeRequired', null, '当前账号没有下发任务的权限'));
+            toastWarning(t('c2.files.writeRequired', null, 'The current account is not allowed to send tasks'));
             return;
         }
         const remote = joinRemotePath(path, item.name);
         try {
             const created = await c2.createTask({ session_id: session.id, task_type: 'download', payload: { path: remote } });
             const taskId = created?.task?.id;
-            if (!taskId) throw new Error(t('c2.files.failed', null, '下载失败'));
+            if (!taskId) throw new Error(t('c2.files.failed', null, 'Failed'));
             const task = await waitTask(taskId);
             if (!task || task.status !== 'success') {
-                throw new Error(task?.error || t('c2.files.failed', null, '下载失败'));
+                throw new Error(task?.error || t('c2.files.failed', null, 'Failed'));
             }
             await c2.downloadTaskResult(task.id, item.name);
-            toastSuccess(t('c2.files.downloadOk', null, '下载成功'));
+            toastSuccess(t('c2.files.downloadOk', null, 'Downloaded'));
         } catch (err) {
-            toastError(err, t('c2.files.failed', null, '下载失败'));
+            toastError(err, t('c2.files.failed', null, 'Failed'));
         }
     };
 
@@ -106,7 +106,7 @@ export default function SessionFiles({ session, canWrite }) {
 
     const columns = [
         {
-            title: t('c2.files.colName', null, '名称'),
+            title: t('c2.files.colName', null, 'Name'),
             dataIndex: 'name',
             render: (name, item) => (
                 <button
@@ -118,16 +118,16 @@ export default function SessionFiles({ session, canWrite }) {
                 </button>
             )
         },
-        { title: t('c2.files.colSize', null, '大小'), dataIndex: 'size', width: 120 },
-        { title: t('c2.files.colMode', null, '权限'), dataIndex: 'mode', width: 160 },
+        { title: t('c2.files.colSize', null, 'Size'), dataIndex: 'size', width: 120 },
+        { title: t('c2.files.colMode', null, 'Mode'), dataIndex: 'mode', width: 160 },
         {
-            title: t('c2.files.colActions', null, '操作'),
+            title: t('c2.files.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 160,
             render: (_, item) => (
                 item.isDir
-                    ? <Button size="small" theme="borderless" onClick={() => load(joinRemotePath(path, item.name))}>{t('c2.files.open', null, '打开')}</Button>
-                    : <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => download(item)}>{t('c2.files.download', null, '下载')}</Button>
+                    ? <Button size="small" theme="borderless" onClick={() => load(joinRemotePath(path, item.name))}>{t('c2.files.open', null, 'Open')}</Button>
+                    : <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => download(item)}>{t('c2.files.download', null, 'Download')}</Button>
             )
         }
     ];
@@ -136,8 +136,8 @@ export default function SessionFiles({ session, canWrite }) {
         <div className="c2-files">
             <div className="c2-files-toolbar">
                 <Space spacing={8} wrap>
-                    <Button size="small" onClick={() => load(remoteParentPath(path))}>{t('c2.files.parent', null, '上级目录')}</Button>
-                    <Button size="small" icon={<IconRefresh />} loading={loading} onClick={() => load(path)}>{t('c2.files.refresh', null, '刷新')}</Button>
+                    <Button size="small" onClick={() => load(remoteParentPath(path))}>{t('c2.files.parent', null, 'Parent')}</Button>
+                    <Button size="small" icon={<IconRefresh />} loading={loading} onClick={() => load(path)}>{t('c2.files.refresh', null, 'Refresh')}</Button>
                     <Input
                         size="small"
                         value={pathInput}
@@ -145,17 +145,17 @@ export default function SessionFiles({ session, canWrite }) {
                         onEnterPress={() => load(pathInput)}
                         className="c2-files-path"
                     />
-                    <Button size="small" onClick={() => load(pathInput)}>{t('c2.files.go', null, '跳转')}</Button>
+                    <Button size="small" onClick={() => load(pathInput)}>{t('c2.files.go', null, 'Go')}</Button>
                     <Input
                         size="small"
                         value={filter}
                         onChange={setFilter}
-                        placeholder={t('c2.files.filter', null, '过滤名称')}
+                        placeholder={t('c2.files.filter', null, 'Filter by name')}
                         className="c2-files-filter"
                     />
                 </Space>
             </div>
-            <Text type="tertiary" size="small">{t('c2.files.currentPath', null, '当前目录')}：{path}</Text>
+            <Text type="tertiary" size="small">{t('c2.files.currentPath', null, 'Current directory')}：{path}</Text>
             <ErrorBanner error={error} onRetry={() => load(path)} />
             {items.length === 0 && raw.trim() && !loading ? (
                 <pre className="c2-pre">{raw}</pre>
@@ -166,7 +166,7 @@ export default function SessionFiles({ session, canWrite }) {
                     rowKey="name"
                     loading={loading}
                     pagination={{ pageSize: 20 }}
-                    emptyText={t('c2.files.emptyDir', null, '空目录')}
+                    emptyText={t('c2.files.emptyDir', null, 'Empty directory')}
                 />
             )}
         </div>

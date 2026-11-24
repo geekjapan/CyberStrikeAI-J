@@ -34,7 +34,7 @@ func (h *VectorRetriever) Retrieve(ctx context.Context, query string, opts ...Re
 	}
 	q := strings.TrimSpace(query)
 	if q == "" {
-		return nil, fmt.Errorf("查询不能为空")
+		return nil, fmt.Errorf("Query is required")
 	}
 
 	ro := retrievalOptions(opts...)

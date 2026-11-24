@@ -1,4 +1,4 @@
-/** 工具开关：GET /config/tools 分页列表，PUT /config（tools 段）+ POST /config/apply 保存。 */
+/** Tool switches: GET /config/tools paginated list; saved with PUT /config (tools section) + POST /config/apply. */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button, Input, Select, SideSheet, Space, Switch, Tag, Tooltip, Typography
@@ -105,24 +105,24 @@ export default function ToolsPanel() {
         try {
             await api.put('/config', { tools: payloadTools });
             await api.post('/config/apply');
-            toastSuccess(t('settings.apply.applySuccess', null, '配置已成功应用'));
+            toastSuccess(t('settings.apply.applySuccess', null, 'Configuration applied successfully!'));
             setDraft({});
             await tools.reload();
         } catch (error) {
             setSaveError(error);
-            toastError(error, t('settings.apply.applyFailed', null, '保存工具开关失败'));
+            toastError(error, t('settings.apply.applyFailed', null, 'Failed to apply configuration'));
         } finally {
             setSaving(false);
         }
     };
 
     if (!canRead) {
-        return <PermissionBanner permission="config:read" label={t('settings.toolsTitle', null, '读取工具列表')} />;
+        return <PermissionBanner permission="config:read" label={t('settings.toolsTitle', null, 'Tool switches')} />;
     }
 
     const columns = [
         {
-            title: t('settings.toolName', null, '工具'),
+            title: t('settings.toolName', null, 'Tool'),
             dataIndex: 'name',
             width: 260,
             render: (name, row) => (
@@ -131,16 +131,16 @@ export default function ToolsPanel() {
                     <Space spacing={4}>
                         {row.is_external
                             ? <Tag size="small" color="violet">{`MCP · ${row.external_mcp}`}</Tag>
-                            : <Tag size="small" color="grey">{t('settings.toolInternal', null, '内置')}</Tag>}
+                            : <Tag size="small" color="grey">{t('settings.toolInternal', null, 'Built-in')}</Tag>}
                         {row.role_enabled === false && (
-                            <Tag size="small" color="orange">{t('settings.toolRoleOff', null, '当前角色未启用')}</Tag>
+                            <Tag size="small" color="orange">{t('settings.toolRoleOff', null, 'Not enabled for the current role')}</Tag>
                         )}
                     </Space>
                 </Space>
             )
         },
         {
-            title: t('settings.toolDescription', null, '说明'),
+            title: t('settings.toolDescription', null, 'Description'),
             dataIndex: 'description',
             render: value => (
                 <Tooltip content={value || '—'} position="topLeft">
@@ -149,7 +149,7 @@ export default function ToolsPanel() {
             )
         },
         {
-            title: t('settings.toolStatus', null, '启用'),
+            title: t('settings.toolStatus', null, 'Enabled'),
             dataIndex: 'enabled',
             width: 160,
             render: (enabled, row) => (
@@ -159,18 +159,18 @@ export default function ToolsPanel() {
                         checked={enabled}
                         disabled={!canWrite || saving}
                         onChange={next => toggle(row, next)}
-                        aria-label={t('settings.toolStatus', null, '启用')}
+                        aria-label={t('settings.toolStatus', null, 'Enabled')}
                     />
-                    {row.dirty && <Tag size="small" color="amber">{t('settings.unsavedShort', null, '未保存')}</Tag>}
+                    {row.dirty && <Tag size="small" color="amber">{t('settings.unsavedShort', null, 'Unsaved')}</Tag>}
                 </Space>
             )
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             width: 110,
             render: (_, row) => (
                 <Button size="small" theme="borderless" onClick={() => setSchemaTool(row)}>
-                    {t('settings.toolSchema', null, '参数')}
+                    {t('settings.toolSchema', null, 'Parameters')}
                 </Button>
             )
         }
@@ -179,15 +179,15 @@ export default function ToolsPanel() {
     return (
         <>
             <SectionCard
-                title={t('settings.toolsTitle', null, '工具开关')}
-                description={t('settings.toolsDesc', null, '开关按工具名写入 config.security.tools；外部 MCP 工具的状态写回对应 MCP 配置。保存后立即应用。')}
+                title={t('settings.toolsTitle', null, 'Tool switches')}
+                description={t('settings.toolsDesc', null, 'Switches are written to config.security.tools by tool name; the state of external MCP tools is written back to the matching MCP configuration. Changes apply immediately after saving.')}
                 extra={(
                     <Space>
                         <Button
                             onClick={() => setDraft({})}
                             disabled={!dirtyCount || saving}
                         >
-                            {t('toolGuard.reset', null, '撤销修改')}
+                            {t('toolGuard.reset', null, 'Discard changes')}
                         </Button>
                         <Button
                             theme="solid"
@@ -196,7 +196,9 @@ export default function ToolsPanel() {
                             disabled={!canWrite || !dirtyCount}
                             onClick={save}
                         >
-                            {t('settings.saveTools', { count: dirtyCount }, `保存工具开关${dirtyCount ? `（${dirtyCount}）` : ''}`)}
+                            {dirtyCount
+                                ? t('settings.saveToolsCount', { count: dirtyCount }, 'Save tool switches ({{count}})')
+                                : t('settings.saveTools', null, 'Save tool switches')}
                         </Button>
                     </Space>
                 )}
@@ -208,14 +210,14 @@ export default function ToolsPanel() {
                     dataSource={rows}
                     rowKey="key"
                     loading={tools.loading}
-                    emptyText={t('settings.toolsEmpty', null, '没有匹配的工具')}
+                    emptyText={t('settings.toolsEmpty', null, 'No matching tools')}
                     toolbar={(
                         <Space wrap>
                             <Input
                                 prefix={<IconSearch />}
                                 value={searchInput}
                                 onChange={value => setSearchInput(value)}
-                                placeholder={t('settings.toolSearch', null, '按工具名或说明搜索')}
+                                placeholder={t('settings.toolSearch', null, 'Search by tool name or description')}
                                 style={{ width: 240 }}
                                 showClear
                             />
@@ -224,20 +226,20 @@ export default function ToolsPanel() {
                                 onChange={value => setFilter(value)}
                                 style={{ width: 140 }}
                                 optionList={[
-                                    { value: 'all', label: t('settings.filterAll', null, '全部状态') },
-                                    { value: 'on', label: t('settings.filterOn', null, '仅已启用') },
-                                    { value: 'off', label: t('settings.filterOff', null, '仅已停用') }
+                                    { value: 'all', label: t('settings.filterAll', null, 'All states') },
+                                    { value: 'on', label: t('settings.filterOn', null, 'Enabled only') },
+                                    { value: 'off', label: t('settings.filterOff', null, 'Disabled only') }
                                 ]}
                             />
                             <Tag size="small" color="blue">
                                 {t(
                                     'settings.toolsTotal',
                                     { total: tools.data?.total ?? 0, enabled: tools.data?.total_enabled ?? 0 },
-                                    `共 ${tools.data?.total ?? 0} 个，已启用 ${tools.data?.total_enabled ?? 0} 个`
+                                    '{{total}} total, {{enabled}} enabled'
                                 )}
                             </Tag>
                             <Button icon={<IconRefresh />} theme="borderless" onClick={tools.reload} loading={tools.loading}>
-                                {t('common.refresh', null, '刷新')}
+                                {t('common.refresh', null, 'Refresh')}
                             </Button>
                         </Space>
                     )}
@@ -254,7 +256,7 @@ export default function ToolsPanel() {
             </SectionCard>
 
             <SideSheet
-                title={schemaTool ? t('settings.toolSchemaTitle', { name: schemaTool.name }, `参数定义 · ${schemaTool.name}`) : ''}
+                title={schemaTool ? t('settings.toolSchemaTitle', { name: schemaTool.name }, 'Parameter definition · {{name}}') : ''}
                 visible={Boolean(schemaTool)}
                 onCancel={() => setSchemaTool(null)}
                 width={620}
@@ -283,7 +285,7 @@ function SchemaBody({ tool }) {
     if (state.loading) return <LoadingBlock rows={5} />;
     if (state.error) return <ErrorBanner error={state.error} />;
     if (!state.schema) {
-        return <Text type="tertiary">{t('settings.toolNoSchema', null, '该工具没有声明参数（无参数 Schema）。')}</Text>;
+        return <Text type="tertiary">{t('settings.toolNoSchema', null, 'This tool declares no parameters (no parameter schema).')}</Text>;
     }
     const params = schemaRows(state.schema);
     return (
@@ -292,10 +294,10 @@ function SchemaBody({ tool }) {
                 <table className="settings-schema-table">
                     <thead>
                         <tr>
-                            <th>{t('settings.paramName', null, '参数')}</th>
-                            <th>{t('settings.paramType', null, '类型')}</th>
-                            <th>{t('settings.paramRequired', null, '必填')}</th>
-                            <th>{t('settings.paramDesc', null, '说明')}</th>
+                            <th>{t('settings.paramName', null, 'Parameter')}</th>
+                            <th>{t('settings.paramType', null, 'Type')}</th>
+                            <th>{t('settings.paramRequired', null, 'Required')}</th>
+                            <th>{t('settings.paramDesc', null, 'Description')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -303,7 +305,7 @@ function SchemaBody({ tool }) {
                             <tr key={param.name}>
                                 <td><Mono>{param.name}</Mono></td>
                                 <td>{param.type}</td>
-                                <td>{param.required ? <Tag size="small" color="red">是</Tag> : <Text type="tertiary">否</Text>}</td>
+                                <td>{param.required ? <Tag size="small" color="red">{t('ui.settingsToolsPanel.yes', null, 'Yes')}</Tag> : <Text type="tertiary">{t('ui.settingsToolsPanel.no', null, 'No')}</Text>}</td>
                                 <td>{param.description || '—'}</td>
                             </tr>
                         ))}

@@ -1,4 +1,4 @@
-/** 页面注册表：路由 id → 页面组件（按需加载）。 */
+/** Page registry: route id -> page component (loaded on demand). */
 import { lazy } from 'react';
 
 export const PAGES = {

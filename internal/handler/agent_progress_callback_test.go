@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// TestCreateProgressCallback_ConcurrentToolEvents 回归 issue #142：并行 tool 回调不得 concurrent map panic。
+// TestCreateProgressCallback_ConcurrentToolEvents regresses issue #142: parallel tool callbacks must not panic with a concurrent map access.
 func TestCreateProgressCallback_ConcurrentToolEvents(t *testing.T) {
 	logger := zap.NewNop()
 	h := &AgentHandler{
@@ -100,8 +100,8 @@ func TestCreateProgressCallback_RecordsSkillStats(t *testing.T) {
 	}
 }
 
-// TestCreateProgressCallback_MirrorsWebStreamEvents 页面刷新后 task-events 订阅必须
-// 继续收到原 Web SSE 任务的后续事件，不能只等数据库最终结果。
+// TestCreateProgressCallback_MirrorsWebStreamEvents after a page refresh the task-events subscription must
+// keep receiving later events of the original Web SSE task, not only wait for the final database result.
 func TestCreateProgressCallback_MirrorsWebStreamEvents(t *testing.T) {
 	bus := NewTaskEventBus()
 	h := &AgentHandler{logger: zap.NewNop(), config: &config.Config{}, taskEventBus: bus}
@@ -112,7 +112,7 @@ func TestCreateProgressCallback_MirrorsWebStreamEvents(t *testing.T) {
 		func(eventType, message string, data interface{}) { primaryCalls++ },
 	)
 
-	cb("progress", "第 3 轮", map[string]interface{}{"iteration": 3})
+	cb("progress", "Round 3", map[string]interface{}{"iteration": 3})
 	if primaryCalls != 1 {
 		t.Fatalf("expected primary SSE callback once, got %d", primaryCalls)
 	}
@@ -138,7 +138,7 @@ func TestCreateProgressCallback_HidesInternalAgentDiagnostics(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateConversation: %v", err)
 	}
-	asst, err := db.AddMessage(conv.ID, "assistant", "处理中...", nil)
+	asst, err := db.AddMessage(conv.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("AddMessage: %v", err)
 	}
@@ -151,7 +151,7 @@ func TestCreateProgressCallback_HidesInternalAgentDiagnostics(t *testing.T) {
 		func(string, string, interface{}) { primaryCalls++ },
 	)
 
-	cb("model_output_rejected", "模型工具调用不完整或参数不安全，已阻止执行并要求重写。", map[string]interface{}{
+	cb("model_output_rejected", "Model tool call was incomplete or its arguments were unsafe; execution was blocked and a rewrite was requested.", map[string]interface{}{
 		"reason": "invalid_tool_arguments_json",
 	})
 	cb("progress", "Agent TurnLoop 常驻多轮 runtime 已接管本轮会话。", map[string]interface{}{
@@ -186,7 +186,7 @@ func TestCreateProgressCallback_PersistsRunningResponseBeforeDone(t *testing.T) 
 	if err != nil {
 		t.Fatalf("CreateConversation: %v", err)
 	}
-	asst, err := db.AddMessage(conv.ID, "assistant", "处理中...", nil)
+	asst, err := db.AddMessage(conv.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("AddMessage: %v", err)
 	}
@@ -199,18 +199,18 @@ func TestCreateProgressCallback_PersistsRunningResponseBeforeDone(t *testing.T) 
 		"orchestration": "single",
 	}
 	cb("response_start", "", meta)
-	cb("response_delta", "刷新前已生成的第一部分", openai.WithSSEAccumulated(meta, "刷新前已生成的第一部分"))
+	cb("response_delta", "first part generated before the refresh", openai.WithSSEAccumulated(meta, "first part generated before the refresh"))
 
 	details, err := db.GetProcessDetails(asst.ID)
 	if err != nil {
 		t.Fatalf("GetProcessDetails: %v", err)
 	}
-	if len(details) != 1 || details[0].EventType != "planning" || details[0].Message != "刷新前已生成的第一部分" {
+	if len(details) != 1 || details[0].EventType != "planning" || details[0].Message != "first part generated before the refresh" {
 		t.Fatalf("expected one running planning snapshot, got %+v", details)
 	}
 
-	longer := "刷新前已生成的第一部分" + strings.Repeat("继续迭代", 300)
-	cb("response_delta", "继续迭代", openai.WithSSEAccumulated(meta, longer))
+	longer := "first part generated before the refresh" + strings.Repeat("keep iterating.", 100)
+	cb("response_delta", "keep iterating", openai.WithSSEAccumulated(meta, longer))
 	details, err = db.GetProcessDetails(asst.ID)
 	if err != nil {
 		t.Fatalf("GetProcessDetails after update: %v", err)
@@ -220,7 +220,7 @@ func TestCreateProgressCallback_PersistsRunningResponseBeforeDone(t *testing.T) 
 	}
 }
 
-// TestCreateProgressCallback_FlushesReasoningOnDone 流式推理聚合须在 done/response 时落库，刷新后可回放。
+// TestCreateProgressCallback_FlushesReasoningOnDone streamed reasoning aggregation must be persisted on done/response so it can be replayed after a refresh.
 func TestCreateProgressCallback_FlushesReasoningOnDone(t *testing.T) {
 	tmp := t.TempDir()
 	db, err := database.NewDB(filepath.Join(tmp, "test.sqlite"), zap.NewNop())
@@ -233,7 +233,7 @@ func TestCreateProgressCallback_FlushesReasoningOnDone(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateConversation: %v", err)
 	}
-	asst, err := db.AddMessage(conv.ID, "assistant", "处理中...", nil)
+	asst, err := db.AddMessage(conv.ID, "assistant", "Processing...", nil)
 	if err != nil {
 		t.Fatalf("AddMessage: %v", err)
 	}

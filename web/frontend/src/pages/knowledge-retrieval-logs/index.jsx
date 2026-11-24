@@ -25,34 +25,34 @@ export default function KnowledgeRetrievalLogsPage() {
     const rows = Array.isArray(logs.data?.logs) ? logs.data.logs : [];
 
     const remove = row => confirmAction({
-        title: '删除该检索日志？',
+        title: t('ui.knowledgeRetrievalLogs.deleteTitle', null, 'Delete this retrieval log?'),
         content: row.query || row.id,
         onOk: async () => {
             await api.del(`/knowledge/retrieval-logs/${encodeURIComponent(row.id)}`);
-            toastSuccess('已删除');
+            toastSuccess(t('ui.knowledgeRetrievalLogs.deleted', null, 'Deleted'));
             logs.reload();
         }
     });
 
     const columns = [
         {
-            title: '检索语句', dataIndex: 'query', render: (value, record) => (
+            title: t('ui.knowledgeRetrievalLogs.query', null, 'Query'), dataIndex: 'query', render: (value, record) => (
                 <button type="button" className="link-button" onClick={() => setDetail(record)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', color: 'var(--semi-color-primary)' }}>
                     {value || '—'}
                 </button>
             )
         },
-        { title: '风险类型', dataIndex: 'riskType', width: 140, render: value => (value ? <Tag size="small">{value}</Tag> : '—') },
+        { title: t('ui.knowledgeRetrievalLogs.riskType', null, 'Risk type'), dataIndex: 'riskType', width: 140, render: value => (value ? <Tag size="small">{value}</Tag> : '—') },
         {
-            title: '命中知识项', dataIndex: 'retrievedItems', width: 120,
-            render: value => <Text type="tertiary">{Array.isArray(value) ? value.length : 0} 条</Text>
+            title: t('ui.knowledgeRetrievalLogs.hitItems', null, 'Matched knowledge items'), dataIndex: 'retrievedItems', width: 120,
+            render: value => <Text type="tertiary">{t('ui.knowledgeRetrievalLogs.countUnit', { count: Array.isArray(value) ? value.length : 0 }, '{{count}} items')}</Text>
         },
-        { title: '会话', dataIndex: 'conversationId', width: 200, render: value => <Text type="tertiary" ellipsis={{ showTooltip: true }}>{value || '—'}</Text> },
-        { title: '时间', dataIndex: 'createdAt', width: 180, render: value => formatDateTime(value) },
+        { title: t('ui.knowledgeRetrievalLogs.conversation', null, 'Conversation'), dataIndex: 'conversationId', width: 200, render: value => <Text type="tertiary" ellipsis={{ showTooltip: true }}>{value || '—'}</Text> },
+        { title: t('ui.knowledgeRetrievalLogs.time', null, 'Time'), dataIndex: 'createdAt', width: 180, render: value => formatDateTime(value) },
         {
-            title: '操作', width: 110, render: (_, record) => (
+            title: t('ui.knowledgeRetrievalLogs.actions', null, 'Actions'), width: 110, render: (_, record) => (
                 <Space>
-                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>详情</Button>
+                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>{t('ui.knowledgeRetrievalLogs.details', null, 'Details')}</Button>
                     {canDelete && <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => remove(record)} />}
                 </Space>
             )
@@ -62,11 +62,11 @@ export default function KnowledgeRetrievalLogsPage() {
     return (
         <div>
             <PageHeader
-                title={t('knowledge.retrievalLogsTitle', null, '检索历史')}
-                description="记录智能体每次知识库检索的语句、命中项与会话，用于回溯回答依据。"
-                extra={<Button icon={<IconRefresh />} onClick={() => logs.reload()} loading={logs.loading}>刷新</Button>}
+                title={t('knowledge.retrievalLogsTitle', null, 'Retrieval history')}
+                description={t('ui.knowledgeRetrievalLogs.pageDescription', null, 'Records the query, matched items and conversation of each agent knowledge base retrieval, to trace the basis of answers.')}
+                extra={<Button icon={<IconRefresh />} onClick={() => logs.reload()} loading={logs.loading}>{t('ui.knowledgeRetrievalLogs.refresh', null, 'Refresh')}</Button>}
             />
-            <SectionCard title={`检索记录（${rows.length}）`}>
+            <SectionCard title={t('ui.knowledgeRetrievalLogs.recordsTitle', { count: rows.length }, 'Retrieval records ({{count}})')}>
                 <ErrorBanner error={logs.error} onRetry={() => logs.reload()} />
                 <DataTable
                     columns={columns}
@@ -78,34 +78,34 @@ export default function KnowledgeRetrievalLogsPage() {
                         <Space>
                             <Input
                                 prefix={<IconSearch />}
-                                placeholder="按会话 ID 过滤"
+                                placeholder={t('ui.knowledgeRetrievalLogs.filterByConversation', null, 'Filter by conversation ID')}
                                 value={conversationId}
                                 onChange={setConversationId}
                                 style={{ width: 260 }}
                             />
                             <Input
-                                placeholder="条数"
+                                placeholder={t('ui.knowledgeRetrievalLogs.limitPlaceholder', null, 'Count')}
                                 value={String(limit)}
                                 onChange={value => setLimit(Math.min(Math.max(Number(value) || 50, 1), 500))}
                                 style={{ width: 100 }}
-                                suffix={<Text type="tertiary">条</Text>}
+                                suffix={<Text type="tertiary">{t('ui.knowledgeRetrievalLogs.limitSuffix', null, 'items')}</Text>}
                             />
                         </Space>
                     )}
                 />
             </SectionCard>
-            <Drawer title="检索日志详情" visible={Boolean(detail)} onCancel={() => setDetail(null)} width={560}>
+            <Drawer title={t('ui.knowledgeRetrievalLogs.detailTitle', null, 'Retrieval log details')} visible={Boolean(detail)} onCancel={() => setDetail(null)} width={560}>
                 {detail && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                         <KeyValueList items={[
-                            { label: '日志 ID', value: detail.id },
-                            { label: '检索语句', value: detail.query },
-                            { label: '风险类型', value: detail.riskType || '—' },
-                            { label: '会话 ID', value: detail.conversationId || '—' },
-                            { label: '消息 ID', value: detail.messageId || '—' },
-                            { label: '时间', value: formatDateTime(detail.createdAt) }
+                            { label: t('ui.knowledgeRetrievalLogs.logId', null, 'Log ID'), value: detail.id },
+                            { label: t('ui.knowledgeRetrievalLogs.query', null, 'Query'), value: detail.query },
+                            { label: t('ui.knowledgeRetrievalLogs.riskType', null, 'Risk type'), value: detail.riskType || '—' },
+                            { label: t('ui.knowledgeRetrievalLogs.conversationId', null, 'Conversation ID'), value: detail.conversationId || '—' },
+                            { label: t('ui.knowledgeRetrievalLogs.messageId', null, 'Message ID'), value: detail.messageId || '—' },
+                            { label: t('ui.knowledgeRetrievalLogs.time', null, 'Time'), value: formatDateTime(detail.createdAt) }
                         ]} />
-                        <JsonViewer value={detail.retrievedItems || []} title="命中知识项" />
+                        <JsonViewer value={detail.retrievedItems || []} title={t('ui.knowledgeRetrievalLogs.hitItems', null, 'Matched knowledge items')} />
                     </div>
                 )}
             </Drawer>

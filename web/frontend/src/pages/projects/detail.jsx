@@ -1,4 +1,4 @@
-/** 项目详情：概览统计、标签页与事实弹窗/详情侧栏的统一入口。 */
+/** Project detail: single entry for overview stats, tabs and the fact dialog/detail drawer. */
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Space, Tabs, Tag, Typography } from '@douyinfe/semi-ui';
@@ -44,19 +44,19 @@ export default function ProjectDetail({ projectId, tab, refreshToken = 0, onTabC
     const openFactDetail = useCallback(factKey => setFactDetail(factKey || ''), []);
 
     const tabList = useMemo(() => ([
-        { itemKey: 'facts', tab: t('projects.tabFacts', null, '事实黑板') },
-        { itemKey: 'graph', tab: t('projects.tabGraph', null, '攻击路径') },
-        { itemKey: 'conversations', tab: t('projects.tabConversations', null, '关联对话') },
-        { itemKey: 'settings', tab: t('projects.tabSettings', null, '设置') }
+        { itemKey: 'facts', tab: t('projects.tabFacts', null, 'Fact board') },
+        { itemKey: 'graph', tab: t('projects.tabGraph', null, 'Attack path') },
+        { itemKey: 'conversations', tab: t('projects.tabConversations', null, 'Bound conversations') },
+        { itemKey: 'settings', tab: t('projects.tabSettings', null, 'Settings') }
     ]), [t]);
 
     const metrics = [
-        { id: 'facts', label: t('projects.facts', null, '事实'), value: stats.data?.fact_count ?? '—', loading: stats.loading },
-        { id: 'vulns', label: t('projects.vulnerabilityManagement', null, '漏洞'), value: stats.data?.vuln_count ?? '—', loading: stats.loading },
-        { id: 'conversations', label: t('projects.tabConversations', null, '关联对话'), value: stats.data?.conversation_count ?? '—', loading: stats.loading },
+        { id: 'facts', label: t('projects.facts', null, 'Facts'), value: stats.data?.fact_count ?? '—', loading: stats.loading },
+        { id: 'vulns', label: t('projects.vulnerabilityManagement', null, 'Vulnerability management'), value: stats.data?.vuln_count ?? '—', loading: stats.loading },
+        { id: 'conversations', label: t('projects.tabConversations', null, 'Bound conversations'), value: stats.data?.conversation_count ?? '—', loading: stats.loading },
         {
             id: 'sparse',
-            label: t('projects.factBodySparse', null, '待补全'),
+            label: t('projects.factBodySparse', null, 'Incomplete'),
             value: stats.data?.sparse_fact_count ?? '—',
             tone: (stats.data?.sparse_fact_count || 0) > 0 ? 'warning' : undefined,
             loading: stats.loading
@@ -73,30 +73,30 @@ export default function ProjectDetail({ projectId, tab, refreshToken = 0, onTabC
                     <div className="project-detail-head-main">
                         <div className="project-detail-title-row">
                             <Title heading={4} className="project-detail-title">
-                                {current?.name || t('projects.projectNotFound', null, '项目不存在')}
+                                {current?.name || t('projects.projectNotFound', null, 'Project not found')}
                             </Title>
-                            {current?.pinned ? <Tag size="small" color="blue">{t('projects.pinned', null, '置顶')}</Tag> : null}
+                            {current?.pinned ? <Tag size="small" color="blue">{t('projects.pinned', null, 'Pinned')}</Tag> : null}
                             <Tag size="small" color={(current?.status || 'active') === 'archived' ? 'grey' : 'green'}>
                                 {(current?.status || 'active') === 'archived'
-                                    ? t('projects.statusArchived', null, '已归档')
-                                    : t('projects.statusActive', null, '进行中')}
+                                    ? t('projects.statusArchived', null, 'Archived')
+                                    : t('projects.statusActive', null, 'Active')}
                             </Tag>
                         </div>
                         {current?.description
                             ? <Paragraph className="project-detail-desc">{current.description}</Paragraph>
-                            : <Text type="tertiary" size="small">{t('projects.noProjectDescription', null, '暂无项目描述')}</Text>}
+                            : <Text type="tertiary" size="small">{t('projects.noProjectDescription', null, 'No project binding')}</Text>}
                         <Text type="tertiary" size="small">
-                            {t('projects.updatedPrefix', { time: formatDateTime(current?.updated_at) }, `更新于 ${formatDateTime(current?.updated_at)}`)}
+                            {t('projects.updatedPrefix', { time: formatDateTime(current?.updated_at) }, 'Updated {{time}}')}
                             {' · '}ID: <code>{projectId}</code>
                         </Text>
                     </div>
                     <Space wrap>
                         {current && hasPermission('asset:write') && (
-                            <Button onClick={() => setAddingAsset(true)}>{t('assets.addAsset', null, '新增资产')}</Button>
+                            <Button onClick={() => setAddingAsset(true)}>{t('assets.addAsset', null, 'Add asset')}</Button>
                         )}
                         {current && hasPermission('asset:read') && (
                             <Button onClick={() => navigate(`/asset-library?project_id=${encodeURIComponent(projectId)}`)}>
-                                {t('assets.projectAssets', null, '项目资产')}
+                                {t('assets.projectAssets', null, 'Project assets')}
                             </Button>
                         )}
                         <Button
@@ -106,7 +106,7 @@ export default function ProjectDetail({ projectId, tab, refreshToken = 0, onTabC
                             onClick={() => { project.reload(); stats.reload(); }}
                         />
                         <Button type="primary" disabled={!canWrite} onClick={() => openFactForm('')}>
-                            {t('projects.addFactCta', null, '+ 添加事实')}
+                            {t('projects.addFactCta', null, '+ Add fact')}
                         </Button>
                     </Space>
                 </SectionCard>

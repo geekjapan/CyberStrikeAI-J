@@ -1,4 +1,5 @@
-/** 格式化工具：时间、数字、字节、状态色板。 */
+/** Formatting utilities: time, numbers, bytes, status palette. */
+import { lazyLabels, translate } from './i18n';
 
 export const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low', 'info'];
 
@@ -10,13 +11,13 @@ export const SEVERITY_COLOR = {
     info: 'grey'
 };
 
-export const SEVERITY_LABEL = {
-    critical: '严重',
-    high: '高危',
-    medium: '中危',
-    low: '低危',
-    info: '信息'
-};
+export const SEVERITY_LABEL = lazyLabels('ui.format.severity', {
+    critical: 'Critical',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
+    info: 'Info'
+});
 
 export const STATUS_COLOR = {
     running: 'blue',
@@ -41,10 +42,9 @@ export const STATUS_COLOR = {
     archived: 'grey'
 };
 
-// 日期与数字格式跟随界面语言，未知时用 en-US；ar-SA 默认是伊斯兰历，这里固定公历。
+// Date and number formats follow the UI language; fall back to en-US when unknown.
 export function currentLocale() {
-    const lang = (typeof document !== 'undefined' && document.documentElement.lang) || 'en-US';
-    return lang === 'ar-SA' ? 'ar-SA-u-ca-gregory' : lang;
+    return (typeof document !== 'undefined' && document.documentElement.lang) || 'en-US';
 }
 
 export function formatDateTime(value, locale = currentLocale()) {
@@ -73,10 +73,10 @@ export function relativeTime(value, t) {
     const date = new Date(value);
     if (!Number.isFinite(date.getTime())) return '—';
     const diff = Date.now() - date.getTime();
-    if (diff < 60_000) return t?.('common.justNow', null, '刚刚') || '刚刚';
-    if (diff < 3_600_000) return t?.('common.minutesAgo', { n: Math.floor(diff / 60_000) }, `${Math.floor(diff / 60_000)} 分钟前`);
-    if (diff < 86_400_000) return t?.('common.hoursAgo', { n: Math.floor(diff / 3_600_000) }, `${Math.floor(diff / 3_600_000)} 小时前`);
-    if (diff < 30 * 86_400_000) return t?.('common.daysAgo', { n: Math.floor(diff / 86_400_000) }, `${Math.floor(diff / 86_400_000)} 天前`);
+    if (diff < 60_000) return translate('common.justNow', null, 'Just now');
+    if (diff < 3_600_000) return translate('common.minutesAgo', { n: Math.floor(diff / 60_000) }, '{{n}} min ago');
+    if (diff < 86_400_000) return translate('common.hoursAgo', { n: Math.floor(diff / 3_600_000) }, '{{n}} h ago');
+    if (diff < 30 * 86_400_000) return translate('common.daysAgo', { n: Math.floor(diff / 86_400_000) }, '{{n}} d ago');
     return formatDate(value);
 }
 
@@ -133,4 +133,9 @@ export function humanizeKey(key) {
         .replace(/\s+/g, ' ')
         .trim()
         .replace(/^\w/, match => match.toUpperCase());
+}
+
+// The default role: "Default", or the name earlier versions stored.
+export function isDefaultRole(name) {
+    return name === 'Default' || name === '默认';
 }

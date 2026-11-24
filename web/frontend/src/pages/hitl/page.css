@@ -1,4 +1,4 @@
-/* 人机协同页私有布局样式（颜色只用 Semi 变量）。 */
+/* Private layout styles for the HITL page (colors use Semi variables only). */
 
 .hitl-page { display: flex; flex-direction: column; }
 .hitl-tabs { margin-top: -4px; }

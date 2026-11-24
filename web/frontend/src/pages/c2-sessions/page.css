@@ -1,4 +1,4 @@
-/* C2 会话页面私有样式（c2- 前缀）。 */
+/* Private styles for the C2 sessions page (c2- prefix). */
 
 .c2-session-layout {
     display: grid;
@@ -133,7 +133,7 @@
     margin-top: 10px;
 }
 
-/* 终端 */
+/* Terminal */
 
 .c2-terminal {
     display: flex;
@@ -187,7 +187,7 @@
     gap: 8px;
 }
 
-/* 文件 */
+/* Files */
 
 .c2-files {
     display: flex;
@@ -224,7 +224,7 @@
     font-weight: 600;
 }
 
-/* 任务与信息 */
+/* Tasks and info */
 
 .c2-session-tasks,
 .c2-session-info {

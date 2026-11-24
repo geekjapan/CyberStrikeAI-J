@@ -2,6 +2,6 @@ package multiagent
 
 import "errors"
 
-// ErrInterruptContinue 作为 context.CancelCause 使用：用户选择「中断并继续」且当前无进行中的 MCP 工具时，
-// 取消当前推理/流式输出，并在同一会话任务内携带用户补充说明自动续跑下一轮（类似 Hermes 式人机回合）。
+// ErrInterruptContinue is used as context.CancelCause: when the user chooses "interrupt and continue" and no MCP tool is currently running,
+// cancel the current reasoning/streaming output and, within the same session task, automatically continue into the next round carrying the user's supplementary note (similar to a Hermes-style human-in-the-loop turn).
 var ErrInterruptContinue = errors.New("agent interrupt: continue with user-supplied context")

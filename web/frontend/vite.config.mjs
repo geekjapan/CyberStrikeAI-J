@@ -10,7 +10,7 @@ export default defineConfig({
                 const path = req.url?.split('?')[0];
                 if (path?.startsWith('/api/') && !process.env.CSAI_API_ORIGIN) {
                     res.writeHead(503, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ error: '开发服务器未连接后端，请设置 CSAI_API_ORIGIN。' }));
+                    res.end(JSON.stringify({ error: 'The dev server is not connected to a backend. Set CSAI_API_ORIGIN.' }));
                     return;
                 }
                 if (!/^\/static\/(?:logo\.png|favicon\.ico|site\.webmanifest|i18n\/[a-z]{2}-[A-Z]{2}\.json)$/.test(path || '')) return next();

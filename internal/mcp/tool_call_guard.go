@@ -7,7 +7,7 @@ import (
 	"cyberstrike-ai/internal/toolguard"
 )
 
-const toolGuardBlockedPrefix = "工具调用已被安全规则拦截"
+const toolGuardBlockedPrefix = "Tool call blocked by a security rule"
 const toolGuardBlockedMetaKey = "cyberstrike.ai/blocked"
 
 // toolGuardBlockError carries structured policy results through pre-run hooks.
@@ -34,8 +34,8 @@ func toolGuardBlockedResult(guard *toolguard.Manager, toolName string, args map[
 	}
 	message := toolGuardBlockedPrefix
 	if custom := strings.TrimSpace(match.Message); custom != "" {
-		message += "：" + custom
+		message += ": " + custom
 	}
-	message += fmt.Sprintf("\n规则: %s (%s)\n匹配内容: %q", match.RuleName, match.RuleID, match.MatchedText)
+	message += fmt.Sprintf("\nRule: %s (%s)\nMatched content: %q", match.RuleName, match.RuleID, match.MatchedText)
 	return &ToolResult{Content: []Content{{Type: "text", Text: message}}, IsError: true, Blocked: true}
 }

@@ -1,7 +1,9 @@
 /**
- * HTTP 访问层：统一注入会话令牌、解析错误、处理 401 失效。
- * 所有页面只通过这里访问 /api，不直接调用 fetch。
+ * HTTP access layer: injects the session token, parses errors, handles 401 expiry.
+ * All pages reach /api only through here and never call fetch directly.
  */
+import { translate } from './i18n';
+
 export const AUTH_STORAGE_KEY = 'cyberstrike-auth';
 
 export function readStoredAuth() {
@@ -21,7 +23,7 @@ export function readStoredAuth() {
             scope: stored.scope || ''
         };
     } catch (error) {
-        console.warn('读取会话失败:', error);
+        console.warn('Failed to read session:', error);
         return null;
     }
 }
@@ -71,18 +73,19 @@ async function readError(response) {
     try {
         if (contentType.includes('application/json')) {
             const payload = await response.json();
-            return { message: payload.error || payload.message || `请求失败（HTTP ${response.status}）`, payload };
+            return { message: payload.error || payload.message || translate('ui.http.requestFailed', { status: response.status }, 'Request failed (HTTP {{status}})'), payload };
         }
         const text = await response.text();
-        return { message: text?.slice(0, 300) || `请求失败（HTTP ${response.status}）`, payload: text };
+        return { message: text?.slice(0, 300) || translate('ui.http.requestFailed', { status: response.status }, 'Request failed (HTTP {{status}})'), payload: text };
     } catch (error) {
-        return { message: `请求失败（HTTP ${response.status}）`, payload: null };
+        return { message: translate('ui.http.requestFailed', { status: response.status }, 'Request failed (HTTP {{status}})'), payload: null };
     }
 }
 
 export async function request(path, options = {}) {
     const { method = 'GET', body, query, headers = {}, signal, raw = false, timeout = 60000 } = options;
-    const finalHeaders = { Accept: 'application/json', ...headers };
+    // Make the backend return localizable messages by UI language (not browser language).
+    const finalHeaders = { Accept: 'application/json', 'Accept-Language': document.documentElement.lang || 'en-US', ...headers };
     let payload = body;
     if (body !== undefined && body !== null && !(body instanceof FormData) && typeof body !== 'string' && !(body instanceof Blob)) {
         finalHeaders['Content-Type'] = 'application/json';
@@ -102,8 +105,8 @@ export async function request(path, options = {}) {
     try {
         response = await fetch(buildUrl(path, query), { method, headers: finalHeaders, body: payload, signal: controller.signal });
     } catch (error) {
-        if (error.name === 'AbortError') throw new ApiError('请求已取消', { path });
-        throw new ApiError('网络连接失败，请检查服务状态', { path });
+        if (error.name === 'AbortError') throw new ApiError(translate('ui.http.cancelled', null, 'Request cancelled'), { path });
+        throw new ApiError(translate('ui.http.networkFailed', null, 'Network connection failed; check that the service is running'), { path });
     } finally {
         if (timer) clearTimeout(timer);
         if (signal) signal.removeEventListener('abort', abort);
@@ -131,7 +134,7 @@ export const api = {
     raw: (path, options = {}) => request(path, { ...options, raw: true })
 };
 
-/** 下载二进制响应并触发浏览器保存。 */
+/** Download a binary response and trigger the browser save. */
 export async function downloadFile(path, { query, filename, method = 'GET', body } = {}) {
     const response = await request(path, { method, body, query, raw: true, timeout: 120000 });
     const blob = await response.blob();
@@ -151,8 +154,8 @@ export async function downloadFile(path, { query, filename, method = 'GET', body
 }
 
 /**
- * 消费服务端 SSE 流。服务端每行以 `data: ` 前缀发送 JSON 对象。
- * onEvent(payload) 逐条回调，返回 abort 函数。
+ * Consume a server SSE stream. The server sends one JSON object per line prefixed with `data: `.
+ * onEvent(payload) is called per event; returns an abort function.
  */
 export function postStream(path, body, { onEvent, onError, onClose, signal } = {}) {
     const controller = new AbortController();
@@ -160,7 +163,7 @@ export function postStream(path, body, { onEvent, onError, onClose, signal } = {
         if (signal.aborted) controller.abort();
         else signal.addEventListener('abort', () => controller.abort(), { once: true });
     }
-    const headers = { 'Content-Type': 'application/json', Accept: 'text/event-stream' };
+    const headers = { 'Content-Type': 'application/json', Accept: 'text/event-stream', 'Accept-Language': document.documentElement.lang || 'en-US' };
     if (currentToken) headers.Authorization = `Bearer ${currentToken}`;
 
     (async () => {
@@ -176,7 +179,7 @@ export function postStream(path, body, { onEvent, onError, onClose, signal } = {
                 const { message } = await readError(response);
                 throw new ApiError(message, { status: response.status, path });
             }
-            if (!response.body) throw new ApiError('服务端未返回流式响应', { path });
+            if (!response.body) throw new ApiError(translate('ui.http.noStream', null, 'The server returned no streaming response'), { path });
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
@@ -212,7 +215,7 @@ export function postStream(path, body, { onEvent, onError, onClose, signal } = {
     return () => controller.abort();
 }
 
-export function errorMessage(error, fallback = '操作失败') {
+export function errorMessage(error, fallback = translate('ui.http.operationFailed', null, 'Operation failed')) {
     if (!error) return fallback;
     if (typeof error === 'string') return error;
     return error.message || fallback;

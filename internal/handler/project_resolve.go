@@ -6,7 +6,7 @@ import (
 	"cyberstrike-ai/internal/config"
 )
 
-// effectiveProjectID 请求/队列显式项目优先，否则使用 config.project.default_project_id。
+// effectiveProjectID: an explicit project on the request or queue takes priority, otherwise config.project.default_project_id is used.
 func effectiveProjectID(cfg *config.Config, explicit string) string {
 	if pid := strings.TrimSpace(explicit); pid != "" {
 		return pid

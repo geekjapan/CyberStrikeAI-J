@@ -1,5 +1,5 @@
 /**
- * C2 监听器表单：创建 / 编辑，覆盖绑定端口、回连地址与关键 OPSEC 参数。
+ * C2 listener form: create / edit, covering bind port, callback address and key OPSEC parameters.
  */
 import { useState } from 'react';
 import { Button, Form, Space, Typography } from '@douyinfe/semi-ui';
@@ -65,12 +65,12 @@ export default function ListenerForm({ visible, record, projects, profiles, subm
     return (
         <Drawer
             visible={visible}
-            title={record ? t('c2.listeners.editTitle', null, '编辑监听器') : t('c2.listeners.modalCreateTitle', null, '创建监听器')}
+            title={record ? t('c2.listeners.editTitle', null, 'Edit Listener') : t('c2.listeners.modalCreateTitle', null, 'Create Listener')}
             footer={(
                 <Space>
-                    <Button onClick={onCancel}>{t('c2.common.cancel', null, '取消')}</Button>
+                    <Button onClick={onCancel}>{t('c2.common.cancel', null, 'Cancel')}</Button>
                     <Button theme="solid" type="primary" loading={submitting} onClick={() => formApi?.submitForm()}>
-                        {record ? t('c2.listeners.save', null, '保存') : t('c2.listeners.submitCreate', null, '创建')}
+                        {record ? t('c2.listeners.save', null, 'Save') : t('c2.listeners.submitCreate', null, 'Create')}
                     </Button>
                 </Space>
             )}
@@ -88,41 +88,41 @@ export default function ListenerForm({ visible, record, projects, profiles, subm
                 <div className="c2-form-row">
                     <Form.Input
                         field="name"
-                        label={t('c2.listeners.name', null, '名称')}
-                        placeholder={t('c2.listeners.placeholderNameExample', null, '例如 http-beacon-01')}
-                        rules={[{ required: true, message: t('c2.listeners.nameRequired', null, '请输入监听器名称') }]}
+                        label={t('c2.listeners.name', null, 'Name')}
+                        placeholder={t('c2.listeners.placeholderNameExample', null, 'e.g. http-beacon-01')}
+                        rules={[{ required: true, message: t('c2.listeners.nameRequired', null, 'Enter a listener name') }]}
                     />
                     <Form.Select
                         field="type"
-                        label={t('c2.listeners.type', null, '类型')}
+                        label={t('c2.listeners.type', null, 'Type')}
                         optionList={LISTENER_TYPES}
                         disabled={Boolean(record)}
                         style={{ width: '100%' }}
                     />
                 </div>
                 <div className="c2-form-row">
-                    <Form.Input field="bind_host" label={t('c2.listeners.bindHost', null, '绑定地址')} placeholder="127.0.0.1" />
+                    <Form.Input field="bind_host" label={t('c2.listeners.bindHost', null, 'Bind Host')} placeholder="127.0.0.1" />
                     <Form.Input
                         field="bind_port"
-                        label={t('c2.listeners.bindPort', null, '绑定端口')}
-                        placeholder={t('c2.listeners.placeholderPort', null, '输入端口号')}
+                        label={t('c2.listeners.bindPort', null, 'Bind Port')}
+                        placeholder={t('c2.listeners.placeholderPort', null, 'Enter port number')}
                         rules={[{
                             required: true,
                             validator: (rule, value) => {
                                 const port = Number(value);
                                 return Number.isInteger(port) && port > 0 && port <= 65535;
                             },
-                            message: t('c2.listeners.portInvalid', null, '端口必须为 1–65535 的整数')
+                            message: t('c2.listeners.portInvalid', null, 'Port must be an integer from 1 to 65535')
                         }]}
                     />
                 </div>
-                <Text type="tertiary" size="small">{t('c2.listeners.bindHintExternal', null, '使用 0.0.0.0 允许外部访问')}</Text>
+                <Text type="tertiary" size="small">{t('c2.listeners.bindHintExternal', null, 'Use 0.0.0.0 to allow external access')}</Text>
                 <div className="c2-form-row">
-                    <Form.Input field="callback_host" label={t('c2.listeners.callbackHost', null, '回连地址（可选）')} placeholder="公网 IP 或域名" />
+                    <Form.Input field="callback_host" label={t('c2.listeners.callbackHost', null, 'Callback host (optional)')} placeholder={t('ui.listenerForm.callbackHostPlaceholder', null, 'Public IP or domain')} />
                     <Form.Select
                         field="profile_id"
                         label={t('c2.listeners.malleableProfile', null, 'Malleable Profile')}
-                        optionList={[{ value: '', label: t('c2.listeners.malleableProfileNone', null, '不使用') },
+                        optionList={[{ value: '', label: t('c2.listeners.malleableProfileNone', null, 'None') },
                             ...profiles.map(item => ({ value: item.id, label: item.name || item.id }))]}
                         style={{ width: '100%' }}
                     />
@@ -130,23 +130,23 @@ export default function ListenerForm({ visible, record, projects, profiles, subm
                 <div className="c2-form-row">
                     <Form.Select
                         field="project_id"
-                        label={t('c2.listeners.project', null, '所属项目')}
-                        optionList={[{ value: '', label: t('c2.listeners.projectNone', null, '不绑定项目') },
+                        label={t('c2.listeners.project', null, 'Project')}
+                        optionList={[{ value: '', label: t('c2.listeners.projectNone', null, 'No project') },
                             ...projects.map(item => ({ value: item.id, label: item.name || item.id }))]}
                         style={{ width: '100%' }}
                     />
-                    <Form.Input field="remark" label={t('c2.listeners.remark', null, '备注')} placeholder={t('c2.listeners.placeholderRemarkLong', null, '可选的备注说明')} />
+                    <Form.Input field="remark" label={t('c2.listeners.remark', null, 'Remark')} placeholder={t('c2.listeners.placeholderRemarkLong', null, 'Optional remark')} />
                 </div>
                 <div className="c2-form-row">
-                    <Form.Input field="default_sleep" label="默认 Sleep（秒）" placeholder="5" />
-                    <Form.Input field="default_jitter" label="默认 Jitter（%）" placeholder="0" />
+                    <Form.Input field="default_sleep" label={t('ui.listenerForm.defaultSleep', null, 'Default sleep (seconds)')} placeholder="5" />
+                    <Form.Input field="default_jitter" label={t('ui.listenerForm.defaultJitter', null, 'Default jitter (%)')} placeholder="0" />
                 </div>
                 <div className="c2-form-row">
-                    <Form.Input field="max_concurrent_tasks" label="单会话并发任务上限（0 不限）" placeholder="0" />
+                    <Form.Input field="max_concurrent_tasks" label={t('ui.listenerForm.maxConcurrentTasks', null, 'Max concurrent tasks per session (0 = unlimited)')} placeholder="0" />
                     {type === 'tcp_reverse' && (
                         <Form.Switch
                             field="allow_legacy_shell"
-                            label={t('c2.listeners.allowLegacyShell', null, '允许未加密经典反弹 Shell（内网实验）')}
+                            label={t('c2.listeners.allowLegacyShell', null, 'Allow unencrypted classic reverse shell (lab only)')}
                         />
                     )}
                 </div>

@@ -93,7 +93,7 @@ func ValidateOnelinerForListener(listener *database.C2Listener, kind OnelinerKin
 			_ = json.Unmarshal([]byte(listener.ConfigJSON), cfg)
 		}
 		if !cfg.AllowLegacyShell {
-			return fmt.Errorf("监听器未开启 allow_legacy_shell：tcp_reverse 默认仅接受 CSB1 加密 Beacon（AES-GCM + Token）；请用 build 生成 beacon，或显式开启 allow_legacy_shell（公网不推荐）")
+			return fmt.Errorf("The listener does not have allow_legacy_shell enabled: tcp_reverse accepts only CSB1-encrypted Beacons (AES-GCM + Token) by default. Generate a beacon with build, or enable allow_legacy_shell explicitly (not recommended on public networks)")
 		}
 	}
 	return nil

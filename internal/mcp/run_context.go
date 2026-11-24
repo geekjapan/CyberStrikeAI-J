@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-// ToolRunRegistry 在工具开始/结束时登记当前 executionId，供对话页「仅终止当前工具」与监控页共用取消逻辑。
+// ToolRunRegistry registers the current executionId when a tool starts and ends, so the chat page's "terminate only the current tool" and the monitoring page share the same cancel logic.
 type ToolRunRegistry interface {
 	RegisterRunningTool(conversationID, executionID string)
 	UnregisterRunningTool(conversationID, executionID string)
 }
 
-// AgentExecuteRunRegistry 登记进行中的 Agent filesystem execute，供「中断并继续」终止 amass 等长命令。
+// AgentExecuteRunRegistry registers in-progress Agent filesystem executes, so "interrupt and continue" can terminate long-running commands such as amass.
 type AgentExecuteRunRegistry interface {
 	RegisterActiveAgentExecute(conversationID string, cancel context.CancelFunc)
 	UnregisterActiveAgentExecute(conversationID string)
@@ -25,7 +25,7 @@ type mcpConversationIDCtxKey struct{}
 type mcpExecutionIDCtxKey struct{}
 type mcpProjectIDCtxKey struct{}
 
-// WithToolRunRegistry 将登记器注入 ctx（Agent / 原生 Agent 任务 ctx）。
+// WithToolRunRegistry injects the registry into ctx (Agent / native Agent task ctx).
 func WithToolRunRegistry(ctx context.Context, reg ToolRunRegistry) context.Context {
 	if ctx == nil || reg == nil {
 		return ctx
@@ -33,7 +33,7 @@ func WithToolRunRegistry(ctx context.Context, reg ToolRunRegistry) context.Conte
 	return context.WithValue(ctx, toolRunRegistryCtxKey{}, reg)
 }
 
-// ToolRunRegistryFromContext 取出登记器（无则 nil）。
+// ToolRunRegistryFromContext retrieves the registry (nil if none).
 func ToolRunRegistryFromContext(ctx context.Context) ToolRunRegistry {
 	if ctx == nil {
 		return nil
@@ -42,7 +42,7 @@ func ToolRunRegistryFromContext(ctx context.Context) ToolRunRegistry {
 	return v
 }
 
-// WithAgentExecuteRunRegistry 将 Agent execute 取消登记器注入 ctx。
+// WithAgentExecuteRunRegistry injects the Agent execute cancel registry into ctx.
 func WithAgentExecuteRunRegistry(ctx context.Context, reg AgentExecuteRunRegistry) context.Context {
 	if ctx == nil || reg == nil {
 		return ctx
@@ -50,7 +50,7 @@ func WithAgentExecuteRunRegistry(ctx context.Context, reg AgentExecuteRunRegistr
 	return context.WithValue(ctx, agentExecuteRunRegistryCtxKey{}, reg)
 }
 
-// AgentExecuteRunRegistryFromContext 取出 Agent execute 登记器（无则 nil）。
+// AgentExecuteRunRegistryFromContext retrieves the Agent execute registry (nil if none).
 func AgentExecuteRunRegistryFromContext(ctx context.Context) AgentExecuteRunRegistry {
 	if ctx == nil {
 		return nil
@@ -59,7 +59,7 @@ func AgentExecuteRunRegistryFromContext(ctx context.Context) AgentExecuteRunRegi
 	return v
 }
 
-// WithMCPConversationID 将对话 ID 注入 ctx，供 CallTool 内与 executionId 关联。
+// WithMCPConversationID injects the conversation ID into ctx, so it can be associated with the executionId inside CallTool.
 func WithMCPConversationID(ctx context.Context, conversationID string) context.Context {
 	if ctx == nil {
 		return nil
@@ -71,7 +71,7 @@ func WithMCPConversationID(ctx context.Context, conversationID string) context.C
 	return context.WithValue(ctx, mcpConversationIDCtxKey{}, id)
 }
 
-// MCPConversationIDFromContext 读取对话 ID。
+// MCPConversationIDFromContext reads the conversation ID.
 func MCPConversationIDFromContext(ctx context.Context) string {
 	if ctx == nil {
 		return ""
@@ -80,7 +80,7 @@ func MCPConversationIDFromContext(ctx context.Context) string {
 	return v
 }
 
-// WithMCPExecutionID 将当前工具 executionId 注入 ctx，供超长输出落盘文件名对齐。
+// WithMCPExecutionID injects the current tool executionId into ctx, so the file name of overlong output written to disk lines up with it.
 func WithMCPExecutionID(ctx context.Context, executionID string) context.Context {
 	if ctx == nil {
 		return nil
@@ -92,7 +92,7 @@ func WithMCPExecutionID(ctx context.Context, executionID string) context.Context
 	return context.WithValue(ctx, mcpExecutionIDCtxKey{}, id)
 }
 
-// MCPExecutionIDFromContext 读取当前工具 executionId。
+// MCPExecutionIDFromContext reads the current tool executionId.
 func MCPExecutionIDFromContext(ctx context.Context) string {
 	if ctx == nil {
 		return ""
@@ -101,7 +101,7 @@ func MCPExecutionIDFromContext(ctx context.Context) string {
 	return v
 }
 
-// WithMCPProjectID 将项目 ID 注入 ctx，供 reduction/trunc 落盘路径与项目隔离对齐。
+// WithMCPProjectID injects the project ID into ctx, so the reduction/truncation disk paths align with project isolation.
 func WithMCPProjectID(ctx context.Context, projectID string) context.Context {
 	if ctx == nil {
 		return nil
@@ -113,7 +113,7 @@ func WithMCPProjectID(ctx context.Context, projectID string) context.Context {
 	return context.WithValue(ctx, mcpProjectIDCtxKey{}, id)
 }
 
-// MCPProjectIDFromContext 读取项目 ID。
+// MCPProjectIDFromContext reads the project ID.
 func MCPProjectIDFromContext(ctx context.Context) string {
 	if ctx == nil {
 		return ""

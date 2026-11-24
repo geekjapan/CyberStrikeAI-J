@@ -13,18 +13,18 @@ import (
 	"cyberstrike-ai/internal/openai"
 )
 
-// Client 调用独立 Vision ChatModel（单次 Generate）。
+// Client calls the standalone Vision ChatModel (a single Generate).
 type Client struct {
 	cfg    config.VisionConfig
 	mainOA config.OpenAIConfig
 }
 
-// NewClient 构造视觉客户端。
+// NewClient constructs the vision client.
 func NewClient(visionCfg config.VisionConfig, mainOpenAI config.OpenAIConfig) *Client {
 	return &Client{cfg: visionCfg, mainOA: mainOpenAI}
 }
 
-// Analyze 将图片字节送入 VL 模型并返回文本描述。
+// Analyze sends the image bytes to the VL model and returns a text description.
 func (c *Client) Analyze(ctx context.Context, img ImagePayload, question string) (string, error) {
 	if len(img.Bytes) == 0 {
 		return "", fmt.Errorf("empty image payload")
@@ -78,14 +78,14 @@ func (c *Client) Analyze(ctx context.Context, img ImagePayload, question string)
 func buildVisionPrompt(question string) string {
 	q := strings.TrimSpace(question)
 	if q == "" {
-		q = "请对图片做通用描述，侧重授权安全测试场景（可见文本、表单、按钮、验证码、错误信息、技术栈线索）。"
+		q = "Describe the image in general terms, focusing on authorized security testing scenarios (visible text, forms, buttons, captchas, error messages, tech stack clues)."
 	}
 	extra := ""
 	if looksLikeCaptchaQuestion(q) {
-		extra = "\n若为验证码：仅输出你辨认出的字符序列，不要空格、标点、解释；看不清则明确说无法识别。"
+		extra = "\nIf it is a captcha: output only the character sequence you recognized, with no spaces, punctuation or explanation; if it is unreadable, state clearly that it cannot be recognized."
 	}
-	return `你是授权安全测试助手。请根据图片回答用户问题，只描述你能从图中确认的内容，不要编造。
-用户问题：` + q + extra
+	return `You are an authorized security testing assistant. Answer the user's question based on the image, describe only what you can confirm from the image, and do not make anything up.
+User question: ` + q + extra
 }
 
 func looksLikeCaptchaQuestion(q string) bool {
@@ -95,5 +95,7 @@ func looksLikeCaptchaQuestion(q string) bool {
 			return true
 		}
 	}
-	return strings.Contains(s, "只输出") && (strings.Contains(s, "字符") || strings.Contains(s, "character"))
+	// The Chinese words match questions written in Chinese.
+	onlyOutput := strings.Contains(s, "output only") || strings.Contains(s, "only output") || strings.Contains(s, "只输出")
+	return onlyOutput && (strings.Contains(s, "字符") || strings.Contains(s, "character"))
 }

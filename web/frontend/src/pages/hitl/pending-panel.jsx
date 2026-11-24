@@ -1,4 +1,4 @@
-/** 待审批：GET /hitl/pending，决策 POST /hitl/decision，忽略 POST /hitl/dismiss。 */
+/** Pending approvals: GET /hitl/pending, decide with POST /hitl/decision, dismiss with POST /hitl/dismiss. */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button, Empty, Input, Pagination, Space, Spin, Tag, TextArea, Typography
@@ -18,6 +18,7 @@ import {
 const { Text } = Typography;
 
 function PendingItem({ item, canWrite, onDone }) {
+    const t = useT();
     const payload = useMemo(() => parsePayload(item.payload), [item.payload]);
     const args = useMemo(() => payloadArguments(payload), [payload]);
     const allowEdit = normalizeMode(item.mode) === 'review_edit';
@@ -34,11 +35,11 @@ function PendingItem({ item, canWrite, onDone }) {
             try {
                 editedArguments = JSON.parse(argsText);
             } catch (error) {
-                setInlineError(`修改后的参数不是合法 JSON：${error.message}`);
+                setInlineError(t('ui.hitlPending.argsInvalidJson', { message: error.message }, 'The edited arguments are not valid JSON: {{message}}'));
                 return;
             }
             if (!editedArguments || typeof editedArguments !== 'object' || Array.isArray(editedArguments)) {
-                setInlineError('修改后的参数必须是 JSON 对象');
+                setInlineError(t('ui.hitlPending.argsNotObject', null, 'The edited arguments must be a JSON object'));
                 return;
             }
         }
@@ -51,37 +52,39 @@ function PendingItem({ item, canWrite, onDone }) {
                 comment: comment.trim(),
                 editedArguments
             });
-            toastSuccess(decision === 'approve' ? '已通过，工具将继续执行' : '已拒绝本次工具调用');
+            toastSuccess(decision === 'approve'
+                ? t('ui.hitlPending.approved', null, 'Approved. The tool will continue running')
+                : t('ui.hitlPending.rejected', null, 'Rejected this tool call'));
             onDone?.();
         } catch (error) {
             if (error?.status === 409) {
                 await api.post('/hitl/dismiss', { interruptId: item.id }).catch(() => null);
-                toastWarning('该审批已被处理，列表已刷新');
+                toastWarning(t('ui.hitlPending.alreadyHandled', null, 'This approval was already handled. The list has been refreshed'));
                 onDone?.();
                 return;
             }
-            toastError(error, '提交审批失败');
+            toastError(error, t('ui.hitlPending.submitFailed', null, 'Failed to submit approval'));
         } finally {
             setBusy('');
         }
-    }, [allowEdit, argsText, busy, comment, item.id, onDone]);
+    }, [allowEdit, argsText, busy, comment, item.id, onDone, t]);
 
     const dismiss = useCallback(() => {
         confirmAction({
-            title: '忽略该审批',
-            content: '忽略后该审批记为取消（reject），本次工具调用不会继续执行，记录可在审批日志中查看。',
-            okText: '忽略',
+            title: t('ui.hitlPending.dismissTitle', null, 'Dismiss this approval'),
+            content: t('ui.hitlPending.dismissContent', null, 'The approval will be recorded as cancelled (reject), and this tool call will not continue. You can review the record in the approval logs.'),
+            okText: t('ui.hitlPending.dismiss', null, 'Dismiss'),
             onOk: async () => {
                 try {
                     await api.post('/hitl/dismiss', { interruptId: item.id });
-                    toastSuccess('已忽略该审批');
+                    toastSuccess(t('ui.hitlPending.dismissed', null, 'Approval dismissed'));
                     onDone?.();
                 } catch (error) {
-                    toastError(error, '忽略审批失败');
+                    toastError(error, t('ui.hitlPending.dismissFailed', null, 'Failed to dismiss approval'));
                 }
             }
         });
-    }, [item.id, onDone]);
+    }, [item.id, onDone, t]);
 
     return (
         <div className="hitl-pending-card">
@@ -94,13 +97,13 @@ function PendingItem({ item, canWrite, onDone }) {
                 <Space spacing={6}>
                     <Text type="tertiary" size="small">{formatHitlTime(item.createdAt)}</Text>
                     <Button size="small" theme="borderless" disabled={!canWrite || Boolean(busy)} onClick={dismiss}>
-                        忽略
+                        {t('ui.hitlPending.dismiss', null, 'Dismiss')}
                     </Button>
                 </Space>
             </div>
 
             <div className="hitl-pending-meta">
-                <span className="hitl-pending-meta-label">会话</span>
+                <span className="hitl-pending-meta-label">{t('ui.hitlPending.conversation', null, 'Conversation')}</span>
                 <span className="hitl-mono">{item.conversationId || '—'}</span>
                 {item.conversationId && <CopyButton text={item.conversationId} size="small" />}
                 <span className="hitl-pending-deadline">{approvalDeadlineText(payload)}</span>
@@ -108,11 +111,13 @@ function PendingItem({ item, canWrite, onDone }) {
 
             <ContextBlocks payload={payload} />
 
-            {args && <JsonViewer title="请求参数" value={args} collapsed />}
+            {args && <JsonViewer title={t('ui.hitlPending.requestArgs', null, 'Request arguments')} value={args} collapsed />}
 
             <div className="hitl-pending-editor">
                 <span className="hitl-context-label">
-                    {allowEdit ? '修改后的参数（可编辑，留空表示沿用原参数）' : '审批模式：仅可通过/拒绝，参数编辑已禁用'}
+                    {allowEdit
+                        ? t('ui.hitlPending.editorEditable', null, 'Edited arguments (editable; leave empty to keep the original arguments)')
+                        : t('ui.hitlPending.editorReadonly', null, 'Approval mode: approve or reject only; argument editing is disabled')}
                 </span>
                 <TextArea
                     rows={allowEdit ? 6 : 3}
@@ -128,7 +133,7 @@ function PendingItem({ item, canWrite, onDone }) {
 
             <Input
                 value={comment}
-                placeholder="审批备注（可选），例如：只读命令，允许执行"
+                placeholder={t('ui.hitlPending.commentPlaceholder', null, 'Approval comment (optional), e.g. read-only command, allowed')}
                 onChange={value => setComment(value)}
             />
 
@@ -140,7 +145,7 @@ function PendingItem({ item, canWrite, onDone }) {
                     loading={busy === 'reject'}
                     onClick={() => decide('reject')}
                 >
-                    拒绝
+                    {t('ui.hitlPending.reject', null, 'Reject')}
                 </Button>
                 <Button
                     theme="solid"
@@ -149,12 +154,12 @@ function PendingItem({ item, canWrite, onDone }) {
                     onClick={() => decide('approve')}
                 >
                     {allowEdit && argsText.trim() && argsText.trim() !== (args ? JSON.stringify(args, null, 2) : '')
-                        ? '保存修改并放行'
-                        : '通过'}
+                        ? t('ui.hitlPending.saveAndApprove', null, 'Save changes and approve')
+                        : t('ui.hitlPending.approve', null, 'Approve')}
                 </Button>
             </div>
 
-            <JsonViewer title="完整载荷" value={payload} collapsed />
+            <JsonViewer title={t('ui.hitlPending.fullPayload', null, 'Full payload')} value={payload} collapsed />
         </div>
     );
 }
@@ -190,11 +195,11 @@ export default function PendingPanel({ canWrite, onCountChange, refreshKey = 0 }
                     showClear
                     value={searchInput}
                     style={{ width: 300 }}
-                    placeholder={t('hitl.searchPlaceholder', null, '搜索工具、会话或载荷…')}
+                    placeholder={t('hitl.searchPlaceholder', null, 'Tool, conversation, payload, comment…')}
                     onChange={value => { setSearchInput(value); setPage(1); }}
                 />
                 <Text type="tertiary" size="small">
-                    {t('hitl.pendingTitle', null, '待审批请求')} · {total}
+                    {t('hitl.pendingTitle', null, 'Pending approvals')} · {total}
                 </Text>
             </div>
 
@@ -206,8 +211,8 @@ export default function PendingPanel({ canWrite, onCountChange, refreshKey = 0 }
 
             {!list.loading && !items.length && !list.error && (
                 <Empty
-                    title={t('hitl.emptyState', null, '暂无待审批请求')}
-                    description="工具调用命中敏感规则时会在此等待裁决。"
+                    title={t('hitl.emptyState', null, 'No pending approvals')}
+                    description={t('ui.hitlPending.emptyDescription', null, 'Tool calls that match a sensitive rule wait here for a decision.')}
                     style={{ padding: 48 }}
                 />
             )}

@@ -83,7 +83,7 @@ func installBinary(src, dst string) (string, error) {
 			return "", err
 		}
 		if err := os.Rename(dst, prev); err != nil {
-			return "", fmt.Errorf("保留旧二进制失败：%w", err)
+			return "", fmt.Errorf("Failed to keep previous binary: %w", err)
 		}
 	}
 	if err := os.Rename(src, dst); err != nil {
@@ -92,7 +92,7 @@ func installBinary(src, dst string) (string, error) {
 		if prev != "" && !fileExists(dst) {
 			_ = os.Rename(prev, dst)
 		}
-		return "", fmt.Errorf("换入新二进制失败：%w", err)
+		return "", fmt.Errorf("Failed to swap in new binary: %w", err)
 	}
 	return prev, nil
 }
@@ -103,7 +103,7 @@ func installBinary(src, dst string) (string, error) {
 func restorePrevBinary(bin string) error {
 	prev := bin + ".prev"
 	if !fileExists(prev) {
-		return fmt.Errorf("没有旧二进制：%s", prev)
+		return fmt.Errorf("No previous binary: %s", prev)
 	}
 	if err := os.Chmod(prev, 0o755); err != nil {
 		return err
@@ -148,7 +148,7 @@ func tail(s string, n int) string {
 	if len(s) <= n {
 		return s
 	}
-	return "…（前文省略）\n" + s[len(s)-n:]
+	return "... (earlier text omitted)\n" + s[len(s)-n:]
 }
 
 // copyFile is used for the operator-owned content that an update puts aside and takes

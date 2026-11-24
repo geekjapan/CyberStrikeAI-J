@@ -1,4 +1,4 @@
-/** 工作流详情：元数据、图结构摘要、graph JSON 原文与导出/删除入口。 */
+/** Workflow detail: metadata, graph structure summary, raw graph JSON and export/delete entry points. */
 import { useEffect, useMemo, useState } from 'react';
 import { Button, SideSheet, Space, Table, Tag, Typography } from '@douyinfe/semi-ui';
 import { api, downloadFile } from '../../lib/http';
@@ -13,9 +13,10 @@ import {
 const { Text } = Typography;
 
 function GraphPreview({ raw }) {
+    const t = useT();
     const summary = useMemo(() => graphSummary(raw), [raw]);
     if (summary.error) {
-        return <Text type="danger" size="small">graph 解析失败：{summary.error}</Text>;
+        return <Text type="danger" size="small">{t('ui.workflowsDetail.graphParseFailed', { detail: summary.error }, 'Failed to parse graph: {{detail}}')}</Text>;
     }
     const rows = summary.nodes.map(node => ({
         id: node.id,
@@ -24,15 +25,15 @@ function GraphPreview({ raw }) {
         config: node.config || {}
     }));
     const columns = [
-        { title: '节点', dataIndex: 'id', width: 160, render: value => <code>{value}</code> },
+        { title: t('ui.workflowsDetail.node', null, 'Node'), dataIndex: 'id', width: 160, render: value => <code>{value}</code> },
         {
-            title: '类型',
+            title: t('ui.workflowsDetail.type', null, 'Type'),
             dataIndex: 'type',
             width: 90,
             render: value => <Tag size="small" color="blue" type="light">{NODE_TYPE_LABEL[value] || value}</Tag>
         },
         {
-            title: '名称',
+            title: t('ui.workflowsDetail.name', null, 'Name'),
             dataIndex: 'label',
             render: (value, record) => (
                 <span className="workflow-cell-ellipsis" title={value || record.id}>{value || '—'}</span>
@@ -47,10 +48,10 @@ function GraphPreview({ raw }) {
                 rowKey="id"
                 size="small"
                 pagination={false}
-                empty={<Text type="tertiary" size="small">图内没有节点</Text>}
+                empty={<Text type="tertiary" size="small">{t('ui.workflowsDetail.noNodes', null, 'No nodes in the graph')}</Text>}
             />
             <div className="workflow-edge-list">
-                <Text strong size="small">连线（{summary.edges.length}）</Text>
+                <Text strong size="small">{t('ui.workflowsDetail.edges', { count: summary.edges.length }, 'Edges ({{count}})')}</Text>
                 {summary.edges.length ? (
                     <ul className="workflow-link-list">
                         {summary.edges.map((edge, index) => (
@@ -60,7 +61,7 @@ function GraphPreview({ raw }) {
                             </li>
                         ))}
                     </ul>
-                ) : <Text type="tertiary" size="small">暂无连线</Text>}
+                ) : <Text type="tertiary" size="small">{t('ui.workflowsDetail.noEdges', null, 'No edges')}</Text>}
             </div>
         </div>
     );
@@ -87,25 +88,25 @@ export default function WorkflowDetailDrawer({ workflowId, visible, canWrite, ca
             await downloadFile(`/workflows/${encodeURIComponent(workflow.id)}/package`, {
                 filename: `${workflow.id}.csapkg.zip`
             });
-            toastSuccess(t('workflows.package.export', null, '导出'));
+            toastSuccess(t('workflows.package.export', null, 'Export'));
         } catch (error) {
-            toastError(errText(error, t('workflows.package.errors.exportFailed', null, '导出失败，请稍后重试。')));
+            toastError(errText(error, t('workflows.package.errors.exportFailed', null, 'Export failed. Try again later.')));
         } finally {
             setExporting(false);
         }
     };
 
     const remove = () => confirmAction({
-        title: t('workflows.deleteWorkflow', null, '删除工作流'),
-        content: t('workflows.confirmDelete', { id: workflow?.id }, `确定删除工作流 ${workflow?.id}？`),
-        okText: t('common.delete', null, '删除'),
+        title: t('workflows.deleteWorkflow', null, 'Delete workflow'),
+        content: t('workflows.confirmDelete', { id: workflow?.id }, 'Delete workflow {{id}}?'),
+        okText: t('common.delete', null, 'Delete'),
         onOk: async () => {
             try {
                 await api.del(`/workflows/${encodeURIComponent(workflow.id)}`);
-                toastSuccess(t('workflows.deleted', null, '工作流已删除'));
+                toastSuccess(t('workflows.deleted', null, 'Workflow deleted'));
                 onDeleted?.(workflow.id);
             } catch (error) {
-                toastError(errText(error, t('workflows.deleteFailed', null, '删除工作流失败')));
+                toastError(errText(error, t('workflows.deleteFailed', null, 'Failed to delete workflow')));
             }
         }
     });
@@ -114,20 +115,20 @@ export default function WorkflowDetailDrawer({ workflowId, visible, canWrite, ca
         <SideSheet
             visible={visible}
             width={760}
-            title={workflow ? workflow.name || workflow.id : t('workflows.metaModalTitle', null, '工作流信息')}
+            title={workflow ? workflow.name || workflow.id : t('workflows.metaModalTitle', null, 'Workflow details')}
             onCancel={onClose}
             footer={(
                 <Space>
                     <Button disabled={!canWrite || !workflow} onClick={() => onEdit?.(workflow)}>
-                        {t('common.edit', null, '编辑')}
+                        {t('common.edit', null, 'Edit')}
                     </Button>
                     <Button loading={exporting} disabled={!workflow} onClick={exportPackage}>
-                        {t('workflows.package.export', null, '导出')}
+                        {t('workflows.package.export', null, 'Export')}
                     </Button>
                     <Button type="danger" disabled={!canDelete || !workflow} onClick={remove}>
-                        {t('workflows.deleteWorkflow', null, '删除工作流')}
+                        {t('workflows.deleteWorkflow', null, 'Delete workflow')}
                     </Button>
-                    <Button onClick={onClose}>{t('common.close', null, '关闭')}</Button>
+                    <Button onClick={onClose}>{t('common.close', null, 'Close')}</Button>
                 </Space>
             )}
         >
@@ -136,12 +137,12 @@ export default function WorkflowDetailDrawer({ workflowId, visible, canWrite, ca
                 <div className="workflow-detail-stack">
                     <div className="workflow-detail-tags">
                         <Tag size="small" color={workflow.enabled ? 'green' : 'grey'}>
-                            {workflow.enabled ? t('workflows.statusEnabled', null, '启用') : t('workflows.statusDisabled', null, '禁用')}
+                            {workflow.enabled ? t('workflows.statusEnabled', null, 'Enabled') : t('workflows.statusDisabled', null, 'Disabled')}
                         </Tag>
                         {workflow.validation_error
-                            ? <Tag size="small" color="red">{t('workflows.statusInvalid', null, '校验未通过')}</Tag>
-                            : <Tag size="small" color="green" type="light">结构有效</Tag>}
-                        <Text type="tertiary" size="small">版本 {workflow.version || 0}</Text>
+                            ? <Tag size="small" color="red">{t('workflows.statusInvalid', null, 'Invalid workflow')}</Tag>
+                            : <Tag size="small" color="green" type="light">{t('ui.workflowsDetail.structureValid', null, 'Structure valid')}</Tag>}
+                        <Text type="tertiary" size="small">{t('ui.workflowsDetail.versionLabel', { version: workflow.version || 0 }, 'Version {{version}}')}</Text>
                     </div>
 
                     {workflow.validation_error ? (
@@ -152,15 +153,15 @@ export default function WorkflowDetailDrawer({ workflowId, visible, canWrite, ca
                         columns={2}
                         items={[
                             { label: t('workflows.metaId', null, 'ID'), value: <code>{workflow.id}</code> },
-                            { label: t('workflows.metaName', null, '名称'), value: workflow.name || '—' },
-                            { label: t('workflows.updated', null, '更新'), value: formatDateTime(workflow.updated_at) },
-                            { label: '创建', value: formatDateTime(workflow.created_at) },
-                            { label: t('workflows.metaDescription', null, '描述'), value: workflow.description || '—' }
+                            { label: t('workflows.metaName', null, 'Name'), value: workflow.name || '—' },
+                            { label: t('workflows.updated', null, 'Updated'), value: formatDateTime(workflow.updated_at) },
+                            { label: t('ui.workflowsDetail.created', null, 'Created'), value: formatDateTime(workflow.created_at) },
+                            { label: t('workflows.metaDescription', null, 'Description'), value: workflow.description || '—' }
                         ]}
                     />
 
                     <div>
-                        <Text strong>{t('workflows.nodeProperties', null, '节点属性')}</Text>
+                        <Text strong>{t('workflows.nodeProperties', null, 'Node properties')}</Text>
                         <GraphPreview raw={workflow.graph_json} />
                     </div>
 

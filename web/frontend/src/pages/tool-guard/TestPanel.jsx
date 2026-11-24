@@ -1,6 +1,6 @@
 /**
- * 规则试匹配：POST /tool-guard/test（后端用 RE2 编译并执行匹配，不调用任何工具）。
- * 同一组件用于「全部规则验证」和单条规则验证，区别只在提交的 config 范围。
+ * Rule trial match: POST /tool-guard/test (the backend compiles and runs the match with RE2, calling no tools).
+ * One component serves "validate all rules" and single-rule validation; they differ only in the submitted config scope.
  */
 import { useState } from 'react';
 import { Banner, Button, Input, Space, Tag, TextArea, Typography } from '@douyinfe/semi-ui';
@@ -28,11 +28,11 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
         setError(null);
         setResult(null);
         if (!single && !config) {
-            setError(new Error(t('toolGuard.loadFirst', null, '请先加载拦截配置')));
+            setError(new Error(t('toolGuard.loadFirst', null, 'Load the blocking configuration first')));
             return;
         }
         if (!toolName.trim()) {
-            setError(new Error(t('toolGuard.toolRequired', null, '请填写测试工具名称')));
+            setError(new Error(t('toolGuard.toolRequired', null, 'Enter a tool name to test')));
             return;
         }
         let args;
@@ -40,7 +40,7 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
             args = JSON.parse(argsText);
             if (!args || Array.isArray(args) || typeof args !== 'object') throw new Error('not an object');
         } catch (parseError) {
-            setError(new Error(t('toolGuard.invalidArguments', null, '工具参数必须是有效的 JSON 对象')));
+            setError(new Error(t('toolGuard.invalidArguments', null, 'Tool arguments must be a valid JSON object')));
             return;
         }
         setBusy(true);
@@ -52,7 +52,7 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
             };
             const response = await api.post('/tool-guard/test', payload);
             if (!response || typeof response.blocked !== 'boolean') {
-                throw new Error(t('toolGuard.invalidTestResponse', null, '服务端返回的测试结果格式不正确'));
+                throw new Error(t('toolGuard.invalidTestResponse', null, 'The server returned an invalid test result'));
             }
             setResult(response);
         } catch (requestError) {
@@ -71,23 +71,23 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
             <Space vertical spacing={6} align="start">
                 <Text strong>
                     {single
-                        ? t('toolGuard.testScopeSingle', { name: rule.name || t('toolGuard.unnamedRule', null, '未命名规则') }, `单条验证：${rule.name || '未命名规则'}`)
-                        : t('toolGuard.testScopeAll', null, '全部规则验证')}
+                        ? t('toolGuard.testScopeSingle', { name: rule.name || t('toolGuard.unnamedRule', null, 'Single rule: {{name}}') }, 'Untitled rule')
+                        : t('toolGuard.testScopeAll', null, 'All rules')}
                 </Text>
                 <Text type="tertiary" size="small">
                     {single
-                        ? t('toolGuard.testSingleHint', null, '仅验证本条规则，忽略总开关和规则启停；不保存、不执行工具。')
-                        : t('toolGuard.testAllHint', null, '按当前顺序与启停状态验证全部规则，不保存、不执行工具。')}
+                        ? t('toolGuard.testSingleHint', null, 'Tests only this rule, ignoring global and rule switches. Does not save or execute tools.')
+                        : t('toolGuard.testAllHint', null, 'Tests all rules in their current order and enabled states. Does not save or execute tools.')}
                 </Text>
             </Space>
 
             <div className="tool-guard-test-form">
                 <label className="tool-guard-field">
-                    <Text type="tertiary" size="small">{t('toolGuard.testTool', null, '工具名称')}</Text>
+                    <Text type="tertiary" size="small">{t('toolGuard.testTool', null, 'Tool name')}</Text>
                     <Input value={toolName} onChange={value => { setToolName(value); setResult(null); }} placeholder="http_request" />
                 </label>
                 <label className="tool-guard-field tool-guard-field-wide">
-                    <Text type="tertiary" size="small">{t('toolGuard.testArguments', null, '工具参数（JSON 对象）')}</Text>
+                    <Text type="tertiary" size="small">{t('toolGuard.testArguments', null, 'Tool arguments (JSON object)')}</Text>
                     <TextArea
                         value={argsText}
                         onChange={value => { setArgsText(value); setResult(null); }}
@@ -106,7 +106,7 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
                 onClick={run}
                 className="tool-guard-test-run"
             >
-                {busy ? t('toolGuard.testing', null, '验证中…') : t('toolGuard.test', null, '测试匹配')}
+                {busy ? t('toolGuard.testing', null, 'Testing…') : t('toolGuard.test', null, 'Test match')}
             </Button>
 
             <ErrorBanner error={error} />
@@ -120,32 +120,32 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
                         <Text strong>
                             {single
                                 ? (blocked
-                                    ? t('toolGuard.singleMatched', null, '本条规则匹配成功')
-                                    : t('toolGuard.singleNotMatched', null, '本条规则未匹配'))
+                                    ? t('toolGuard.singleMatched', null, 'This rule matched')
+                                    : t('toolGuard.singleNotMatched', null, 'This rule did not match'))
                                 : (blocked
-                                    ? t('toolGuard.blocked', null, '已命中规则：将阻止调用')
+                                    ? t('toolGuard.blocked', null, 'Rule matched: this call will be blocked')
                                     : (disabledScope
-                                        ? t('toolGuard.disabledResult', null, '调用拦截已关闭：此配置不会阻止调用')
-                                        : t('toolGuard.notBlocked', null, '未命中已启用的规则')))}
+                                        ? t('toolGuard.disabledResult', null, 'Call blocking is disabled: this configuration will not block calls')
+                                        : t('toolGuard.notBlocked', null, 'No enabled rule matched')))}
                         </Text>
                     </Space>
                     {single && (
                         <Text type="tertiary" size="small">
-                            {t('toolGuard.singleResultHint', null, '这是单条规则验证结果，实际拦截还取决于总开关、规则启停和匹配顺序。')}
+                            {t('toolGuard.singleResultHint', null, 'This is a single-rule test. Actual blocking also depends on the global switch, enabled rules, and matching order.')}
                         </Text>
                     )}
                     {blocked && match && (
                         <div className="tool-guard-match">
                             <div>
-                                <Text type="tertiary" size="small">{t('toolGuard.matchedRule', null, '命中规则')}</Text>
+                                <Text type="tertiary" size="small">{t('toolGuard.matchedRule', null, 'Matched rule')}</Text>
                                 <div>{match.ruleName || match.ruleId || '—'}</div>
                             </div>
                             <div>
-                                <Text type="tertiary" size="small">{t('toolGuard.matchedText', null, '匹配文本')}</Text>
+                                <Text type="tertiary" size="small">{t('toolGuard.matchedText', null, 'Matched text')}</Text>
                                 <pre>{match.matchedText || '—'}</pre>
                             </div>
                             <div>
-                                <Text type="tertiary" size="small">{t('toolGuard.matchedMessage', null, '返回的拦截提醒')}</Text>
+                                <Text type="tertiary" size="small">{t('toolGuard.matchedMessage', null, 'Returned blocking message')}</Text>
                                 <div>{match.message || '—'}</div>
                             </div>
                         </div>
@@ -153,14 +153,14 @@ export default function TestPanel({ config, rule = null, disabled = false, compa
                 </div>
             )}
             {!result && !error && (
-                <Text type="tertiary" size="small">{t('toolGuard.testReadyHint', null, '点击「测试匹配」，在这里查看验证结果。')}</Text>
+                <Text type="tertiary" size="small">{t('toolGuard.testReadyHint', null, 'Click Test match to see the result here.')}</Text>
             )}
             {single === false && !result && !error && disabledScope && (
                 <Banner
                     type="info"
                     bordered
                     closeIcon={null}
-                    description={t('toolGuard.disabledResult', null, '调用拦截已关闭：此配置不会阻止调用')}
+                    description={t('toolGuard.disabledResult', null, 'Call blocking is disabled: this configuration will not block calls')}
                 />
             )}
         </div>

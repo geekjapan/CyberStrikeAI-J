@@ -1,7 +1,8 @@
 /**
- * 资产目标解析：URL / 域名 / IP / IPv6 / 端口互转。
- * 规则与旧版 assets.js（parseAssetEditorTarget）保持一致，供编辑器、导入与 FOFA 入库共用。
+ * Asset target parsing: conversion between URL / domain / IP / IPv6 / port.
+ * Rules match the legacy assets.js (parseAssetEditorTarget); shared by the editor, import and FOFA import.
  */
+import { translate } from '../../../lib/i18n';
 
 export const DEFAULT_PORTS = {
     http: 80, https: 443, ssh: 22, ftp: 21, smtp: 25, rdp: 3389,
@@ -51,10 +52,10 @@ export function normalizeDomain(value) {
 }
 
 /**
- * 解析用户输入的资产目标。始终返回结构体，格式无法识别时按不透明 host 处理；
- * 端口越界会抛出错误（与旧版行为一致）。
+ * Parse a user-entered asset target. Always returns a struct; unrecognized formats are treated as an opaque host;
+ * an out-of-range port throws (same as the legacy behavior).
  */
-/** 把粘贴的通报拆成单个地址。支持换行、空格、逗号和分号。 */
+/** Split pasted text into single addresses; supports newlines, spaces, commas and semicolons. */
 export function splitAssetTargets(value) {
     const seen = new Set();
     const targets = [];
@@ -70,8 +71,8 @@ export function splitAssetTargets(value) {
 
 export function parseAssetTarget(value) {
     const raw = String(value || '').trim();
-    if (!raw) throw new Error('请输入资产地址');
-    if (/\s/.test(raw)) throw new Error('资产地址不能包含空格');
+    if (!raw) throw new Error(translate('ui.assetTarget.addressRequired', null, 'Enter an asset address'));
+    if (/\s/.test(raw)) throw new Error(translate('ui.assetTarget.addressNoSpaces', null, 'Asset address cannot contain spaces'));
     const opaque = () => ({ host: raw, ip: '', domain: '', port: 0, protocol: '' });
     let hostname = '';
     let port = 0;
@@ -104,7 +105,7 @@ export function parseAssetTarget(value) {
         }
         protocol = protocolForPort(port);
     }
-    if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('端口必须在 0–65535 之间');
+    if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error(translate('ui.assetTarget.portRange', null, 'Port must be between 0 and 65535'));
     const ipAddress = isIPv4(hostname) || isIPv6(hostname);
     const domain = ipAddress ? '' : normalizeDomain(hostname);
     if (!ipAddress && (!domain || isIPv4(domain) || isIPv6(domain))) return opaque();
@@ -129,7 +130,7 @@ export function assetServiceLabel(asset) {
     return `${protocol}${port ? `:${port}` : ''}`;
 }
 
-/** 编辑弹窗的目标输入初始值：优先 host，其次 domain/ip + 端口。 */
+/** Initial target input of the edit dialog: host first, then domain/ip plus port. */
 export function targetInputFromAsset(asset) {
     if (!asset) return '';
     if (asset.host) return String(asset.host);
@@ -139,7 +140,7 @@ export function targetInputFromAsset(asset) {
     return `${wrapped}${Number(asset.port || 0) > 0 ? `:${asset.port}` : ''}`;
 }
 
-/** 资产去重键（与服务端 dedup_key 同构，仅用于导入前的前端提示）。 */
+/** Asset dedup key (same shape as the server's dedup_key; only used for frontend hints before import). */
 export function assetDedupKey(asset) {
     const target = String(asset?.domain || asset?.ip || asset?.host || '').toLowerCase();
     return `${target}|${Number(asset?.port || 0)}|${String(asset?.protocol || '').toLowerCase()}`;
@@ -153,16 +154,16 @@ export function splitTags(raw) {
 }
 
 export function validateAssetPayload(asset) {
-    if (!asset) return '资产不能为空';
-    if (!asset.host && !asset.ip && !asset.domain) return '资产目标不能为空';
-    if (asset.ip && !isIPv4(asset.ip) && !isIPv6(asset.ip)) return 'IP 地址格式无效';
+    if (!asset) return translate('ui.assetTarget.assetEmpty', null, 'Asset cannot be empty');
+    if (!asset.host && !asset.ip && !asset.domain) return translate('ui.assetTarget.targetEmpty', null, 'Asset target cannot be empty');
+    if (asset.ip && !isIPv4(asset.ip) && !isIPv6(asset.ip)) return translate('ui.assetTarget.ipInvalid', null, 'Invalid IP address format');
     if (asset.domain && (!normalizeDomain(asset.domain) || isIPv4(asset.domain) || isIPv6(asset.domain))) {
-        return '域名格式无效';
+        return translate('ui.assetTarget.domainInvalid', null, 'Invalid domain format');
     }
-    if (asset.protocol && !/^[a-z][a-z0-9+.-]{0,31}$/.test(asset.protocol)) return '协议格式无效';
-    if (Number(asset.port) < 0 || Number(asset.port) > 65535) return '端口必须在 0–65535 之间';
+    if (asset.protocol && !/^[a-z][a-z0-9+.-]{0,31}$/.test(asset.protocol)) return translate('ui.assetTarget.protocolInvalid', null, 'Invalid protocol format');
+    if (Number(asset.port) < 0 || Number(asset.port) > 65535) return translate('ui.assetTarget.portRange', null, 'Port must be between 0 and 65535');
     const tags = Array.isArray(asset.tags) ? asset.tags : [];
-    if (tags.length > 30) return '标签最多 30 个';
-    if (tags.some(tag => Array.from(String(tag)).length > 64)) return '单个标签最多 64 个字符';
+    if (tags.length > 30) return translate('ui.assetTarget.tagsMax', null, 'At most 30 tags');
+    if (tags.some(tag => Array.from(String(tag)).length > 64)) return translate('ui.assetTarget.tagLengthMax', null, 'Each tag can be at most 64 characters');
     return '';
 }

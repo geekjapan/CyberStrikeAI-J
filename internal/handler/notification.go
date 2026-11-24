@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"cyberstrike-ai/internal/apimsg"
 	"cyberstrike-ai/internal/database"
 	"cyberstrike-ai/internal/security"
 
@@ -15,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// NotificationHandler 聚合通知（Phase 2：服务端统一计算）
+// NotificationHandler aggregated notifications (Phase 2: computed uniformly on the server side)
 type NotificationHandler struct {
 	db           *database.DB
 	agentHandler *AgentHandler
@@ -24,7 +25,7 @@ type NotificationHandler struct {
 
 const notificationReadMaxRows = 150
 
-// NotificationSummaryItem 通知项
+// NotificationSummaryItem notification item
 type NotificationSummaryItem struct {
 	ID         string `json:"id"`
 	Level      string `json:"level"` // p0/p1/p2
@@ -35,15 +36,15 @@ type NotificationSummaryItem struct {
 	Count      int    `json:"count,omitempty"`
 	Actionable bool   `json:"actionable"`
 	Read       bool   `json:"read"`
-	// 以下字段用于前端深链跳转（通知即入口）
+	// The following fields are used for frontend deep-link navigation (the notification itself is the entry point)
 	ConversationID  string `json:"conversationId,omitempty"`
 	VulnerabilityID string `json:"vulnerabilityId,omitempty"`
 	ExecutionID     string `json:"executionId,omitempty"`
 	InterruptID     string `json:"interruptId,omitempty"`
-	SessionID       string `json:"sessionId,omitempty"` // C2 会话（如新会话上线）
+	SessionID       string `json:"sessionId,omitempty"` // C2 session (for example, a new session coming online)
 }
 
-// NotificationSummaryResponse 聚合响应
+// NotificationSummaryResponse aggregated response
 type NotificationSummaryResponse struct {
 	SinceMs     int64                     `json:"sinceMs"`
 	GeneratedAt string                    `json:"generatedAt"`
@@ -84,7 +85,7 @@ func unixSecToRFC3339(sec int64) string {
 
 func normalizedSinceSec(sinceMs int64) int64 {
 	sec := sinceMs / 1000
-	// SQLite 默认时间精度到秒；给 1s 回看窗口，避免“同秒内新增”被漏算。
+	// SQLite's default time precision is seconds; a 1s lookback window avoids missing rows added within the same second.
 	if sec > 0 {
 		return sec - 1
 	}
@@ -99,7 +100,7 @@ func normalizeSinceMs(raw int64) int64 {
 	if raw > 0 {
 		return raw
 	}
-	// 默认仅看最近 24 小时，避免首次打开拉全量历史噪音。
+	// Only look at the last 24 hours by default, to avoid flooding the first open with full historical noise.
 	return time.Now().Add(-24 * time.Hour).UnixMilli()
 }
 
@@ -114,32 +115,9 @@ func levelBySeverity(sev string) string {
 	}
 }
 
-// requestLang 返回通知文案语言："zh"、"ja"，其余（含缺省）为 "en"。
+// requestLang returns the notification text language: "zh", "ja"; everything else (including the default) is "en".
 func requestLang(c *gin.Context) string {
-	if c == nil {
-		return "en"
-	}
-	lang := strings.ToLower(strings.TrimSpace(c.Query("lang")))
-	if lang == "" {
-		lang = strings.ToLower(strings.TrimSpace(c.GetHeader("Accept-Language")))
-	}
-	switch {
-	case strings.HasPrefix(lang, "zh"):
-		return "zh"
-	case strings.HasPrefix(lang, "ja"):
-		return "ja"
-	}
-	return "en"
-}
-
-func i18nText(lang string, zh string, en string, ja string) string {
-	switch lang {
-	case "zh":
-		return zh
-	case "ja":
-		return ja
-	}
-	return en
+	return apimsg.Lang(c)
 }
 
 func notificationAccessFromContext(c *gin.Context) database.RBACListAccess {
@@ -244,15 +222,15 @@ func (h *NotificationHandler) loadPendingHITLItems(limit int, lang string, acces
 		if err := rows.Scan(&id, &conversationID, &toolName, &createdSec); err != nil {
 			continue
 		}
-		desc := i18nText(lang, "会话 "+conversationID+" 的审批中断待处理", "Conversation "+conversationID+" has pending HITL approval", "会話 "+conversationID+" に承認待ちの HITL があります")
+		desc := apimsg.Translate(lang, "Conversation "+conversationID+" has pending HITL approval")
 		if strings.TrimSpace(toolName) != "" {
-			desc = i18nText(lang, "工具 "+toolName+" 等待审批", "Tool "+toolName+" is waiting for approval", "ツール "+toolName+" が承認待ちです")
+			desc = apimsg.Translate(lang, "Tool "+toolName+" is waiting for approval")
 		}
 		items = append(items, NotificationSummaryItem{
 			ID:             "hitl:" + id,
 			Level:          "p0",
 			Type:           "hitl_pending",
-			Title:          i18nText(lang, "HITL 待审批", "HITL Pending Approval", "HITL 承認待ち"),
+			Title:          apimsg.Translate(lang, "HITL Pending Approval"),
 			Desc:           desc,
 			Ts:             unixSecToRFC3339(createdSec),
 			Count:          1,
@@ -319,10 +297,10 @@ func (h *NotificationHandler) loadVulnerabilityItems(sinceMs int64, limit int, l
 		if sevUpper == "" {
 			sevUpper = "INFO"
 		}
-		finalTitle := i18nText(lang, "新漏洞（"+sevUpper+"）", "New Vulnerability ("+sevUpper+")", "新しい脆弱性（"+sevUpper+"）")
+		finalTitle := apimsg.Translate(lang, "New Vulnerability ("+sevUpper+")")
 		finalDesc := strings.TrimSpace(title)
 		if finalDesc == "" {
-			finalDesc = i18nText(lang, "（无标题）", "(Untitled)", "（無題）")
+			finalDesc = apimsg.Translate(lang, "(Untitled)")
 		}
 		items = append(items, NotificationSummaryItem{
 			ID:              "vuln:" + id,
@@ -341,7 +319,7 @@ func (h *NotificationHandler) loadVulnerabilityItems(sinceMs int64, limit int, l
 	return items, counts, nil
 }
 
-// loadC2SessionOnlineEvents 新会话上线（c2_events：session + critical，与 Manager.IngestCheckIn 一致）
+// loadC2SessionOnlineEvents handles newly online sessions (c2_events: session + critical, consistent with Manager.IngestCheckIn)
 func (h *NotificationHandler) loadC2SessionOnlineEvents(sinceMs int64, limit int, lang string, access database.RBACListAccess) ([]NotificationSummaryItem, int, error) {
 	sinceSec := normalizedSinceSec(sinceMs)
 	events, err := h.db.ListC2EventsForAccess(database.ListC2EventsFilter{
@@ -363,13 +341,13 @@ func (h *NotificationHandler) loadC2SessionOnlineEvents(sinceMs int64, limit int
 			desc = desc[:200] + "…"
 		}
 		if desc == "" {
-			desc = i18nText(lang, "新会话已建立", "A new session was created", "新しいセッションが確立されました")
+			desc = apimsg.Translate(lang, "A new session was created")
 		}
 		items = append(items, NotificationSummaryItem{
 			ID:         "c2evt:" + e.ID,
 			Level:      "p0",
 			Type:       "c2_session_online",
-			Title:      i18nText(lang, "C2 新会话上线", "C2 new session online", "C2 新規セッションがオンライン"),
+			Title:      apimsg.Translate(lang, "C2 new session online"),
 			Desc:       desc,
 			Ts:         e.CreatedAt.UTC().Format(time.RFC3339),
 			Count:      1,
@@ -408,14 +386,14 @@ func (h *NotificationHandler) loadFailedExecutionItems(sinceMs int64, limit int,
 		}
 		count++
 		if strings.TrimSpace(toolName) == "" {
-			toolName = i18nText(lang, "未知工具", "unknown", "不明なツール")
+			toolName = apimsg.Translate(lang, "Unknown tool")
 		}
 		items = append(items, NotificationSummaryItem{
 			ID:          "exec_failed:" + id,
 			Level:       "p0",
 			Type:        "task_failed",
-			Title:       i18nText(lang, "任务执行失败", "Task Execution Failed", "タスク実行失敗"),
-			Desc:        i18nText(lang, "工具 "+toolName+" 执行失败", "Tool "+toolName+" execution failed", "ツール "+toolName+" の実行に失敗しました"),
+			Title:       apimsg.Translate(lang, "Task Execution Failed"),
+			Desc:        apimsg.Translate(lang, "Tool "+toolName+" execution failed"),
 			Ts:          unixSecToRFC3339(startSec),
 			Count:       1,
 			Actionable:  false,
@@ -445,8 +423,8 @@ func (h *NotificationHandler) summarizeLongRunningTasks(threshold time.Duration,
 				ID:             "task_long:" + t.RunID,
 				Level:          "p1",
 				Type:           "long_running_tasks",
-				Title:          i18nText(lang, "长时间运行任务", "Long Running Task", "長時間実行中のタスク"),
-				Desc:           i18nText(lang, "会话 "+t.ConversationID+" 运行超过 15 分钟", "Conversation "+t.ConversationID+" has been running over 15 minutes", "会話 "+t.ConversationID+" の実行が 15 分を超えています"),
+				Title:          apimsg.Translate(lang, "Long Running Task"),
+				Desc:           apimsg.Translate(lang, "Conversation "+t.ConversationID+" has been running over 15 minutes"),
 				Ts:             t.StartedAt.UTC().Format(time.RFC3339),
 				Count:          1,
 				Actionable:     false,
@@ -477,8 +455,8 @@ func (h *NotificationHandler) summarizeCompletedTasksSince(sinceMs int64, limit 
 				ID:             "task_completed:" + t.ConversationID + ":" + strconv.FormatInt(t.CompletedAt.Unix(), 10),
 				Level:          "p2",
 				Type:           "task_completed",
-				Title:          i18nText(lang, "任务完成", "Task Completed", "タスク完了"),
-				Desc:           i18nText(lang, "会话 "+t.ConversationID+" 已完成", "Conversation "+t.ConversationID+" completed", "会話 "+t.ConversationID+" が完了しました"),
+				Title:          apimsg.Translate(lang, "Task Completed"),
+				Desc:           apimsg.Translate(lang, "Conversation "+t.ConversationID+" completed"),
 				Ts:             t.CompletedAt.UTC().Format(time.RFC3339),
 				Count:          1,
 				Actionable:     false,
@@ -622,7 +600,7 @@ func normalizeMarkableEventID(id string) (string, bool) {
 	if v == "" {
 		return "", false
 	}
-	// 仅允许“可读后隐藏”的信息类事件；Actionable 事件不参与 read 标记。
+	// Only informational events that can be read and then hidden are allowed; Actionable events do not take part in read marking.
 	allowedPrefixes := []string{
 		"vuln:",
 		"exec_failed:",
@@ -638,7 +616,7 @@ func normalizeMarkableEventID(id string) (string, bool) {
 	return "", false
 }
 
-// MarkRead 按事件 ID 标记已读
+// MarkRead marks events as read by event ID
 func (h *NotificationHandler) MarkRead(c *gin.Context) {
 	if h.db == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to prepare notification read table"})
@@ -693,12 +671,12 @@ func (h *NotificationHandler) MarkRead(c *gin.Context) {
 		return
 	}
 	if err := pruneNotificationReads(h.db, session.UserID, notificationReadMaxRows); err != nil {
-		h.logger.Warn("裁剪通知已读记录失败", zap.Error(err))
+		h.logger.Warn("Failed to trim read notification records", zap.Error(err))
 	}
 	c.JSON(http.StatusOK, gin.H{"ok": true, "marked": marked})
 }
 
-// GetSummary 返回通知聚合视图（用于头部铃铛）
+// GetSummary returns the aggregated notification view (used by the header bell)
 func (h *NotificationHandler) GetSummary(c *gin.Context) {
 	if h.db == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database unavailable"})
@@ -721,7 +699,7 @@ func (h *NotificationHandler) GetSummary(c *gin.Context) {
 		var err error
 		hitlItems, err = h.loadPendingHITLItems(limit, lang, access)
 		if err != nil {
-			h.logger.Warn("加载 HITL 通知失败", zap.Error(err))
+			h.logger.Warn("Failed to load HITL notifications", zap.Error(err))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to summarize hitl notifications"})
 			return
 		}
@@ -739,7 +717,7 @@ func (h *NotificationHandler) GetSummary(c *gin.Context) {
 		var err error
 		vulnItems, vulnCounts, err = h.loadVulnerabilityItems(sinceMs, limit, lang, access)
 		if err != nil {
-			h.logger.Warn("加载漏洞通知失败", zap.Error(err))
+			h.logger.Warn("Failed to load vulnerability notifications", zap.Error(err))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to summarize vulnerabilities"})
 			return
 		}
@@ -751,7 +729,7 @@ func (h *NotificationHandler) GetSummary(c *gin.Context) {
 		var err error
 		c2OnlineItems, c2OnlineCount, err = h.loadC2SessionOnlineEvents(sinceMs, limit, lang, access)
 		if err != nil {
-			h.logger.Warn("加载 C2 会话上线通知失败", zap.Error(err))
+			h.logger.Warn("Failed to load C2 session online notifications", zap.Error(err))
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to summarize c2 session events"})
 			return
 		}
@@ -776,7 +754,7 @@ func (h *NotificationHandler) GetSummary(c *gin.Context) {
 	session, _ := security.CurrentSession(c)
 	items, err := h.applyReadStates(session.UserID, items)
 	if err != nil {
-		h.logger.Warn("加载通知已读状态失败", zap.Error(err))
+		h.logger.Warn("Failed to load notification read state", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to load notification read states"})
 		return
 	}

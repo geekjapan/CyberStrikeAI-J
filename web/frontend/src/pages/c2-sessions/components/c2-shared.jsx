@@ -1,8 +1,8 @@
 /**
- * C2 页面共享常量、时间快捷筛选与展示小工具。
+ * C2 page shared constants, quick time filters and small display helpers.
  */
 import { Button, Space, Typography } from '@douyinfe/semi-ui';
-import { useT } from '../../../lib/i18n';
+import { lazyLabels, lazyOptions, translate, useT } from '../../../lib/i18n';
 import { formatDateTime, relativeTime } from '../../../lib/format';
 import './c2-shared.css';
 
@@ -11,15 +11,15 @@ const { Text } = Typography;
 export const LISTENER_TYPES = [
     { value: 'http_beacon', label: 'HTTP Beacon' },
     { value: 'https_beacon', label: 'HTTPS Beacon' },
-    { value: 'tcp_reverse', label: 'TCP 反向' },
+    { value: 'tcp_reverse', get label() { return translate('ui.c2Shared.tcpReverse', null, 'TCP reverse'); } },
     { value: 'websocket', label: 'WebSocket' }
 ];
 
-export const LISTENER_STATUS_LABEL = {
-    running: '运行中',
-    stopped: '已停止',
-    error: '异常'
-};
+export const LISTENER_STATUS_LABEL = lazyLabels('ui.c2Shared.listenerStatus', {
+    running: 'Running',
+    stopped: 'Stopped',
+    error: 'Error'
+});
 
 export const HEARTBEAT_TYPES = new Set(['http_beacon', 'https_beacon', 'websocket']);
 
@@ -58,48 +58,48 @@ export const TASK_TYPES = [
     { value: 'persist', label: 'persist' }
 ];
 
-export const TASK_STATUS_OPTIONS = [
-    { value: 'queued', label: '队列中' },
-    { value: 'sent', label: '已发送' },
-    { value: 'running', label: '执行中' },
-    { value: 'success', label: '成功' },
-    { value: 'failed', label: '失败' },
-    { value: 'cancelled', label: '已取消' }
-];
+export const TASK_STATUS_OPTIONS = lazyOptions('ui.c2Shared.taskStatus', [
+    { value: 'queued', label: 'Queued' },
+    { value: 'sent', label: 'Sent' },
+    { value: 'running', label: 'Running' },
+    { value: 'success', label: 'Succeeded' },
+    { value: 'failed', label: 'Failed' },
+    { value: 'cancelled', label: 'Cancelled' }
+]);
 
-export const EVENT_LEVEL_OPTIONS = [
-    { value: 'info', label: '信息' },
-    { value: 'warn', label: '警告' },
-    { value: 'critical', label: '严重' }
-];
+export const EVENT_LEVEL_OPTIONS = lazyOptions('ui.c2Shared.eventLevel', [
+    { value: 'info', label: 'Info' },
+    { value: 'warn', label: 'Warning' },
+    { value: 'critical', label: 'Critical' }
+]);
 
-export const EVENT_CATEGORY_OPTIONS = [
-    { value: 'listener', label: '监听器' },
-    { value: 'session', label: '会话' },
-    { value: 'task', label: '任务' },
+export const EVENT_CATEGORY_OPTIONS = lazyOptions('ui.c2Shared.eventCategory', [
+    { value: 'listener', label: 'Listener' },
+    { value: 'session', label: 'Session' },
+    { value: 'task', label: 'Task' },
     { value: 'payload', label: 'Payload' },
     { value: 'opsec', label: 'OPSEC' }
-];
+]);
 
-export const SESSION_STATUS_OPTIONS = [
-    { value: 'active', label: '活跃' },
-    { value: 'sleeping', label: '休眠' },
-    { value: 'dead', label: '离线' },
-    { value: 'killed', label: '已终止' }
-];
+export const SESSION_STATUS_OPTIONS = lazyOptions('ui.c2Shared.sessionStatus', [
+    { value: 'active', label: 'Active' },
+    { value: 'sleeping', label: 'Sleeping' },
+    { value: 'dead', label: 'Offline' },
+    { value: 'killed', label: 'Terminated' }
+]);
 
-/** 任务/事件轮询间隔：需求要求 5 秒轮询。 */
+/** Task/event polling interval: requirements call for 5-second polling. */
 export const POLL_INTERVAL = 5000;
 
-export const TIME_PRESETS = [
-    { value: '15m', label: '最近15分钟', ms: 15 * 60 * 1000 },
-    { value: '1h', label: '最近1小时', ms: 60 * 60 * 1000 },
-    { value: '24h', label: '最近24小时', ms: 24 * 60 * 60 * 1000 },
-    { value: '7d', label: '最近7天', ms: 7 * 24 * 60 * 60 * 1000 },
-    { value: 'all', label: '全部', ms: 0 }
-];
+export const TIME_PRESETS = lazyOptions('ui.c2Shared.timePreset', [
+    { value: '15m', label: 'Last 15 minutes', ms: 15 * 60 * 1000 },
+    { value: '1h', label: 'Last hour', ms: 60 * 60 * 1000 },
+    { value: '24h', label: 'Last 24 hours', ms: 24 * 60 * 60 * 1000 },
+    { value: '7d', label: 'Last 7 days', ms: 7 * 24 * 60 * 60 * 1000 },
+    { value: 'all', label: 'All', ms: 0 }
+]);
 
-/** 快捷时间窗 → since（RFC3339）；all 返回空串。 */
+/** Quick time window -> since (RFC3339); all returns an empty string. */
 export function presetToSince(preset) {
     const item = TIME_PRESETS.find(entry => entry.value === preset);
     if (!item || !item.ms) return '';
@@ -110,7 +110,7 @@ export function TimePresetBar({ value, onChange, ns = 'tasks' }) {
     const t = useT();
     return (
         <Space spacing={6} wrap className="c2-time-presets">
-            <Text type="tertiary" size="small">{t('c2.tasks.timePresets', null, '快捷')}</Text>
+            <Text type="tertiary" size="small">{t('c2.tasks.timePresets', null, 'Quick')}</Text>
             {TIME_PRESETS.map(preset => (
                 <Button
                     key={preset.value}
@@ -130,8 +130,8 @@ export function formatDurationMs(ms) {
     const value = Number(ms);
     if (!Number.isFinite(value) || value <= 0) return '—';
     if (value < 1000) return `${Math.round(value)}ms`;
-    if (value < 60_000) return `${(value / 1000).toFixed(1)}秒`;
-    return `${Math.round(value / 60_000)}分钟`;
+    if (value < 60_000) return translate('ui.c2Shared.seconds', { n: (value / 1000).toFixed(1) }, '{{n}} s');
+    return translate('ui.c2Shared.minutes', { n: Math.round(value / 60_000) }, '{{n}} min');
 }
 
 export function TimeText({ value }) {

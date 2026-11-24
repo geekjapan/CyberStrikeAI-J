@@ -44,11 +44,11 @@ func piModelTransportFailure(raw string) (code, detail string) {
 	text := strings.ToLower(raw)
 	switch {
 	case strings.Contains(text, "und_err_headers_timeout"):
-		return "model_headers_timeout", "等待模型服务响应头超时"
+		return "model_headers_timeout", "Timed out waiting for model service response headers"
 	case strings.Contains(text, "und_err_body_timeout"):
-		return "model_stream_timeout", "模型响应流长时间未收到新数据"
+		return "model_stream_timeout", "No new data received on the model response stream for a long time"
 	case strings.Contains(text, "stream ended without finish_reason"):
-		return "model_stream_incomplete", "模型响应流提前关闭，未收到结束标记"
+		return "model_stream_incomplete", "Model response stream closed early without receiving an end marker"
 	default:
 		return "", ""
 	}

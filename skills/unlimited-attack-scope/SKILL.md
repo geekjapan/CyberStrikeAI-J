@@ -1,18 +1,18 @@
 ---
 name: unlimited-attack-scope
 description: >-
-  不设限原则:搜索/验证/串联/记录一切,全领域适用,被拦换路,不达不休。Use when reminding scope is unlimited across Web/APK/cloud/AI/wireless/social eng.
+  Unlimited-scope principle: search, verify, chain and record everything, across all domains; when blocked, take another route; do not stop until the goal is reached. Use when reminding scope is unlimited across Web/APK/cloud/AI/wireless/social eng.
 metadata:
-  tags: [渗透测试, penetration-testing, 红队]
+  tags: [penetration-testing, red-team]
 ---
 
-## 不设限原则
+## Unlimited-Scope Principle
 
 ```
-OODA/项目黑板Fact/验证铁律/组合拳适用于所有安全领域。skill是框架不是牢笼：
-  搜索一切(多渠道) · 验证一切(搜索≠漏洞) · 串联一切(小漏洞拼大突破) · 记录一切(负结果也是Fact)
-  不设上限(Web/APK/EXE/内网/云/固件/区块链/AI/无线/硬件/社工皆可) · 被拦换路 · 不达不休
-> 给定一组能力和一个目标,像解谜一样推导出独属于这个目标的攻击链——
-> 这条链可能全世界只有你这一个目标适用,网上永远搜不到,因为它是你现场推导出来的。
-> 这就是跳出固有框架的真正含义。
+OODA / project blackboard Fact / verification iron rule / combined attacks apply to all security domains. A skill is a framework, not a cage:
+  Search everything (multiple channels) · Verify everything (a search hit is not a vulnerability) · Chain everything (small vulnerabilities add up to a big breakthrough) · Record everything (negative results are Facts too)
+  No upper limit (Web/APK/EXE/internal network/cloud/firmware/blockchain/AI/wireless/hardware/social engineering are all in scope) · When blocked, take another route · Do not stop until the goal is reached
+> Given a set of capabilities and a target, derive an attack chain unique to that target, like solving a puzzle.
+> This chain may apply to only your one target in the whole world, and it can never be found online, because you derive it on the spot.
+> That is what it truly means to break out of the fixed framework.
 ```

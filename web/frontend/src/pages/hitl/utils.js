@@ -1,20 +1,33 @@
-/** HITL 页共用：决策/审批方映射、载荷解析、审批时效文案。 */
+/** Shared by HITL pages: decision/reviewer mapping, payload parsing, approval timeliness text. */
 import { formatDateTime } from '../../lib/format';
+import { lazyLabels, translate } from '../../lib/i18n';
 
 export const HITL_MODES = [
-    { value: 'off', label: '关闭', hint: '不拦截工具调用' },
-    { value: 'approval', label: '审批模式', hint: '只裁决通过/拒绝' },
-    { value: 'review_edit', label: '审查编辑模式', hint: '可收窄参数后放行' }
+    {
+        value: 'off',
+        get label() { return translate('ui.hitlUtils.modeOff', null, 'Off'); },
+        get hint() { return translate('ui.hitlUtils.modeOffHint', null, 'Do not intercept tool calls'); }
+    },
+    {
+        value: 'approval',
+        get label() { return translate('ui.hitlUtils.modeApproval', null, 'Approval mode'); },
+        get hint() { return translate('ui.hitlUtils.modeApprovalHint', null, 'Approve or reject only'); }
+    },
+    {
+        value: 'review_edit',
+        get label() { return translate('ui.hitlUtils.modeReviewEdit', null, 'Review and edit mode'); },
+        get hint() { return translate('ui.hitlUtils.modeReviewEditHint', null, 'Can narrow arguments before approving'); }
+    }
 ];
 
-const DECISION_LABEL = { approve: '通过', reject: '拒绝' };
+const DECISION_LABEL = lazyLabels('ui.hitlUtils.decision', { approve: 'Approved', reject: 'Rejected' });
 const DECISION_COLOR = { approve: 'green', reject: 'red' };
-const DECIDED_BY_LABEL = {
-    human: '人工',
-    audit_agent: '审计 Agent',
-    system: '系统',
-    manual: '手动录入'
-};
+const DECIDED_BY_LABEL = lazyLabels('ui.hitlUtils.decidedBy', {
+    human: 'Human',
+    audit_agent: 'Audit Agent',
+    system: 'System',
+    manual: 'Manual entry'
+});
 
 export function normalizeMode(mode) {
     const value = String(mode || '').trim().toLowerCase().replace(/-/g, '_');
@@ -34,7 +47,7 @@ export function reviewerValue(reviewer) {
 }
 
 export function reviewerLabel(reviewer) {
-    return reviewerValue(reviewer) === 'audit_agent' ? '审计 Agent' : '人工审批';
+    return reviewerValue(reviewer) === 'audit_agent' ? translate('ui.hitlUtils.reviewerAuditAgent', null, 'Audit Agent') : translate('ui.hitlUtils.reviewerHuman', null, 'Human approval');
 }
 
 export function decisionLabel(decision) {
@@ -53,14 +66,14 @@ export function decidedByLabel(value) {
 
 export function decisionStatusLabel(status) {
     const key = String(status || '').trim().toLowerCase();
-    if (key === 'pending') return '待审批';
-    if (key === 'decided') return '已裁决';
-    if (key === 'timeout') return '超时自动拒绝';
-    if (key === 'cancelled') return '已取消';
+    if (key === 'pending') return translate('ui.hitlUtils.statusPending', null, 'Pending approval');
+    if (key === 'decided') return translate('ui.hitlUtils.statusDecided', null, 'Decided');
+    if (key === 'timeout') return translate('ui.hitlUtils.statusTimeout', null, 'Timed out, auto-rejected');
+    if (key === 'cancelled') return translate('ui.hitlUtils.statusCancelled', null, 'Cancelled');
     return status || '—';
 }
 
-/** payload 在库中是 JSON 字符串；旧会话也可能是对象。 */
+/** The payload is a JSON string in the database; older sessions may store an object. */
 export function parsePayload(raw) {
     if (!raw) return {};
     if (typeof raw === 'object') return raw;
@@ -72,7 +85,7 @@ export function parsePayload(raw) {
     }
 }
 
-/** 优先取结构化参数 argumentsObj，其次解析 arguments 字符串。 */
+/** Prefer the structured argumentsObj, then parse the arguments string. */
 export function payloadArguments(payload) {
     if (!payload || typeof payload !== 'object') return null;
     if (payload.argumentsObj && typeof payload.argumentsObj === 'object') return payload.argumentsObj;
@@ -91,10 +104,10 @@ export function payloadArguments(payload) {
 export function contextBlocks(payload) {
     if (!payload || typeof payload !== 'object') return [];
     return [
-        { key: 'userMessage', label: '用户消息', value: payload.userMessage },
-        { key: 'thinking', label: '思考', value: payload.thinking },
-        { key: 'reasoningChain', label: '推理链', value: payload.reasoningChain },
-        { key: 'planning', label: '计划', value: payload.planning }
+        { key: 'userMessage', get label() { return translate('ui.hitlUtils.blockUserMessage', null, 'User message'); }, value: payload.userMessage },
+        { key: 'thinking', get label() { return translate('ui.hitlUtils.blockThinking', null, 'Thinking'); }, value: payload.thinking },
+        { key: 'reasoningChain', get label() { return translate('ui.hitlUtils.blockReasoning', null, 'Reasoning chain'); }, value: payload.reasoningChain },
+        { key: 'planning', get label() { return translate('ui.hitlUtils.blockPlanning', null, 'Plan'); }, value: payload.planning }
     ].filter(item => String(item.value || '').trim());
 }
 
@@ -110,13 +123,13 @@ export function approvalDeadlineText(payload) {
     const approval = payload?.hitlApproval;
     if (!approval || typeof approval !== 'object') return '';
     const timeoutSeconds = Number(approval.timeoutSeconds) || 0;
-    if (timeoutSeconds <= 0) return '无超时限制';
+    if (timeoutSeconds <= 0) return translate('ui.hitlUtils.noTimeout', null, 'No timeout');
     const expiresAt = approval.expiresAt ? new Date(approval.expiresAt) : null;
     if (expiresAt && Number.isFinite(expiresAt.getTime())) {
-        if (expiresAt.getTime() <= Date.now()) return `已于 ${formatDateTime(expiresAt)} 到期`;
-        return `${formatDateTime(expiresAt)} 截止`;
+        if (expiresAt.getTime() <= Date.now()) return translate('ui.hitlUtils.expiredAt', { time: formatDateTime(expiresAt) }, 'Expired at {{time}}');
+        return translate('ui.hitlUtils.dueAt', { time: formatDateTime(expiresAt) }, 'Due {{time}}');
     }
-    return `${timeoutSeconds} 秒内需裁决`;
+    return translate('ui.hitlUtils.dueInSeconds', { seconds: timeoutSeconds }, 'Decision required within {{seconds}} s');
 }
 
 export function formatHitlTime(value) {
@@ -133,8 +146,8 @@ export function parseToolTokens(text) {
 
 export function summarizePayload(payload) {
     const parts = [];
-    if (payload?.userMessage) parts.push('用户消息');
-    if (payload?.thinking) parts.push('思考');
-    if (payload?.executionResult) parts.push('执行结果');
+    if (payload?.userMessage) parts.push(translate('ui.hitlUtils.blockUserMessage', null, 'User message'));
+    if (payload?.thinking) parts.push(translate('ui.hitlUtils.blockThinking', null, 'Thinking'));
+    if (payload?.executionResult) parts.push(translate('ui.hitlUtils.summaryExecResult', null, 'Execution result'));
     return parts.length ? parts.join(' · ') : '—';
 }

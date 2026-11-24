@@ -42,7 +42,7 @@ func (h *AgentHandler) authorizeChatAttachmentPaths(c *gin.Context, attachments 
 		}
 		relative, err := filepath.Rel(root, path)
 		if err != nil || !uploads.pathAllowed(c, relative) {
-			return fmt.Errorf("无权访问附件 %s", attachment.FileName)
+			return fmt.Errorf("Not authorized to access attachment %s", attachment.FileName)
 		}
 	}
 	return nil
@@ -70,7 +70,7 @@ func loadChatImages(paths []string) ([]agentruntime.Image, error) {
 		}
 		img, err := readChatImage(root, relative, maxChatImageTotal-total)
 		if err != nil {
-			return nil, fmt.Errorf("读取附件 %s: %w", filepath.Base(path), err)
+			return nil, fmt.Errorf("Failed to read attachment %s: %w", filepath.Base(path), err)
 		}
 		if img.Data != nil {
 			images = append(images, img)
@@ -83,7 +83,7 @@ func loadChatImages(paths []string) ([]agentruntime.Image, error) {
 func readChatImage(root *os.Root, name string, remaining int) (agentruntime.Image, error) {
 	var fileImage agentruntime.Image
 	if !filepath.IsLocal(name) {
-		return fileImage, fmt.Errorf("附件路径无效")
+		return fileImage, fmt.Errorf("Invalid attachment path")
 	}
 	for parent := filepath.Dir(name); parent != "."; parent = filepath.Dir(parent) {
 		info, err := root.Lstat(parent)
@@ -91,7 +91,7 @@ func readChatImage(root *os.Root, name string, remaining int) (agentruntime.Imag
 			return fileImage, err
 		}
 		if !info.IsDir() {
-			return fileImage, fmt.Errorf("附件目录无效")
+			return fileImage, fmt.Errorf("Invalid attachment directory")
 		}
 	}
 	info, err := root.Lstat(name)
@@ -99,7 +99,7 @@ func readChatImage(root *os.Root, name string, remaining int) (agentruntime.Imag
 		return fileImage, err
 	}
 	if !info.Mode().IsRegular() {
-		return fileImage, fmt.Errorf("附件必须是普通文件")
+		return fileImage, fmt.Errorf("Attachment must be a regular file")
 	}
 	f, err := root.Open(name)
 	if err != nil {
@@ -111,7 +111,7 @@ func readChatImage(root *os.Root, name string, remaining int) (agentruntime.Imag
 		return fileImage, err
 	}
 	if !os.SameFile(info, opened) {
-		return fileImage, fmt.Errorf("附件已变更，请重新上传")
+		return fileImage, fmt.Errorf("Attachment has changed, please upload it again")
 	}
 	var header [512]byte
 	n, err := io.ReadFull(f, header[:])
@@ -126,21 +126,21 @@ func readChatImage(root *os.Root, name string, remaining int) (agentruntime.Imag
 	}
 	limit := min(maxChatImageBytes, remaining)
 	if opened.Size() > int64(limit) || n > limit {
-		return fileImage, fmt.Errorf("图片超过单张 8 MiB 或单次合计 12 MiB 的限制")
+		return fileImage, fmt.Errorf("Image exceeds the limit of 8 MiB per image or 12 MiB in total per request")
 	}
 	data, err := io.ReadAll(io.LimitReader(io.MultiReader(bytes.NewReader(header[:n]), f), int64(limit)+1))
 	if err != nil {
 		return fileImage, err
 	}
 	if len(data) > limit {
-		return fileImage, fmt.Errorf("图片超过单张 8 MiB 或单次合计 12 MiB 的限制")
+		return fileImage, fmt.Errorf("Image exceeds the limit of 8 MiB per image or 12 MiB in total per request")
 	}
 	dimensions, _, err := image.DecodeConfig(bytes.NewReader(data))
 	if err != nil || dimensions.Width <= 0 || dimensions.Height <= 0 {
-		return fileImage, fmt.Errorf("图片格式无效")
+		return fileImage, fmt.Errorf("Invalid image format")
 	}
 	if dimensions.Width > 8192 || dimensions.Height > 8192 || dimensions.Width*dimensions.Height > 32<<20 {
-		return fileImage, fmt.Errorf("图片分辨率过大")
+		return fileImage, fmt.Errorf("Image resolution is too large")
 	}
 	return agentruntime.Image{MIMEType: mime, Data: data}, nil
 }

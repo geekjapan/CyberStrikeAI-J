@@ -3,17 +3,17 @@ package config
 import "strings"
 
 const (
-	// DefaultMaxTotalTokens 是未显式配置时的通用上下文预算。
+	// DefaultMaxTotalTokens is the general context budget when not explicitly configured.
 	DefaultMaxTotalTokens = 120000
-	// DefaultLocalContextWindow 是 local 档位下未提供 context_window 时的保守窗口。
+	// DefaultLocalContextWindow is the conservative window used by the local tier when no context_window is provided.
 	DefaultLocalContextWindow = 32768
 	// DeepSeek's official /models response reports this total input and output window.
 	deepSeekContextWindow = 1048576
-	// LocalContextBudgetPercent 是 local 档位把原生窗口折算成提示词预算的比例。
+	// LocalContextBudgetPercent is the ratio the local tier uses to convert the native window into a prompt budget.
 	LocalContextBudgetPercent = 60
-	// LocalContextBudgetCap 防止 256K/1M 窗口把预算放大到超出本地模型有效上下文。
+	// LocalContextBudgetCap prevents 256K/1M windows from inflating the budget beyond the effective context of a local model.
 	LocalContextBudgetCap = 131072
-	// MinLocalContextWindow 以下不建议运行带工具的 agent。
+	// Running tool-enabled agents is not recommended below MinLocalContextWindow.
 	MinLocalContextWindow = 16384
 
 	ContextWarningLocalWindowUnknown   = "local_context_window_unknown"
@@ -52,7 +52,7 @@ func (c OpenAIConfig) IsLocalContextProfile() bool {
 	return profile == "local" || profile == "local_auto"
 }
 
-// OutputLimitField 返回输出上限字段名。本地端点普遍只认旧字段 max_tokens。
+// OutputLimitField returns the output limit field name. Local endpoints generally only accept the legacy max_tokens field.
 func (c OpenAIConfig) OutputLimitField() string {
 	if c.IsLocalContextProfile() {
 		return "max_tokens"
@@ -82,8 +82,8 @@ func (c OpenAIConfig) DefaultContextWindow() int {
 	return 0
 }
 
-// EffectiveMaxTotalTokens 把 max_total_tokens 收紧到模型窗口内。
-// 通用档位保留输出预留；local 档位再按 Effective Context 经验折到窗口的 60%，并限制在 128K 以内。
+// EffectiveMaxTotalTokens tightens max_total_tokens to within the model window.
+// The general tier keeps an output reserve; the local tier further scales the window to 60% based on Effective Context experience, capped at 128K.
 func (c OpenAIConfig) EffectiveMaxTotalTokens() int {
 	configured := c.MaxTotalTokens
 	if configured <= 0 {
@@ -134,7 +134,7 @@ func (c OpenAIConfig) EffectiveMaxTotalTokens() int {
 	return budget
 }
 
-// ContextBudgetWarnings 返回可本地化的告警码；不直接拼自然语言，便于 UI 多语言与日志检索。
+// ContextBudgetWarnings returns localizable warning codes; it does not build natural-language text directly, to ease multilingual UI and log search.
 func (c OpenAIConfig) ContextBudgetWarnings() []string {
 	var out []string
 	if c.IsLocalContextProfile() {
@@ -221,7 +221,7 @@ func localToolTruncBytes(window int) int {
 	return bytes
 }
 
-// localCoreToolNames 是本地小窗口下值得常驻的工具；其余交给 tool_search 按需解锁。
+// localCoreToolNames are the tools worth keeping resident in small local windows; the rest are unlocked on demand via tool_search.
 var localCoreToolNames = map[string]struct{}{
 	"read_file":             {},
 	"glob":                  {},

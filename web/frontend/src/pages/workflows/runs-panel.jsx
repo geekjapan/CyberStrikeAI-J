@@ -1,4 +1,4 @@
-/** 运行历史：待审批运行列表 + 运行详情（replay）抽屉。 */
+/** Run history: pending-approval run list + run detail (replay) drawer. */
 import { useSearchParams } from 'react-router-dom';
 import { Button, Space, Tag, Typography } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
@@ -31,7 +31,7 @@ export default function RunsPanel({ canExecute }) {
 
     const columns = [
         {
-            title: '运行',
+            title: t('ui.workflowsRunsPanel.run', null, 'Run'),
             dataIndex: 'id',
             width: 190,
             render: value => (
@@ -41,19 +41,19 @@ export default function RunsPanel({ canExecute }) {
             )
         },
         {
-            title: '工作流',
+            title: t('ui.workflowsRunsPanel.workflow', null, 'Workflow'),
             dataIndex: 'workflow_id',
             width: 200,
             render: value => <Text size="small"><code>{value}</code></Text>
         },
         {
-            title: '会话',
+            title: t('ui.workflowsRunsPanel.conversation', null, 'Conversation'),
             dataIndex: 'conversation_id',
             width: 220,
             render: value => <Text type="tertiary" size="small"><code>{value || '—'}</code></Text>
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'status',
             width: 110,
             render: value => {
@@ -62,25 +62,25 @@ export default function RunsPanel({ canExecute }) {
             }
         },
         {
-            title: '待审批节点',
+            title: t('ui.workflowsRunsPanel.pendingNode', null, 'Pending approval node'),
             dataIndex: 'pending_hitl_node_id',
             width: 160,
             render: value => (value ? <code>{value}</code> : <Text type="tertiary">—</Text>)
         },
         {
-            title: '开始时间',
+            title: t('ui.workflowsRunsPanel.startedAt', null, 'Started at'),
             dataIndex: 'started_at',
             width: 165,
             render: value => <Text size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 120,
             render: value => (
                 <Space>
                     <Button size="small" theme="borderless" onClick={() => openRun(value)}>
-                        {t('projects.details', null, '详情')}
+                        {t('projects.details', null, 'Details')}
                     </Button>
                 </Space>
             )
@@ -90,11 +90,13 @@ export default function RunsPanel({ canExecute }) {
     return (
         <>
             <SectionCard
-                title={t('workflows.runsPending', null, '待审批运行')}
-                description={`等待审批（awaiting_hitl）的工作流运行，每 15 秒自动刷新。${canExecute ? ' 可直接在此通过或拒绝。' : ''}`}
+                title={t('workflows.runsPending', null, 'Runs pending approval')}
+                description={canExecute
+                    ? t('ui.workflowsRunsPanel.descriptionExecute', null, 'Workflow runs awaiting approval (awaiting_hitl), refreshed every 15 seconds. You can approve or reject them here.')
+                    : t('ui.workflowsRunsPanel.descriptionReadonly', null, 'Workflow runs awaiting approval (awaiting_hitl), refreshed every 15 seconds.')}
                 extra={(
                     <Button icon={<IconRefresh />} theme="borderless" loading={pending.loading} onClick={() => pending.reload()}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>
                 )}
             >
@@ -105,7 +107,7 @@ export default function RunsPanel({ canExecute }) {
                     rowKey="id"
                     loading={pending.loading}
                     pagination={{ pageSize: 10 }}
-                    emptyText="当前没有等待审批的工作流运行"
+                    emptyText={t('ui.workflowsRunsPanel.empty', null, 'No workflow runs are awaiting approval')}
                 />
             </SectionCard>
 

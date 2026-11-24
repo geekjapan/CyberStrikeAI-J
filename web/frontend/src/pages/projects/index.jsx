@@ -1,4 +1,4 @@
-/** 项目管理：项目列表（含仪表盘统计）、项目详情、深链接 ?id=。 */
+/** Project management: project list (with dashboard stats), project detail, deep link ?id=. */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Empty, Input, Pagination, Select, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -73,7 +73,7 @@ export default function ProjectsPage() {
     const currentPage = Math.min(listPage, Math.max(1, Math.ceil(filtered.length / PROJECT_PAGE_SIZE)));
     const pageProjects = filtered.slice((currentPage - 1) * PROJECT_PAGE_SIZE, currentPage * PROJECT_PAGE_SIZE);
 
-    // 首次进入且没有指定项目时，默认选中第一个可见项目，避免右侧面板空白。
+    // On first entry without a specified project, select the first visible project by default so the right panel is not blank.
     useEffect(() => {
         if (selectedId || !filtered.length) return;
         navigate(filtered[0].id, activeTab);
@@ -87,35 +87,35 @@ export default function ProjectsPage() {
     const metrics = [
         {
             id: 'active',
-            label: t('projects.statusActive', null, '进行中'),
+            label: t('projects.statusActive', null, 'Active'),
             value: summary?.totals?.active_projects ?? projects.filter(item => (item.status || 'active') === 'active').length,
             loading: overview.loading
         },
         {
             id: 'facts',
-            label: t('projects.facts', null, '事实'),
+            label: t('projects.facts', null, 'Facts'),
             value: summary?.totals?.total_facts ?? '—',
-            detail: t('projects.sharedFactBoard', null, '共享事实黑板'),
+            detail: t('projects.sharedFactBoard', null, 'Shared fact board'),
             loading: overview.loading
         },
-        { id: 'total', label: t('projects.projectList', null, '项目列表'), value: overview.data?.total ?? projects.length, loading: overview.loading },
-        { id: 'archived', label: t('projects.statusArchived', null, '已归档'), value: archivedCount, loading: overview.loading }
+        { id: 'total', label: t('projects.projectList', null, 'Project list'), value: overview.data?.total ?? projects.length, loading: overview.loading },
+        { id: 'archived', label: t('projects.statusArchived', null, 'Archived'), value: archivedCount, loading: overview.loading }
     ];
 
     const removeProject = (record) => {
         confirmAction({
-            title: t('projects.deleteProject', null, '删除项目'),
-            content: t('projects.confirmDeleteProject', null, '确定删除该项目？事实将一并删除，对话将解除绑定。'),
-            okText: t('common.delete', null, '删除'),
+            title: t('projects.deleteProject', null, 'Delete project'),
+            content: t('projects.confirmDeleteProject', null, 'Delete this project? Facts will be deleted and conversations unbound.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/projects/${record.id}`);
-                    toastSuccess(t('projects.deleteProject', null, '删除项目'));
+                    toastSuccess(t('projects.deleteProject', null, 'Delete project'));
                     if (selectedId === record.id) navigate('');
                     overview.reload({ silent: true });
                     setDetailRev(value => value + 1);
                 } catch (error) {
-                    toastError(errText(error, t('projects.deleteFailed', null, '删除失败')));
+                    toastError(errText(error, t('projects.deleteFailed', null, 'Delete failed')));
                 }
             }
         });
@@ -124,20 +124,20 @@ export default function ProjectsPage() {
     const toggleArchive = (record) => {
         const archived = (record.status || 'active') === 'archived';
         confirmAction({
-            title: archived ? t('projects.restoreProjectActive', null, '恢复为进行中') : t('projects.archiveProject', null, '归档'),
+            title: archived ? t('projects.restoreProjectActive', null, 'Restore to active') : t('projects.archiveProject', null, 'Archive'),
             content: archived
-                ? t('projects.confirmRestoreProjectActive', null, '恢复为 active？')
-                : t('projects.confirmArchiveProject', null, '归档后默认不再出现在活跃列表，是否继续？'),
-            okText: t('common.confirm', null, '确认'),
+                ? t('projects.confirmRestoreProjectActive', null, 'Restore to active?')
+                : t('projects.confirmArchiveProject', null, 'After archiving, this project is hidden from active list by default. Continue?'),
+            okText: t('common.confirm', null, 'Confirm'),
             danger: !archived,
             onOk: async () => {
                 try {
                     await api.put(`/projects/${record.id}`, { status: archived ? 'active' : 'archived' });
-                    toastSuccess(t('projects.saved', null, '已保存'));
+                    toastSuccess(t('projects.saved', null, 'Saved'));
                     overview.reload({ silent: true });
                     setDetailRev(value => value + 1);
                 } catch (error) {
-                    toastError(errText(error, t('projects.operationFailed', null, '操作失败')));
+                    toastError(errText(error, t('projects.operationFailed', null, 'Operation failed')));
                 }
             }
         });
@@ -145,13 +145,13 @@ export default function ProjectsPage() {
 
     const columns = [
         {
-            title: t('projects.projectName', null, '项目名称'),
+            title: t('projects.projectName', null, 'Project name'),
             dataIndex: 'name',
             render: (value, record) => (
                 <div className="project-list-name">
                     <div className="project-list-name-row">
                         <span className={`project-list-name-text${record.id === selectedId ? ' is-active' : ''}`}>{value || record.id}</span>
-                        {record.pinned ? <Tag size="small" color="blue" type="light">{t('projects.pinned', null, '置顶')}</Tag> : null}
+                        {record.pinned ? <Tag size="small" color="blue" type="light">{t('projects.pinned', null, 'Pinned')}</Tag> : null}
                     </div>
                     {record.description
                         ? <Text type="tertiary" size="small" className="project-list-desc">{record.description}</Text>
@@ -160,40 +160,40 @@ export default function ProjectsPage() {
             )
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'status',
             width: 92,
             render: value => {
                 const archived = (value || 'active') === 'archived';
                 return (
                     <Tag size="small" color={archived ? 'grey' : 'green'}>
-                        {archived ? t('projects.statusArchived', null, '已归档') : t('projects.statusActive', null, '进行中')}
+                        {archived ? t('projects.statusArchived', null, 'Archived') : t('projects.statusActive', null, 'Active')}
                     </Tag>
                 );
             }
         },
         {
-            title: t('projects.updated', null, '更新'),
+            title: t('projects.updated', null, 'Updated'),
             dataIndex: 'updated_at',
             width: 150,
             render: value => <Text type="tertiary" size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 176,
             render: (value, record) => (
                 <Space spacing={2} onClick={event => event.stopPropagation()}>
                     <Button size="small" theme="borderless" onClick={() => setModal({ visible: true, project: record })} disabled={!canWrite}>
-                        {t('common.edit', null, '编辑')}
+                        {t('common.edit', null, 'Edit')}
                     </Button>
                     <Button size="small" theme="borderless" onClick={() => toggleArchive(record)} disabled={!canWrite}>
                         {(record.status || 'active') === 'archived'
-                            ? t('projects.restore', null, '恢复')
-                            : t('projects.archiveProject', null, '归档')}
+                            ? t('projects.restore', null, 'Restore')
+                            : t('projects.archiveProject', null, 'Archive')}
                     </Button>
                     <Button size="small" theme="borderless" type="danger" onClick={() => removeProject(record)} disabled={!canDelete}>
-                        {t('common.delete', null, '删除')}
+                        {t('common.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -203,15 +203,15 @@ export default function ProjectsPage() {
     return (
         <div className="project-page">
             <PageHeader
-                title={t('projects.title', null, '项目管理')}
-                description={t('projects.selectOrCreateHint', null, '项目用于跨对话共享「事实黑板」：目标、环境、认证等信息会在绑定项目的对话中自动注入。')}
+                title={t('projects.title', null, 'Projects')}
+                description={t('projects.selectOrCreateHint', null, 'Projects share a cross-chat fact board; target, environment, auth and other facts are auto-injected in bound conversations.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} theme="borderless" loading={overview.loading} onClick={() => overview.reload()}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setModal({ visible: true, project: null })}>
-                            {t('projects.newProjectCta', null, '+ 新建项目')}
+                            {t('projects.newProjectCta', null, '+ New project')}
                         </Button>
                     </Space>
                 )}
@@ -222,7 +222,7 @@ export default function ProjectsPage() {
 
             <div className={`project-layout${selectedId && activeTab === 'graph' ? ' project-layout--graph' : ''}`}>
                 <SectionCard
-                    title={t('projects.projectList', null, '项目列表')}
+                    title={t('projects.projectList', null, 'Project list')}
                     className="project-list-card"
                     bodyClassName="project-list-body"
                     extra={<Text type="tertiary" size="small">{filtered.length} / {projects.length}</Text>}
@@ -232,7 +232,7 @@ export default function ProjectsPage() {
                             prefix={<IconSearch />}
                             value={search}
                             showClear
-                            placeholder={t('projects.searchProjectsPlaceholder', null, '搜索项目…')}
+                            placeholder={t('projects.searchProjectsPlaceholder', null, 'Search projects…')}
                             onChange={value => { setSearch(value); setListPage(1); }}
                             style={{ width: '100%' }}
                         />
@@ -241,9 +241,9 @@ export default function ProjectsPage() {
                             onChange={value => { setStatusFilter(value); setListPage(1); }}
                             style={{ width: '100%' }}
                             optionList={[
-                                { value: 'all', label: t('projects.all', null, '全部') },
-                                { value: 'active', label: t('projects.statusActive', null, '进行中') },
-                                { value: 'archived', label: t('projects.statusArchived', null, '已归档') }
+                                { value: 'all', label: t('projects.all', null, 'All') },
+                                { value: 'active', label: t('projects.statusActive', null, 'Active') },
+                                { value: 'archived', label: t('projects.statusArchived', null, 'Archived') }
                             ]}
                         />
                     </div>
@@ -254,8 +254,8 @@ export default function ProjectsPage() {
                         loading={overview.loading}
                         pagination={false}
                         emptyText={search || statusFilter !== 'all'
-                            ? t('projects.noMatchingProjects', null, '无匹配项目')
-                            : t('projects.noProjects', null, '暂无项目')}
+                            ? t('projects.noMatchingProjects', null, 'No matching projects')
+                            : t('projects.noProjects', null, 'No projects')}
                         onRow={record => ({
                             onClick: () => navigate(record.id, activeTab),
                             style: { cursor: 'pointer' }
@@ -291,25 +291,25 @@ export default function ProjectsPage() {
                     ) : (
                         <>
                             <SectionCard
-                                title={t('projects.selectOrCreateTitle', null, '选择或创建项目')}
-                                extra={canWrite ? null : <Text type="tertiary" size="small">{t('projects.writePermissionDenied', null, '当前账号仅有只读权限，无法创建或修改项目')}</Text>}
+                                title={t('projects.selectOrCreateTitle', null, 'Select or create a project')}
+                                extra={canWrite ? null : <Text type="tertiary" size="small">{t('projects.writePermissionDenied', null, 'This account is read-only and cannot create or edit projects')}</Text>}
                             >
                                 <div className="project-empty-state">
                                     <Empty
-                                        title={t('projects.noProjectsClickCreate', null, '暂无项目，点击下方「新建项目」')}
-                                        description={t('projects.selectOrCreateHint', null, '项目用于跨对话共享「事实黑板」：目标、环境、认证等信息会在绑定项目的对话中自动注入。')}
+                                        title={t('projects.noProjectsClickCreate', null, 'No projects yet, click New project below')}
+                                        description={t('projects.selectOrCreateHint', null, 'Projects share a cross-chat fact board; target, environment, auth and other facts are auto-injected in bound conversations.')}
                                         style={{ padding: 24 }}
                                     >
                                         <Button type="primary" disabled={!canWrite} onClick={() => setModal({ visible: true, project: null })}>
-                                            {t('projects.createFirstProject', null, '创建第一个项目')}
+                                            {t('projects.createFirstProject', null, 'Create first project')}
                                         </Button>
                                     </Empty>
                                 </div>
                             </SectionCard>
 
                             <SectionCard
-                                title={t('projects.sharedFactBoard', null, '共享事实黑板')}
-                                description={t('projects.factToolbarHint', null, '索引仅含 key 与摘要；攻击链 / POC 写在 body，Agent 通过 get_project_fact 复现')}
+                                title={t('projects.sharedFactBoard', null, 'Shared fact board')}
+                                description={t('projects.factToolbarHint', null, 'Index includes key and summary only (must include what + where + how to verify); put attack chain / POC in body, and reproduce via get_project_fact.')}
                             >
                                 {(summary?.recent_facts || []).length ? (
                                     <ul className="project-recent-facts">
@@ -331,7 +331,7 @@ export default function ProjectsPage() {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <Text type="tertiary">{t('projects.noFacts', null, '暂无事实')}</Text>
+                                    <Text type="tertiary">{t('projects.noFacts', null, 'No facts yet. Click Add fact or let Agent write facts automatically')}</Text>
                                 )}
                             </SectionCard>
                         </>

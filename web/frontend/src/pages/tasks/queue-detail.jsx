@@ -1,4 +1,4 @@
-/** 队列详情抽屉：进度、子任务表格、启动/暂停/重跑、单条执行与结果查看。 */
+/** Queue detail drawer: progress, subtask table, start/pause/rerun, single execution and result view. */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -6,7 +6,7 @@ import {
 } from '@douyinfe/semi-ui';
 import { IconPlus, IconRefresh } from '@douyinfe/semi-icons';
 import { api } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { useInterval, useResource } from '../../components/hooks';
 import {
     Drawer, DataTable, ErrorBanner, KeyValueList, MarkdownView, confirmAction, toastError, toastSuccess
@@ -64,51 +64,51 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
             toastSuccess(label);
             refresh();
         } catch (error) {
-            toastError(errText(error, label + '失败'));
+            toastError(errText(error, translate('ui.tasksQueueDetail.actionFailed', { label }, '{{label}} failed')));
         }
     };
 
-    const start = () => act('start', '已开始执行');
+    const start = () => act('start', translate('ui.tasksQueueDetail.started', null, 'Started'));
     const pause = () => confirmAction({
-        title: t('tasks.statusPaused', null, '已暂停'),
-        content: t('tasks.pauseQueueConfirm', null, '确定要暂停这个批量任务队列吗？当前正在执行的任务将被停止，后续任务将保留待执行状态。'),
-        okText: t('common.confirm', null, '确认'),
+        title: t('tasks.statusPaused', null, 'Paused'),
+        content: t('tasks.pauseQueueConfirm', null, 'Pause this batch queue? The current task will be stopped; remaining tasks will stay pending.'),
+        okText: t('common.confirm', null, 'Confirm'),
         onOk: async () => {
             try {
                 await api.post(`/batch-tasks/${queueId}/pause`);
-                toastSuccess(t('tasks.statusPaused', null, '已暂停'));
+                toastSuccess(t('tasks.statusPaused', null, 'Paused'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.pauseQueueFailed', null, '暂停批量任务失败')));
+                toastError(errText(error, t('tasks.pauseQueueFailed', null, 'Failed to pause queue')));
             }
         }
     });
     const rerun = () => confirmAction({
-        title: t('tasks.retry', null, '重试'),
-        content: t('tasks.rerunQueueConfirm', null, '确定要重跑一轮吗？所有子任务将被重置为待执行状态并重新开始执行。'),
-        okText: t('common.confirm', null, '确认'),
+        title: t('tasks.retry', null, 'Retry'),
+        content: t('tasks.rerunQueueConfirm', null, 'Rerun this batch queue? All tasks will be reset to pending and re-executed.'),
+        okText: t('common.confirm', null, 'Confirm'),
         onOk: async () => {
             try {
                 await api.post(`/batch-tasks/${queueId}/rerun`);
-                toastSuccess(t('tasks.statusRunning', null, '执行中'));
+                toastSuccess(t('tasks.statusRunning', null, 'Running'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.rerunQueueFailed', null, '重跑批量任务失败')));
+                toastError(errText(error, t('tasks.rerunQueueFailed', null, 'Failed to rerun batch queue')));
             }
         }
     });
     const removeQueue = () => confirmAction({
-        title: t('tasks.deleteQueue', null, '删除队列'),
-        content: t('tasks.deleteQueueConfirm', null, '确定要删除这个批量任务队列吗？此操作不可恢复。'),
-        okText: t('common.delete', null, '删除'),
+        title: t('tasks.deleteQueue', null, 'Delete queue'),
+        content: t('tasks.deleteQueueConfirm', null, 'Delete this batch queue? This cannot be undone.'),
+        okText: t('common.delete', null, 'Delete'),
         onOk: async () => {
             try {
                 await api.del(`/batch-tasks/${queueId}`);
-                toastSuccess(t('tasks.deleteQueue', null, '删除队列'));
+                toastSuccess(t('tasks.deleteQueue', null, 'Delete queue'));
                 onChanged?.();
                 onClose?.();
             } catch (error) {
-                toastError(errText(error, t('tasks.deleteQueueFailed', null, '删除批量任务队列失败')));
+                toastError(errText(error, t('tasks.deleteQueueFailed', null, 'Failed to delete batch queue')));
             }
         }
     });
@@ -122,7 +122,7 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
     const saveTask = async () => {
         const message = taskModal.message.trim();
         if (!message) {
-            toastError(t('tasks.taskMessageRequired', null, '任务消息不能为空'));
+            toastError(t('tasks.taskMessageRequired', null, 'Task message is required'));
             return;
         }
         try {
@@ -131,43 +131,43 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
             } else {
                 await api.post(`/batch-tasks/${queueId}/tasks`, { message });
             }
-            toastSuccess(t('common.save', null, '保存'));
+            toastSuccess(t('common.save', null, 'Save'));
             setTaskModal({ visible: false, taskId: '', message: '' });
             refresh();
         } catch (error) {
             toastError(errText(error, taskModal.taskId
-                ? t('tasks.saveTaskFailed', null, '保存任务失败')
-                : t('tasks.addTaskFailed', null, '添加任务失败')));
+                ? t('tasks.saveTaskFailed', null, 'Failed to save task')
+                : t('tasks.addTaskFailed', null, 'Failed to add task')));
         }
     };
 
     const runSingle = (record) => confirmAction({
-        title: t('tasks.runSingleTask', null, '单条执行'),
-        content: t('tasks.confirmRunSingleTask', null, '确定执行该任务？仅运行这一条，完成后队列会自动暂停，不会继续执行其他待执行项。'),
-        okText: t('common.confirm', null, '确认'),
+        title: t('tasks.runSingleTask', null, 'Run task'),
+        content: t('tasks.confirmRunSingleTask', null, 'Run this task only? The queue will pause when it finishes and will not continue other pending items.'),
+        okText: t('common.confirm', null, 'Confirm'),
         danger: false,
         onOk: async () => {
             try {
                 await api.post(`/batch-tasks/${queueId}/tasks/${record.id}/run`);
-                toastSuccess(t('tasks.runSingleTask', null, '单条执行'));
+                toastSuccess(t('tasks.runSingleTask', null, 'Run task'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.runSingleTaskFailed', null, '单条执行失败')));
+                toastError(errText(error, t('tasks.runSingleTaskFailed', null, 'Failed to run task')));
             }
         }
     });
 
     const removeTask = (record) => confirmAction({
-        title: t('common.delete', null, '删除'),
-        content: t('tasks.confirmDeleteTask', null, '确定要删除这个任务吗？'),
-        okText: t('common.delete', null, '删除'),
+        title: t('common.delete', null, 'Delete'),
+        content: t('tasks.confirmDeleteTask', null, 'Delete this task?\n\nTask: {{message}}\n\nThis cannot be undone.'),
+        okText: t('common.delete', null, 'Delete'),
         onOk: async () => {
             try {
                 await api.del(`/batch-tasks/${queueId}/tasks/${record.id}`);
-                toastSuccess(t('common.delete', null, '删除'));
+                toastSuccess(t('common.delete', null, 'Delete'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.deleteTaskFailed', null, '删除任务失败')));
+                toastError(errText(error, t('tasks.deleteTaskFailed', null, 'Failed to delete task')));
             }
         }
     });
@@ -191,20 +191,20 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
             }
         },
         {
-            title: t('tasks.title', null, '任务'),
+            title: t('tasks.title', null, 'Task Management'),
             dataIndex: 'message',
             render: (value, record) => (
-                <span className="task-cell-message" title={value}>{value || t('tasks.taskIncomplete', null, '任务信息不完整')}</span>
+                <span className="task-cell-message" title={value}>{value || t('tasks.taskIncomplete', null, 'Task information incomplete')}</span>
             )
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'status',
             width: 96,
             render: value => <TaskStatusTag status={value} />
         },
         {
-            title: t('tasks.duration', null, '执行时长'),
+            title: t('tasks.duration', null, 'Duration'),
             dataIndex: 'startedAt',
             width: 110,
             render: (value, record) => (
@@ -212,7 +212,7 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
             )
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 210,
             render: (value, record) => (
@@ -222,22 +222,22 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                         theme="borderless"
                         onClick={() => setResultModal({ visible: true, task: record })}
                     >
-                        结果
+                        {t('ui.tasksQueueDetail.result', null, 'Result')}
                     </Button>
                     <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => openTaskModal(record)}>
-                        {t('common.edit', null, '编辑')}
+                        {t('common.edit', null, 'Edit')}
                     </Button>
                     <Button
                         size="small"
                         theme="borderless"
                         disabled={!canRunSingle(record)}
-                        title={t('tasks.runSingleTaskUnavailable', null, '队列或任务执行中，暂无法单条执行')}
+                        title={t('tasks.runSingleTaskUnavailable', null, 'Unavailable while the queue or a task is running')}
                         onClick={() => runSingle(record)}
                     >
-                        {t('tasks.runSingleTask', null, '单条执行')}
+                        {t('tasks.runSingleTask', null, 'Run task')}
                     </Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => removeTask(record)}>
-                        {t('common.delete', null, '删除')}
+                        {t('common.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -251,7 +251,7 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
         <SideSheet
             visible={visible}
             width={900}
-            title={queue ? (queue.title || queue.id) : t('tasks.batchQueueTitle', null, '批量任务队列')}
+            title={queue ? (queue.title || queue.id) : t('tasks.batchQueueTitle', null, 'Batch task queue')}
             onCancel={onClose}
         >
             <ErrorBanner error={errorProp(detail.error)} onRetry={() => detail.reload()} />
@@ -264,25 +264,25 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                                 disabled={!canWrite || queue.status === 'running'}
                                 onClick={start}
                             >
-                                开始执行
+                                {t('ui.tasksQueueDetail.start', null, 'Start')}
                             </Button>
                             <Button disabled={!canWrite || queue.status !== 'running'} onClick={pause}>
-                                暂停
+                                {t('ui.tasksQueueDetail.pause', null, 'Pause')}
                             </Button>
                             <Button
                                 disabled={!canWrite || !['completed', 'cancelled'].includes(queue.status)}
                                 onClick={rerun}
                             >
-                                {t('tasks.retry', null, '重试')}
+                                {t('tasks.retry', null, 'Retry')}
                             </Button>
                             <Button icon={<IconRefresh />} theme="borderless" onClick={() => detail.reload()} />
                         </Space>
                         <Space>
                             <Button icon={<IconPlus />} disabled={!canWrite} onClick={() => openTaskModal(null)}>
-                                添加任务
+                                {t('ui.tasksQueueDetail.addTask', null, 'Add task')}
                             </Button>
                             <Button type="danger" disabled={!canDelete} onClick={removeQueue}>
-                                {t('tasks.deleteQueue', null, '删除队列')}
+                                {t('tasks.deleteQueue', null, 'Delete queue')}
                             </Button>
                         </Space>
                     </div>
@@ -294,42 +294,42 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                         </div>
                         <Progress percent={stats.percent} showInfo stroke="var(--semi-color-primary)" />
                         <div className="task-progress-legend">
-                            <span>{t('tasks.totalLabel', null, '总计')} {stats.total}</span>
-                            <span>{t('tasks.pendingLabel', null, '待执行')} {stats.pending}</span>
-                            <span>{t('tasks.runningLabel', null, '执行中')} {stats.running}</span>
-                            <span>{t('tasks.completedLabel', null, '已完成')} {stats.completed}</span>
-                            <span>{t('tasks.failedLabel', null, '失败')} {stats.failed}</span>
-                            <span>{t('tasks.cancelledLabel', null, '已取消')} {stats.cancelled}</span>
-                            <span>受阻 {stats.blocked}</span>
+                            <span>{t('tasks.totalLabel', null, 'Total')} {stats.total}</span>
+                            <span>{t('tasks.pendingLabel', null, 'Pending')} {stats.pending}</span>
+                            <span>{t('tasks.runningLabel', null, 'Running')} {stats.running}</span>
+                            <span>{t('tasks.completedLabel', null, 'Completed')} {stats.completed}</span>
+                            <span>{t('tasks.failedLabel', null, 'Failed')} {stats.failed}</span>
+                            <span>{t('tasks.cancelledLabel', null, 'Cancelled')} {stats.cancelled}</span>
+                            <span>{t('ui.tasksQueueDetail.blocked', null, 'Blocked')} {stats.blocked}</span>
                         </div>
                         <Text type="tertiary" size="small">
                             {cronOn
-                                ? t('tasks.cronRunningProgressHint', null, '本轮执行中；下一整轮仍按 Cron 与「下次执行时间」排程')
-                                : t('tasks.finishedProgressHint', null, '进度表示已结束的任务比例，包含失败和取消，不表示成功率。')}
+                                ? t('tasks.cronRunningProgressHint', null, 'This round is running; the next full cycle follows Cron / next run time')
+                                : t('tasks.finishedProgressHint', null, 'Progress counts finished tasks, including failures and cancellations; it is not the success rate.')}
                         </Text>
                     </div>
 
                     <KeyValueList
                         columns={3}
                         items={[
-                            { label: t('tasks.queueIdLabel', null, '队列ID'), value: <code>{queue.id}</code> },
-                            { label: t('tasks.createdTimeLabel', null, '创建时间'), value: formatDateTime(queue.createdAt) },
-                            { label: 'Agent 模式', value: (AGENT_MODES.find(item => item.value === queue.agentMode) || AGENT_MODES[0]).label },
-                            { label: '角色', value: queue.role || t('batchImportModal.defaultRole', null, '默认') },
-                            { label: '项目', value: queue.projectId || '—' },
+                            { label: t('tasks.queueIdLabel', null, 'Queue ID'), value: <code>{queue.id}</code> },
+                            { label: t('tasks.createdTimeLabel', null, 'Created at'), value: formatDateTime(queue.createdAt) },
+                            { label: t('ui.tasksQueueDetail.agentMode', null, 'Agent mode'), value: (AGENT_MODES.find(item => item.value === queue.agentMode) || AGENT_MODES[0]).label },
+                            { label: t('ui.tasksQueueDetail.role', null, 'Role'), value: queue.role || t('batchImportModal.defaultRole', null, 'Default') },
+                            { label: t('ui.tasksQueueDetail.project', null, 'Project'), value: queue.projectId || '—' },
                             {
-                                label: t('batchImportModal.hitlPolicy', null, '工具审批'),
+                                label: t('batchImportModal.hitlPolicy', null, 'Tool approval'),
                                 value: (HITL_POLICIES.find(item => item.value === (queue.hitlPolicy || '')) || HITL_POLICIES[0]).label
                             },
-                            { label: t('batchImportModal.concurrency', null, '并发数'), value: queue.concurrency || 1 },
+                            { label: t('batchImportModal.concurrency', null, 'Concurrency'), value: queue.concurrency || 1 },
                             {
-                                label: t('batchImportModal.scheduleMode', null, '调度方式'),
+                                label: t('batchImportModal.scheduleMode', null, 'Schedule mode'),
                                 value: queue.scheduleMode === 'cron'
-                                    ? `Cron ${queue.cronExpr || ''}${cronOn ? '' : '（已关闭）'}`
-                                    : t('batchImportModal.scheduleModeManual', null, '手工执行')
+                                    ? `Cron ${queue.cronExpr || ''}${cronOn ? '' : t('ui.tasksQueueDetail.cronOff', null, ' (off)')}`
+                                    : t('batchImportModal.scheduleModeManual', null, 'Manual')
                             },
-                            { label: '下一次执行', value: queue.nextRunAt ? formatDateTime(queue.nextRunAt) : '—' },
-                            queue.lastRunError ? { label: '最近错误', value: <Text type="danger" size="small">{queue.lastRunError}</Text> } : null
+                            { label: t('ui.tasksQueueDetail.nextRun', null, 'Next run'), value: queue.nextRunAt ? formatDateTime(queue.nextRunAt) : '—' },
+                            queue.lastRunError ? { label: t('ui.tasksQueueDetail.lastError', null, 'Last error'), value: <Text type="danger" size="small">{queue.lastRunError}</Text> } : null
                         ]}
                     />
 
@@ -339,31 +339,31 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                         rowKey="id"
                         size="small"
                         pagination={{ pageSize: 10 }}
-                        emptyText={t('tasks.noValidTask', null, '没有有效的任务')}
+                        emptyText={t('tasks.noValidTask', null, 'No valid tasks')}
                     />
                 </div>
             ) : null}
 
             <Drawer
                 visible={taskModal.visible}
-                title={taskModal.taskId ? t('common.edit', null, '编辑') : '添加任务'}
+                title={taskModal.taskId ? t('common.edit', null, 'Edit') : t('ui.tasksQueueDetail.addTask', null, 'Add task')}
                 onCancel={() => setTaskModal({ visible: false, taskId: '', message: '' })}
                 onOk={saveTask}
-                okText={t('common.save', null, '保存')}
-                cancelText={t('common.cancel', null, '取消')}
+                okText={t('common.save', null, 'Save')}
+                cancelText={t('common.cancel', null, 'Cancel')}
                 width={620}
             >
                 <TextArea
                     value={taskModal.message}
                     rows={5}
-                    placeholder={t('batchImportModal.tasksListPlaceholder', null, '请输入任务列表，每行一个任务')}
+                    placeholder={t('batchImportModal.tasksListPlaceholder', null, 'Enter task list, one per line')}
                     onChange={value => setTaskModal(prev => ({ ...prev, message: value }))}
                 />
             </Drawer>
 
             <Drawer
                 visible={resultModal.visible}
-                title={resultModal.task ? resultModal.task.message : '结果'}
+                title={resultModal.task ? resultModal.task.message : t('ui.tasksQueueDetail.result', null, 'Result')}
                 onCancel={() => setResultModal({ visible: false, task: null })}
                 footer={(
                     <Space>
@@ -376,11 +376,11 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                                     navigate(`/chat?conversation=${encodeURIComponent(id)}`);
                                 }}
                             >
-                                {t('tasks.viewConversation', null, '查看对话')}
+                                {t('tasks.viewConversation', null, 'View conversation')}
                             </Button>
                         ) : null}
                         <Button onClick={() => setResultModal({ visible: false, task: null })}>
-                            {t('common.close', null, '关闭')}
+                            {t('common.close', null, 'Close')}
                         </Button>
                     </Space>
                 )}
@@ -390,26 +390,26 @@ export default function QueueDetailDrawer({ queueId, visible, canWrite, canDelet
                     <KeyValueList
                         columns={2}
                         items={[
-                            { label: t('projects.status', null, '状态'), value: <TaskStatusTag status={resultModal.task?.status} /> },
-                            { label: t('tasks.startedAt', null, '开始时间'), value: formatDateTime(resultModal.task?.startedAt) },
-                            { label: t('tasks.completedAt', null, '完成时间'), value: formatDateTime(resultModal.task?.completedAt) },
-                            { label: t('tasks.duration', null, '执行时长'), value: durationText(resultModal.task?.startedAt, resultModal.task?.completedAt) },
+                            { label: t('projects.status', null, 'Status'), value: <TaskStatusTag status={resultModal.task?.status} /> },
+                            { label: t('tasks.startedAt', null, 'Started at'), value: formatDateTime(resultModal.task?.startedAt) },
+                            { label: t('tasks.completedAt', null, 'Completed at'), value: formatDateTime(resultModal.task?.completedAt) },
+                            { label: t('tasks.duration', null, 'Duration'), value: durationText(resultModal.task?.startedAt, resultModal.task?.completedAt) },
                             resultModal.task?.conversationId
-                                ? { label: t('tasks.conversationIdLabel', null, '对话ID'), value: <code>{resultModal.task.conversationId}</code> }
+                                ? { label: t('tasks.conversationIdLabel', null, 'Conversation ID'), value: <code>{resultModal.task.conversationId}</code> }
                                 : null
                         ]}
                     />
                     {resultModal.task?.error ? (
                         <div>
                             <Text strong type="danger">
-                                {resultModal.task.status === 'blocked' ? '受阻原因' : t('tasks.statusFailed', null, '执行失败')}
+                                {resultModal.task.status === 'blocked' ? t('ui.tasksQueueDetail.blockedReason', null, 'Blocked reason') : t('tasks.statusFailed', null, 'Failed')}
                             </Text>
                             <pre className="task-result-pre">{resultModal.task.error}</pre>
                         </div>
                     ) : null}
                     {resultModal.task?.result
                         ? <MarkdownView content={resultModal.task.result} />
-                        : <Text type="tertiary">暂无结果</Text>}
+                        : <Text type="tertiary">{t('ui.tasksQueueDetail.noResult', null, 'No result yet')}</Text>}
                 </div>
             </Drawer>
         </SideSheet>

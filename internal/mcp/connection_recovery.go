@@ -11,13 +11,13 @@ import (
 )
 
 const (
-	// externalReconnectMinInterval 两次自动重连之间的最短间隔
+	// externalReconnectMinInterval is the minimum interval between two automatic reconnects
 	externalReconnectMinInterval = 30 * time.Second
-	// externalReconnectMaxBackoff 指数退避上限
+	// externalReconnectMaxBackoff is the upper limit of exponential backoff
 	externalReconnectMaxBackoff = 5 * time.Minute
 )
 
-// isConnectionDeadError 判断错误是否表示底层传输已断开（而非调用方主动取消或超时）。
+// isConnectionDeadError determines whether the error means the underlying transport has disconnected (rather than the caller cancelling or timing out).
 func isConnectionDeadError(err error) bool {
 	if err == nil {
 		return false
@@ -36,12 +36,12 @@ func isConnectionDeadError(err error) bool {
 		strings.Contains(s, "broken pipe")
 }
 
-// handleConnectionDead 在 ListTools/CallTool 等操作失败且判定为断连时，标记客户端并调度重连。
+// handleConnectionDead marks the client and schedules a reconnect when an operation such as ListTools/CallTool fails and is judged to be a disconnect.
 func (m *ExternalMCPManager) handleConnectionDead(name string, client ExternalMCPClient, err error) {
 	if !isConnectionDeadError(err) {
 		return
 	}
-	m.logger.Warn("检测到外部MCP连接已断开，将尝试自动重连",
+	m.logger.Warn("Detected that the external MCP connection was dropped, will try to reconnect automatically",
 		zap.String("name", name),
 		zap.Error(err),
 	)
@@ -55,7 +55,7 @@ func (m *ExternalMCPManager) markClientDisconnected(name string, client External
 	}
 	m.mu.Lock()
 	if err != nil {
-		m.errors[name] = "连接已断开: " + err.Error()
+		m.errors[name] = "Connection dropped: " + err.Error()
 	}
 	m.mu.Unlock()
 	m.toolCountsMu.Lock()
@@ -134,11 +134,11 @@ func (m *ExternalMCPManager) tryReconnect(name string) {
 	m.mu.RUnlock()
 
 	if !enabled {
-		m.logger.Debug("跳过自动重连（外部MCP已停用）", zap.String("name", name))
+		m.logger.Debug("Skipping auto-reconnect (external MCP is disabled)", zap.String("name", name))
 		return
 	}
 	if connecting {
-		m.logger.Debug("跳过自动重连（连接正在进行中）", zap.String("name", name))
+		m.logger.Debug("Skipping auto-reconnect (connection in progress)", zap.String("name", name))
 		return
 	}
 
@@ -148,20 +148,20 @@ func (m *ExternalMCPManager) tryReconnect(name string) {
 	attemptNum := m.reconnectAttempts[name]
 	m.reconnectMu.Unlock()
 
-	m.logger.Info("正在自动重连外部MCP",
+	m.logger.Info("Auto-reconnecting external MCP",
 		zap.String("name", name),
 		zap.Int("attempt", attemptNum),
 	)
 
 	if err := m.startClient(name, true); err != nil {
-		m.logger.Warn("自动重连外部MCP失败",
+		m.logger.Warn("Auto-reconnect of external MCP failed",
 			zap.String("name", name),
 			zap.Error(err),
 		)
 	}
 }
 
-// scheduleReconnectAfterFailure 在自动重连失败后，按当前退避间隔预约下一次重试。
+// scheduleReconnectAfterFailure schedules the next retry at the current backoff interval after an automatic reconnect fails.
 func (m *ExternalMCPManager) scheduleReconnectAfterFailure(name string) {
 	m.mu.RLock()
 	cfg, exists := m.configs[name]
@@ -173,14 +173,14 @@ func (m *ExternalMCPManager) scheduleReconnectAfterFailure(name string) {
 	m.reconnectMu.Lock()
 	wait := m.reconnectBackoff(m.reconnectAttempts[name])
 	m.reconnectMu.Unlock()
-	m.logger.Info("自动重连失败，将按退避间隔再次尝试",
+	m.logger.Info("Auto-reconnect failed, will try again after the backoff interval",
 		zap.String("name", name),
 		zap.Duration("after", wait),
 	)
 	m.scheduleReconnectAfter(name, wait)
 }
 
-// scheduleReconnectAfter 在 delay 后触发 tryReconnect（delay<=0 时立即执行）。
+// scheduleReconnectAfter triggers tryReconnect after delay (runs immediately when delay<=0).
 func (m *ExternalMCPManager) scheduleReconnectAfter(name string, delay time.Duration) {
 	if delay <= 0 {
 		go m.tryReconnect(name)

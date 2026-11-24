@@ -1,4 +1,4 @@
-/* 工作流页私有样式：仅布局与间距，颜色全部取 Semi 变量。 */
+/* Private styles for the workflows page: layout and spacing only, all colors from Semi variables. */
 
 .workflow-toolbar {
     display: flex;

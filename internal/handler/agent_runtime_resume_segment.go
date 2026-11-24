@@ -7,7 +7,7 @@ import (
 	"cyberstrike-ai/internal/multiagent"
 )
 
-// applyAgentTraceResumeSegment 中断并继续：persist last_react_* → loadHistory，可选替换下一段 user 文案。
+// applyAgentTraceResumeSegment for interrupt-and-continue: persist last_react_*, then loadHistory; optionally replaces the next user text.
 func (h *AgentHandler) applyAgentTraceResumeSegment(
 	conversationID string,
 	result *multiagent.RunResult,

@@ -1,6 +1,6 @@
 /**
- * WebShell 文件浏览辅助：解析 `ls -la` / Windows `dir` 输出并处理路径拼接。
- * 解析规则与旧版 web/static/js/webshell.js 的 parseWebshellListItems 保持一致。
+ * WebShell file browsing helpers: parse `ls -la` / Windows `dir` output and handle path joining.
+ * Parsing rules match parseWebshellListItems in the old web/static/js/webshell.js.
  */
 
 const MONTH_INDEX = {
@@ -63,7 +63,7 @@ const SKIP_LINE = [
     /^[^>\n]*>\s*dir(?:\s|$)/i
 ];
 
-/** 把目录列表原始输出解析为文件项数组。 */
+/** Parse raw directory listing output into an array of file items. */
 export function parseListing(rawOutput) {
     const lines = String(rawOutput || '').split(/\n/).filter(line => line.trim());
     const items = [];
@@ -114,13 +114,13 @@ export function parseListing(rawOutput) {
     return items;
 }
 
-/** 归一化路径：去掉重复斜杠与尾部斜杠，空路径回落为 "."。 */
+/** Normalize a path: drop duplicate and trailing slashes; an empty path falls back to ".". */
 export function normalizePath(input) {
     let value = String(input ?? '').trim();
     if (!value) return '.';
     value = value.replace(/\\/g, '/').replace(/\/{2,}/g, '/');
     if (value.length > 1) value = value.replace(/\/+$/, '');
-    // Windows 盘符根（C: / C:/）保留尾斜杠，避免退化成相对盘符
+    // Keep the trailing slash on a Windows drive root (C: / C:/) so it does not degrade into a relative drive
     if (/^[A-Za-z]:$/.test(value)) return `${value}/`;
     return value || '.';
 }
@@ -145,7 +145,7 @@ export function parentPath(input) {
     return /^[A-Za-z]:$/.test(head) ? `${head}/` : head;
 }
 
-/** 面包屑分段：返回 [{label, path}]，首段为根。 */
+/** Breadcrumb segments: returns [{label, path}], the first segment is the root. */
 export function pathSegments(input) {
     const dir = normalizePath(input);
     const drive = /^[A-Za-z]:/.test(dir);

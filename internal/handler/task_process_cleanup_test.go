@@ -247,11 +247,11 @@ func TestTaskCleanupDistinguishesLocalAndRemoteUncertainty(t *testing.T) {
 		wantKind   string
 		wantText   string
 	}{
-		{"local D state", security.ErrCleanupUnconfirmed, nil, "cleanup_unconfirmed", "warning", "本地残留进程"},
-		{"remote MCP", nil, runlease.ErrUnconfirmed, "cleanup_unconfirmed", "warning", "远端 MCP"},
-		{"local and remote", security.ErrCleanupUnconfirmed, runlease.ErrUnconfirmed, "cleanup_unconfirmed", "warning", "本地残留进程处于不可中断状态，远端 MCP"},
-		{"worker still running", security.ErrCleanupUnconfirmed, retryErr, "cleanup_failed", "error", "将自动重试"},
-		{"local cleanup failed", retryErr, runlease.ErrUnconfirmed, "cleanup_failed", "error", "将自动重试"},
+		{"local D state", security.ErrCleanupUnconfirmed, nil, "cleanup_unconfirmed", "warning", "Leftover local process"},
+		{"remote MCP", nil, runlease.ErrUnconfirmed, "cleanup_unconfirmed", "warning", "remote MCP"},
+		{"local and remote", security.ErrCleanupUnconfirmed, runlease.ErrUnconfirmed, "cleanup_unconfirmed", "warning", "Leftover local process is in an uninterruptible state; remote MCP"},
+		{"worker still running", security.ErrCleanupUnconfirmed, retryErr, "cleanup_failed", "error", "will be retried automatically"},
+		{"local cleanup failed", retryErr, runlease.ErrUnconfirmed, "cleanup_failed", "error", "will be retried automatically"},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			got := taskCleanupResult(tc.localErr, tc.workerErr)

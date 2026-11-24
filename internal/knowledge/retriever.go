@@ -15,8 +15,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// Retriever 检索器：SQLite 存向量 + Agent 嵌入，**纯向量检索**（余弦相似度、TopK、阈值），
-// 实现语义与 [DocumentRetriever] 适配层 [VectorRetriever] 一致。
+// Retriever: stores vectors in SQLite with Agent embeddings, **pure vector retrieval** (cosine similarity, TopK, threshold),
+// its implementation semantics match the [VectorRetriever] adapter layer of [DocumentRetriever].
 type Retriever struct {
 	db       *sql.DB
 	embedder *Embedder
@@ -30,7 +30,7 @@ type Retriever struct {
 	wireOpenAI *config.OpenAIConfig
 }
 
-// RetrievalConfig 检索配置
+// RetrievalConfig is the retrieval configuration
 type RetrievalConfig struct {
 	TopK                int
 	SimilarityThreshold float64
@@ -40,7 +40,7 @@ type RetrievalConfig struct {
 	PostRetrieve        config.PostRetrieveConfig
 }
 
-// NewRetriever 创建新的检索器
+// NewRetriever creates a new retriever
 func NewRetriever(db *sql.DB, embedder *Embedder, config *RetrievalConfig, logger *zap.Logger) *Retriever {
 	return &Retriever{
 		db:       db,
@@ -50,12 +50,12 @@ func NewRetriever(db *sql.DB, embedder *Embedder, config *RetrievalConfig, logge
 	}
 }
 
-// UpdateConfig 更新检索配置并重建 Agent MultiQuery + 重排流水线。
+// UpdateConfig updates the retrieval config and rebuilds the Agent MultiQuery + reranking pipeline.
 func (r *Retriever) UpdateConfig(cfg *RetrievalConfig) {
 	if cfg != nil {
 		r.config = cfg
 		if r.logger != nil {
-			r.logger.Info("检索器配置已更新",
+			r.logger.Info("Retriever configuration updated",
 				zap.Int("top_k", cfg.TopK),
 				zap.Float64("similarity_threshold", cfg.SimilarityThreshold),
 				zap.String("sub_index_filter", cfg.SubIndexFilter),
@@ -68,12 +68,12 @@ func (r *Retriever) UpdateConfig(cfg *RetrievalConfig) {
 	}
 	if r.wireOpenAI != nil {
 		if err := WireRetrieverPipeline(context.Background(), r, r.wireOpenAI); err != nil && r.logger != nil {
-			r.logger.Warn("检索流水线重建失败", zap.Error(err))
+			r.logger.Warn("Failed to rebuild retrieval pipeline", zap.Error(err))
 		}
 	}
 }
 
-// SetDocumentReranker 注入可选重排器（并发安全）；nil 表示禁用。
+// SetDocumentReranker injects an optional reranker (concurrency-safe); nil disables it.
 func (r *Retriever) SetDocumentReranker(rr DocumentReranker) {
 	if r == nil {
 		return
@@ -111,14 +111,14 @@ func cosineSimilarity(a, b []float32) float64 {
 	return dotProduct / (math.Sqrt(normA) * math.Sqrt(normB))
 }
 
-// Search 搜索知识库（Agent MultiQuery → 向量检索 → 重排 → 后处理）。
+// Search searches the knowledge base (Agent MultiQuery → vector retrieval → reranking → post-processing).
 func (r *Retriever) Search(ctx context.Context, req *SearchRequest) ([]*RetrievalResult, error) {
 	if req == nil {
-		return nil, fmt.Errorf("请求不能为空")
+		return nil, fmt.Errorf("Request is required")
 	}
 	q := strings.TrimSpace(req.Query)
 	if q == "" {
-		return nil, fmt.Errorf("查询不能为空")
+		return nil, fmt.Errorf("Query is required")
 	}
 	opts := r.retrievalOptionsForRequest(req)
 	docs, err := r.activeRetriever().Retrieve(ctx, q, opts...)
@@ -149,7 +149,7 @@ func (r *Retriever) retrievalOptionsForRequest(req *SearchRequest) []RetrievalOp
 	return opts
 }
 
-// RetrieveDocuments 直接返回 [Document]，供 Agent Graph / Chain 使用。
+// RetrieveDocuments returns [Document] directly, for use by Agent Graph / Chain.
 func (r *Retriever) RetrieveDocuments(ctx context.Context, query string, opts ...RetrievalOption) ([]*Document, error) {
 	return r.activeRetriever().Retrieve(ctx, query, opts...)
 }
@@ -161,7 +161,7 @@ func (r *Retriever) activeRetriever() DocumentRetriever {
 	return NewVectorRetriever(r)
 }
 
-// AsRetriever 将知识库检索流水线暴露为 Agent [DocumentRetriever]。
+// AsRetriever exposes the knowledge base retrieval pipeline as an Agent [DocumentRetriever].
 func (r *Retriever) AsRetriever() DocumentRetriever {
 	return r.activeRetriever()
 }
@@ -184,10 +184,10 @@ WHERE 1=1`
 	return q, args
 }
 
-// vectorSearch 纯向量检索：余弦相似度排序，按相似度阈值与 TopK 截断（无 BM25、无混合分、无邻块扩展）。
+// vectorSearch is pure vector retrieval: sorted by cosine similarity, truncated by the similarity threshold and TopK (no BM25, no hybrid scoring, no neighbor-chunk expansion).
 func (r *Retriever) vectorSearch(ctx context.Context, req *SearchRequest) ([]*RetrievalResult, error) {
 	if req.Query == "" {
-		return nil, fmt.Errorf("查询不能为空")
+		return nil, fmt.Errorf("Query is required")
 	}
 
 	topK := req.TopK
@@ -214,7 +214,7 @@ func (r *Retriever) vectorSearch(ctx context.Context, req *SearchRequest) ([]*Re
 	queryText := FormatQueryEmbeddingText(req.RiskType, req.Query)
 	queryEmbedding, err := r.embedder.EmbedText(ctx, queryText)
 	if err != nil {
-		return nil, fmt.Errorf("向量化查询失败: %w", err)
+		return nil, fmt.Errorf("Failed to vectorize query: %w", err)
 	}
 	queryDim := len(queryEmbedding)
 	expectedModel := ""
@@ -225,7 +225,7 @@ func (r *Retriever) vectorSearch(ctx context.Context, req *SearchRequest) ([]*Re
 	sqlStr, sqlArgs := r.knowledgeEmbeddingSelectSQL(strings.TrimSpace(req.RiskType), subIdxFilter)
 	rows, err := r.db.QueryContext(ctx, sqlStr, sqlArgs...)
 	if err != nil {
-		return nil, fmt.Errorf("查询向量失败: %w", err)
+		return nil, fmt.Errorf("Failed to query vectors: %w", err)
 	}
 	defer rows.Close()
 
@@ -251,26 +251,26 @@ func (r *Retriever) vectorSearch(ctx context.Context, req *SearchRequest) ([]*Re
 		var chunkIndex, rowDim int
 
 		if err := rows.Scan(&chunkID, &itemID, &chunkIndex, &chunkText, &embeddingJSON, &rowModel, &rowDim, &category, &title); err != nil {
-			r.logger.Warn("扫描向量失败", zap.Error(err))
+			r.logger.Warn("Failed to scan vectors", zap.Error(err))
 			continue
 		}
 
 		var embedding []float32
 		if err := json.Unmarshal([]byte(embeddingJSON), &embedding); err != nil {
-			r.logger.Warn("解析向量失败", zap.Error(err))
+			r.logger.Warn("Failed to parse vector", zap.Error(err))
 			continue
 		}
 
 		if rowDim > 0 && len(embedding) != rowDim {
-			r.logger.Debug("跳过维度不一致的向量行", zap.String("chunkId", chunkID), zap.Int("rowDim", rowDim), zap.Int("got", len(embedding)))
+			r.logger.Debug("Skipping vector row with mismatched dimension", zap.String("chunkId", chunkID), zap.Int("rowDim", rowDim), zap.Int("got", len(embedding)))
 			continue
 		}
 		if queryDim > 0 && len(embedding) != queryDim {
-			r.logger.Debug("跳过与查询维度不一致的向量", zap.String("chunkId", chunkID), zap.Int("queryDim", queryDim), zap.Int("got", len(embedding)))
+			r.logger.Debug("Skipping vector whose dimension differs from the query", zap.String("chunkId", chunkID), zap.Int("queryDim", queryDim), zap.Int("got", len(embedding)))
 			continue
 		}
 		if expectedModel != "" && strings.TrimSpace(rowModel) != "" && strings.TrimSpace(rowModel) != expectedModel {
-			r.logger.Debug("跳过嵌入模型不一致的行", zap.String("chunkId", chunkID), zap.String("rowModel", rowModel), zap.String("expected", expectedModel))
+			r.logger.Debug("Skipping row with mismatched embedding model", zap.String("chunkId", chunkID), zap.String("rowModel", rowModel), zap.String("expected", expectedModel))
 			continue
 		}
 

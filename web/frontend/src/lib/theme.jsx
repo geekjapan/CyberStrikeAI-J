@@ -1,6 +1,6 @@
 /**
- * 主题：沿用既有偏好键 cyberstrike-theme（system/light/dark），
- * 通过 body[theme-mode] 驱动 Semi Design 暗色变量，同时同步 html[data-theme]。
+ * Theme: keeps the existing preference key cyberstrike-theme (system/light/dark),
+ * drives Semi Design dark variables through body[theme-mode] and also syncs html[data-theme].
  */
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 

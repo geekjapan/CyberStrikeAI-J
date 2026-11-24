@@ -1,7 +1,9 @@
-/** HITL 载荷上下文区块：用户消息 / 思考 / 推理 / 计划 / 上次执行结果。 */
+/** HITL payload context blocks: user message / thinking / reasoning / plan / last execution result. */
+import { useT } from '../../lib/i18n';
 import { contextBlocks, executionResult } from './utils';
 
 export default function ContextBlocks({ payload }) {
+    const t = useT();
     const blocks = contextBlocks(payload);
     const exec = executionResult(payload);
     if (!blocks.length && !exec) return null;
@@ -15,7 +17,9 @@ export default function ContextBlocks({ payload }) {
             ))}
             {exec && (
                 <div className={`hitl-context-block ${exec.success ? 'hitl-state-success' : 'hitl-state-failed'}`}>
-                    <span className="hitl-context-label">{`执行结果（${exec.success ? '成功' : '失败'}）`}</span>
+                    <span className="hitl-context-label">{exec.success
+                        ? t('ui.hitlBlocks.execResultSuccess', null, 'Execution result (success)')
+                        : t('ui.hitlBlocks.execResultFailed', null, 'Execution result (failed)')}</span>
                     <pre className="hitl-context-text">{exec.text}</pre>
                 </div>
             )}

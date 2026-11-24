@@ -1,4 +1,4 @@
-/** 调用趋势：纯 DOM 柱状条（不引图表库），按 24h / 7d / 30d 分桶。 */
+/** Call trend: pure DOM bars (no chart library), bucketed by 24h / 7d / 30d. */
 import { useMemo } from 'react';
 import { Select } from '@douyinfe/semi-ui';
 import { SectionCard, ErrorBanner, StatCard } from '../../components/ui';
@@ -7,9 +7,9 @@ import { formatNumber } from '../../lib/format';
 import { formatBucketLabel, formatBucketTooltip } from './utils';
 
 const RANGE_OPTIONS = [
-    { value: '24h', labelKey: 'timelineRange24h', fallback: '24 小时' },
-    { value: '7d', labelKey: 'timelineRange7d', fallback: '7 天' },
-    { value: '30d', labelKey: 'timelineRange30d', fallback: '30 天' }
+    { value: '24h', labelKey: 'timelineRange24h', fallback: '24h' },
+    { value: '7d', labelKey: 'timelineRange7d', fallback: '7d' },
+    { value: '30d', labelKey: 'timelineRange30d', fallback: '30d' }
 ];
 
 export function CallsTimeline({ data, loading, error, range, onRangeChange, onRetry }) {
@@ -28,8 +28,8 @@ export function CallsTimeline({ data, loading, error, range, onRangeChange, onRe
 
     return (
         <SectionCard
-            title={t('mcpMonitor.timelineTitle', null, '调用趋势')}
-            description={t('mcpMonitor.timelineHint', null, '全部工具合计，失败与拦截单独着色')}
+            title={t('mcpMonitor.timelineTitle', null, 'Call trend')}
+            description={t('mcpMonitor.timelineHint', null, 'All tools combined (not split by tool)')}
             extra={(
                 <Select
                     size="small"
@@ -43,41 +43,41 @@ export function CallsTimeline({ data, loading, error, range, onRangeChange, onRe
             <ErrorBanner error={error} onRetry={onRetry} />
             <div className="mcp-monitor-timeline-summary">
                 <StatCard
-                    label={t('mcpMonitor.timelineTotalLegend', null, '总调用')}
+                    label={t('mcpMonitor.timelineTotalLegend', null, 'Total calls')}
                     value={formatNumber(totalCalls)}
                     loading={loading}
                 />
                 <StatCard
-                    label="峰值 / 桶"
+                    label={t('ui.mcpTimeline.peakPerBucket', null, 'Peak / bucket')}
                     value={formatNumber(peak)}
-                    detail={t('mcpMonitor.scopeTimeline', null, '当前时间范围')}
+                    detail={t('mcpMonitor.scopeTimeline', null, 'Trend period')}
                     loading={loading}
                 />
                 <div className="mcp-monitor-timeline-legend">
                     <span className="mcp-monitor-legend-item">
                         <i className="mcp-monitor-legend-dot mcp-monitor-legend-total" />
-                        {t('mcpMonitor.timelineTotalLegend', null, '总调用')}
+                        {t('mcpMonitor.timelineTotalLegend', null, 'Total calls')}
                     </span>
                     <span className="mcp-monitor-legend-item">
                         <i className="mcp-monitor-legend-dot mcp-monitor-legend-failed" />
-                        {t('mcpMonitor.timelineFailedLegend', null, '失败')}
+                        {t('mcpMonitor.timelineFailedLegend', null, 'Failed')}
                     </span>
                     <span className="mcp-monitor-legend-item">
                         <i className="mcp-monitor-legend-dot mcp-monitor-legend-blocked" />
-                        {t('mcpMonitor.timelineBlockedLegend', null, '安全拦截')}
+                        {t('mcpMonitor.timelineBlockedLegend', null, 'Blocked')}
                     </span>
                 </div>
             </div>
 
             {loading && !points.length ? (
-                <div className="mcp-monitor-timeline-empty">{t('mcpMonitor.timelineLoading', null, '趋势加载中…')}</div>
+                <div className="mcp-monitor-timeline-empty">{t('mcpMonitor.timelineLoading', null, 'Loading trend…')}</div>
             ) : totalCalls === 0 || max === 0 ? (
                 <div className="mcp-monitor-timeline-empty">
-                    <p>{t('mcpMonitor.timelineNoData', null, '该时段暂无调用')}</p>
-                    <p className="mcp-monitor-timeline-hint">{t('mcpMonitor.timelineEmptyHint', null, '调用 MCP 工具后此处会出现趋势')}</p>
+                    <p>{t('mcpMonitor.timelineNoData', null, 'No calls in this period')}</p>
+                    <p className="mcp-monitor-timeline-hint">{t('mcpMonitor.timelineEmptyHint', null, 'Switch the time range or invoke MCP tools in chat or tasks')}</p>
                 </div>
             ) : (
-                <div className="mcp-monitor-timeline-chart" role="img" aria-label={t('mcpMonitor.timelineTitle', null, '调用趋势')}>
+                <div className="mcp-monitor-timeline-chart" role="img" aria-label={t('mcpMonitor.timelineTitle', null, 'Call trend')}>
                     {points.map((point, index) => {
                         const total = Number(point.total) || 0;
                         const failed = Number(point.failed) || 0;

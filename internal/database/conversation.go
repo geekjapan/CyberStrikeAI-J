@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// ProjectFilterUnbound 列表 API 中 project_id=__none__ 表示仅未绑定项目的对话。
+// ProjectFilterUnbound: in the list API, project_id=__none__ means only conversations not bound to a project.
 const ProjectFilterUnbound = "__none__"
 
 type ConversationProjectGroup struct {
@@ -50,7 +50,7 @@ func (db *DB) ListConversationProjectGroups(search, userID, scope string) ([]Con
 	return groups, rows.Err()
 }
 
-// Conversation 对话
+// Conversation conversation
 type Conversation struct {
 	ID        string               `json:"id"`
 	Title     string               `json:"title"`
@@ -64,7 +64,7 @@ type Conversation struct {
 	Retest    *VulnerabilityRetest `json:"retest,omitempty"`
 }
 
-// Message 消息
+// Message message
 type Message struct {
 	ID               string                   `json:"id"`
 	ConversationID   string                   `json:"conversationId"`
@@ -77,12 +77,12 @@ type Message struct {
 	UpdatedAt        time.Time                `json:"updatedAt"`
 }
 
-// CreateConversation 创建新对话
+// CreateConversation creates a new conversation
 func (db *DB) CreateConversation(title string, meta ConversationCreateMeta) (*Conversation, error) {
 	return db.CreateConversationWithWebshell("", title, meta)
 }
 
-// CreateConversationWithWebshell 创建新对话，可选绑定 WebShell 连接 ID（为空则普通对话）
+// CreateConversationWithWebshell creates a new conversation, optionally bound to a WebShell connection ID (empty means a regular conversation)
 func (db *DB) CreateConversationWithWebshell(webshellConnectionID, title string, meta ConversationCreateMeta) (*Conversation, error) {
 	id := uuid.New().String()
 	now := time.Now()
@@ -121,7 +121,7 @@ func (db *DB) CreateConversationWithWebshell(webshellConnectionID, title string,
 		)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("创建对话失败: %w", err)
+		return nil, fmt.Errorf("Failed to create conversation: %w", err)
 	}
 
 	conv := &Conversation{
@@ -140,7 +140,7 @@ func (db *DB) CreateConversationWithWebshell(webshellConnectionID, title string,
 	return conv, nil
 }
 
-// GetConversationByWebshellConnectionID 根据 WebShell 连接 ID 获取该连接下最近一条对话（用于 AI 助手持久化）
+// GetConversationByWebshellConnectionID gets the most recent conversation under a WebShell connection ID (used for AI assistant persistence)
 func (db *DB) GetConversationByWebshellConnectionID(connectionID string) (*Conversation, error) {
 	if connectionID == "" {
 		return nil, fmt.Errorf("connectionID is empty")
@@ -156,7 +156,7 @@ func (db *DB) GetConversationByWebshellConnectionID(connectionID string) (*Conve
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("查询对话失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation: %w", err)
 	}
 	conv.Pinned = pinned != 0
 	if t, e := time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt); e == nil {
@@ -175,14 +175,14 @@ func (db *DB) GetConversationByWebshellConnectionID(connectionID string) (*Conve
 	}
 	messages, err := db.GetMessages(conv.ID)
 	if err != nil {
-		return nil, fmt.Errorf("加载消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to load messages: %w", err)
 	}
 	conv.Messages = messages
 
-	// 加载过程详情并附加到对应消息（与 GetConversation 一致，便于刷新后仍可查看执行过程）
+	// Load process details and attach them to the corresponding messages (consistent with GetConversation, so execution history remains viewable after a refresh)
 	processDetailsMap, err := db.GetProcessDetailsByConversation(conv.ID)
 	if err != nil {
-		db.logger.Warn("加载过程详情失败", zap.Error(err))
+		db.logger.Warn("Failed to load process details", zap.Error(err))
 		processDetailsMap = make(map[string][]ProcessDetail)
 	}
 	for i := range conv.Messages {
@@ -193,7 +193,7 @@ func (db *DB) GetConversationByWebshellConnectionID(connectionID string) (*Conve
 				var data interface{}
 				if detail.Data != "" {
 					if err := json.Unmarshal([]byte(detail.Data), &data); err != nil {
-						db.logger.Warn("解析过程详情数据失败", zap.Error(err))
+						db.logger.Warn("Failed to parse process detail data", zap.Error(err))
 					}
 				}
 				detailsJSON[j] = map[string]interface{}{
@@ -213,14 +213,14 @@ func (db *DB) GetConversationByWebshellConnectionID(connectionID string) (*Conve
 	return &conv, nil
 }
 
-// WebShellConversationItem 用于侧边栏列表，不含消息
+// WebShellConversationItem used for the sidebar list, without messages
 type WebShellConversationItem struct {
 	ID        string    `json:"id"`
 	Title     string    `json:"title"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// ListConversationsByWebshellConnectionID 列出该 WebShell 连接下的所有对话（按更新时间倒序），供侧边栏展示
+// ListConversationsByWebshellConnectionID lists all conversations under this WebShell connection (ordered by update time descending), for display in the sidebar
 func (db *DB) ListConversationsByWebshellConnectionID(connectionID string) ([]WebShellConversationItem, error) {
 	if connectionID == "" {
 		return nil, nil
@@ -230,7 +230,7 @@ func (db *DB) ListConversationsByWebshellConnectionID(connectionID string) ([]We
 		connectionID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询对话列表失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation list: %w", err)
 	}
 	defer rows.Close()
 	var list []WebShellConversationItem
@@ -269,7 +269,7 @@ func (db *DB) ConversationExists(id string) (bool, error) {
 	return true, nil
 }
 
-// GetConversation 获取对话
+// GetConversation gets a conversation
 func (db *DB) GetConversation(id string) (*Conversation, error) {
 	var conv Conversation
 	var createdAt, updatedAt string
@@ -284,9 +284,9 @@ func (db *DB) GetConversation(id string) (*Conversation, error) {
 	).Scan(&conv.ID, &conv.Title, &pinned, &createdAt, &updatedAt, &projectID, &roleName, &agentMode)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("对话不存在")
+			return nil, fmt.Errorf("Conversation not found")
 		}
-		return nil, fmt.Errorf("查询对话失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation: %w", err)
 	}
 	if projectID.Valid {
 		conv.ProjectID = strings.TrimSpace(projectID.String)
@@ -298,7 +298,7 @@ func (db *DB) GetConversation(id string) (*Conversation, error) {
 		conv.AgentMode = normalizeConversationAgentMode(agentMode.String)
 	}
 
-	// 尝试多种时间格式解析
+	// Try multiple time formats when parsing
 	var err1, err2 error
 	conv.CreatedAt, err1 = time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt)
 	if err1 != nil {
@@ -318,31 +318,31 @@ func (db *DB) GetConversation(id string) (*Conversation, error) {
 
 	conv.Pinned = pinned != 0
 
-	// 加载消息
+	// Load messages
 	messages, err := db.GetMessages(id)
 	if err != nil {
-		return nil, fmt.Errorf("加载消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to load messages: %w", err)
 	}
 	conv.Messages = messages
 
-	// 加载过程详情（按消息ID分组）
+	// Load process details (grouped by message ID)
 	processDetailsMap, err := db.GetProcessDetailsByConversation(id)
 	if err != nil {
-		db.logger.Warn("加载过程详情失败", zap.Error(err))
+		db.logger.Warn("Failed to load process details", zap.Error(err))
 		processDetailsMap = make(map[string][]ProcessDetail)
 	}
 
-	// 将过程详情附加到对应的消息上
+	// Attach process details to the corresponding messages
 	for i := range conv.Messages {
 		if details, ok := processDetailsMap[conv.Messages[i].ID]; ok {
 			details = DedupeConsecutiveProcessDetails(details)
-			// 将ProcessDetail转换为JSON格式，以便前端使用
+			// Convert ProcessDetail to JSON format for frontend use
 			detailsJSON := make([]map[string]interface{}, len(details))
 			for j, detail := range details {
 				var data interface{}
 				if detail.Data != "" {
 					if err := json.Unmarshal([]byte(detail.Data), &data); err != nil {
-						db.logger.Warn("解析过程详情数据失败", zap.Error(err))
+						db.logger.Warn("Failed to parse process detail data", zap.Error(err))
 					}
 				}
 				detailsJSON[j] = map[string]interface{}{
@@ -362,8 +362,8 @@ func (db *DB) GetConversation(id string) (*Conversation, error) {
 	return &conv, nil
 }
 
-// GetConversationLite 获取对话（轻量版）：包含 messages，但不加载 process_details。
-// 用于历史会话快速切换，避免一次性把大体量过程详情灌到前端导致卡顿。
+// GetConversationLite gets a conversation (lightweight): includes messages but does not load process_details.
+// Used to switch quickly between historical sessions, avoiding a lag caused by sending large process-detail payloads to the frontend at once.
 func (db *DB) GetConversationLite(id string) (*Conversation, error) {
 	var conv Conversation
 	var createdAt, updatedAt string
@@ -378,9 +378,9 @@ func (db *DB) GetConversationLite(id string) (*Conversation, error) {
 	).Scan(&conv.ID, &conv.Title, &pinned, &createdAt, &updatedAt, &projectID, &roleName, &agentMode)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("对话不存在")
+			return nil, fmt.Errorf("Conversation not found")
 		}
-		return nil, fmt.Errorf("查询对话失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation: %w", err)
 	}
 	if projectID.Valid {
 		conv.ProjectID = strings.TrimSpace(projectID.String)
@@ -392,7 +392,7 @@ func (db *DB) GetConversationLite(id string) (*Conversation, error) {
 		conv.AgentMode = normalizeConversationAgentMode(agentMode.String)
 	}
 
-	// 尝试多种时间格式解析
+	// Try multiple time formats when parsing
 	var err1, err2 error
 	conv.CreatedAt, err1 = time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt)
 	if err1 != nil {
@@ -412,10 +412,10 @@ func (db *DB) GetConversationLite(id string) (*Conversation, error) {
 
 	conv.Pinned = pinned != 0
 
-	// 加载消息（不加载 process_details / reasoning_content，减少历史会话切换 payload）
+	// Load messages (without process_details / reasoning_content, to reduce the payload when switching historical sessions)
 	messages, err := db.GetMessagesLite(id)
 	if err != nil {
-		return nil, fmt.Errorf("加载消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to load messages: %w", err)
 	}
 	conv.Messages = messages
 	return &conv, nil
@@ -424,7 +424,7 @@ func (db *DB) GetConversationLite(id string) (*Conversation, error) {
 func normalizeConversationRoleName(roleName string) string {
 	roleName = strings.TrimSpace(roleName)
 	if roleName == "" {
-		return "默认"
+		return "Default"
 	}
 	return roleName
 }
@@ -447,7 +447,7 @@ func (db *DB) SetConversationRoleName(id, roleName string) error {
 		roleName, time.Now(), id,
 	)
 	if err != nil {
-		return fmt.Errorf("更新对话角色失败: %w", err)
+		return fmt.Errorf("Failed to update conversation role: %w", err)
 	}
 	return nil
 }
@@ -459,7 +459,7 @@ func (db *DB) SetConversationAgentMode(id, agentMode string) error {
 		agentMode, id,
 	)
 	if err != nil {
-		return fmt.Errorf("更新对话模式失败: %w", err)
+		return fmt.Errorf("Failed to update conversation mode: %w", err)
 	}
 	return nil
 }
@@ -508,7 +508,7 @@ func appendConversationAccessFilter(where string, args []interface{}, userID, sc
 	return where, args
 }
 
-// CountConversations 统计对话数量。
+// CountConversations counts conversations.
 func (db *DB) CountConversations(search, projectID string) (int, error) {
 	var count int
 	var err error
@@ -529,7 +529,7 @@ func (db *DB) CountConversations(search, projectID string) (int, error) {
 		err = db.QueryRow(`SELECT COUNT(*) FROM conversations`+where, args...).Scan(&count)
 	}
 	if err != nil {
-		return 0, fmt.Errorf("统计对话失败: %w", err)
+		return 0, fmt.Errorf("Failed to count conversations: %w", err)
 	}
 	return count, nil
 }
@@ -556,7 +556,7 @@ func (db *DB) CountConversationsForAccess(search, projectID, userID, scope strin
 		err = db.QueryRow(`SELECT COUNT(*) FROM conversations`+where, args...).Scan(&count)
 	}
 	if err != nil {
-		return 0, fmt.Errorf("统计对话失败: %w", err)
+		return 0, fmt.Errorf("Failed to count conversations: %w", err)
 	}
 	return count, nil
 }
@@ -573,13 +573,13 @@ func conversationOrderClause(sortBy, tableAlias string) string {
 	return "ORDER BY " + prefix + col + " DESC"
 }
 
-// ListConversations 列出所有对话
+// ListConversations lists all conversations
 func (db *DB) ListConversations(limit, offset int, search, sortBy, projectID string) ([]*Conversation, error) {
 	var rows *sql.Rows
 	var err error
 
 	if search != "" {
-		// 使用 EXISTS 子查询代替 LEFT JOIN + DISTINCT，避免大表笛卡尔积
+		// Use an EXISTS subquery instead of LEFT JOIN + DISTINCT, to avoid a Cartesian product on large tables
 		searchPattern := "%" + search + "%"
 		orderClause := conversationOrderClause(sortBy, "c")
 		where := ` WHERE (c.title LIKE ?
@@ -610,7 +610,7 @@ func (db *DB) ListConversations(limit, offset int, search, sortBy, projectID str
 	}
 
 	if err != nil {
-		return nil, fmt.Errorf("查询对话列表失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation list: %w", err)
 	}
 	defer rows.Close()
 	return scanConversationRows(rows)
@@ -651,7 +651,7 @@ func (db *DB) ListConversationsForAccess(limit, offset int, search, sortBy, proj
 			args...)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("查询对话列表失败: %w", err)
+		return nil, fmt.Errorf("Failed to query conversation list: %w", err)
 	}
 	defer rows.Close()
 	return scanConversationRows(rows)
@@ -667,7 +667,7 @@ func scanConversationRows(rows *sql.Rows) ([]*Conversation, error) {
 		var roleName sql.NullString
 		var agentMode sql.NullString
 		if err := rows.Scan(&conv.ID, &conv.Title, &pinned, &createdAt, &updatedAt, &projectID, &roleName, &agentMode); err != nil {
-			return nil, fmt.Errorf("扫描对话失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan conversations: %w", err)
 		}
 		if projectID.Valid {
 			conv.ProjectID = strings.TrimSpace(projectID.String)
@@ -699,33 +699,33 @@ func scanConversationRows(rows *sql.Rows) ([]*Conversation, error) {
 	return conversations, rows.Err()
 }
 
-// GetConversationTitle 获取对话标题（轻量查询，不加载消息）
+// GetConversationTitle gets a conversation title (lightweight query, does not load messages)
 func (db *DB) GetConversationTitle(id string) (string, error) {
 	var title string
 	err := db.QueryRow("SELECT title FROM conversations WHERE id = ?", id).Scan(&title)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", fmt.Errorf("对话不存在")
+			return "", fmt.Errorf("Conversation not found")
 		}
-		return "", fmt.Errorf("查询对话标题失败: %w", err)
+		return "", fmt.Errorf("Failed to query conversation title: %w", err)
 	}
 	return title, nil
 }
 
-// UpdateConversationTitle 更新对话标题
+// UpdateConversationTitle updates a conversation title
 func (db *DB) UpdateConversationTitle(id, title string) error {
-	// 注意：不更新 updated_at，因为重命名操作不应该改变对话的更新时间
+	// Note: updated_at is not updated, because renaming should not change the conversation's update time
 	_, err := db.Exec(
 		"UPDATE conversations SET title = ? WHERE id = ?",
 		title, id,
 	)
 	if err != nil {
-		return fmt.Errorf("更新对话标题失败: %w", err)
+		return fmt.Errorf("Failed to update conversation title: %w", err)
 	}
 	return nil
 }
 
-// UpdateConversationPinned 更新对话置顶状态
+// UpdateConversationPinned updates the pinned state of a conversation
 func (db *DB) UpdateConversationPinned(id string, pinned bool) error {
 	pinnedValue := 0
 	if pinned {
@@ -736,62 +736,62 @@ func (db *DB) UpdateConversationPinned(id string, pinned bool) error {
 		pinnedValue, time.Now(), id,
 	)
 	if err != nil {
-		return fmt.Errorf("更新对话置顶状态失败: %w", err)
+		return fmt.Errorf("Failed to update conversation pinned state: %w", err)
 	}
 	return nil
 }
 
-// UpdateConversationTime 更新对话时间
+// UpdateConversationTime updates the time of a conversation
 func (db *DB) UpdateConversationTime(id string) error {
 	_, err := db.Exec(
 		"UPDATE conversations SET updated_at = ? WHERE id = ?",
 		time.Now(), id,
 	)
 	if err != nil {
-		return fmt.Errorf("更新对话时间失败: %w", err)
+		return fmt.Errorf("Failed to update conversation time: %w", err)
 	}
 	return nil
 }
 
-// DeleteConversation 删除对话及其会话相关数据。
-// 由于数据库外键约束设置了 ON DELETE CASCADE，删除对话时会自动删除：
-// - messages（消息）
-// - process_details（过程详情）
-// - attack_chain_nodes（攻击链节点）
-// - attack_chain_edges（攻击链边）
-// 漏洞记录会保留：vulnerabilities.conversation_id 使用 ON DELETE SET NULL，仅解除与会话的关联。
-// 注意：knowledge_retrieval_logs 在删除前会被显式清理。
+// DeleteConversation deletes a conversation and its session-related data.
+// Because the database foreign keys are set to ON DELETE CASCADE, deleting a conversation automatically deletes:
+// - messages
+// - process_details
+// - attack_chain_nodes
+// - attack_chain_edges
+// Vulnerability records are kept: vulnerabilities.conversation_id uses ON DELETE SET NULL, which only removes the association with the session.
+// Note: knowledge_retrieval_logs are explicitly cleaned up before deletion.
 func (db *DB) DeleteConversation(id string) error {
 	if err := db.removePiSessions(id); err != nil {
 		return err
 	}
-	// 删除对话前补全漏洞来源标签，便于在漏洞库中追溯已删除会话的发现。
+	// Before deleting a conversation, backfill the vulnerability source tag, so findings from the deleted session can still be traced in the vulnerability library.
 	_, err := db.Exec(`
 		UPDATE vulnerabilities
 		SET conversation_tag = COALESCE(NULLIF(TRIM(conversation_tag), ''), (SELECT title FROM conversations WHERE id = ?))
 		WHERE conversation_id = ?
 	`, id, id)
 	if err != nil {
-		db.logger.Warn("更新漏洞来源标签失败", zap.String("conversationId", id), zap.Error(err))
+		db.logger.Warn("Failed to update vulnerability source label", zap.String("conversationId", id), zap.Error(err))
 	}
 
-	// 显式删除知识检索日志（虽然外键是SET NULL，但为了彻底清理，我们手动删除）
+	// Explicitly delete knowledge retrieval logs (although the foreign key is SET NULL, we delete them manually for a thorough cleanup)
 	_, err = db.Exec("DELETE FROM knowledge_retrieval_logs WHERE conversation_id = ?", id)
 	if err != nil {
-		db.logger.Warn("删除知识检索日志失败", zap.String("conversationId", id), zap.Error(err))
-		// 不返回错误，继续删除对话
+		db.logger.Warn("Failed to delete knowledge retrieval logs", zap.String("conversationId", id), zap.Error(err))
+		// Do not return an error; continue deleting the conversation
 	}
 
 	projectID, _ := db.GetConversationProjectID(id)
 
-	// 删除对话（外键CASCADE会自动删除其他相关数据）
+	// Delete the conversation (the foreign key CASCADE automatically deletes other related data)
 	_, err = db.Exec("DELETE FROM conversations WHERE id = ?", id)
 	if err != nil {
-		return fmt.Errorf("删除对话失败: %w", err)
+		return fmt.Errorf("Failed to delete conversation: %w", err)
 	}
 	db.removeConversationScopedDirs(id, projectID)
 
-	db.logger.Info("对话已删除（漏洞记录已保留）", zap.String("conversationId", id))
+	db.logger.Info("Conversation deleted (vulnerability records retained)", zap.String("conversationId", id))
 	return nil
 }
 
@@ -818,7 +818,7 @@ func (db *DB) removeConversationScopedDir(base, conversationID, label string) {
 	dir := filepath.Join(base, sanitizeConversationPathSegment(conversationID))
 	if rmErr := os.RemoveAll(dir); rmErr != nil {
 		if db.logger != nil {
-			db.logger.Warn("删除会话目录失败",
+			db.logger.Warn("Failed to delete session directory",
 				zap.String("conversationId", conversationID),
 				zap.String("kind", label),
 				zap.String("dir", dir),
@@ -872,7 +872,7 @@ func (db *DB) removeConversationScopedDirs(conversationID, projectID string) {
 	db.removeConversationScopedDir(db.agentPlantaskBaseDir, conversationID, "plantask")
 	// Pi runner checkpoints (checkpoint_dir/<id>/).
 	db.removeConversationScopedDir(db.agentCheckpointBaseDir, conversationID, "legacy_checkpoint")
-	// 上传附件始终归属单个会话，项目绑定的会话也要删，故放在 projectID 判断之外。
+	// Uploaded attachments always belong to a single session, and sessions bound to a project must be deleted too, so this sits outside the projectID check.
 	db.removeChatUploadDirs(conversationID)
 	// Agent reduction persisted tool outputs (tmp/reduction/conversations/<id>/).
 	// Project-bound sessions share projects/<id>/ — skip on single conversation delete.
@@ -884,8 +884,8 @@ func (db *DB) removeConversationScopedDirs(conversationID, projectID string) {
 	}
 }
 
-// removeChatUploadDirs 删除 chat_uploads/<日期>/<会话ID>/ 下属于该会话的上传目录。
-// 该根目录比其他产物多一层日期目录，无法复用 removeConversationScopedDir。
+// removeChatUploadDirs deletes the upload directories under chat_uploads/<date>/<session ID>/ that belong to this session.
+// This root directory has one more date-directory level than the other artifacts, so removeConversationScopedDir cannot be reused.
 func (db *DB) removeChatUploadDirs(conversationID string) {
 	base := strings.TrimSpace(db.chatUploadsDir)
 	if base == "" || strings.TrimSpace(conversationID) == "" {
@@ -902,7 +902,7 @@ func (db *DB) removeChatUploadDirs(conversationID string) {
 		}
 		dir := filepath.Join(base, dateDir.Name(), seg)
 		if rmErr := os.RemoveAll(dir); rmErr != nil && db.logger != nil {
-			db.logger.Warn("删除会话上传目录失败",
+			db.logger.Warn("Failed to delete session upload directory",
 				zap.String("conversationId", conversationID),
 				zap.String("kind", "chat_uploads"),
 				zap.String("dir", dir),
@@ -920,20 +920,20 @@ func (db *DB) removeProjectScopedDirs(projectID string) {
 	db.removeConversationScopedDir(workspaceBase, projectID, "workspace")
 }
 
-// SaveAgentTrace 保存最后一轮代理消息轨迹与助手输出摘要。
-// SQLite 列名仍为 last_react_input / last_react_output，与历史库表兼容；语义上为「全模式代理轨迹」，非仅 ReAct。
+// SaveAgentTrace saves the agent message trace of the last round and a summary of the assistant output.
+// The SQLite column names are still last_react_input / last_react_output, for compatibility with the existing schema; semantically this is the "all-mode agent trace", not ReAct only.
 func (db *DB) SaveAgentTrace(conversationID, traceInputJSON, assistantOutput string) error {
 	_, err := db.Exec(
 		"UPDATE conversations SET last_react_input = ?, last_react_output = ?, updated_at = ? WHERE id = ?",
 		traceInputJSON, assistantOutput, time.Now(), conversationID,
 	)
 	if err != nil {
-		return fmt.Errorf("保存代理轨迹失败: %w", err)
+		return fmt.Errorf("Failed to save agent trace: %w", err)
 	}
 	return nil
 }
 
-// GetAgentTrace 读取 conversations 中保存的代理轨迹（列名 last_react_*）。
+// GetAgentTrace reads the agent trace saved in conversations (column names last_react_*).
 func (db *DB) GetAgentTrace(conversationID string) (traceInputJSON, assistantOutput string, err error) {
 	var input, output sql.NullString
 	err = db.QueryRow(
@@ -942,9 +942,9 @@ func (db *DB) GetAgentTrace(conversationID string) (traceInputJSON, assistantOut
 	).Scan(&input, &output)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return "", "", fmt.Errorf("对话不存在")
+			return "", "", fmt.Errorf("Conversation not found")
 		}
-		return "", "", fmt.Errorf("获取代理轨迹失败: %w", err)
+		return "", "", fmt.Errorf("Failed to get agent trace: %w", err)
 	}
 
 	if input.Valid {
@@ -957,7 +957,7 @@ func (db *DB) GetAgentTrace(conversationID string) (traceInputJSON, assistantOut
 	return traceInputJSON, assistantOutput, nil
 }
 
-// ConversationHasToolProcessDetails 对话是否存在已落库的工具调用/结果（用于多代理等场景下 MCP execution id 未汇总时的攻击链判定）。
+// ConversationHasToolProcessDetails reports whether the conversation has persisted tool calls/results (used to decide attack chains in multi-agent scenarios when MCP execution IDs have not been aggregated).
 func (db *DB) ConversationHasToolProcessDetails(conversationID string) (bool, error) {
 	var n int
 	err := db.QueryRow(
@@ -965,12 +965,12 @@ func (db *DB) ConversationHasToolProcessDetails(conversationID string) (bool, er
 		conversationID,
 	).Scan(&n)
 	if err != nil {
-		return false, fmt.Errorf("查询过程详情失败: %w", err)
+		return false, fmt.Errorf("Failed to query process details: %w", err)
 	}
 	return n > 0, nil
 }
 
-// AddMessage 添加消息
+// AddMessage adds a message
 func (db *DB) AddMessage(conversationID, role, content string, mcpExecutionIDs []string) (*Message, error) {
 	id := uuid.New().String()
 	now := time.Now()
@@ -979,7 +979,7 @@ func (db *DB) AddMessage(conversationID, role, content string, mcpExecutionIDs [
 	if len(mcpExecutionIDs) > 0 {
 		jsonData, err := json.Marshal(mcpExecutionIDs)
 		if err != nil {
-			db.logger.Warn("序列化MCP执行ID失败", zap.Error(err))
+			db.logger.Warn("Failed to serialize MCP execution IDs", zap.Error(err))
 		} else {
 			mcpIDsJSON = string(jsonData)
 		}
@@ -990,12 +990,12 @@ func (db *DB) AddMessage(conversationID, role, content string, mcpExecutionIDs [
 		id, conversationID, role, content, "", mcpIDsJSON, now, now,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("添加消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to add message: %w", err)
 	}
 
-	// 更新对话时间
+	// Update conversation time
 	if err := db.UpdateConversationTime(conversationID); err != nil {
-		db.logger.Warn("更新对话时间失败", zap.Error(err))
+		db.logger.Warn("Failed to update conversation time", zap.Error(err))
 	}
 
 	message := &Message{
@@ -1011,13 +1011,13 @@ func (db *DB) AddMessage(conversationID, role, content string, mcpExecutionIDs [
 	return message, nil
 }
 
-// UpdateAssistantMessageFinalize 更新助手消息终态（正文、MCP id、思考链聚合文本，供无轨迹回退时回放）。
+// UpdateAssistantMessageFinalize updates the final state of an assistant message (body, MCP IDs, aggregated thinking-chain text, for replay when there is no trace fallback).
 func (db *DB) UpdateAssistantMessageFinalize(messageID, content string, mcpExecutionIDs []string, reasoningContent string) error {
 	var mcpIDsJSON string
 	if len(mcpExecutionIDs) > 0 {
 		jsonData, err := json.Marshal(mcpExecutionIDs)
 		if err != nil {
-			return fmt.Errorf("序列化MCP执行ID失败: %w", err)
+			return fmt.Errorf("Failed to serialize MCP execution IDs: %w", err)
 		}
 		mcpIDsJSON = string(jsonData)
 	}
@@ -1026,19 +1026,19 @@ func (db *DB) UpdateAssistantMessageFinalize(messageID, content string, mcpExecu
 		content, mcpIDsJSON, strings.TrimSpace(reasoningContent), time.Now(), messageID,
 	)
 	if err != nil {
-		return fmt.Errorf("更新助手消息失败: %w", err)
+		return fmt.Errorf("Failed to update assistant message: %w", err)
 	}
 	return nil
 }
 
-// GetMessages 获取对话的所有消息
+// GetMessages gets all messages of a conversation
 func (db *DB) GetMessages(conversationID string) ([]Message, error) {
 	rows, err := db.Query(
 		"SELECT id, conversation_id, role, content, reasoning_content, mcp_execution_ids, created_at, updated_at FROM messages WHERE conversation_id = ? ORDER BY created_at ASC, rowid ASC",
 		conversationID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to query messages: %w", err)
 	}
 	defer rows.Close()
 
@@ -1051,13 +1051,13 @@ func (db *DB) GetMessages(conversationID string) ([]Message, error) {
 		var updatedAt sql.NullString
 
 		if err := rows.Scan(&msg.ID, &msg.ConversationID, &msg.Role, &msg.Content, &reasoning, &mcpIDsJSON, &createdAt, &updatedAt); err != nil {
-			return nil, fmt.Errorf("扫描消息失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan messages: %w", err)
 		}
 		if reasoning.Valid {
 			msg.ReasoningContent = reasoning.String
 		}
 
-		// 尝试多种时间格式解析
+		// Try multiple time formats when parsing
 		var err error
 		msg.CreatedAt, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt)
 		if err != nil {
@@ -1067,7 +1067,7 @@ func (db *DB) GetMessages(conversationID string) ([]Message, error) {
 			msg.CreatedAt, _ = time.Parse(time.RFC3339, createdAt)
 		}
 
-		// updated_at 兼容老库：字段不存在/为空时回退为 created_at
+		// updated_at compatibility for older databases: falls back to created_at when the field is missing or empty
 		if updatedAt.Valid && strings.TrimSpace(updatedAt.String) != "" {
 			msg.UpdatedAt, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", updatedAt.String)
 			if err != nil {
@@ -1081,10 +1081,10 @@ func (db *DB) GetMessages(conversationID string) ([]Message, error) {
 			msg.UpdatedAt = msg.CreatedAt
 		}
 
-		// 解析MCP执行ID
+		// Parse MCP execution ID
 		if mcpIDsJSON.Valid && mcpIDsJSON.String != "" {
 			if err := json.Unmarshal([]byte(mcpIDsJSON.String), &msg.MCPExecutionIDs); err != nil {
-				db.logger.Warn("解析MCP执行ID失败", zap.Error(err))
+				db.logger.Warn("Failed to parse MCP execution IDs", zap.Error(err))
 			}
 		}
 
@@ -1094,14 +1094,14 @@ func (db *DB) GetMessages(conversationID string) ([]Message, error) {
 	return messages, nil
 }
 
-// GetMessagesLite 获取对话消息（不含 reasoning_content），用于历史会话快速切换。
+// GetMessagesLite gets conversation messages (without reasoning_content), for quickly switching historical sessions.
 func (db *DB) GetMessagesLite(conversationID string) ([]Message, error) {
 	rows, err := db.Query(
 		"SELECT id, conversation_id, role, content, mcp_execution_ids, created_at, updated_at FROM messages WHERE conversation_id = ? ORDER BY created_at ASC, rowid ASC",
 		conversationID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询消息失败: %w", err)
+		return nil, fmt.Errorf("Failed to query messages: %w", err)
 	}
 	defer rows.Close()
 
@@ -1113,7 +1113,7 @@ func (db *DB) GetMessagesLite(conversationID string) ([]Message, error) {
 		var updatedAt sql.NullString
 
 		if err := rows.Scan(&msg.ID, &msg.ConversationID, &msg.Role, &msg.Content, &mcpIDsJSON, &createdAt, &updatedAt); err != nil {
-			return nil, fmt.Errorf("扫描消息失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan messages: %w", err)
 		}
 
 		var err error
@@ -1140,7 +1140,7 @@ func (db *DB) GetMessagesLite(conversationID string) ([]Message, error) {
 
 		if mcpIDsJSON.Valid && mcpIDsJSON.String != "" {
 			if err := json.Unmarshal([]byte(mcpIDsJSON.String), &msg.MCPExecutionIDs); err != nil {
-				db.logger.Warn("解析MCP执行ID失败", zap.Error(err))
+				db.logger.Warn("Failed to parse MCP execution IDs", zap.Error(err))
 			}
 		}
 
@@ -1150,8 +1150,8 @@ func (db *DB) GetMessagesLite(conversationID string) ([]Message, error) {
 	return messages, nil
 }
 
-// turnSliceRange 根据任意一条消息 ID 定位「一轮对话」在 msgs 中的 [start, end) 下标区间（msgs 须已按时间升序，与 GetMessages 一致）。
-// 一轮 = 从某条 user 消息起，至下一条 user 之前（含中间所有 assistant）。
+// turnSliceRange locates the "turn" that contains a given message ID, returning its [start, end) index range in msgs (msgs must already be sorted by time ascending, consistent with GetMessages).
+// A turn = from a user message up to, but not including, the next user message (including all assistant messages in between).
 func turnSliceRange(msgs []Message, anchorID string) (start, end int, err error) {
 	idx := -1
 	for i := range msgs {
@@ -1180,7 +1180,7 @@ func turnSliceRange(msgs []Message, anchorID string) (start, end int, err error)
 	return start, end, nil
 }
 
-// DeleteConversationTurn 删除锚点所在轮次的全部消息（用户提问 + 该轮助手回复等），并清空 last_react_*，避免与消息表不一致。
+// DeleteConversationTurn deletes all messages of the turn containing the anchor (the user question plus the assistant replies of that turn, etc.), and clears last_react_*, to avoid inconsistency with the message table.
 func (db *DB) DeleteConversationTurn(conversationID, anchorMessageID string) (deletedIDs []string, err error) {
 	msgs, err := db.GetMessages(conversationID)
 	if err != nil {
@@ -1251,18 +1251,18 @@ func (db *DB) DeleteConversationTurn(conversationID, anchorMessageID string) (de
 	return deletedIDs, nil
 }
 
-// ProcessDetail 过程详情事件
+// ProcessDetail process detail event
 type ProcessDetail struct {
 	ID             string    `json:"id"`
 	MessageID      string    `json:"messageId"`
 	ConversationID string    `json:"conversationId"`
 	EventType      string    `json:"eventType"` // iteration, thinking, reasoning_chain, tool_calls_detected, tool_call, tool_result, progress, error
 	Message        string    `json:"message"`
-	Data           string    `json:"data"` // JSON格式的数据
+	Data           string    `json:"data"` // JSON-format data
 	CreatedAt      time.Time `json:"createdAt"`
 }
 
-// GetTurnUserMessage 返回锚点消息所在轮次中的用户原文（最近一条 user 消息，不含完整历史）。
+// GetTurnUserMessage returns the original user text of the turn containing the anchor message (the most recent user message, not the full history).
 func (db *DB) GetTurnUserMessage(conversationID, anchorMessageID string) (string, error) {
 	conversationID = strings.TrimSpace(conversationID)
 	anchorMessageID = strings.TrimSpace(anchorMessageID)
@@ -1285,14 +1285,14 @@ LIMIT 1`, conversationID, anchorMessageID, conversationID).Scan(&content)
 	return content, nil
 }
 
-// AssistantCognitionTexts 单条助手消息上的思考/推理/规划文本。
+// AssistantCognitionTexts thinking/reasoning/planning text on a single assistant message.
 type AssistantCognitionTexts struct {
 	Thinking       string
 	ReasoningChain string
 	Planning       string
 }
 
-// GetAssistantCognitionTexts 聚合助手消息在 process_details 中的 thinking / reasoning_chain / planning。
+// GetAssistantCognitionTexts aggregates the thinking / reasoning_chain / planning entries in process_details for an assistant message.
 func (db *DB) GetAssistantCognitionTexts(assistantMessageID string) (AssistantCognitionTexts, error) {
 	assistantMessageID = strings.TrimSpace(assistantMessageID)
 	if assistantMessageID == "" {
@@ -1333,13 +1333,13 @@ ORDER BY created_at ASC, rowid ASC`, assistantMessageID)
 	}, nil
 }
 
-// AddProcessDetail 添加过程详情事件
+// AddProcessDetail adds a process detail event
 func (db *DB) AddProcessDetail(messageID, conversationID, eventType, message string, data interface{}) error {
 	_, err := db.AddProcessDetailWithID(messageID, conversationID, eventType, message, data)
 	return err
 }
 
-// AddProcessDetailWithID 添加过程详情事件并返回记录 ID。
+// AddProcessDetailWithID adds a process detail event and returns the record ID.
 func (db *DB) AddProcessDetailWithID(messageID, conversationID, eventType, message string, data interface{}) (string, error) {
 	id := uuid.New().String()
 
@@ -1347,7 +1347,7 @@ func (db *DB) AddProcessDetailWithID(messageID, conversationID, eventType, messa
 	if data != nil {
 		jsonData, err := json.Marshal(data)
 		if err != nil {
-			db.logger.Warn("序列化过程详情数据失败", zap.Error(err))
+			db.logger.Warn("Failed to serialize process detail data", zap.Error(err))
 		} else {
 			dataJSON = string(jsonData)
 		}
@@ -1358,7 +1358,7 @@ func (db *DB) AddProcessDetailWithID(messageID, conversationID, eventType, messa
 		id, messageID, conversationID, eventType, message, dataJSON, time.Now(),
 	)
 	if err != nil {
-		return "", fmt.Errorf("添加过程详情失败: %w", err)
+		return "", fmt.Errorf("Failed to add process detail: %w", err)
 	}
 
 	db.maybeRecordModelTokenUsage(messageID, conversationID, id, eventType, data)
@@ -1366,14 +1366,14 @@ func (db *DB) AddProcessDetailWithID(messageID, conversationID, eventType, messa
 	return id, nil
 }
 
-// UpdateProcessDetailContent 更新流式聚合详情的正文与元数据。使用固定记录 ID，
-// 避免每个 token 新增一行，同时让页面刷新能读取到尚未结束的规划输出。
+// UpdateProcessDetailContent updates the body and metadata of a streamed aggregate detail. It uses a fixed record ID,
+// to avoid adding a new row per token, while letting page refreshes read planning output that has not finished yet.
 func (db *DB) UpdateProcessDetailContent(id, message string, data interface{}) error {
 	var dataJSON string
 	if data != nil {
 		jsonData, err := json.Marshal(data)
 		if err != nil {
-			return fmt.Errorf("序列化过程详情数据失败: %w", err)
+			return fmt.Errorf("Failed to serialize process detail data: %w", err)
 		}
 		dataJSON = string(jsonData)
 	}
@@ -1382,31 +1382,31 @@ func (db *DB) UpdateProcessDetailContent(id, message string, data interface{}) e
 		message, dataJSON, strings.TrimSpace(id),
 	)
 	if err != nil {
-		return fmt.Errorf("更新过程详情失败: %w", err)
+		return fmt.Errorf("Failed to update process detail: %w", err)
 	}
 	if affected, affectedErr := result.RowsAffected(); affectedErr == nil && affected == 0 {
-		return fmt.Errorf("过程详情不存在: %s", id)
+		return fmt.Errorf("Process detail not found: %s", id)
 	}
 	return nil
 }
 
-// DeleteProcessDetail 删除被判定为工具结果回显的临时规划记录。
+// DeleteProcessDetail deletes a temporary planning record that was judged to be an echo of a tool result.
 func (db *DB) DeleteProcessDetail(id string) error {
 	_, err := db.Exec("DELETE FROM process_details WHERE id = ?", strings.TrimSpace(id))
 	if err != nil {
-		return fmt.Errorf("删除过程详情失败: %w", err)
+		return fmt.Errorf("Failed to delete process detail: %w", err)
 	}
 	return nil
 }
 
-// GetProcessDetails 获取消息的过程详情
+// GetProcessDetails gets the process details of a message
 func (db *DB) GetProcessDetails(messageID string) ([]ProcessDetail, error) {
 	rows, err := db.Query(
 		"SELECT id, message_id, conversation_id, event_type, message, data, created_at FROM process_details WHERE message_id = ? ORDER BY created_at ASC, rowid ASC",
 		messageID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询过程详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to query process details: %w", err)
 	}
 	defer rows.Close()
 
@@ -1416,10 +1416,10 @@ func (db *DB) GetProcessDetails(messageID string) ([]ProcessDetail, error) {
 		var createdAt string
 
 		if err := rows.Scan(&detail.ID, &detail.MessageID, &detail.ConversationID, &detail.EventType, &detail.Message, &detail.Data, &createdAt); err != nil {
-			return nil, fmt.Errorf("扫描过程详情失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan process details: %w", err)
 		}
 
-		// 尝试多种时间格式解析
+		// Try multiple time formats when parsing
 		var err error
 		detail.CreatedAt, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt)
 		if err != nil {
@@ -1435,7 +1435,7 @@ func (db *DB) GetProcessDetails(messageID string) ([]ProcessDetail, error) {
 	return details, nil
 }
 
-// GetProcessDetailByID 获取单条过程详情。
+// GetProcessDetailByID gets a single process detail.
 func (db *DB) GetProcessDetailByID(id string) (*ProcessDetail, error) {
 	var detail ProcessDetail
 	var createdAt string
@@ -1444,7 +1444,7 @@ func (db *DB) GetProcessDetailByID(id string) (*ProcessDetail, error) {
 		id,
 	).Scan(&detail.ID, &detail.MessageID, &detail.ConversationID, &detail.EventType, &detail.Message, &detail.Data, &createdAt)
 	if err != nil {
-		return nil, fmt.Errorf("查询过程详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to query process details: %w", err)
 	}
 
 	var parseErr error
@@ -1458,7 +1458,7 @@ func (db *DB) GetProcessDetailByID(id string) (*ProcessDetail, error) {
 	return &detail, nil
 }
 
-// ProcessDetailsSummary 过程详情摘要（用于折叠态展示，避免全量加载）。
+// ProcessDetailsSummary process detail summary (for collapsed display, avoids loading everything).
 type ProcessDetailsSummary struct {
 	Total           int                           `json:"total"`
 	IterationCount  int                           `json:"iterationCount"`
@@ -1481,14 +1481,14 @@ type ProcessDetailsToolExecution struct {
 	Status          string `json:"status,omitempty"`
 }
 
-// GetProcessDetailsSummary 统计消息的过程详情数量与迭代轮次。
+// GetProcessDetailsSummary counts the process details and iteration rounds of a message.
 func (db *DB) GetProcessDetailsSummary(messageID string) (*ProcessDetailsSummary, error) {
 	var total int
 	if err := db.QueryRow(
 		"SELECT COUNT(*) FROM process_details WHERE message_id = ?",
 		messageID,
 	).Scan(&total); err != nil {
-		return nil, fmt.Errorf("统计过程详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to count process details: %w", err)
 	}
 
 	summary := &ProcessDetailsSummary{Total: total}
@@ -1498,7 +1498,7 @@ func (db *DB) GetProcessDetailsSummary(messageID string) (*ProcessDetailsSummary
 		"SELECT created_at, updated_at, content FROM messages WHERE id = ?",
 		messageID,
 	).Scan(&messageCreatedAt, &messageUpdatedAt, &messageContent); err != nil && !errors.Is(err, sql.ErrNoRows) {
-		return nil, fmt.Errorf("查询过程详情耗时失败: %w", err)
+		return nil, fmt.Errorf("Failed to query process detail durations: %w", err)
 	}
 	if messageCreatedAt.Valid {
 		if startedAt := parseDBTime(messageCreatedAt.String); !startedAt.IsZero() {
@@ -1513,7 +1513,7 @@ WHERE message_id = ? AND event_type IN ('cancelled', 'timeout', 'error')
 ORDER BY created_at DESC, rowid DESC
 LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 	if terminalErr != nil && !errors.Is(terminalErr, sql.ErrNoRows) {
-		return nil, fmt.Errorf("查询过程详情终态失败: %w", terminalErr)
+		return nil, fmt.Errorf("Failed to query process detail final states: %w", terminalErr)
 	}
 	if terminalEvent != "" {
 		switch terminalEvent {
@@ -1548,7 +1548,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 		"SELECT COUNT(*) FROM process_details WHERE message_id = ? AND event_type = 'tool_call'",
 		messageID,
 	).Scan(&summary.ToolCount); err != nil {
-		return nil, fmt.Errorf("统计工具调用详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to count tool call details: %w", err)
 	}
 
 	pendingToolStatus := "result_missing"
@@ -1561,7 +1561,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 		messageID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询工具执行摘要失败: %w", err)
+		return nil, fmt.Errorf("Failed to query tool execution summaries: %w", err)
 	}
 	seenExecIDs := make(map[string]bool)
 	// A provider may reuse a fallback toolCallId across streaming rounds. Keep a
@@ -1578,7 +1578,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 		var dataJSON string
 		if err := execRows.Scan(&detailID, &eventType, &dataJSON); err != nil {
 			execRows.Close()
-			return nil, fmt.Errorf("扫描工具执行摘要失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan tool execution summaries: %w", err)
 		}
 		if dataJSON == "" {
 			continue
@@ -1651,7 +1651,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 	}
 	if err := execRows.Err(); err != nil {
 		execRows.Close()
-		return nil, fmt.Errorf("遍历工具执行摘要失败: %w", err)
+		return nil, fmt.Errorf("Failed to iterate tool execution summaries: %w", err)
 	}
 	execRows.Close()
 	db.applyPersistedToolExecutionStatuses(summary.ToolExecutions)
@@ -1661,7 +1661,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 		messageID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询迭代详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to query iteration details: %w", err)
 	}
 	defer rows.Close()
 
@@ -1670,7 +1670,7 @@ LIMIT 1`, messageID).Scan(&terminalEvent, &terminalCreatedAt)
 	for rows.Next() {
 		var dataJSON string
 		if err := rows.Scan(&dataJSON); err != nil {
-			return nil, fmt.Errorf("扫描迭代详情失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan iteration details: %w", err)
 		}
 		iterCount++
 		if dataJSON == "" {
@@ -1786,14 +1786,14 @@ func matchToolExecutionIndex(
 	return -1
 }
 
-// GetProcessDetailsPage 分页获取消息的过程详情（按时间升序）。
+// GetProcessDetailsPage gets the process details of a message page by page (ordered by time ascending).
 func (db *DB) GetProcessDetailsPage(messageID string, limit, offset int) ([]ProcessDetail, int, error) {
 	var total int
 	if err := db.QueryRow(
 		"SELECT COUNT(*) FROM process_details WHERE message_id = ?",
 		messageID,
 	).Scan(&total); err != nil {
-		return nil, 0, fmt.Errorf("统计过程详情失败: %w", err)
+		return nil, 0, fmt.Errorf("Failed to count process details: %w", err)
 	}
 	if total == 0 || offset >= total {
 		return nil, total, nil
@@ -1804,7 +1804,7 @@ func (db *DB) GetProcessDetailsPage(messageID string, limit, offset int) ([]Proc
 		messageID, limit, offset,
 	)
 	if err != nil {
-		return nil, 0, fmt.Errorf("查询过程详情失败: %w", err)
+		return nil, 0, fmt.Errorf("Failed to query process details: %w", err)
 	}
 	defer rows.Close()
 
@@ -1814,7 +1814,7 @@ func (db *DB) GetProcessDetailsPage(messageID string, limit, offset int) ([]Proc
 		var createdAt string
 
 		if err := rows.Scan(&detail.ID, &detail.MessageID, &detail.ConversationID, &detail.EventType, &detail.Message, &detail.Data, &createdAt); err != nil {
-			return nil, 0, fmt.Errorf("扫描过程详情失败: %w", err)
+			return nil, 0, fmt.Errorf("Failed to scan process details: %w", err)
 		}
 
 		var parseErr error
@@ -1832,7 +1832,7 @@ func (db *DB) GetProcessDetailsPage(messageID string, limit, offset int) ([]Proc
 	return details, total, nil
 }
 
-// GetProcessDetailOffset 返回某条过程详情在所属消息详情流中的零基 offset。
+// GetProcessDetailOffset returns the zero-based offset of a process detail within its message's detail stream.
 func (db *DB) GetProcessDetailOffset(messageID, detailID string) (int, error) {
 	messageID = strings.TrimSpace(messageID)
 	detailID = strings.TrimSpace(detailID)
@@ -1846,9 +1846,9 @@ func (db *DB) GetProcessDetailOffset(messageID, detailID string) (int, error) {
 		messageID, detailID,
 	).Scan(&createdAt, &rowID); err != nil {
 		if err == sql.ErrNoRows {
-			return 0, fmt.Errorf("过程详情不存在")
+			return 0, fmt.Errorf("Process detail not found")
 		}
-		return 0, fmt.Errorf("查询过程详情锚点失败: %w", err)
+		return 0, fmt.Errorf("Failed to query process detail anchor: %w", err)
 	}
 	var offset int
 	if err := db.QueryRow(
@@ -1857,19 +1857,19 @@ func (db *DB) GetProcessDetailOffset(messageID, detailID string) (int, error) {
 		   AND (created_at < ? OR (created_at = ? AND rowid < ?))`,
 		messageID, createdAt, createdAt, rowID,
 	).Scan(&offset); err != nil {
-		return 0, fmt.Errorf("计算过程详情锚点位置失败: %w", err)
+		return 0, fmt.Errorf("Failed to compute process detail anchor position: %w", err)
 	}
 	return offset, nil
 }
 
-// GetProcessDetailsByConversation 获取对话的所有过程详情（按消息分组）
+// GetProcessDetailsByConversation gets all process details of a conversation (grouped by message)
 func (db *DB) GetProcessDetailsByConversation(conversationID string) (map[string][]ProcessDetail, error) {
 	rows, err := db.Query(
 		"SELECT id, message_id, conversation_id, event_type, message, data, created_at FROM process_details WHERE conversation_id = ? ORDER BY created_at ASC, rowid ASC",
 		conversationID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询过程详情失败: %w", err)
+		return nil, fmt.Errorf("Failed to query process details: %w", err)
 	}
 	defer rows.Close()
 
@@ -1879,10 +1879,10 @@ func (db *DB) GetProcessDetailsByConversation(conversationID string) (map[string
 		var createdAt string
 
 		if err := rows.Scan(&detail.ID, &detail.MessageID, &detail.ConversationID, &detail.EventType, &detail.Message, &detail.Data, &createdAt); err != nil {
-			return nil, fmt.Errorf("扫描过程详情失败: %w", err)
+			return nil, fmt.Errorf("Failed to scan process details: %w", err)
 		}
 
-		// 尝试多种时间格式解析
+		// Try multiple time formats when parsing
 		var err error
 		detail.CreatedAt, err = time.Parse("2006-01-02 15:04:05.999999999-07:00", createdAt)
 		if err != nil {

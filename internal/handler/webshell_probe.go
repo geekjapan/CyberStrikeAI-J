@@ -9,22 +9,22 @@ import (
 	"go.uber.org/zap"
 )
 
-// webshellOSProbeCommand 探活命令：利用 Windows cmd 与 POSIX shell 对 `%OS%` 展开差异进行判定。
-//   - Windows cmd：`%OS%` 被展开为 `Windows_NT`，回显 `:OSPROBE_Windows_NT:END`
-//   - POSIX sh/bash：`%OS%` 不是变量语法，作为字面量原样保留，回显 `:OSPROBE_%OS%:END`
+// webshellOSProbeCommand is the probe command: it relies on the difference in how Windows cmd and POSIX shell expand `%OS%` to decide the OS.
+//   - Windows cmd: `%OS%` expands to `Windows_NT`, echoing `:OSPROBE_Windows_NT:END`
+//   - POSIX sh/bash: `%OS%` is not variable syntax and is kept literally, echoing `:OSPROBE_%OS%:END`
 //
-// 一条命令即可得到明确的、互斥的信号，避免探活成本（相比发两次命令）。
-// 冒号包裹是为了避免部分 shell 输出多余空白/BOM 时字符串匹配失效。
+// One command yields a clear, mutually exclusive signal, avoiding the probing cost (compared with sending two commands).
+// The colons on each side avoid string matching failing when some shells output extra whitespace or a BOM.
 const webshellOSProbeCommand = "echo :OSPROBE_%OS%:END"
 
-// probeWebshellOSViaExec 通过一次命令执行的回显推断目标操作系统。
+// probeWebshellOSViaExec infers the target operating system from the echo of a single command execution.
 //
-// 返回值：
-//   - "windows" / "linux"：识别成功
-//   - ""：无法判定（调用方应保留既有 fallback 逻辑）
+// Return values:
+//   - "windows" / "linux": identified successfully
+//   - "": cannot be determined (the caller should keep its existing fallback logic)
 //
-// 入参 execFn 是一个"发命令并拿到回显"的闭包；让 HTTP 入口和 MCP 入口可以共用同一套探活逻辑
-// 而不必关心底层是如何发包的。
+// The input execFn is a closure that "sends a command and gets the echo back"; this lets the HTTP entry point and the MCP entry point share the same probing logic
+// without caring how the underlying packets are sent.
 func probeWebshellOSViaExec(execFn func(cmd string) (output string, ok bool)) string {
 	if execFn == nil {
 		return ""
@@ -36,37 +36,37 @@ func probeWebshellOSViaExec(execFn func(cmd string) (output string, ok bool)) st
 	return classifyWebshellOSProbeOutput(out)
 }
 
-// classifyWebshellOSProbeOutput 纯函数：根据探活命令的回显判定 OS。
-// 抽出来是为了单测可直接覆盖所有分支，无需真实 HTTP 调用。
+// classifyWebshellOSProbeOutput is a pure function: it decides the OS from the echo of the probe command.
+// It is split out so unit tests can cover every branch directly, without a real HTTP call.
 func classifyWebshellOSProbeOutput(out string) string {
 	if out == "" {
 		return ""
 	}
 	lower := strings.ToLower(out)
 
-	// Windows 强信号：cmd.exe 成功展开了 %OS% 变量
+	// Strong Windows signal: cmd.exe successfully expanded the %OS% variable
 	if strings.Contains(out, "Windows_NT") {
 		return "windows"
 	}
-	// 容错：部分老版本 Windows 可能 `%OS%` 展开为其他字样（极少见），再看 PATH/OS 等次级线索
+	// Fault tolerance: some old Windows versions may expand `%OS%` to something else (very rare), so look at secondary clues such as PATH/OS
 	if strings.Contains(lower, "microsoft windows") {
 		return "windows"
 	}
 
-	// Linux/Unix 强信号：`%OS%` 字面量被原样回显，说明 shell 不是 cmd.exe
+	// Linux/Unix strong signal: the `%OS%` literal was echoed back as is, which means the shell is not cmd.exe
 	if strings.Contains(out, "%OS%") {
 		return "linux"
 	}
 
-	// 次级线索：部分 webshell 在 Linux 上可能走了其他外壳（如 zsh/ash），
-	// 但它们对 `%OS%` 同样不展开；若命中 OSPROBE 头部却没拿到 %OS% 字面量，
-	// 说明回显被中途截断或过滤，保守返回空让上层 fallback。
+	// Secondary clue: some webshells on Linux may run under other shells (such as zsh/ash),
+	// but they also do not expand `%OS%`; if the OSPROBE header is hit but no %OS% literal is obtained,
+	// the echo was truncated or filtered midway, so conservatively return empty and let the upper layer fall back.
 	return ""
 }
 
-// newHTTPExecFn 为 HTTP FileOp 路径构造"发命令取回显"的闭包，供探活复用。
-// 参数来自 HTTP 请求，复用 buildExecURL / buildExecBody 两个已有的命令编排器，
-// 确保探活包与实际文件操作包走完全一致的 webshell 协议（GET/POST、参数名、编码）。
+// newHTTPExecFn builds, for the HTTP FileOp path, the closure that "sends a command and gets the echo back", for reuse by probing.
+// The parameters come from the HTTP request; reuse the two existing command builders buildExecURL / buildExecBody,
+// ensuring the probe packet and the actual file operation packet follow exactly the same webshell protocol (GET/POST, parameter name, encoding).
 func (h *WebShellHandler) newHTTPExecFn(targetURL, password, shellType, method, cmdParam, encoding string) func(string) (string, bool) {
 	useGET := strings.ToUpper(strings.TrimSpace(method)) == "GET"
 	if strings.TrimSpace(cmdParam) == "" {
@@ -101,8 +101,8 @@ func (h *WebShellHandler) newHTTPExecFn(targetURL, password, shellType, method, 
 	}
 }
 
-// persistDetectedOS 把探活结果回写到连接表；失败只记日志不阻断主流程。
-// 设计上故意只触发 UPDATE，不会新建记录，因此即便 connectionID 不存在也只是悄悄放弃。
+// persistDetectedOS writes the probe result back to the connection table; on failure it only logs and does not block the main flow.
+// By design it only triggers an UPDATE and never creates a record, so even if connectionID does not exist it is quietly dropped.
 func (h *WebShellHandler) persistDetectedOS(connectionID, detected string) {
 	connectionID = strings.TrimSpace(connectionID)
 	detected = normalizeWebshellOS(detected)
@@ -111,17 +111,17 @@ func (h *WebShellHandler) persistDetectedOS(connectionID, detected string) {
 	}
 	conn, err := h.db.GetWebshellConnection(connectionID)
 	if err != nil || conn == nil {
-		// 不是所有调用方都能提供有效 ID（比如临时测试），这里静默返回
+		// Not every caller can provide a valid ID (for example a temporary test), so return silently here
 		return
 	}
 	if normalizeWebshellOS(conn.OS) != "auto" {
-		// 用户已经显式选过 OS，尊重用户选择，不自动覆盖
+		// The user has already explicitly chosen an OS; respect that choice and do not overwrite it automatically
 		return
 	}
 	conn.OS = detected
 	if err := h.db.UpdateWebshellConnection(conn); err != nil {
-		h.logger.Warn("webshell 探活结果持久化失败", zap.String("id", connectionID), zap.String("os", detected), zap.Error(err))
+		h.logger.Warn("Failed to persist webshell probe result", zap.String("id", connectionID), zap.String("os", detected), zap.Error(err))
 		return
 	}
-	h.logger.Info("webshell auto OS 探活成功并持久化", zap.String("id", connectionID), zap.String("os", detected))
+	h.logger.Info("webshell auto OS probe succeeded and was persisted", zap.String("id", connectionID), zap.String("os", detected))
 }

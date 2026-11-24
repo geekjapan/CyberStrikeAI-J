@@ -1,5 +1,5 @@
 /**
- * C2 事件审计：按级别/类别/会话/时间窗筛选，5 秒轮询并支持批量删除。
+ * C2 event audit: filter by level/category/session/time window, 5-second polling, batch delete supported.
  */
 import { useMemo, useState } from 'react';
 import { Button, Input, Select, SideSheet, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -69,22 +69,22 @@ export default function C2EventsPage() {
     };
 
     const metrics = [
-        { id: 'total', label: t('c2.events.statTotal', null, '当前筛选'), value: total },
-        { id: 'info', label: t('c2.events.info', null, '信息'), value: counts.info || 0 },
-        { id: 'warn', label: t('c2.events.warn', null, '警告'), value: counts.warn || 0, tone: 'warning' },
-        { id: 'critical', label: t('c2.events.critical', null, '严重'), value: counts.critical || 0, tone: 'danger' }
+        { id: 'total', label: t('c2.events.statTotal', null, 'Filtered'), value: total },
+        { id: 'info', label: t('c2.events.info', null, 'Info'), value: counts.info || 0 },
+        { id: 'warn', label: t('c2.events.warn', null, 'Warning'), value: counts.warn || 0, tone: 'warning' },
+        { id: 'critical', label: t('c2.events.critical', null, 'Critical'), value: counts.critical || 0, tone: 'danger' }
     ];
 
     const remove = ids => {
         confirmAction({
-            title: t('c2.events.batchDelete', null, '删除事件'),
+            title: t('c2.events.batchDelete', null, 'Delete selected'),
             content: ids.length > 1
-                ? t('c2.events.confirmBatchDelete', null, '确定删除选中的事件吗？此操作不可恢复。').replace('{{n}}', String(ids.length))
-                : t('c2.events.confirmDeleteOne', null, '确定删除该条事件吗？此操作不可恢复。'),
+                ? t('c2.events.confirmBatchDelete', null, 'Delete {{n}} selected event(s)? This cannot be undone.').replace('{{n}}', String(ids.length))
+                : t('c2.events.confirmDeleteOne', null, 'Delete this event? This cannot be undone.'),
             onOk: async () => {
                 try {
                     const result = await c2.deleteEvents(ids);
-                    toastSuccess(t('c2.events.toastDeleted', null, '已删除').replace('{{n}}', String(result?.deleted ?? ids.length)));
+                    toastSuccess(t('c2.events.toastDeleted', null, 'Deleted {{n}} event(s)').replace('{{n}}', String(result?.deleted ?? ids.length)));
                     setSelectedKeys(current => current.filter(key => !ids.includes(key)));
                     reload();
                 } catch (err) {
@@ -96,14 +96,14 @@ export default function C2EventsPage() {
 
     const columns = [
         {
-            title: t('c2.events.level', null, '级别'),
+            title: t('c2.events.level', null, 'Level'),
             dataIndex: 'level',
             width: 90,
             render: value => <Tag size="small" color={EVENT_LEVEL_COLOR[value] || 'grey'}>{t(`c2.events.${value || 'info'}`, null, value || '—')}</Tag>
         },
-        { title: t('c2.events.category', null, '类别'), dataIndex: 'category', width: 110 },
+        { title: t('c2.events.category', null, 'Category'), dataIndex: 'category', width: 110 },
         {
-            title: t('c2.events.message', null, '消息'),
+            title: t('c2.events.message', null, 'Message'),
             dataIndex: 'message',
             render: (value, record) => (
                 <button type="button" className="c2-event-message" onClick={() => setDetail(record)} title={value}>
@@ -112,27 +112,27 @@ export default function C2EventsPage() {
             )
         },
         {
-            title: t('c2.events.colSession', null, '会话'),
+            title: t('c2.events.colSession', null, 'Session'),
             dataIndex: 'sessionId',
             width: 150,
             render: value => <span className="c2-mono">{value || '—'}</span>
         },
         {
-            title: t('c2.events.colTask', null, '任务'),
+            title: t('c2.events.colTask', null, 'Task'),
             dataIndex: 'taskId',
             width: 150,
             render: value => <span className="c2-mono">{value || '—'}</span>
         },
-        { title: t('c2.events.time', null, '时间'), dataIndex: 'createdAt', width: 130, render: value => <TimeText value={value} /> },
+        { title: t('c2.events.time', null, 'Time'), dataIndex: 'createdAt', width: 130, render: value => <TimeText value={value} /> },
         {
-            title: t('c2.tasks.colActions', null, '操作'),
+            title: t('c2.tasks.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 130,
             render: (_, record) => (
                 <Space spacing={4}>
-                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>{t('c2.events.view', null, '查看')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>{t('c2.events.view', null, 'View')}</Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove([record.id])}>
-                        {t('c2.events.deleteOne', null, '删除')}
+                        {t('c2.events.deleteOne', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -142,17 +142,17 @@ export default function C2EventsPage() {
     return (
         <div className="c2-page" id="page-c2-events">
             <PageHeader
-                title={t('c2.events.title', null, '事件审计')}
-                description={t('c2.events.pageDesc', null, '监听器、会话、任务与 OPSEC 事件留痕，5 秒自动刷新')}
+                title={t('c2.events.title', null, 'Event Audit')}
+                description={t('c2.events.pageDesc', null, 'Audit trail of listener, session, task, and OPSEC events; refreshes every 5 seconds')}
                 extra={[
-                    <Button key="refresh" icon={<IconRefresh />} onClick={() => reload()} loading={loading}>{t('c2.events.refresh', null, '刷新')}</Button>,
+                    <Button key="refresh" icon={<IconRefresh />} onClick={() => reload()} loading={loading}>{t('c2.events.refresh', null, 'Refresh')}</Button>,
                     <Button
                         key="delete"
                         type="danger"
                         disabled={!canDelete || !selectedKeys.length}
                         onClick={() => remove(selectedKeys)}
                     >
-                        {t('c2.events.batchDelete', null, '批量删除')}
+                        {t('c2.events.batchDelete', null, 'Delete selected')}
                     </Button>
                 ]}
             />
@@ -161,30 +161,30 @@ export default function C2EventsPage() {
             <ErrorBanner error={error} onRetry={() => reload()} />
 
             <SectionCard
-                title={t('c2.events.filterTitle', null, '筛选')}
+                title={t('c2.events.filterTitle', null, 'Filters')}
                 extra={<TimePresetBar value={preset} onChange={value => { setPreset(value); setPage(1); }} ns="events" />}
             >
                 <div className="c2-toolbar-fields">
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.events.level', null, '级别')}</span>
+                        <span className="c2-field-label">{t('c2.events.level', null, 'Level')}</span>
                         <Select
                             value={level}
                             onChange={value => { setLevel(value || ''); setPage(1); }}
                             style={{ width: 150 }}
-                            optionList={[{ value: '', label: t('c2.events.filterAllLevels', null, '全部级别') }, ...EVENT_LEVEL_OPTIONS]}
+                            optionList={[{ value: '', label: t('c2.events.filterAllLevels', null, 'All levels') }, ...EVENT_LEVEL_OPTIONS]}
                         />
                     </div>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.events.category', null, '类别')}</span>
+                        <span className="c2-field-label">{t('c2.events.category', null, 'Category')}</span>
                         <Select
                             value={category}
                             onChange={value => { setCategory(value || ''); setPage(1); }}
                             style={{ width: 150 }}
-                            optionList={[{ value: '', label: t('c2.events.filterAllCategories', null, '全部类别') }, ...EVENT_CATEGORY_OPTIONS]}
+                            optionList={[{ value: '', label: t('c2.events.filterAllCategories', null, 'All categories') }, ...EVENT_CATEGORY_OPTIONS]}
                         />
                     </div>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.events.filterSession', null, '会话 ID')}</span>
+                        <span className="c2-field-label">{t('c2.events.filterSession', null, 'Session ID')}</span>
                         <Input
                             value={sessionInput}
                             onChange={setSessionInput}
@@ -194,13 +194,13 @@ export default function C2EventsPage() {
                         />
                     </div>
                     <Space spacing={8}>
-                        <Button theme="solid" type="primary" onClick={applyFilters}>{t('c2.events.applyFilters', null, '应用筛选')}</Button>
-                        <Button onClick={resetFilters}>{t('c2.events.resetFilters', null, '重置')}</Button>
+                        <Button theme="solid" type="primary" onClick={applyFilters}>{t('c2.events.applyFilters', null, 'Apply filters')}</Button>
+                        <Button onClick={resetFilters}>{t('c2.events.resetFilters', null, 'Reset')}</Button>
                     </Space>
                 </div>
             </SectionCard>
 
-            <SectionCard title={t('c2.events.listTitle', null, '事件列表')}>
+            <SectionCard title={t('c2.events.listTitle', null, 'Events')}>
                 <DataTable
                     columns={columns}
                     dataSource={events}
@@ -218,13 +218,13 @@ export default function C2EventsPage() {
                         onPageChange: next => setPage(next),
                         onPageSizeChange: size => { setPageSize(size); setPage(1); }
                     }}
-                    emptyText={t('c2.events.empty', null, '暂无事件')}
+                    emptyText={t('c2.events.empty', null, 'No events yet')}
                 />
             </SectionCard>
 
             <SideSheet
                 visible={Boolean(detail)}
-                title={t('c2.events.detailTitle', null, '事件详情')}
+                title={t('c2.events.detailTitle', null, 'Event details')}
                 width={560}
                 onCancel={() => setDetail(null)}
             >
@@ -236,17 +236,17 @@ export default function C2EventsPage() {
                             <Text type="tertiary" size="small">{formatDateTime(detail.createdAt)}</Text>
                         </div>
                         <Text>{detail.message}</Text>
-                        <div className="c2-field-label">{t('c2.events.colId', null, '事件 ID')}</div>
+                        <div className="c2-field-label">{t('c2.events.colId', null, 'Event ID')}</div>
                         <Text className="c2-mono" copyable={{ text: detail.id }}>{detail.id}</Text>
                         {detail.sessionId && (
                             <>
-                                <div className="c2-field-label">{t('c2.events.colSession', null, '会话')}</div>
+                                <div className="c2-field-label">{t('c2.events.colSession', null, 'Session')}</div>
                                 <Text className="c2-mono">{detail.sessionId}</Text>
                             </>
                         )}
                         {detail.data && Object.keys(detail.data).length > 0 && (
                             <>
-                                <div className="c2-field-label">{t('c2.events.detailData', null, '附加数据')}</div>
+                                <div className="c2-field-label">{t('c2.events.detailData', null, 'Additional data')}</div>
                                 <JsonViewer value={detail.data} />
                             </>
                         )}

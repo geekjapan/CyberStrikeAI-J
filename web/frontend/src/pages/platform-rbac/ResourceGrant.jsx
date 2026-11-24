@@ -3,15 +3,18 @@ import { Button, Form, Input, Select, Space, Typography } from '@douyinfe/semi-u
 import { api } from '../../lib/http';
 import { useDebounced, useResource } from '../../components/hooks';
 import { Drawer, ErrorBanner, toastSuccess } from '../../components/ui';
+import { lazyLabels, useT } from '../../lib/i18n';
 
-const types = [
-    ['project', '项目'], ['conversation', '会话'], ['asset', '资产'],
-    ['vulnerability', '漏洞'], ['batch_task', '批量任务'],
-];
+const TYPE_LABELS = lazyLabels('ui.resourceGrant.type', {
+    project: 'Project', conversation: 'Conversation', asset: 'Asset',
+    vulnerability: 'Vulnerability', batch_task: 'Batch task'
+});
+const types = Object.keys(TYPE_LABELS);
 
 export default function ResourceGrant({ users, onCancel, onSaved }) {
+    const t = useT();
     const formId = useId();
-    const [type, setType] = useState(types[0][0]);
+    const [type, setType] = useState(types[0]);
     const [query, setQuery] = useState('');
     const [offset, setOffset] = useState(0);
     const [picked, setPicked] = useState([]);
@@ -32,7 +35,7 @@ export default function ResourceGrant({ users, onCancel, onSaved }) {
         const manual = String(values.ids || '').split(/[\s,，;；]+/).filter(Boolean);
         const ids = [...new Set([...picked.map(([id]) => id), ...manual])];
         if (!ids.length || ids.length > 100) {
-            setError(new Error('请选择或输入 1 至 100 个资源 ID'));
+            setError(new Error(t('ui.resourceGrant.idsRange', null, 'Select or enter 1 to 100 resource IDs')));
             return;
         }
         setSaving(true);
@@ -40,7 +43,7 @@ export default function ResourceGrant({ users, onCancel, onSaved }) {
             await api.post('/rbac/resource-assignments', {
                 user_id: values.user_id, resource_type: type, resource_ids: ids
             });
-            toastSuccess('资源授权已保存');
+            toastSuccess(t('ui.resourceGrant.saved', null, 'Resource grant saved'));
             onSaved();
         } catch (err) {
             setError(err);
@@ -52,40 +55,40 @@ export default function ResourceGrant({ users, onCancel, onSaved }) {
     return (
         <Drawer
             visible
-            title="新增资源授权"
+            title={t('ui.resourceGrant.title', null, 'Add resource grant')}
             width={560}
             closable={!saving}
             maskClosable={!saving}
             closeOnEsc={!saving}
             onCancel={onCancel}
             formId={formId}
-            okText="保存授权"
+            okText={t('ui.resourceGrant.okText', null, 'Save grant')}
             confirmLoading={saving}
             cancelButtonProps={{ disabled: saving }}
         >
             <Form id={formId} onSubmit={submit} initValues={{ resource_type: type }}>
-                <Form.Select field="user_id" label="用户" filter
+                <Form.Select field="user_id" label={t('ui.resourceGrant.user', null, 'User')} filter
                     optionList={users.map(user => ({ value: user.id, label: user.display_name || user.username }))}
-                    rules={[{ required: true, message: '请选择用户' }]} />
-                <Form.Select field="resource_type" label="资源类型"
-                    optionList={types.map(([value, label]) => ({ value, label }))}
+                    rules={[{ required: true, message: t('ui.resourceGrant.userRequired', null, 'Select a user') }]} />
+                <Form.Select field="resource_type" label={t('ui.resourceGrant.resourceType', null, 'Resource type')}
+                    optionList={types.map(value => ({ value, label: TYPE_LABELS[value] }))}
                     onChange={value => { setType(value); setPicked([]); setQuery(''); setOffset(0); }} />
-                <Form.Slot label="按名称或 ID 搜索">
-                    <Input aria-label="搜索资源" value={query} onChange={value => { setQuery(value); setOffset(0); }} />
+                <Form.Slot label={t('ui.resourceGrant.searchLabel', null, 'Search by name or ID')}>
+                    <Input aria-label={t('ui.resourceGrant.searchAria', null, 'Search resources')} value={query} onChange={value => { setQuery(value); setOffset(0); }} />
                 </Form.Slot>
-                <Form.Slot label="选择资源">
+                <Form.Slot label={t('ui.resourceGrant.pickLabel', null, 'Select resources')}>
                     <Space wrap>
-                        <Button size="small" disabled={offset === 0 || result.loading} onClick={() => setOffset(value => Math.max(0, value - 20))}>上一页</Button>
+                        <Button size="small" disabled={offset === 0 || result.loading} onClick={() => setOffset(value => Math.max(0, value - 20))}>{t('ui.resourceGrant.prevPage', null, 'Previous page')}</Button>
                         <Typography.Text type="tertiary">{offset + resources.length} / {data?.total ?? '—'}</Typography.Text>
-                        <Button size="small" disabled={!data?.has_more || result.loading} onClick={() => setOffset(value => value + 20)}>下一页</Button>
+                        <Button size="small" disabled={!data?.has_more || result.loading} onClick={() => setOffset(value => value + 20)}>{t('ui.resourceGrant.nextPage', null, 'Next page')}</Button>
                     </Space>
                     <Select multiple style={{ width: '100%', marginTop: 8 }} loading={result.loading}
                         value={picked.map(([id]) => id)}
-                        aria-label="选择资源"
+                        aria-label={t('ui.resourceGrant.pickLabel', null, 'Select resources')}
                         optionList={[...optionMap].map(([value, label]) => ({ value, label }))}
                         onChange={values => setPicked((values || []).map(id => [id, optionMap.get(id) || id]))} />
                 </Form.Slot>
-                <Form.TextArea field="ids" label="手动输入资源 ID" placeholder="多个 ID 用空格或换行分隔" rows={2} />
+                <Form.TextArea field="ids" label={t('ui.resourceGrant.manualIds', null, 'Enter resource IDs manually')} placeholder={t('ui.resourceGrant.manualIdsHint', null, 'Separate multiple IDs with spaces or line breaks')} rows={2} />
                 <ErrorBanner error={error || result.error} />
             </Form>
         </Drawer>

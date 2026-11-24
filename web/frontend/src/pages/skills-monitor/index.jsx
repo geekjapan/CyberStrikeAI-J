@@ -22,37 +22,37 @@ export default function SkillsMonitorPage() {
     const rate = total > 0 ? success / total : null;
 
     const clearAll = () => confirmAction({
-        title: '清空所有技能调用统计？',
-        content: '只影响统计计数，不删除技能文件。',
+        title: t('ui.skillsMonitor.clearAllTitle', null, 'Clear call statistics for all skills?'),
+        content: t('ui.skillsMonitor.clearAllContent', null, 'Only the counters are affected; skill files are not deleted.'),
         onOk: async () => {
             await api.del('/skills/stats');
-            toastSuccess('统计已清空');
+            toastSuccess(t('ui.skillsMonitor.clearedAll', null, 'Statistics cleared'));
             stats.reload();
         }
     });
 
     const clearOne = name => confirmAction({
-        title: `清空「${name}」的统计？`,
+        title: t('ui.skillsMonitor.clearOneTitle', { name }, 'Clear statistics for "{{name}}"?'),
         onOk: async () => {
             await api.del(`/skills/${encodeURIComponent(name)}/stats`);
-            toastSuccess('已清空');
+            toastSuccess(t('ui.skillsMonitor.clearedOne', null, 'Cleared'));
             stats.reload();
         }
     });
 
     const columns = [
-        { title: '技能', dataIndex: 'skill_name', render: value => <Text strong>{value}</Text> },
-        { title: '调用次数', dataIndex: 'total_calls', width: 120, render: value => formatNumber(value || 0) },
-        { title: '成功', dataIndex: 'success_calls', width: 100, render: value => formatNumber(value || 0) },
+        { title: t('ui.skillsMonitor.colSkill', null, 'Skill'), dataIndex: 'skill_name', render: value => <Text strong>{value}</Text> },
+        { title: t('ui.skillsMonitor.colCalls', null, 'Calls'), dataIndex: 'total_calls', width: 120, render: value => formatNumber(value || 0) },
+        { title: t('ui.skillsMonitor.colSuccess', null, 'Succeeded'), dataIndex: 'success_calls', width: 100, render: value => formatNumber(value || 0) },
         {
-            title: '失败', dataIndex: 'failed_calls', width: 100,
+            title: t('ui.skillsMonitor.colFailed', null, 'Failed'), dataIndex: 'failed_calls', width: 100,
             render: value => (Number(value) > 0 ? <Text type="danger">{formatNumber(value)}</Text> : '0')
         },
-        { title: '最后调用', dataIndex: 'last_call_time', width: 180, render: value => value || '—' },
+        { title: t('ui.skillsMonitor.colLastCall', null, 'Last call'), dataIndex: 'last_call_time', width: 180, render: value => value || '—' },
         {
-            title: '操作', width: 110, render: (_, record) => (
+            title: t('ui.skillsMonitor.colActions', null, 'Actions'), width: 110, render: (_, record) => (
                 canDelete && Number(record.total_calls) > 0
-                    ? <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => clearOne(record.skill_name)}>清空</Button>
+                    ? <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => clearOne(record.skill_name)}>{t('ui.skillsMonitor.clear', null, 'Clear')}</Button>
                     : null
             )
         }
@@ -61,25 +61,27 @@ export default function SkillsMonitorPage() {
     return (
         <div>
             <PageHeader
-                title={t('skills.monitorTitle', null, '技能状态')}
-                description={stats.data?.skills_dir ? `技能目录：${stats.data.skills_dir}` : '统计技能被调用的次数、成功率与最近使用时间。'}
+                title={t('skills.monitorTitle', null, 'Skills monitor')}
+                description={stats.data?.skills_dir
+                    ? t('ui.skillsMonitor.skillsDir', { dir: stats.data.skills_dir }, 'Skills directory: {{dir}}')
+                    : t('ui.skillsMonitor.description', null, 'Tracks how often skills are called, their success rate and when they were last used.')}
                 extra={(
                     <Space>
-                        <Button icon={<IconRefresh />} onClick={() => stats.reload()} loading={stats.loading}>刷新</Button>
-                        {canDelete && <Button type="danger" theme="light" onClick={clearAll}>清空全部统计</Button>}
+                        <Button icon={<IconRefresh />} onClick={() => stats.reload()} loading={stats.loading}>{t('ui.skillsMonitor.refresh', null, 'Refresh')}</Button>
+                        {canDelete && <Button type="danger" theme="light" onClick={clearAll}>{t('ui.skillsMonitor.clearAll', null, 'Clear all statistics')}</Button>}
                     </Space>
                 )}
             />
             <StatGrid
                 columns={4}
                 metrics={[
-                    { id: 'skills', label: '技能总数', value: formatNumber(stats.data?.total_skills || 0), loading: stats.loading },
-                    { id: 'calls', label: '调用总数', value: formatNumber(total), loading: stats.loading },
-                    { id: 'success', label: '成功次数', value: formatNumber(success), loading: stats.loading },
-                    { id: 'rate', label: '成功率', value: rate === null ? '—' : formatPercent(rate), tone: rate !== null && rate < 0.8 ? 'warning' : 'success', loading: stats.loading }
+                    { id: 'skills', label: t('ui.skillsMonitor.metricSkills', null, 'Total skills'), value: formatNumber(stats.data?.total_skills || 0), loading: stats.loading },
+                    { id: 'calls', label: t('ui.skillsMonitor.metricCalls', null, 'Total calls'), value: formatNumber(total), loading: stats.loading },
+                    { id: 'success', label: t('ui.skillsMonitor.metricSuccess', null, 'Successful calls'), value: formatNumber(success), loading: stats.loading },
+                    { id: 'rate', label: t('ui.skillsMonitor.metricRate', null, 'Success rate'), value: rate === null ? '—' : formatPercent(rate), tone: rate !== null && rate < 0.8 ? 'warning' : 'success', loading: stats.loading }
                 ]}
             />
-            <SectionCard title="按技能统计">
+            <SectionCard title={t('ui.skillsMonitor.bySkill', null, 'Statistics by skill')}>
                 <ErrorBanner error={stats.error} onRetry={() => stats.reload()} />
                 <DataTable columns={columns} dataSource={rows} rowKey="skill_name" loading={stats.loading} pagination={{ pageSize: 20 }} />
             </SectionCard>

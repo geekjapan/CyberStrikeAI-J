@@ -1,4 +1,4 @@
-/* 系统设置页私有布局样式：只用 Semi 变量，不重复定义配色。 */
+/* Private layout styles for the system settings page: Semi variables only, no duplicate color definitions. */
 
 .settings-page { display: flex; flex-direction: column; min-width: 0; }
 

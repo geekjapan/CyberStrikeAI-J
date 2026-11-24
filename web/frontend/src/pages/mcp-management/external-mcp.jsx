@@ -1,4 +1,4 @@
-/** 外部 MCP 配置：列表、启停、JSON 表单新增/编辑、删除。 */
+/** External MCP config: list, enable/disable, JSON form add/edit, delete. */
 import { useCallback, useMemo, useState } from 'react';
 import { Banner, Button, Space, Tag, TextArea, Typography } from '@douyinfe/semi-ui';
 import { IconPlus, IconRefresh } from '@douyinfe/semi-icons';
@@ -7,7 +7,7 @@ import {
 } from '../../components/ui';
 import { useInterval, useResource } from '../../components/hooks';
 import { api, errorMessage } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { connectionMeta, transportOf } from './utils';
 
 const { Text } = Typography;
@@ -31,21 +31,21 @@ const EXAMPLE_CONFIG = {
 };
 
 function validateConfigMap(raw, { editingName }) {
-    if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return { error: '配置必须是 JSON 对象' };
+    if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return { error: translate('ui.externalMcp.configMustBeObject', null, 'Configuration must be a JSON object') };
     const names = Object.keys(raw);
-    if (!names.length) return { error: '至少需要一个 MCP 配置' };
-    if (editingName && !raw[editingName]) return { error: `编辑模式下 JSON 必须包含配置名称 "${editingName}"` };
+    if (!names.length) return { error: translate('ui.externalMcp.needOneConfig', null, 'At least one MCP configuration is required') };
+    if (editingName && !raw[editingName]) return { error: translate('ui.externalMcp.mustIncludeName', { name: editingName }, 'In edit mode the JSON must include the configuration name "{{name}}"') };
     for (const name of names) {
-        if (!name.trim()) return { error: '配置名称不能为空' };
+        if (!name.trim()) return { error: translate('ui.externalMcp.nameEmpty', null, 'Configuration name cannot be empty') };
         const config = raw[name];
         if (config === null || typeof config !== 'object' || Array.isArray(config)) {
-            return { error: `"${name}" 的配置必须是对象` };
+            return { error: translate('ui.externalMcp.entryMustBeObject', { name }, 'The configuration for "{{name}}" must be an object') };
         }
         delete config.external_mcp_enable;
         const transport = config.type || config.transport || (config.command ? 'stdio' : (config.url ? 'http' : ''));
-        if (!transport) return { error: `"${name}" 需要指定 command（stdio）或 url + type（http/sse）` };
-        if (transport === 'stdio' && !config.command) return { error: `"${name}" 的 stdio 模式需要 command` };
-        if ((transport === 'http' || transport === 'sse') && !config.url) return { error: `"${name}" 的 ${transport} 模式需要 url` };
+        if (!transport) return { error: translate('ui.externalMcp.needTransport', { name }, '"{{name}}" must specify command (stdio) or url + type (http/sse)') };
+        if (transport === 'stdio' && !config.command) return { error: translate('ui.externalMcp.stdioNeedsCommand', { name }, '"{{name}}" in stdio mode requires command') };
+        if ((transport === 'http' || transport === 'sse') && !config.url) return { error: translate('ui.externalMcp.transportNeedsUrl', { name, transport }, '"{{name}}" in {{transport}} mode requires url') };
     }
     return { error: '', names };
 }
@@ -92,7 +92,7 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
             setJson(JSON.stringify({ [name]: config }, null, 2));
         } catch (error) {
             setModalOpen(false);
-            toastError(error, t('mcp.getConfigFailed', null, '获取外部MCP配置失败'));
+            toastError(error, t('mcp.getConfigFailed', null, 'Failed to get config'));
         }
     }, [t]);
 
@@ -107,11 +107,13 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
         setBusy(name);
         try {
             await api.post(`/external-mcp/${encodeURIComponent(name)}/${action}`, {});
-            toastSuccess(action === 'start' ? '已提交启动请求，正在后台连接' : '外部 MCP 已停止');
+            toastSuccess(action === 'start'
+                ? t('ui.externalMcp.startSubmitted', null, 'Start request submitted. Connecting in the background.')
+                : t('ui.externalMcp.stopped', null, 'External MCP stopped'));
             reload({ silent: true });
             onChanged?.();
         } catch (error) {
-            toastError(error, t('mcp.operationFailed', null, '操作失败'));
+            toastError(error, t('mcp.operationFailed', null, 'Operation failed'));
         } finally {
             setBusy('');
         }
@@ -119,17 +121,17 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
 
     const remove = useCallback(name => {
         confirmAction({
-            title: t('mcp.deleteExternalConfirm', { name }, `确定要删除外部MCP "${name}" 吗？`),
-            content: '删除后该 MCP 的工具将从对话中移除。',
-            okText: t('common.delete', null, '删除'),
+            title: t('mcp.deleteExternalConfirm', { name }, 'Delete external MCP "{{name}}"?'),
+            content: t('ui.externalMcp.deleteContent', null, 'After deletion, this MCP\'s tools will be removed from conversations.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/external-mcp/${encodeURIComponent(name)}`);
-                    toastSuccess(t('mcp.deleteSuccess', null, '删除成功'));
+                    toastSuccess(t('mcp.deleteSuccess', null, 'Deleted'));
                     reload();
                     onChanged?.();
                 } catch (error) {
-                    toastError(error, t('mcp.operationFailed', null, '删除失败'));
+                    toastError(error, t('mcp.operationFailed', null, 'Operation failed'));
                 }
             }
         });
@@ -138,14 +140,14 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
     const submit = useCallback(async () => {
         const text = json.trim();
         if (!text) {
-            setJsonError(t('mcp.jsonEmpty', null, 'JSON不能为空'));
+            setJsonError(t('mcp.jsonEmpty', null, 'JSON cannot be empty'));
             return;
         }
         let parsed;
         try {
             parsed = JSON.parse(text);
         } catch (error) {
-            setJsonError(`${t('mcp.jsonError', null, 'JSON格式错误')}: ${error.message}`);
+            setJsonError(`${t('mcp.jsonError', null, 'JSON format error')}: ${error.message}`);
             return;
         }
         const { error, names } = validateConfigMap(parsed, { editingName });
@@ -160,12 +162,12 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
             for (const name of targets) {
                 await api.put(`/external-mcp/${encodeURIComponent(name)}`, { config: parsed[name] });
             }
-            toastSuccess(t('mcp.saveSuccess', null, '保存成功'));
+            toastSuccess(t('mcp.saveSuccess', null, 'Saved'));
             closeModal();
             reload();
             onChanged?.();
         } catch (err) {
-            setJsonError(`${t('mcp.operationFailed', null, '保存失败')}: ${errorMessage(err)}`);
+            setJsonError(`${t('mcp.operationFailed', null, 'Operation failed')}: ${errorMessage(err)}`);
         } finally {
             setSaving(false);
         }
@@ -174,26 +176,26 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
     const extra = (
         <Space spacing={8}>
             <Button size="small" icon={<IconRefresh />} theme="borderless" onClick={() => reload()} loading={list.loading}>
-                {t('common.refresh', null, '刷新')}
+                {t('common.refresh', null, 'Refresh')}
             </Button>
             <Button size="small" icon={<IconPlus />} disabled={!canWrite} onClick={openAdd}>
-                {t('mcp.addExternalMCP', null, '添加外部MCP')}
+                {t('mcp.addExternalMCP', null, 'Add external MCP')}
             </Button>
         </Space>
     );
 
     return (
         <SectionCard
-            title={t('mcp.externalConfig', null, '外部 MCP 配置')}
-            description="stdio 传 command/args/env，http 与 sse 传 url/headers；状态每 8 秒自动刷新。"
+            title={t('mcp.externalConfig', null, 'External MCP config')}
+            description={t('ui.externalMcp.description', null, 'Use command/args/env for stdio and url/headers for http and sse. Status refreshes every 8 seconds.')}
             extra={extra}
         >
             <ErrorBanner error={list.error} onRetry={() => reload()} />
             {!servers.length && !list.loading && (
                 <div className="mcp-management-empty">
-                    <p>{t('mcp.noExternalMCP', null, '暂无外部 MCP')}</p>
+                    <p>{t('mcp.noExternalMCP', null, 'No external MCP configured')}</p>
                     <Button size="small" disabled={!canWrite} onClick={openAdd}>
-                        {t('mcp.clickToAddExternal', null, '点击添加外部 MCP')}
+                        {t('mcp.clickToAddExternal', null, 'Click "Add external MCP" to configure')}
                     </Button>
                 </div>
             )}
@@ -212,7 +214,7 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
                                     <Tag size="small" color={meta.color}>{meta.label}</Tag>
                                     <Tag size="small" color="grey">{transport.toUpperCase()}</Tag>
                                     {Number(server?.tool_count) > 0 && (
-                                        <Tag size="small" color="blue">{`${server.tool_count} 个工具`}</Tag>
+                                        <Tag size="small" color="blue">{t('ui.externalMcp.toolCount', { count: server.tool_count }, '{{count}} tools')}</Tag>
                                     )}
                                 </div>
                                 <Space spacing={4} wrap>
@@ -224,14 +226,14 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
                                         onClick={() => toggle(name, status)}
                                     >
                                         {status === 'connecting'
-                                            ? t('mcp.connecting', null, '连接中')
-                                            : (connected ? t('mcp.stop', null, '停止') : t('mcp.start', null, '启动'))}
+                                            ? t('mcp.connecting', null, 'Connecting...')
+                                            : (connected ? t('mcp.stop', null, 'Stop') : t('mcp.start', null, 'Start'))}
                                     </Button>
                                     <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => openEdit(name)}>
-                                        {t('common.edit', null, '编辑')}
+                                        {t('common.edit', null, 'Edit')}
                                     </Button>
                                     <Button size="small" type="danger" theme="borderless" disabled={!canWrite} onClick={() => remove(name)}>
-                                        {t('common.delete', null, '删除')}
+                                        {t('common.delete', null, 'Delete')}
                                     </Button>
                                 </Space>
                             </div>
@@ -246,18 +248,18 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
 
                             <div className="mcp-management-mcp-meta">
                                 <div>
-                                    <span className="mcp-management-meta-label">{t('mcp.transportMode', null, '传输方式')}</span>
+                                    <span className="mcp-management-meta-label">{t('mcp.transportMode', null, 'Transport')}</span>
                                     <span>{transport.toUpperCase()}</span>
                                 </div>
                                 {config.description && (
                                     <div>
-                                        <span className="mcp-management-meta-label">{t('mcp.description', null, '描述')}</span>
+                                        <span className="mcp-management-meta-label">{t('mcp.description', null, 'Description')}</span>
                                         <span>{config.description}</span>
                                     </div>
                                 )}
                                 {transport === 'stdio' && config.command && (
                                     <div>
-                                        <span className="mcp-management-meta-label">{t('mcp.command', null, '命令')}</span>
+                                        <span className="mcp-management-meta-label">{t('mcp.command', null, 'Command')}</span>
                                         <span className="mcp-management-mono">{config.command}</span>
                                     </div>
                                 )}
@@ -269,8 +271,8 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
                                 )}
                                 {Number(config.timeout) > 0 && (
                                     <div>
-                                        <span className="mcp-management-meta-label">{t('mcp.timeout', null, '超时')}</span>
-                                        <span>{config.timeout} {t('mcp.secondsUnit', null, '秒')}</span>
+                                        <span className="mcp-management-meta-label">{t('mcp.timeout', null, 'Timeout')}</span>
+                                        <span>{config.timeout} {t('mcp.secondsUnit', null, 's')}</span>
                                     </div>
                                 )}
                             </div>
@@ -281,26 +283,26 @@ export default function ExternalMcpPanel({ canWrite, onChanged, refreshKey = 0 }
 
             <Drawer
                 title={editingName
-                    ? `${t('mcp.editExternalMCP', null, '编辑外部MCP')} · ${editingName}`
-                    : t('mcp.addExternalMCP', null, '添加外部 MCP')}
+                    ? `${t('mcp.editExternalMCP', null, 'Edit external MCP')} · ${editingName}`
+                    : t('mcp.addExternalMCP', null, 'Add external MCP')}
                 visible={modalOpen}
                 onCancel={closeModal}
                 onOk={submit}
                 confirmLoading={saving}
                 width={760}
-                okText={t('common.save', null, '保存')}
-                cancelText={t('common.cancel', null, '取消')}
+                okText={t('common.save', null, 'Save')}
+                cancelText={t('common.cancel', null, 'Cancel')}
             >
                 <div className="mcp-management-form">
                     <div className="mcp-management-form-head">
                         <Text type="tertiary">
                             {editingName
-                                ? '编辑模式下只提交当前名称的配置；external_mcp_enable 由启停按钮维护。'
-                                : '支持一次粘贴多个 MCP：{"name": {...}}；保存后逐个写入 config.yaml。'}
+                                ? t('ui.externalMcp.editHint', null, 'In edit mode only the configuration with the current name is submitted. external_mcp_enable is managed by the start/stop button.')
+                                : t('ui.externalMcp.addHint', null, 'You can paste several MCPs at once: {"name": {...}}. They are written to config.yaml one by one on save.')}
                         </Text>
                         {!editingName && (
                             <Button size="small" theme="borderless" onClick={() => setJson(JSON.stringify(EXAMPLE_CONFIG, null, 2))}>
-                                载入示例
+                                {t('ui.externalMcp.loadExample', null, 'Load example')}
                             </Button>
                         )}
                         {json && <CopyButton text={json} size="small" />}

@@ -56,9 +56,9 @@ function ThemeMenu() {
     const { preference, setPreference } = useTheme();
     const t = useT();
     const options = [
-        { key: 'system', label: t('theme.system', null, '跟随系统') },
-        { key: 'light', label: t('theme.light', null, '浅色') },
-        { key: 'dark', label: t('theme.dark', null, '暗色') }
+        { key: 'system', label: t('theme.system', null, 'System') },
+        { key: 'light', label: t('theme.light', null, 'Light') },
+        { key: 'dark', label: t('theme.dark', null, 'Dark') }
     ];
     const current = options.find(option => option.key === preference) || options[0];
     return (
@@ -109,7 +109,7 @@ function NotificationsBell({ navigate }) {
             setItems(list);
             setPending(summary?.unreadCount ?? list.filter(item => !item.read).length);
         } catch (error) {
-            /* 通知属于辅助信息，失败不打扰 */
+            /* Notifications are auxiliary; do not bother the user on failure */
         }
     };
 
@@ -142,11 +142,11 @@ function NotificationsBell({ navigate }) {
     const content = (
         <div className="cs-notification-panel">
             <div className="cs-notification-head">
-                <Text strong>{t('notifications.title', null, '通知')}</Text>
-                <Button size="small" theme="borderless" onClick={markSeen} loading={marking}>{t('notifications.markAllRead', null, '全部标记已读')}</Button>
+                <Text strong>{t('notifications.title', null, 'Notifications')}</Text>
+                <Button size="small" theme="borderless" onClick={markSeen} loading={marking}>{t('notifications.markAllRead', null, 'Mark all read')}</Button>
             </div>
             <div className="cs-notification-list">
-                {items.length === 0 && <Text type="tertiary">{t('notifications.empty', null, '暂无新通知')}</Text>}
+                {items.length === 0 && <Text type="tertiary">{t('notifications.empty', null, 'No new events')}</Text>}
                 {items.map(item => (
                     <button type="button" key={item.id || `${item.type}-${item.ts}`} className="cs-notification-item" onClick={() => openItem(item)}>
                         <span className={`cs-notification-dot level-${item.level || 'p2'}`} />
@@ -166,7 +166,7 @@ function NotificationsBell({ navigate }) {
     return (
         <Popover content={content} trigger="click" position="bottomRight" visible={visible} onVisibleChange={setVisible}>
             <Badge count={pending || null} overflowCount={99} type="danger">
-                <Button theme="borderless" type="tertiary" icon={<IconBell />} aria-label={t('notifications.title', null, '通知')} />
+                <Button theme="borderless" type="tertiary" icon={<IconBell />} aria-label={t('notifications.title', null, 'Notifications')} />
             </Badge>
         </Popover>
     );
@@ -184,11 +184,11 @@ function UserMenu({ navigate }) {
         setSaving(true);
         try {
             await api.post('/auth/change-password', { oldPassword: values.oldPassword, newPassword: values.newPassword });
-            toastSuccess(t('auth.passwordChanged', null, '密码已更新'));
+            toastSuccess(t('auth.passwordChanged', null, 'Password updated'));
             setPasswordOpen(false);
             formApi?.reset();
         } catch (error) {
-            toastError(error, t('auth.changeFailed', null, '修改密码失败'));
+            toastError(error, t('auth.changeFailed', null, 'Failed to change password'));
         } finally {
             setSaving(false);
         }
@@ -203,44 +203,44 @@ function UserMenu({ navigate }) {
                         { node: 'title', name: user?.display_name || user?.username || 'admin' },
                         {
                             node: 'item',
-                            name: t('auth.changePassword', null, '修改密码'),
+                            name: t('auth.changePassword', null, 'Change password'),
                             icon: <IconKey />,
                             onClick: () => setPasswordOpen(true)
                         },
                         {
                             node: 'item',
-                            name: t('auth.refreshSession', null, '刷新会话权限'),
-                            onClick: () => refresh().then(() => toastSuccess(t('auth.sessionRefreshed', null, '会话已刷新'))).catch(error => toastError(error))
+                            name: t('auth.refreshSession', null, 'Refresh session permissions'),
+                            onClick: () => refresh().then(() => toastSuccess(t('auth.sessionRefreshed', null, 'Session refreshed'))).catch(error => toastError(error))
                         },
                         { node: 'divider' },
                         {
                             node: 'item',
-                            name: t('auth.logout', null, '退出登录'),
+                            name: t('auth.logout', null, 'Sign out'),
                             icon: <IconExit />,
                             onClick: async () => { await logout(); navigate('/dashboard'); }
                         }
                 ]}
             >
-                <Button theme="borderless" type="tertiary" className="cs-user-trigger" aria-label={t('auth.userMenu', null, '用户菜单')}>
+                <Button theme="borderless" type="tertiary" className="cs-user-trigger" aria-label={t('auth.userMenu', null, 'User menu')}>
                     <Avatar size="extra-small" color="blue">{(user?.display_name || user?.username || 'A').slice(0, 1).toUpperCase()}</Avatar>
                     <span className="cs-user-name">{user?.display_name || user?.username || 'admin'}</span>
                 </Button>
             </Dropdown>
             <Drawer
-                title={t('auth.changePassword', null, '修改密码')}
+                title={t('auth.changePassword', null, 'Change password')}
                 visible={passwordOpen}
                 onCancel={() => setPasswordOpen(false)}
                 formId={passwordFormId}
-                okText={t('common.save', null, '保存')}
+                okText={t('common.save', null, 'Save')}
                 confirmLoading={saving}
                 width={420}
             >
                 <Form id={passwordFormId} onSubmit={submitPassword} getFormApi={setFormApi}>
-                    <Form.Input field="oldPassword" label={t('auth.currentPassword', null, '当前密码')} type="password" rules={[{ required: true, message: t('auth.required', null, '必填') }]} />
-                    <Form.Input field="newPassword" label={t('auth.newPassword', null, '新密码')} type="password" rules={[{ required: true, min: 8, message: t('auth.passwordMin', null, '至少 8 位') }]} />
-                    <Form.Input field="confirmPassword" label={t('auth.confirmPassword', null, '确认新密码')} type="password" rules={[
-                        { required: true, message: t('auth.required', null, '必填') },
-                        { validator: (rule, value) => value === formApi?.getValue('newPassword'), message: t('auth.passwordMismatch', null, '两次输入不一致') }
+                    <Form.Input field="oldPassword" label={t('auth.currentPassword', null, 'Current password')} type="password" rules={[{ required: true, message: t('auth.required', null, 'Required') }]} />
+                    <Form.Input field="newPassword" label={t('auth.newPassword', null, 'New password')} type="password" rules={[{ required: true, min: 8, message: t('auth.passwordMin', null, 'At least 8 characters') }]} />
+                    <Form.Input field="confirmPassword" label={t('auth.confirmPassword', null, 'Confirm new password')} type="password" rules={[
+                        { required: true, message: t('auth.required', null, 'Required') },
+                        { validator: (rule, value) => value === formApi?.getValue('newPassword'), message: t('auth.passwordMismatch', null, 'The two entries do not match') }
                     ]} />
                 </Form>
             </Drawer>
@@ -271,7 +271,7 @@ export default function AppLayout() {
     }, [location.pathname, page?.parent]);
 
     useEffect(() => {
-        document.title = `${page ? t(page.i18n, null, page.fallback) : '工作台'} · CyberStrikeAI`;
+        document.title = `${page ? t(page.i18n, null, page.fallback) : t('ui.appLayout.workbench', null, 'Workbench')} · CyberStrikeAI`;
     }, [page, t]);
 
     const onSelect = ({ itemKey }) => {
@@ -298,7 +298,7 @@ export default function AppLayout() {
                     <span className="cs-brand-copy">
                         <span className="cs-brand-name">CyberStrike<span>AI</span></span>
                         {version && <span id={versionId} className="cs-brand-version" dir="ltr"
-                            title={`${t('header.version', null, '当前版本')} ${version}`}>{version}</span>}
+                            title={`${t('header.version', null, 'Current version')} ${version}`}>{version}</span>}
                     </span>
                 )}
             </Button>
@@ -327,9 +327,9 @@ export default function AppLayout() {
             {!mobile && (
                 <div className="cs-nav-footer">
                     <Button theme="borderless" type="tertiary" block icon={compact ? <IconChevronRight /> : <IconChevronLeft />}
-                        aria-label={t(compact ? 'nav.expand' : 'nav.collapse', null, compact ? '展开菜单' : '收起菜单')}
+                        aria-label={t(compact ? 'nav.expand' : 'nav.collapse', null, compact ? 'Expand menu' : 'Collapse menu')}
                         onClick={toggleCollapsed}>
-                        {!compact && t('nav.collapse', null, '收起菜单')}
+                        {!compact && t('nav.collapse', null, 'Collapse menu')}
                     </Button>
                 </div>
             )}
@@ -349,7 +349,7 @@ export default function AppLayout() {
                     onCancel={() => setDrawerOpen(false)}
                     placement="left"
                     width={264}
-                    title={t('nav.navigation', null, '导航')}
+                    title={t('nav.navigation', null, 'Navigation')}
                     bodyStyle={{ padding: 0 }}
                     className="cs-mobile-nav"
                 >
@@ -360,10 +360,10 @@ export default function AppLayout() {
                 <header className="cs-header">
                     <div className="cs-header-left">
                         {mobile && (
-                            <Button theme="borderless" icon={<IconMenu />} onClick={() => setDrawerOpen(true)} aria-label={t('common.expandPanel', null, '展开面板')} />
+                            <Button theme="borderless" icon={<IconMenu />} onClick={() => setDrawerOpen(true)} aria-label={t('common.expandPanel', null, 'Expand panel')} />
                         )}
                         <Breadcrumb className="cs-header-crumb" compact={false}>
-                            <Breadcrumb.Item onClick={() => navigate('/dashboard')}>{t('nav.groupWorkspace', null, '工作台')}</Breadcrumb.Item>
+                            <Breadcrumb.Item onClick={() => navigate('/dashboard')}>{t('nav.groupWorkspace', null, 'Workspace')}</Breadcrumb.Item>
                             {parentTitle && <Breadcrumb.Item>{parentTitle}</Breadcrumb.Item>}
                             <Breadcrumb.Item>{title}</Breadcrumb.Item>
                         </Breadcrumb>

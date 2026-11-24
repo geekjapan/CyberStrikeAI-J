@@ -1,5 +1,5 @@
 /**
- * C2 流量伪装（Malleable Profile）：列表、创建、编辑与删除。
+ * C2 traffic disguise (Malleable Profile): list, create, edit and delete.
  */
 import { useMemo, useState } from 'react';
 import { Button, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -33,20 +33,20 @@ export default function C2ProfilesPage() {
     const profiles = Array.isArray(data?.profiles) ? data.profiles : [];
 
     const metrics = useMemo(() => [
-        { id: 'total', label: t('c2.profiles.total', null, 'Profile 总数'), value: profiles.length },
+        { id: 'total', label: t('c2.profiles.total', null, 'Total profiles'), value: profiles.length },
         {
             id: 'jitter',
-            label: t('c2.profiles.withJitter', null, '启用 Jitter'),
+            label: t('c2.profiles.withJitter', null, 'Jitter enabled'),
             value: profiles.filter(item => Number(item.jitterMaxMs) > 0).length
         },
         {
             id: 'uris',
-            label: t('c2.profiles.withUris', null, '自定义 URI'),
+            label: t('c2.profiles.withUris', null, 'Custom URIs'),
             value: profiles.filter(item => Array.isArray(item.uris) && item.uris.length > 0).length
         },
         {
             id: 'headers',
-            label: t('c2.profiles.withHeaders', null, '自定义响应头'),
+            label: t('c2.profiles.withHeaders', null, 'Custom response headers'),
             value: profiles.filter(item => item.responseHeaders && Object.keys(item.responseHeaders).length > 0).length
         }
     ], [profiles, t]);
@@ -56,15 +56,15 @@ export default function C2ProfilesPage() {
         try {
             if (form.record?.id) {
                 await c2.updateProfile(form.record.id, values);
-                toastSuccess(t('c2.profiles.toastUpdated', null, 'Profile 已更新'));
+                toastSuccess(t('c2.profiles.toastUpdated', null, 'Profile updated'));
             } else {
                 await c2.createProfile(values);
-                toastSuccess(t('c2.profiles.toastCreated', null, 'Profile 已创建'));
+                toastSuccess(t('c2.profiles.toastCreated', null, 'Profile created'));
             }
             setForm({ visible: false, record: null });
             reload();
         } catch (err) {
-            toastError(err, t('c2.profiles.saveFailed', null, 'Profile 保存失败'));
+            toastError(err, t('c2.profiles.saveFailed', null, 'Failed to save profile'));
         } finally {
             setSubmitting(false);
         }
@@ -72,12 +72,12 @@ export default function C2ProfilesPage() {
 
     const remove = record => {
         confirmAction({
-            title: t('c2.profiles.delete', null, '删除 Profile'),
-            content: t('c2.profiles.confirmDelete', null, '确定删除此 Profile？'),
+            title: t('c2.profiles.delete', null, 'Delete'),
+            content: t('c2.profiles.confirmDelete', null, 'Delete this profile?'),
             onOk: async () => {
                 try {
                     await c2.deleteProfile(record.id);
-                    toastSuccess(t('c2.profiles.toastDeleted', null, 'Profile 已删除'));
+                    toastSuccess(t('c2.profiles.toastDeleted', null, 'Profile deleted'));
                     reload();
                 } catch (err) {
                     toastError(err);
@@ -88,7 +88,7 @@ export default function C2ProfilesPage() {
 
     const columns = [
         {
-            title: t('c2.profiles.name', null, '名称'),
+            title: t('c2.profiles.name', null, 'Name'),
             dataIndex: 'name',
             render: (name, record) => (
                 <button type="button" className="c2-profile-name" onClick={() => setPreview(record)}>
@@ -102,7 +102,7 @@ export default function C2ProfilesPage() {
             render: value => <span className="c2-mono c2-profile-ua" title={value}>{value || '—'}</span>
         },
         {
-            title: t('c2.profiles.uris', null, 'URI 路径'),
+            title: t('c2.profiles.uris', null, 'URI Paths'),
             dataIndex: 'uris',
             width: 220,
             render: value => (Array.isArray(value) && value.length
@@ -110,24 +110,24 @@ export default function C2ProfilesPage() {
                 : <Text type="tertiary">—</Text>)
         },
         {
-            title: t('c2.profiles.jitter', null, 'Jitter 范围'),
+            title: t('c2.profiles.jitter', null, 'Jitter Range'),
             dataIndex: 'jitterMinMs',
             width: 140,
             render: (value, record) => `${value || 0} – ${record.jitterMaxMs || 0} ms`
         },
-        { title: t('c2.profiles.createdAt', null, '创建时间'), dataIndex: 'createdAt', width: 170, render: value => formatDateTime(value) },
+        { title: t('c2.profiles.createdAt', null, 'Created'), dataIndex: 'createdAt', width: 170, render: value => formatDateTime(value) },
         {
-            title: t('c2.tasks.colActions', null, '操作'),
+            title: t('c2.tasks.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 180,
             render: (_, record) => (
                 <Space spacing={4}>
-                    <Button size="small" theme="borderless" onClick={() => setPreview(record)}>{t('c2.profiles.view', null, '查看')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setPreview(record)}>{t('c2.profiles.view', null, 'View')}</Button>
                     <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => setForm({ visible: true, record })}>
-                        {t('c2.profiles.edit', null, '编辑')}
+                        {t('c2.profiles.edit', null, 'Edit')}
                     </Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove(record)}>
-                        {t('c2.profiles.delete', null, '删除')}
+                        {t('c2.profiles.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -137,12 +137,12 @@ export default function C2ProfilesPage() {
     return (
         <div className="c2-page" id="page-c2-profiles">
             <PageHeader
-                title={t('c2.profiles.title', null, '流量伪装')}
-                description={t('c2.profiles.pageDesc', null, '维护 HTTP/HTTPS Beacon 的 UA、URI 与响应头模板')}
+                title={t('c2.profiles.title', null, 'Malleable Profile')}
+                description={t('c2.profiles.pageDesc', null, 'Maintain UA, URI, and response-header templates for HTTP/HTTPS Beacons')}
                 extra={[
-                    <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>{t('common.refresh', null, '刷新')}</Button>,
+                    <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>{t('common.refresh', null, 'Refresh')}</Button>,
                     <Button key="create" theme="solid" type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setForm({ visible: true, record: null })}>
-                        {t('c2.profiles.createBtn', null, '创建 Profile')}
+                        {t('c2.profiles.createBtn', null, '+ Create Profile')}
                     </Button>
                 ]}
             />
@@ -150,7 +150,7 @@ export default function C2ProfilesPage() {
             <StatGrid metrics={metrics} columns={4} />
             <ErrorBanner error={error} onRetry={reload} />
 
-            <SectionCard title={t('c2.profiles.listTitle', null, 'Profile 列表')}>
+            <SectionCard title={t('c2.profiles.listTitle', null, 'Profiles')}>
                 <DataTable
                     columns={columns}
                     dataSource={profiles}
@@ -158,14 +158,14 @@ export default function C2ProfilesPage() {
                     loading={loading}
                     onRefresh={reload}
                     pagination={{ pageSize: 10 }}
-                    emptyText={t('c2.profiles.empty', null, '暂无 Profile')}
+                    emptyText={t('c2.profiles.empty', null, 'No profiles yet')}
                 />
             </SectionCard>
 
             {preview && (
                 <SectionCard
-                    title={`${t('c2.profiles.detailTitle', null, 'Profile 详情')} · ${preview.name || preview.id}`}
-                    extra={<Button size="small" onClick={() => setPreview(null)}>{t('c2.profiles.close', null, '收起')}</Button>}
+                    title={`${t('c2.profiles.detailTitle', null, 'Profile details')} · ${preview.name || preview.id}`}
+                    extra={<Button size="small" onClick={() => setPreview(null)}>{t('c2.profiles.close', null, 'Collapse')}</Button>}
                 >
                     <JsonViewer value={preview} />
                 </SectionCard>

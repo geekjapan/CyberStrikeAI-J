@@ -1,24 +1,30 @@
 /**
- * 极简 YAML 子集：只服务于「系统设置 → 原始配置」编辑框。
+ * Minimal YAML subset: only serves the "Settings → Raw configuration" editor.
  *
- * 覆盖 config.yaml 实际用到的写法：块映射、块列表、行内注释、引号字符串、
- * 多行 `|` / `>` 文本块、以及 `[]` / `{}` 行内集合。不支持锚点、别名、多文档
- * 合并键——遇到直接报错并给出行号，避免静默丢字段。
+ * Covers the syntax config.yaml actually uses: block mappings, block lists, inline comments, quoted strings,
+ * multi-line `|` / `>` text blocks, and `[]` / `{}` inline collections. Anchors, aliases and multi-document
+ * merge keys are unsupported: they fail with an error and a line number, so fields are never dropped silently.
  *
- * 解析语义对齐 Go 的 gopkg.in/yaml.v3（YAML 1.2 core schema）：
- * 只有 true/false 视为布尔，yes/no/on/off 保持字符串。
+ * Parsing semantics match Go's gopkg.in/yaml.v3 (YAML 1.2 core schema):
+ * only true/false are booleans; yes/no/on/off stay strings.
  */
+
+// The translate function for error messages is injected by the UI layer (see BasicSection); this file must stay importable by node directly, so it does not depend on the i18n module.
+let translate = (key, vars, fallback) => fallback;
+export function setYamlTranslator(fn) {
+    translate = fn;
+}
 
 export class YamlError extends Error {
     constructor(message, line) {
-        super(line ? `第 ${line} 行：${message}` : message);
+        super(line ? translate('ui.settingsYaml.lineMessage', { line, message }, 'Line {{line}}: {{message}}') : message);
         this.name = 'YamlError';
         this.line = line || 0;
     }
 }
 
 /* ------------------------------------------------------------------ */
-/* 序列化                                                              */
+/* Serialization                                                         */
 /* ------------------------------------------------------------------ */
 
 const NEEDS_QUOTE = /^(?:[-?:,\[\]{}#&*!|>'"%@`]|.*[:\s]$|.*\s#|.*[\n\r\t])/;
@@ -111,7 +117,7 @@ function dumpArray(value, indent, lines) {
     for (const item of value) dumpArrayItem(item, indent, lines);
 }
 
-/** 对象 → YAML 文本。空对象返回 `{}`，空数组返回 `[]`。 */
+/** Object to YAML text. An empty object returns `{}`, an empty array returns `[]`. */
 export function dumpYaml(value, { header } = {}) {
     const out = [];
     if (header) {
@@ -136,7 +142,7 @@ export function dumpYaml(value, { header } = {}) {
 }
 
 /* ------------------------------------------------------------------ */
-/* 解析                                                                */
+/* Parsing                                                               */
 /* ------------------------------------------------------------------ */
 
 function stripComment(text) {
@@ -186,7 +192,7 @@ function readQuoted(text, start, line) {
         out += char;
         i += 1;
     }
-    throw new YamlError('字符串引号未闭合', line);
+    throw new YamlError(translate('ui.settingsYaml.quoteUnclosed', null, 'Unclosed string quote'), line);
 }
 
 function splitKey(content, line) {
@@ -194,18 +200,18 @@ function splitKey(content, line) {
     if (text.startsWith('"') || text.startsWith("'")) {
         const quoted = readQuoted(text, 0, line);
         const rest = text.slice(quoted.end).trimStart();
-        if (!rest.startsWith(':')) throw new YamlError('键名后缺少冒号', line);
+        if (!rest.startsWith(':')) throw new YamlError(translate('ui.settingsYaml.keyMissingColon', null, 'Missing colon after key'), line);
         return { key: quoted.value, rest: stripComment(rest.slice(1).trim()) };
     }
     for (let i = 0; i < text.length; i += 1) {
         if (text[i] === ':' && (i + 1 >= text.length || /\s/.test(text[i + 1]))) {
             const key = text.slice(0, i).trim();
-            if (!key) throw new YamlError('键名为空', line);
-            if (/^[&*!|>@`]/.test(key)) throw new YamlError(`不支持的键名写法：${key}`, line);
+            if (!key) throw new YamlError(translate('ui.settingsYaml.keyEmpty', null, 'Key name is empty'), line);
+            if (/^[&*!|>@`]/.test(key)) throw new YamlError(translate('ui.settingsYaml.keyUnsupported', { key }, 'Unsupported key syntax: {{key}}'), line);
             return { key, rest: stripComment(text.slice(i + 1).trim()) };
         }
     }
-    throw new YamlError('缺少冒号，无法识别为键值', line);
+    throw new YamlError(translate('ui.settingsYaml.missingColon', null, 'Missing colon; cannot be parsed as a key-value pair'), line);
 }
 
 function hasMappingColon(text, line) {
@@ -244,21 +250,21 @@ function parseFlow(text, start, line) {
             const out = isArray ? [] : {};
             for (;;) {
                 skip();
-                if (i >= text.length) throw new YamlError('行内集合未闭合', line);
+                if (i >= text.length) throw new YamlError(translate('ui.settingsYaml.inlineUnclosed', null, 'Inline collection is not closed'), line);
                 if (text[i] === close) { i += 1; return out; }
                 if (isArray) {
                     out.push(read());
                 } else {
                     const key = read();
                     skip();
-                    if (text[i] !== ':') throw new YamlError('行内对象缺少冒号', line);
+                    if (text[i] !== ':') throw new YamlError(translate('ui.settingsYaml.inlineObjMissingColon', null, 'Inline object is missing a colon'), line);
                     i += 1;
                     out[String(key)] = read();
                 }
                 skip();
                 if (text[i] === ',') { i += 1; continue; }
                 if (text[i] === close) { i += 1; return out; }
-                throw new YamlError('行内集合分隔符不正确', line);
+                throw new YamlError(translate('ui.settingsYaml.inlineBadSeparator', null, 'Invalid separator in inline collection'), line);
             }
         }
         if (char === '"' || char === "'") {
@@ -278,7 +284,7 @@ function parseFlow(text, start, line) {
     const value = read();
     skip();
     if (i < text.length) {
-        throw new YamlError('行内值后存在多余内容', line);
+        throw new YamlError(translate('ui.settingsYaml.inlineTrailing', null, 'Unexpected content after inline value'), line);
     }
     return value;
 }
@@ -289,10 +295,10 @@ function parseValueText(text, line) {
     if (value.startsWith('[') || value.startsWith('{')) return parseFlow(value, 0, line);
     if (value.startsWith('"') || value.startsWith("'")) {
         const quoted = readQuoted(value, 0, line);
-        if (value.slice(quoted.end).trim()) throw new YamlError('引号字符串后存在多余内容', line);
+        if (value.slice(quoted.end).trim()) throw new YamlError(translate('ui.settingsYaml.quotedTrailing', null, 'Unexpected content after quoted string'), line);
         return quoted.value;
     }
-    if (/^[&*]/.test(value)) throw new YamlError('不支持锚点/别名', line);
+    if (/^[&*]/.test(value)) throw new YamlError(translate('ui.settingsYaml.anchorUnsupported', null, 'Anchors and aliases are not supported'), line);
     return plainScalar(value);
 }
 
@@ -327,7 +333,7 @@ function readBlockString(state, parentIndent, header, headerLine) {
     if (style === '|') {
         body = raw.join('\n');
     } else {
-        // 折叠：相邻非空行合并为空格，空行保留为段落分隔（空行数 = 换行数）。
+        // Folding: adjacent non-empty lines merge with a space; blank lines stay as paragraph breaks (blank-line count = newline count).
         body = raw[0] ?? '';
         for (let i = 1; i < raw.length; i += 1) {
             body += raw[i] === '' || raw[i - 1] === '' ? `\n${raw[i]}` : ` ${raw[i]}`;
@@ -351,9 +357,9 @@ function parseMapping(state, indent, seed = null) {
     while (state.i < state.lines.length) {
         const ln = state.lines[state.i];
         if (ln.indent < indent) break;
-        if (ln.indent > indent) throw new YamlError('缩进层级不一致', ln.line);
+        if (ln.indent > indent) throw new YamlError(translate('ui.settingsYaml.indentMismatch', null, 'Inconsistent indentation level'), ln.line);
         if (ln.content === '-' || ln.content.startsWith('- ')) {
-            throw new YamlError('同一层级不能混用列表与键值', ln.line);
+            throw new YamlError(translate('ui.settingsYaml.mixedListMap', null, 'A list and key-value pairs cannot be mixed at the same level'), ln.line);
         }
         const pair = splitKey(ln.content, ln.line);
         state.i += 1;
@@ -377,7 +383,7 @@ function parseSequence(state, indent) {
     while (state.i < state.lines.length) {
         const ln = state.lines[state.i];
         if (ln.indent !== indent) {
-            if (ln.indent > indent) throw new YamlError('缩进层级不一致', ln.line);
+            if (ln.indent > indent) throw new YamlError(translate('ui.settingsYaml.indentMismatch', null, 'Inconsistent indentation level'), ln.line);
             break;
         }
         if (!(ln.content === '-' || ln.content.startsWith('- '))) break;
@@ -407,7 +413,7 @@ function parseSequence(state, indent) {
     return list;
 }
 
-/** YAML 文本 → JS 值。空文档返回 null；语法问题抛 YamlError（含行号）。 */
+/** YAML text to a JS value. An empty document returns null; syntax problems throw YamlError (with a line number). */
 export function parseYaml(text) {
     const source = String(text ?? '').replace(/\r\n?/g, '\n');
     const rawLines = source.split('\n');
@@ -417,14 +423,14 @@ export function parseYaml(text) {
         if (/^\s*#/.test(raw)) return;
         if (/^\s*(---|\.\.\.)\s*(#.*)?$/.test(raw)) return;
         const lead = /^[ \t]*/.exec(raw)[0];
-        if (lead.includes('\t')) throw new YamlError('缩进不能使用制表符', index + 1);
+        if (lead.includes('\t')) throw new YamlError(translate('ui.settingsYaml.tabIndent', null, 'Tabs cannot be used for indentation'), index + 1);
         lines.push({ indent: lead.length, content: raw.slice(lead.length), line: index + 1 });
     });
     if (!lines.length) return null;
     const state = { lines, rawLines, i: 0 };
     const value = parseBlock(state, lines[0].indent);
     if (state.i < lines.length) {
-        throw new YamlError('存在无法归属的缩进内容', state.lines[state.i].line);
+        throw new YamlError(translate('ui.settingsYaml.orphanIndent', null, 'Indented content cannot be attached to any parent'), state.lines[state.i].line);
     }
     return value;
 }

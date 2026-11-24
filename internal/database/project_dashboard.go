@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// ProjectDashboardFact 仪表盘跨项目近期事实条目。
+// ProjectDashboardFact recent cross-project fact entry for the dashboard.
 type ProjectDashboardFact struct {
 	ID          string    `json:"id"`
 	ProjectID   string    `json:"project_id"`
@@ -19,19 +19,19 @@ type ProjectDashboardFact struct {
 	UpdatedAt   time.Time `json:"updated_at"`
 }
 
-// ProjectDashboardTotals 仪表盘项目事实汇总计数。
+// ProjectDashboardTotals summary counts of project facts for the dashboard.
 type ProjectDashboardTotals struct {
 	ActiveProjects int `json:"active_projects"`
 	TotalFacts     int `json:"total_facts"`
 }
 
-// ProjectDashboardSummary 仪表盘项目情报摘要。
+// ProjectDashboardSummary project intelligence summary for the dashboard.
 type ProjectDashboardSummary struct {
 	RecentFacts []ProjectDashboardFact `json:"recent_facts"`
 	Totals      ProjectDashboardTotals `json:"totals"`
 }
 
-// GetProjectDashboardSummary 聚合跨项目近期事实（仅活跃项目、排除 deprecated）。
+// GetProjectDashboardSummary aggregates recent cross-project facts (active projects only, excluding deprecated).
 func (db *DB) GetProjectDashboardSummary(factLimit int) (*ProjectDashboardSummary, error) {
 	return db.GetProjectDashboardSummaryForAccess(factLimit, "", "")
 }
@@ -63,7 +63,7 @@ func (db *DB) GetProjectDashboardSummaryForAccess(factLimit int, userID, scope s
 	}
 
 	if err := db.QueryRow(`SELECT COUNT(*) FROM projects p WHERE p.status = 'active'`+projectAccess, args...).Scan(&out.Totals.ActiveProjects); err != nil {
-		return nil, fmt.Errorf("统计活跃项目失败: %w", err)
+		return nil, fmt.Errorf("Failed to count active projects: %w", err)
 	}
 	if err := db.QueryRow(
 		`SELECT COUNT(*) FROM project_facts f
@@ -71,7 +71,7 @@ func (db *DB) GetProjectDashboardSummaryForAccess(factLimit int, userID, scope s
 		 WHERE f.confidence != 'deprecated' AND p.status = 'active'`+projectAccess,
 		args...,
 	).Scan(&out.Totals.TotalFacts); err != nil {
-		return nil, fmt.Errorf("统计事实失败: %w", err)
+		return nil, fmt.Errorf("Failed to count facts: %w", err)
 	}
 
 	queryArgs := append([]interface{}{}, args...)
@@ -86,7 +86,7 @@ func (db *DB) GetProjectDashboardSummaryForAccess(factLimit int, userID, scope s
 		queryArgs...,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("查询近期事实失败: %w", err)
+		return nil, fmt.Errorf("Failed to query recent facts: %w", err)
 	}
 	defer rows.Close()
 

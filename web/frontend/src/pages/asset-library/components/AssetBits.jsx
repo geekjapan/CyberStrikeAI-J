@@ -1,4 +1,4 @@
-/** 资产相关的轻量展示原子：截断文本、风险/状态/协议标签、标签列表。 */
+/** Lightweight asset display atoms: truncated text, risk/status/protocol tags, tag list. */
 import { Space, Tag, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { RISK_COLORS, riskLevelOf, riskLabel, STATUS_LABELS } from './assetConstants';
 

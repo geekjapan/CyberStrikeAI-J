@@ -1,4 +1,4 @@
-/** 事实黑板：筛选、表格与增删改/废弃恢复入口。 */
+/** Fact blackboard: filtering, table and entry points for add/edit/delete/deprecate/restore. */
 import { useMemo, useState } from 'react';
 import {
     Button, Checkbox, Input, Popconfirm, Select, Space, Tag, Typography
@@ -48,38 +48,38 @@ export default function FactsPanel({
     const deprecate = async (record) => {
         try {
             await api.post(`/projects/${projectId}/facts/deprecate`, { fact_key: record.fact_key });
-            toastSuccess(t('projects.saved', null, '已保存'));
+            toastSuccess(t('projects.saved', null, 'Saved'));
             if (onMutated) onMutated();
             else facts.reload({ silent: true });
         } catch (error) {
-            toastError(errText(error, t('projects.operationFailed', null, '操作失败')));
+            toastError(errText(error, t('projects.operationFailed', null, 'Operation failed')));
         }
     };
 
     const restore = async (record) => {
         try {
             await api.post(`/projects/${projectId}/facts/restore`, { fact_key: record.fact_key, confidence: 'tentative' });
-            toastSuccess(t('projects.saved', null, '已保存'));
+            toastSuccess(t('projects.saved', null, 'Saved'));
             if (onMutated) onMutated();
             else facts.reload({ silent: true });
         } catch (error) {
-            toastError(errText(error, t('projects.operationFailed', null, '操作失败')));
+            toastError(errText(error, t('projects.operationFailed', null, 'Operation failed')));
         }
     };
 
     const remove = (record) => {
         confirmAction({
-            title: t('projects.deleteForeverTitle', null, '永久删除'),
-            content: t('projects.confirmDeleteFact', null, '删除该事实？'),
-            okText: t('common.delete', null, '删除'),
+            title: t('projects.deleteForeverTitle', null, 'Delete permanently'),
+            content: t('projects.confirmDeleteFact', null, 'Delete this fact?'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/projects/${projectId}/facts/${record.id}`);
-                    toastSuccess(t('common.delete', null, '删除'));
+                    toastSuccess(t('common.delete', null, 'Delete'));
                     if (onMutated) onMutated();
                     else facts.reload({ silent: true });
                 } catch (error) {
-                    toastError(errText(error, t('projects.operationFailed', null, '操作失败')));
+                    toastError(errText(error, t('projects.operationFailed', null, 'Operation failed')));
                 }
             }
         });
@@ -94,10 +94,10 @@ export default function FactsPanel({
                 <div className="project-fact-key">
                     <code className="project-fact-key-chip" title={value}>{value}</code>
                     <div className="project-fact-key-meta">
-                        {record.pinned && <Tag size="small" color="blue" type="light">{t('projects.pinned', null, '置顶')}</Tag>}
+                        {record.pinned && <Tag size="small" color="blue" type="light">{t('projects.pinned', null, 'Pinned')}</Tag>}
                         {record.related_vulnerability_id && (
                             <Tag size="small" color="violet" type="light" title={record.related_vulnerability_id}>
-                                {t('projects.relatedVulnIdTitle', null, '关联漏洞 ID')}
+                                {t('projects.relatedVulnIdTitle', null, 'Related vulnerability ID')}
                             </Tag>
                         )}
                     </div>
@@ -105,7 +105,7 @@ export default function FactsPanel({
             )
         },
         {
-            title: t('projects.category', null, '分类'),
+            title: t('projects.category', null, 'Category'),
             dataIndex: 'category',
             width: 108,
             render: value => (
@@ -115,7 +115,7 @@ export default function FactsPanel({
             )
         },
         {
-            title: t('projects.summary', null, '摘要'),
+            title: t('projects.summary', null, 'Summary'),
             dataIndex: 'summary',
             render: (value, record) => (
                 <button type="button" className="project-cell-ellipsis project-link-button" title={value} onClick={() => onViewFact?.(record.fact_key)}>
@@ -124,7 +124,7 @@ export default function FactsPanel({
             )
         },
         {
-            title: t('projects.linksColumn', null, '关系'),
+            title: t('projects.linksColumn', null, 'Links'),
             dataIndex: 'link_counts',
             width: 92,
             render: value => {
@@ -132,26 +132,26 @@ export default function FactsPanel({
                 const inc = value?.incoming || 0;
                 if (!out && !inc) return <Text type="tertiary">—</Text>;
                 return (
-                    <span className="project-link-counts" title={t('projects.linkCountsTitle', null, '出边数 / 入边数')}>
+                    <span className="project-link-counts" title={t('projects.linkCountsTitle', null, 'Outgoing / incoming edge counts')}>
                         ↑{out} ↓{inc}
                     </span>
                 );
             }
         },
         {
-            title: t('projects.confidence', null, '置信度'),
+            title: t('projects.confidence', null, 'Confidence'),
             dataIndex: 'confidence',
             width: 92,
             render: value => <ConfidenceTag value={value} />
         },
         {
-            title: t('projects.updated', null, '更新'),
+            title: t('projects.updated', null, 'Updated'),
             dataIndex: 'updated_at',
             width: 158,
             render: value => <Text size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 224,
             render: (value, record) => {
@@ -159,18 +159,18 @@ export default function FactsPanel({
                 return (
                     <Space spacing={2} wrap>
                         <Button size="small" theme="borderless" onClick={() => onViewFact?.(record.fact_key)}>
-                            {t('projects.details', null, '详情')}
+                            {t('projects.details', null, 'Details')}
                         </Button>
                         <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => onEditFact?.(record.fact_key)}>
-                            {t('common.edit', null, '编辑')}
+                            {t('common.edit', null, 'Edit')}
                         </Button>
                         {deprecated ? (
                             <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => restore(record)}>
-                                {t('projects.restore', null, '恢复')}
+                                {t('projects.restore', null, 'Restore')}
                             </Button>
                         ) : (
                             <Popconfirm
-                                title={t('projects.confirmDeprecateFact', { factKey: record.fact_key }, `将事实 ${record.fact_key} 标记为已废弃？`)}
+                                title={t('projects.confirmDeprecateFact', { factKey: record.fact_key }, 'Mark fact {{factKey}} as deprecated?')}
                                 onConfirm={() => deprecate(record)}
                                 disabled={!canWrite}
                             >
@@ -178,14 +178,14 @@ export default function FactsPanel({
                                     size="small"
                                     theme="borderless"
                                     disabled={!canWrite}
-                                    title={t('projects.deprecateTitle', null, '标记为已废弃')}
+                                    title={t('projects.deprecateTitle', null, 'Mark as deprecated')}
                                 >
-                                    {t('projects.deprecate', null, '废弃')}
+                                    {t('projects.deprecate', null, 'Deprecate')}
                                 </Button>
                             </Popconfirm>
                         )}
                         <Button size="small" theme="borderless" type="danger" disabled={!canWrite} onClick={() => remove(record)}>
-                            {t('common.delete', null, '删除')}
+                            {t('common.delete', null, 'Delete')}
                         </Button>
                     </Space>
                 );
@@ -195,8 +195,8 @@ export default function FactsPanel({
 
     return (
         <SectionCard
-            title={t('projects.tabFacts', null, '事实黑板')}
-            description={t('projects.factToolbarHint', null, '索引仅含 key 与摘要；攻击链 / POC 写在 body，Agent 通过 get_project_fact 复现')}
+            title={t('projects.tabFacts', null, 'Fact board')}
+            description={t('projects.factToolbarHint', null, 'Index includes key and summary only (must include what + where + how to verify); put attack chain / POC in body, and reproduce via get_project_fact.')}
             extra={(
                 <Space>
                     <Button
@@ -206,7 +206,7 @@ export default function FactsPanel({
                         onClick={() => { if (onMutated) onMutated(); else facts.reload(); }}
                     />
                     <Button type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={onAddFact}>
-                        {t('projects.addFact', null, '添加事实')}
+                        {t('projects.addFact', null, 'Add fact')}
                     </Button>
                 </Space>
             )}
@@ -217,8 +217,8 @@ export default function FactsPanel({
                     prefix={<IconSearch />}
                     value={search}
                     showClear
-                    aria-label={t('projects.searchFactsSr', null, '搜索事实')}
-                    placeholder={t('projects.searchFactsPlaceholder', null, '搜索 key、摘要、body…')}
+                    aria-label={t('projects.searchFactsSr', null, 'Search facts')}
+                    placeholder={t('projects.searchFactsPlaceholder', null, 'Search key, summary, body…')}
                     onChange={value => setSearch(value)}
                     style={{ width: 260 }}
                 />
@@ -226,19 +226,19 @@ export default function FactsPanel({
                     value={category}
                     onChange={setCategory}
                     style={{ width: 146 }}
-                    optionList={[{ value: 'all', label: t('projects.all', null, '全部') }, ...FACT_CATEGORIES]}
+                    optionList={[{ value: 'all', label: t('projects.all', null, 'All') }, ...FACT_CATEGORIES]}
                 />
                 <Select
                     value={confidence}
                     onChange={setConfidence}
                     style={{ width: 128 }}
-                    optionList={[{ value: 'all', label: t('projects.all', null, '全部') }, ...CONFIDENCE_OPTIONS]}
+                    optionList={[{ value: 'all', label: t('projects.all', null, 'All') }, ...CONFIDENCE_OPTIONS]}
                 />
                 <Checkbox checked={hideDeprecated} onChange={event => setHideDeprecated(event.target.checked)}>
-                    {t('projects.hideDeprecated', null, '隐藏废弃')}
+                    {t('projects.hideDeprecated', null, 'Hide deprecated')}
                 </Checkbox>
                 <Checkbox checked={sparseOnly} onChange={event => setSparseOnly(event.target.checked)}>
-                    {t('projects.sparseOnly', null, '仅待补全')}
+                    {t('projects.sparseOnly', null, 'Sparse only')}
                 </Checkbox>
             </div>
             <DataTable
@@ -248,8 +248,8 @@ export default function FactsPanel({
                 loading={facts.loading}
                 pagination={{ pageSize: 20 }}
                 emptyText={search || category !== 'all' || confidence !== 'all'
-                    ? t('projects.noMatchingFacts', null, '无匹配事实，请调整筛选条件')
-                    : t('projects.noFacts', null, '暂无事实，点击「添加事实」或由 Agent 自动写入')}
+                    ? t('projects.noMatchingFacts', null, 'No matching facts, try adjusting filters')
+                    : t('projects.noFacts', null, 'No facts yet. Click Add fact or let Agent write facts automatically')}
             />
         </SectionCard>
     );

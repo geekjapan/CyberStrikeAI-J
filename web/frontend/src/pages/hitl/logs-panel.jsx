@@ -1,4 +1,4 @@
-/** 审批日志：GET /hitl/logs、GET /hitl/logs/:id、DELETE /hitl/logs（批量/清空）。 */
+/** Approval logs: GET /hitl/logs, GET /hitl/logs/:id, DELETE /hitl/logs (batch/clear). */
 import { useCallback, useMemo, useState } from 'react';
 import {
     Button, Input, Select, SideSheet, Space, Spin, Tag, Typography
@@ -33,8 +33,8 @@ function LogDetail({ logId, onClose }) {
             visible={Boolean(logId)}
             onCancel={onClose}
             width={720}
-            title={t('hitl.logModalView', null, '审批日志详情')}
-            footer={<Button onClick={onClose}>{t('common.close', null, '关闭')}</Button>}
+            title={t('hitl.logModalView', null, 'Audit log detail')}
+            footer={<Button onClick={onClose}>{t('common.close', null, 'Close')}</Button>}
         >
             <ErrorBanner error={error} onRetry={reload} />
             {loading && !data && <div className="hitl-panel-loading"><Spin /></div>}
@@ -43,20 +43,20 @@ function LogDetail({ logId, onClose }) {
                     <KeyValueList
                         columns={2}
                         items={[
-                            { label: t('hitl.colTool', null, '工具'), value: <Text strong>{data.toolName || '—'}</Text> },
+                            { label: t('hitl.colTool', null, 'Tool'), value: <Text strong>{data.toolName || '—'}</Text> },
                             {
-                                label: t('hitl.colDecision', null, '决策'),
+                                label: t('hitl.colDecision', null, 'Decision'),
                                 value: <Tag size="small" color={decisionColor(data.decision)}>{decisionLabel(data.decision)}</Tag>
                             },
-                            { label: '状态', value: decisionStatusLabel(data.status) },
-                            { label: t('hitl.colDecidedBy', null, '审批方'), value: decidedByLabel(data.decidedBy) },
-                            { label: '审批方类型', value: reviewerLabel(data.reviewer) },
+                            { label: t('ui.hitlLogs.fieldStatus', null, 'Status'), value: decisionStatusLabel(data.status) },
+                            { label: t('hitl.colDecidedBy', null, 'Reviewer'), value: decidedByLabel(data.decidedBy) },
+                            { label: t('ui.hitlLogs.fieldReviewerType', null, 'Reviewer type'), value: reviewerLabel(data.reviewer) },
                             {
-                                label: '审批引擎',
+                                label: t('ui.hitlLogs.fieldEngine', null, 'Approval engine'),
                                 value: engineLabel || '—'
                             },
                             {
-                                label: t('hitl.colConversation', null, '会话'),
+                                label: t('hitl.colConversation', null, 'Conversation'),
                                 value: data.conversationId
                                     ? (
                                         <Space spacing={4}>
@@ -66,15 +66,15 @@ function LogDetail({ logId, onClose }) {
                                     )
                                     : '—'
                             },
-                            { label: '模式', value: data.mode || '—' },
-                            { label: '创建时间', value: formatHitlTime(data.createdAt) },
-                            { label: '裁决时间', value: formatHitlTime(data.decidedAt) },
+                            { label: t('ui.hitlLogs.fieldMode', null, 'Mode'), value: data.mode || '—' },
+                            { label: t('ui.hitlLogs.fieldCreatedAt', null, 'Created at'), value: formatHitlTime(data.createdAt) },
+                            { label: t('ui.hitlLogs.fieldDecidedAt', null, 'Decided at'), value: formatHitlTime(data.decidedAt) },
                             { label: 'ID', value: <span className="hitl-mono">{data.id}</span> },
-                            { label: t('hitl.fieldComment', null, '备注'), value: data.comment || '—' }
+                            { label: t('hitl.fieldComment', null, 'Comment'), value: data.comment || '—' }
                         ]}
                     />
                     <ContextBlocks payload={payload} />
-                    <JsonViewer title={t('hitl.fieldPayload', null, '载荷')} value={payload} collapsed />
+                    <JsonViewer title={t('hitl.fieldPayload', null, 'Payload (JSON)')} value={payload} collapsed />
                 </div>
             )}
         </SideSheet>
@@ -111,17 +111,17 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
     const deleteSelected = useCallback(() => {
         if (!selected.length) return;
         confirmAction({
-            title: '批量删除审批日志',
-            content: `确定删除选中的 ${selected.length} 条审批日志？此操作不可恢复。`,
-            okText: t('common.delete', null, '删除'),
+            title: t('ui.hitlLogs.batchDeleteTitle', null, 'Delete approval logs'),
+            content: t('ui.hitlLogs.batchDeleteConfirm', { count: selected.length }, 'Delete the {{count}} selected approval logs? This cannot be undone.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del('/hitl/logs', { body: { ids: selected } });
-                    toastSuccess(`已删除 ${selected.length} 条审批日志`);
+                    toastSuccess(t('ui.hitlLogs.batchDeleted', { count: selected.length }, 'Deleted {{count}} approval logs'));
                     setSelected([]);
                     reload();
                 } catch (error) {
-                    toastError(error, '批量删除审批日志失败');
+                    toastError(error, t('ui.hitlLogs.batchDeleteFailed', null, 'Failed to delete approval logs'));
                 }
             }
         });
@@ -129,20 +129,20 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
 
     const clearAll = useCallback(() => {
         confirmAction({
-            title: t('hitl.clearAll', null, '清空审计日志'),
+            title: t('hitl.clearAll', null, 'Clear all'),
             content: q || decision !== 'all' || decidedBy !== 'all'
-                ? '将清空当前筛选条件下的全部已裁决日志（不会删除待审批项）。'
-                : '将清空全部已裁决审批日志（不会删除待审批项）。',
-            okText: t('hitl.clearAll', null, '清空'),
+                ? t('ui.hitlLogs.clearFilteredConfirm', null, 'This clears all decided logs that match the current filters (pending items are not deleted).')
+                : t('ui.hitlLogs.clearAllConfirm', null, 'This clears all decided approval logs (pending items are not deleted).'),
+            okText: t('hitl.clearAll', null, 'Clear all'),
             onOk: async () => {
                 try {
                     await api.del('/hitl/logs', { query, body: { all: true } });
-                    toastSuccess('审批日志已清空');
+                    toastSuccess(t('ui.hitlLogs.cleared', null, 'Approval logs cleared'));
                     setSelected([]);
                     setPage(1);
                     reload();
                 } catch (error) {
-                    toastError(error, '清空审批日志失败');
+                    toastError(error, t('ui.hitlLogs.clearFailed', null, 'Failed to clear approval logs'));
                 }
             }
         });
@@ -150,24 +150,24 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
 
     const columns = [
         {
-            title: t('hitl.colTool', null, '工具'),
+            title: t('hitl.colTool', null, 'Tool'),
             dataIndex: 'toolName',
             render: value => <span className="hitl-mono">{value || '—'}</span>
         },
         {
-            title: t('hitl.colConversation', null, '会话'),
+            title: t('hitl.colConversation', null, 'Conversation'),
             dataIndex: 'conversationId',
             width: 200,
             render: value => <span className="hitl-mono hitl-ellipsis" title={value || ''}>{value || '—'}</span>
         },
         {
-            title: t('hitl.colDecision', null, '决策'),
+            title: t('hitl.colDecision', null, 'Decision'),
             dataIndex: 'decision',
             width: 100,
             render: value => <Tag size="small" color={decisionColor(value)}>{decisionLabel(value)}</Tag>
         },
         {
-            title: t('hitl.colDecidedBy', null, '审批方'),
+            title: t('hitl.colDecidedBy', null, 'Reviewer'),
             dataIndex: 'decidedBy',
             width: 140,
             render: (value, record) => (
@@ -180,25 +180,25 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
             )
         },
         {
-            title: '备注',
+            title: t('ui.hitlLogs.colComment', null, 'Comment'),
             dataIndex: 'comment',
             render: (value, record) => (
                 <span title={value || ''}>{value || summarizePayload(parsePayload(record.payload))}</span>
             )
         },
         {
-            title: t('hitl.colTime', null, '时间'),
+            title: t('hitl.colTime', null, 'Time'),
             dataIndex: 'decidedAt',
             width: 180,
             render: (value, record) => formatHitlTime(value || record.createdAt)
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 90,
             render: id => (
                 <Button size="small" theme="borderless" onClick={() => onOpenDetail(id)}>
-                    {t('common.view', null, '详情')}
+                    {t('common.view', null, 'View')}
                 </Button>
             )
         }
@@ -219,7 +219,7 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
         <div className="hitl-logs-panel">
             {retentionDays > 0 && (
                 <p className="hitl-retention-hint">
-                    {t('hitl.retentionHint', { days: retentionDays }, `审批日志保留 ${retentionDays} 天，到期自动清理。`)}
+                    {t('hitl.retentionHint', { days: retentionDays }, 'Audit logs are kept for {{days}} days, then purged automatically.')}
                 </p>
             )}
             <ErrorBanner error={list.error} onRetry={reload} />
@@ -230,7 +230,7 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
                 loading={list.loading}
                 pagination={pagination}
                 size="small"
-                emptyText={t('hitl.logsEmpty', null, '暂无审批日志')}
+                emptyText={t('hitl.logsEmpty', null, 'No audit logs')}
                 rowSelection={{
                     selectedRowKeys: selected,
                     onChange: keys => setSelected(keys || [])
@@ -241,16 +241,16 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
                             showClear
                             style={{ width: 220 }}
                             value={searchInput}
-                            placeholder={t('hitl.searchPlaceholder', null, '搜索工具、会话或载荷…')}
+                            placeholder={t('hitl.searchPlaceholder', null, 'Tool, conversation, payload, comment…')}
                             onChange={value => { setSearchInput(value); setPage(1); }}
                         />
                         <Select
                             value={decision}
                             style={{ width: 120 }}
                             optionList={[
-                                { value: 'all', label: t('hitl.filterAll', null, '全部') },
-                                { value: 'approve', label: t('hitl.decisionApprove', null, '通过') },
-                                { value: 'reject', label: t('hitl.decisionReject', null, '拒绝') }
+                                { value: 'all', label: t('hitl.filterAll', null, 'All') },
+                                { value: 'approve', label: t('hitl.decisionApprove', null, 'Approve') },
+                                { value: 'reject', label: t('hitl.decisionReject', null, 'Reject') }
                             ]}
                             onChange={value => { setDecision(value); setPage(1); }}
                         />
@@ -258,16 +258,16 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
                             value={decidedBy}
                             style={{ width: 150 }}
                             optionList={[
-                                { value: 'all', label: t('hitl.filterAll', null, '全部') },
-                                { value: 'human', label: t('hitl.reviewerHuman', null, '人工') },
-                                { value: 'audit_agent', label: t('hitl.reviewerAgent', null, '审计 Agent') },
-                                { value: 'system', label: t('hitl.reviewerSystem', null, '系统') },
-                                { value: 'manual', label: t('hitl.reviewerManual', null, '手动录入') }
+                                { value: 'all', label: t('hitl.filterAll', null, 'All') },
+                                { value: 'human', label: t('hitl.reviewerHuman', null, 'Human') },
+                                { value: 'audit_agent', label: t('hitl.reviewerAgent', null, 'Audit Agent') },
+                                { value: 'system', label: t('hitl.reviewerSystem', null, 'System') },
+                                { value: 'manual', label: t('hitl.reviewerManual', null, 'Manual entry') }
                             ]}
                             onChange={value => { setDecidedBy(value); setPage(1); }}
                         />
                         <Button icon={<IconRefresh />} theme="borderless" size="small" onClick={reload} loading={list.loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button
                             size="small"
@@ -276,10 +276,12 @@ export default function LogsPanel({ canWrite, detailId, onOpenDetail, onCloseDet
                             disabled={!canWrite || !selected.length}
                             onClick={deleteSelected}
                         >
-                            批量删除{selected.length ? `（${selected.length}）` : ''}
+                            {selected.length
+                                ? t('ui.hitlLogs.batchDeleteCount', { count: selected.length }, 'Delete selected ({{count}})')
+                                : t('ui.hitlLogs.batchDelete', null, 'Delete selected')}
                         </Button>
                         <Button size="small" type="danger" theme="borderless" disabled={!canWrite || !total} onClick={clearAll}>
-                            {t('hitl.clearAll', null, '清空')}
+                            {t('hitl.clearAll', null, 'Clear all')}
                         </Button>
                     </Space>
                 )}

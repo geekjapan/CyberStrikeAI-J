@@ -1,4 +1,4 @@
-/** 项目下拉数据：资产范围与绑定共用。 */
+/** Project dropdown data, shared by the asset scope and binding. */
 import { api } from '../../../lib/http';
 import { useResource } from '../../../components/hooks';
 

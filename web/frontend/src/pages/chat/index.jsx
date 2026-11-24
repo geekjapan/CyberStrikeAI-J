@@ -1,4 +1,5 @@
-/** 对话工作台：会话列表、消息区、流式发送、审批和执行计划。 */
+/** Chat workbench: conversation list, message area, streaming send, approvals and execution plan. */
+import { isDefaultRole } from '../../lib/format';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button, Collapse, Progress, SideSheet, Typography } from '@douyinfe/semi-ui';
@@ -31,7 +32,7 @@ const ROLE_STORAGE_KEY = 'csai-chat-role';
 
 function chatRoleValue(value) {
     const name = typeof value === 'string' ? value.trim() : '';
-    return !name || name === '默认' ? '' : name;
+    return !name || isDefaultRole(name) ? '' : name;
 }
 const EMPTY_PLAN = { tasks: [], total: 0, completed: 0, activeStep: 0, running: false };
 const EMPTY_DETAIL = { conversation: null, messages: [], loading: false, error: null };
@@ -219,7 +220,7 @@ export default function Page() {
             );
             setApprovalSnapshot({ id, items });
         } catch (error) {
-            /* 审批轮询失败不打断对话 */
+            /* An approval polling failure does not interrupt the conversation */
         }
     }, [canReadHitl]);
 
@@ -235,7 +236,7 @@ export default function Page() {
             const payload = await api.get(`/conversations/${encodeURIComponent(id)}/plan-tasks`);
             if (seq === planSeq.current && conversationRef.current === id) setPlan(payload && typeof payload === 'object' ? payload : EMPTY_PLAN);
         } catch (error) {
-            /* 计划看板按需刷新，失败静默 */
+            /* The plan board refreshes on demand; failures are silent */
         } finally {
             if (seq === planSeq.current && conversationRef.current === id) setPlanLoading(false);
         }
@@ -272,9 +273,9 @@ export default function Page() {
     });
     const { live, sending, lastEvents, reset: resetRun, isStreaming } = run;
 
-    // 会话切换：清空流式状态并按需加载历史
+    // Conversation switch: clear the streaming state and load history as needed
     useEffect(() => {
-        // 极速回复可能先于路由提交完成，绑定会话时仍须保留最终事件。
+        // A very fast reply may finish before the route commit; the final events must still be kept when binding the conversation.
         const newlyBound = conversationId && boundByRun.current === conversationId;
         boundByRun.current = null;
         if (newlyBound || isStreaming(conversationId)) return;
@@ -345,7 +346,7 @@ export default function Page() {
             if (!projectFilter || projectFilter === projectId) openGroup(projectId || DEFAULT_WORKSPACE);
             reloadList();
         } catch (error) {
-            toastError(error, t('chat.projectChangeFailed', null, '更新对话所属项目失败'));
+            toastError(error, t('chat.projectChangeFailed', null, 'Failed to update the conversation project'));
         } finally {
             setProjectSaving(false);
         }
@@ -378,13 +379,13 @@ export default function Page() {
                 comment: comment || ''
             });
             toastSuccess(decision === 'approve'
-                ? t('chat.hitlApproved', null, '已批准本次调用')
-                : t('chat.hitlRejected', null, '已拒绝本次调用'));
+                ? t('chat.hitlApproved', null, 'This call was approved')
+                : t('chat.hitlRejected', null, 'This call was rejected'));
             setApprovalSnapshot(previous => previous?.id === id
                 ? { id, items: previous.items.filter(row => String(row.id || row.interruptId) !== item.interruptId) }
                 : previous);
         } catch (error) {
-            toastError(error, t('chat.hitlDecisionFailed', null, '提交审批失败'));
+            toastError(error, t('chat.hitlDecisionFailed', null, 'Failed to submit the decision'));
         } finally {
             if (conversationRef.current === id) {
                 setHitlBusy('');
@@ -400,12 +401,12 @@ export default function Page() {
         setHitlBusy(item.interruptId);
         try {
             await api.post('/hitl/dismiss', { interruptId: item.interruptId });
-            toastSuccess(t('chat.hitlDismissed', null, '已忽略该审批'));
+            toastSuccess(t('chat.hitlDismissed', null, 'Approval dismissed'));
             setApprovalSnapshot(previous => previous?.id === id
                 ? { id, items: previous.items.filter(row => String(row.id || row.interruptId) !== item.interruptId) }
                 : previous);
         } catch (error) {
-            toastError(error, t('chat.hitlDismissFailed', null, '忽略审批失败'));
+            toastError(error, t('chat.hitlDismissFailed', null, 'Failed to dismiss the approval'));
         } finally {
             if (conversationRef.current === id) {
                 setHitlBusy('');
@@ -435,7 +436,7 @@ export default function Page() {
             try {
                 const payload = await api.post('/chat-uploads', form);
                 const absolutePath = String(payload?.absolutePath || '').trim();
-                if (!absolutePath) throw new Error('服务端未返回文件路径');
+                if (!absolutePath) throw new Error(t('ui.chatIndex.noFilePath', null, 'The server did not return a file path'));
                 updateAttachments(prev => prev.map(item => (
                     item.id === entry.id ? { ...item, serverPath: absolutePath, uploading: false, error: false } : item
                 )));
@@ -443,7 +444,7 @@ export default function Page() {
                 updateAttachments(prev => prev.map(item => (
                     item.id === entry.id ? { ...item, uploading: false, error: true } : item
                 )));
-                toastError(error, t('chat.attachmentUploadFailed', { name: entry.fileName }, `附件 ${entry.fileName} 上传失败`));
+                toastError(error, t('chat.attachmentUploadFailed', { name: entry.fileName }, 'Failed'));
             }
         }));
     }, [updateComposer, t]);
@@ -476,20 +477,20 @@ export default function Page() {
         if (!canWrite || !canExecute || sending || backgroundRunning || checkingRun || projectSaving || model.waitingForChannel || !roleResolved) return;
         const text = draft.trim();
         if (!text && !attachments.length) {
-            toastWarning(t('chat.emptyMessage', null, '请输入内容或添加附件'));
+            toastWarning(t('chat.emptyMessage', null, 'Enter a message or add an attachment'));
             return;
         }
         if (attachments.some(item => item.uploading)) {
-            toastWarning(t('chat.waitingAttachmentsUpload', null, '附件仍在上传，请稍候'));
+            toastWarning(t('chat.waitingAttachmentsUpload', null, 'Waiting for attachments to finish uploading…'));
             return;
         }
         const ready = attachments.filter(item => item.serverPath && !item.error);
         if (attachments.length && ready.length !== attachments.length) {
-            toastWarning(t('chat.attachmentsUploadIncomplete', null, '存在上传失败的附件，请移除后再发送'));
+            toastWarning(t('chat.attachmentsUploadIncomplete', null, 'Some attachments failed to upload. Remove the failed items or pick files again before sending.'));
             return;
         }
 
-        const message = text || t('chat.filePrompt', null, '请解析我上传的附件。');
+        const message = text || t('chat.filePrompt', null, 'Please analyze the attachments I uploaded.');
         const displayContent = ready.length
             ? `${message}\n${ready.map(item => `📎 ${item.fileName}`).join('\n')}`
             : message;
@@ -514,7 +515,7 @@ export default function Page() {
         });
     }, [attachments, backgroundRunning, canWrite, canExecute, canDecideHitl, checkingRun, conversationId, draft, draftHitl, mode, model, newProjectId, projectSaving, resetRun, role, roleResolved, run, sending, t, updateComposer]);
 
-    // 漏洞页创建复测分支后跳转过来：自动发出服务端已解析的复测提示词（一键执行）。
+    // Arrived from the vulnerability page after it created a retest branch: auto-send the retest prompt resolved by the server (one-click run).
     const retestAutoSentRef = useRef(new Set());
     const retestNotifiedRef = useRef('');
     const retestDraftRestoredRef = useRef('');
@@ -528,16 +529,16 @@ export default function Page() {
             return;
         }
         if (detail.error || !canWrite || !canExecute) {
-            // 无法发送时提示并放弃自动执行；服务端仍保存 pending_prompt，回填输入框供手动续发。
+            // If sending is impossible, warn and give up auto-run; the server still keeps pending_prompt, which is filled back into the input for a manual resend.
             if (retestNotifiedRef.current !== conversationId) {
                 retestNotifiedRef.current = conversationId;
                 consumeRetestAutosend(conversationId);
-                toastWarning(t('vulnerabilityRetest.startFailed', null, '复测尚未成功发送，提示词已保存在分支中，请返回该分支继续。'));
+                toastWarning(t('vulnerabilityRetest.startFailed', null, 'The retest was not sent. Its prompt is saved in the branch; return there to continue.'));
             }
             return;
         }
         if (sending || backgroundRunning || checkingRun || !roleResolved) return;
-        // 等分支详情加载完成再发送：角色/审批配置继承自原始对话。
+        // Wait until the branch details are loaded before sending: role/approval settings are inherited from the original conversation.
         if (detail.conversation?.id !== conversationId) return;
         consumeRetestAutosend(conversationId);
         const id = conversationRef.current;
@@ -555,17 +556,17 @@ export default function Page() {
     }, [conversationId, detail.conversation, detail.error, sending, backgroundRunning, checkingRun,
         roleResolved, canWrite, canExecute, mode, model, resetRun, role, run, t, updateComposer]);
 
-    // 手动打开复测分支或自动发送被中断时：把服务端保存的 pending_prompt 回填输入框。
+    // When a retest branch is opened manually or the auto-send was interrupted: fill the server-saved pending_prompt back into the input.
     useEffect(() => {
         const conversation = detail.conversation;
         const pendingPrompt = String(conversation?.retest?.pending_prompt || '').trim();
         if (!conversationId || conversation?.id !== conversationId || !pendingPrompt) return;
         if (retestAutoSentRef.current.has(conversationId)) return;
-        // 一键执行还在等前置条件时不回填，避免发送时输入框残留提示词。
+        // Do not fill back while the one-click run is still waiting for prerequisites, so no prompt lingers in the input when sending.
         if (peekRetestAutosend(conversationId)) return;
         if (sending || backgroundRunning) return;
         if (String(draft || '').trim()) return;
-        // 只回填一次：用户清空后不再覆盖。
+        // Fill back only once: do not overwrite after the user clears it.
         if (retestDraftRestoredRef.current !== conversationId) {
             retestDraftRestoredRef.current = conversationId;
             updateComposer(conversationId, current => ({ ...current, draft: pendingPrompt }));
@@ -587,10 +588,10 @@ export default function Page() {
 
     const defaultTotal = groups.find(group => !group.projectId)?.total || 0;
     const workspaceGroups = [
-        { id: DEFAULT_WORKSPACE, title: t('chat.defaultWorkspace', null, '默认工作区'), total: defaultTotal },
+        { id: DEFAULT_WORKSPACE, title: t('chat.defaultWorkspace', null, 'Default workspace'), total: defaultTotal },
         ...groups.filter(group => group.projectId).map(group => ({
             id: group.projectId,
-            title: projects.find(project => project.id === group.projectId)?.name || t('chat.boundProject', null, '已绑定项目'),
+            title: projects.find(project => project.id === group.projectId)?.name || t('chat.boundProject', null, 'Linked project'),
             total: group.total,
             projectId: group.projectId
         }))
@@ -661,7 +662,7 @@ export default function Page() {
                     />
                     {plan.running && plan.total > 0 && (
                         <div className="chat-plan-strip">
-                            <Text size="small">{t('chat.planTasks', null, '执行计划')}</Text>
+                            <Text size="small">{t('chat.planTasks', null, 'Execution plan')}</Text>
                             <Progress
                                 percent={Math.round((Number(plan.completed || 0) / Math.max(1, Number(plan.total))) * 100)}
                                 showInfo={false}
@@ -670,7 +671,7 @@ export default function Page() {
                             />
                             <Text size="small" type="tertiary">
                                 {plan.completed}/{plan.total}
-                                {plan.activeStep ? ` · ${t('chat.planStep', { step: plan.activeStep }, `第 ${plan.activeStep} 步`)}` : ''}
+                                {plan.activeStep ? ` · ${t('chat.planStep', { step: plan.activeStep }, 'Step {{step}}')}` : ''}
                             </Text>
                             <Button
                                 size="small"
@@ -680,13 +681,13 @@ export default function Page() {
                                     setPlanOpen(true);
                                 }}
                             >
-                                {t('chat.planDetails', null, '详情')}
+                                {t('chat.planDetails', null, 'Details')}
                             </Button>
                         </div>
                     )}
                     {lastEvents.length > 0 && !live && (
                         <Collapse className="chat-events-strip">
-                            <Collapse.Panel itemKey="1" header={`${t('chat.rawEvents', null, '本轮原始事件')} · ${lastEvents.length}`}>
+                            <Collapse.Panel itemKey="1" header={`${t('chat.rawEvents', null, 'Raw events of this turn')} · ${lastEvents.length}`}>
                                 <pre className="chat-pre">
                                     {lastEvents.map((event, index) => `${index + 1}. ${JSON.stringify(event)}`).join('\n')}
                                 </pre>
@@ -756,7 +757,7 @@ export default function Page() {
                 placement="left"
                 width={300}
                 onCancel={() => setSidebarOpen(false)}
-                title={t('chat.conversations', null, '会话列表')}
+                title={t('chat.conversations', null, 'Conversations')}
                 bodyStyle={{ padding: 0 }}
             >
                 {sidebar}

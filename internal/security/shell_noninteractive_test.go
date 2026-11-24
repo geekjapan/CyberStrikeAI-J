@@ -72,7 +72,7 @@ func TestResolveShellNoOutputTimeoutSeconds(t *testing.T) {
 	}
 }
 
-// TestNonInteractiveStdinReadExitsQuickly 验证 exec </dev/null + attachNonInteractiveStdin 时 read 立即 EOF，不挂起。
+// TestNonInteractiveStdinReadExitsQuickly verifies that with exec </dev/null + attachNonInteractiveStdin, read gets EOF immediately and does not hang.
 func TestNonInteractiveStdinReadExitsQuickly(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping shell integration in -short")
@@ -97,7 +97,7 @@ func TestNonInteractiveStdinReadExitsQuickly(t *testing.T) {
 	}
 }
 
-// TestNonInteractiveStdinReadBlocksWithoutRedirect 对照：stdin 为永不写入的管道时 read 会挂起。
+// TestNonInteractiveStdinReadBlocksWithoutRedirect control case: read hangs when stdin is a pipe that is never written to.
 func TestNonInteractiveStdinReadBlocksWithoutRedirect(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping shell integration in -short")
@@ -107,7 +107,7 @@ func TestNonInteractiveStdinReadBlocksWithoutRedirect(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer r.Close()
-	// 保持 w 打开且不写数据，模拟「等待用户输入」
+	// Keep w open and write no data, simulating "waiting for user input"
 
 	cmd := exec.Command("sh", "-c", `read x; echo done`)
 	cmd.Stdin = r
@@ -123,6 +123,6 @@ func TestNonInteractiveStdinReadBlocksWithoutRedirect(t *testing.T) {
 			_ = cmd.Process.Kill()
 		}
 		_ = w.Close()
-		<-done // 等待 goroutine 退出
+		<-done // wait for the goroutine to exit
 	}
 }

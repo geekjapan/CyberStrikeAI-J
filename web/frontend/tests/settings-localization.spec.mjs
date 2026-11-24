@@ -56,7 +56,7 @@ test('Japanese is offered alongside the other languages and renders its own dict
     await page.goto('/static/app/#/dashboard');
     await ready(page);
     await page.getByRole('button', { name: 'zh-CN', exact: true }).click();
-    for (const name of ['English', '日本語', '简体中文', 'Русский', 'العربية']) await expect(page.getByText(name, { exact: true })).toBeVisible();
+    for (const name of ['English', '日本語', '简体中文']) await expect(page.getByText(name, { exact: true })).toBeVisible();
     await page.getByText('日本語', { exact: true }).click();
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja-JP');
     await expect(page.getByRole('button', { name: 'ja-JP', exact: true })).toBeVisible();

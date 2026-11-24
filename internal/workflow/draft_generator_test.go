@@ -104,7 +104,7 @@ func TestGenerateDraftFromLLMUsesOpenAICompatibleEndpoint(t *testing.T) {
 			t.Fatalf("system prompt still contains pipe enum: %q", payload.Messages[0].Content)
 		}
 		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"meta\":{\"id\":\"llm-port-scan\",\"name\":\"端口扫描\",\"description\":\"端口扫描\",\"enabled\":true},\"graph\":{\"nodes\":[{\"id\":\"start-1\",\"type\":\"start\",\"label\":\"开始\",\"position\":{\"x\":120,\"y\":150},\"config\":{\"input_keys\":\"message, target\"}},{\"id\":\"tool-2\",\"type\":\"tool\",\"label\":\"端口扫描\",\"position\":{\"x\":330,\"y\":150},\"config\":{\"tool_name\":\"nmap\",\"arguments\":\"{\\\"target\\\":\\\"{{inputs.target}}\\\"}\",\"timeout_seconds\":\"120\",\"join_strategy\":\"all_merge\"}},{\"id\":\"output-3\",\"type\":\"output\",\"label\":\"输出报告\",\"position\":{\"x\":540,\"y\":150},\"config\":{\"source_binding\":{\"from\":\"previous\",\"field\":\"output\"},\"join_strategy\":\"all_merge\"}}],\"edges\":[{\"id\":\"edge-1\",\"source\":\"start-1\",\"target\":\"tool-2\"},{\"id\":\"edge-2\",\"source\":\"tool-2\",\"target\":\"output-3\"}],\"config\":{\"schema_version\":1}},\"capabilities\":[{\"label\":\"端口扫描\",\"tool_name\":\"nmap\",\"tool_candidates\":[\"nmap\"]}],\"audit\":{\"assumptions\":[]}}"}}]}`))
+		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"{\"meta\":{\"id\":\"llm-port-scan\",\"name\":\"Port scan\",\"description\":\"Port scan\",\"enabled\":true},\"graph\":{\"nodes\":[{\"id\":\"start-1\",\"type\":\"start\",\"label\":\"Start\",\"position\":{\"x\":120,\"y\":150},\"config\":{\"input_keys\":\"message, target\"}},{\"id\":\"tool-2\",\"type\":\"tool\",\"label\":\"Port scan\",\"position\":{\"x\":330,\"y\":150},\"config\":{\"tool_name\":\"nmap\",\"arguments\":\"{\\\"target\\\":\\\"{{inputs.target}}\\\"}\",\"timeout_seconds\":\"120\",\"join_strategy\":\"all_merge\"}},{\"id\":\"output-3\",\"type\":\"output\",\"label\":\"Output report\",\"position\":{\"x\":540,\"y\":150},\"config\":{\"source_binding\":{\"from\":\"previous\",\"field\":\"output\"},\"join_strategy\":\"all_merge\"}}],\"edges\":[{\"id\":\"edge-1\",\"source\":\"start-1\",\"target\":\"tool-2\"},{\"id\":\"edge-2\",\"source\":\"tool-2\",\"target\":\"output-3\"}],\"config\":{\"schema_version\":1}},\"capabilities\":[{\"label\":\"Port scan\",\"tool_name\":\"nmap\",\"tool_candidates\":[\"nmap\"]}],\"audit\":{\"assumptions\":[]}}"}}]}`))
 	}))
 	defer srv.Close()
 
@@ -144,7 +144,7 @@ func TestGenerateDraftFromLLMReturnsErrorOnMalformedJSON(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected malformed JSON error")
 	}
-	if !strings.Contains(err.Error(), "解析大模型工作流 JSON 失败") {
+	if !strings.Contains(err.Error(), "Failed to parse LLM workflow JSON") {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
@@ -153,9 +153,9 @@ func TestNormalizeLLMDraftRepairsMissingRequiredConfig(t *testing.T) {
 	result := normalizeLLMDraft("随便生成一个工作流", DraftRequest{}, llmDraftEnvelope{
 		Graph: graphDef{
 			Nodes: []graphNode{
-				{ID: "start-1", Type: "start", Label: "开始", Config: map[string]any{}},
-				{ID: "agent-1", Type: "agent", Label: "分析", Config: map[string]any{}},
-				{ID: "out-1", Type: "output", Label: "输出结果", Config: map[string]any{}},
+				{ID: "start-1", Type: "start", Label: "Start", Config: map[string]any{}},
+				{ID: "agent-1", Type: "agent", Label: "Analyze", Config: map[string]any{}},
+				{ID: "out-1", Type: "output", Label: "Output result", Config: map[string]any{}},
 			},
 			Edges: []graphEdge{
 				{ID: "e1", Source: "start-1", Target: "agent-1"},
@@ -185,10 +185,10 @@ func TestNormalizeLLMDraftRepairsConditionBranches(t *testing.T) {
 	result := normalizeLLMDraft("如果发现异常则输出详情，否则输出正常", DraftRequest{}, llmDraftEnvelope{
 		Graph: graphDef{
 			Nodes: []graphNode{
-				{ID: "start-1", Type: "start", Label: "开始", Config: map[string]any{}},
-				{ID: "cond-1", Type: "condition", Label: "判断", Config: map[string]any{"expression": `{{inputs.message}} != ""`}},
-				{ID: "out-yes", Type: "output", Label: "异常", Config: map[string]any{}},
-				{ID: "out-no", Type: "output", Label: "正常", Config: map[string]any{}},
+				{ID: "start-1", Type: "start", Label: "Start", Config: map[string]any{}},
+				{ID: "cond-1", Type: "condition", Label: "Judge", Config: map[string]any{"expression": `{{inputs.message}} != ""`}},
+				{ID: "out-yes", Type: "output", Label: "Anomaly", Config: map[string]any{}},
+				{ID: "out-no", Type: "output", Label: "OK", Config: map[string]any{}},
 			},
 			Edges: []graphEdge{
 				{ID: "e1", Source: "start-1", Target: "cond-1"},

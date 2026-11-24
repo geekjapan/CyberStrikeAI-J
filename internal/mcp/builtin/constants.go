@@ -1,15 +1,15 @@
 package builtin
 
-// 内置工具名称常量
-// 所有代码中使用内置工具名称的地方都应该使用这些常量，而不是硬编码字符串
+// Built-in tool name constants
+// Everywhere in the code that uses built-in tool names should use these constants, not hard-coded strings
 const (
-	// 漏洞管理工具
+	// Vulnerability management tools
 	ToolRecordVulnerability       = "record_vulnerability"
 	ToolListVulnerabilities       = "list_vulnerabilities"
 	ToolGetVulnerability          = "get_vulnerability"
 	ToolUpdateVulnerabilityStatus = "update_vulnerability_status"
 
-	// 资产管理工具
+	// Asset management tools
 	ToolCreateAsset       = "create_asset"
 	ToolGetAsset          = "get_asset"
 	ToolQueryAssets       = "query_assets"
@@ -17,7 +17,7 @@ const (
 	ToolDeleteAsset       = "delete_asset"
 	ToolCompleteAssetScan = "complete_asset_scan"
 
-	// 项目黑板（事实）工具
+	// Project blackboard (facts) tools
 	ToolUpsertProjectFact    = "upsert_project_fact"
 	ToolGetProjectFact       = "get_project_fact"
 	ToolListProjectFacts     = "list_project_facts"
@@ -25,32 +25,32 @@ const (
 	ToolDeprecateProjectFact = "deprecate_project_fact"
 	ToolRestoreProjectFact   = "restore_project_fact"
 
-	// 知识库工具
+	// Knowledge base tools
 	ToolListKnowledgeRiskTypes = "list_knowledge_risk_types"
 	ToolSearchKnowledgeBase    = "search_knowledge_base"
 
-	// 视觉分析（本地图片 → VL 模型 → 文本摘要）
+	// Visual analysis (local image → VL model → text summary)
 	ToolAnalyzeImage = "analyze_image"
 
-	// 长耗时工具执行控制（后台 execution 查询/等待/取消）
+	// Long-running tool execution control (query/wait/cancel background executions)
 	ToolGetToolExecution    = "get_tool_execution"
 	ToolWaitToolExecution   = "wait_tool_execution"
 	ToolCancelToolExecution = "cancel_tool_execution"
 
-	// WebShell 助手工具（AI 在 WebShell 管理 - AI 助手 中使用）
+	// WebShell assistant tools (used by the AI in WebShell management - AI assistant)
 	ToolWebshellExec      = "webshell_exec"
 	ToolWebshellFileList  = "webshell_file_list"
 	ToolWebshellFileRead  = "webshell_file_read"
 	ToolWebshellFileWrite = "webshell_file_write"
 
-	// WebShell 连接管理工具（用于通过 MCP 管理 webshell 连接）
+	// WebShell connection management tools (for managing webshell connections via MCP)
 	ToolManageWebshellList   = "manage_webshell_list"
 	ToolManageWebshellAdd    = "manage_webshell_add"
 	ToolManageWebshellUpdate = "manage_webshell_update"
 	ToolManageWebshellDelete = "manage_webshell_delete"
 	ToolManageWebshellTest   = "manage_webshell_test"
 
-	// 批量任务队列（与 Web 端批量任务一致，供模型创建/启停/查询队列）
+	// Batch task queue (consistent with the Web batch tasks; lets the model create, start/stop and query queues)
 	ToolBatchTaskList            = "batch_task_list"
 	ToolBatchTaskGet             = "batch_task_get"
 	ToolBatchTaskCreate          = "batch_task_create"
@@ -65,18 +65,18 @@ const (
 	ToolBatchTaskUpdate          = "batch_task_update_task"
 	ToolBatchTaskRemove          = "batch_task_remove_task"
 
-	// C2 工具集（合并同类项，8 个统一工具）
-	ToolC2Listener   = "c2_listener"    // 监听器管理（create/start/stop/list/get/update/delete）
-	ToolC2Session    = "c2_session"     // 会话管理（list/get/set_sleep/kill/delete）
-	ToolC2Task       = "c2_task"        // 任务下发（统一 task_type 参数）
-	ToolC2TaskManage = "c2_task_manage" // 任务管理（get_result/wait/list/cancel）
-	ToolC2Payload    = "c2_payload"     // Payload 生成（oneliner/build）
-	ToolC2Event      = "c2_event"       // 事件查询
-	ToolC2Profile    = "c2_profile"     // Malleable Profile 管理（list/get/create/update/delete）
-	ToolC2File       = "c2_file"        // 文件管理（list/get_result）
+	// C2 toolset (similar items merged, 8 unified tools)
+	ToolC2Listener   = "c2_listener"    // Listener management (create/start/stop/list/get/update/delete)
+	ToolC2Session    = "c2_session"     // Session management (list/get/set_sleep/kill/delete)
+	ToolC2Task       = "c2_task"        // Task dispatch (unified task_type parameter)
+	ToolC2TaskManage = "c2_task_manage" // Task management (get_result/wait/list/cancel)
+	ToolC2Payload    = "c2_payload"     // Payload generation (oneliner/build)
+	ToolC2Event      = "c2_event"       // Event query
+	ToolC2Profile    = "c2_profile"     // Malleable Profile management (list/get/create/update/delete)
+	ToolC2File       = "c2_file"        // File management (list/get_result)
 )
 
-// IsBuiltinTool 检查工具名称是否是内置工具
+// IsBuiltinTool checks whether the tool name is a built-in tool
 func IsBuiltinTool(toolName string) bool {
 	switch toolName {
 	case ToolRecordVulnerability,
@@ -123,7 +123,7 @@ func IsBuiltinTool(toolName string) bool {
 		ToolBatchTaskAdd,
 		ToolBatchTaskUpdate,
 		ToolBatchTaskRemove,
-		// C2 工具
+		// C2 tools
 		ToolC2Listener,
 		ToolC2Session,
 		ToolC2Task,
@@ -138,7 +138,7 @@ func IsBuiltinTool(toolName string) bool {
 	}
 }
 
-// GetAllBuiltinTools 返回所有内置工具名称列表
+// GetAllBuiltinTools returns the list of all built-in tool names
 func GetAllBuiltinTools() []string {
 	return []string{
 		ToolRecordVulnerability,
@@ -185,7 +185,7 @@ func GetAllBuiltinTools() []string {
 		ToolBatchTaskAdd,
 		ToolBatchTaskUpdate,
 		ToolBatchTaskRemove,
-		// C2 工具
+		// C2 tools
 		ToolC2Listener,
 		ToolC2Session,
 		ToolC2Task,

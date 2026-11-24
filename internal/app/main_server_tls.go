@@ -21,7 +21,7 @@ import (
 	"cyberstrike-ai/internal/config"
 )
 
-// mainTLSMode 主 Web 服务 TLS 启动方式。
+// mainTLSMode is the TLS startup mode of the main Web service.
 type mainTLSMode int
 
 const (
@@ -30,9 +30,9 @@ const (
 	mainTLSAutoSelfSigned
 )
 
-// prepareMainServerTLS 根据 server 配置决定主站是否启用 HTTPS（及 HTTP/2 协商）。
-// fromFiles：使用 tls_cert_path + tls_key_path，由 http.Server.ListenAndServeTLS 加载 PEM。
-// autoSelfSigned：tls_auto_self_sign 生成并复用的自签证书，仅用于本地/测试。
+// prepareMainServerTLS decides, based on the server config, whether the main site enables HTTPS (and HTTP/2 negotiation).
+// fromFiles: uses tls_cert_path + tls_key_path; http.Server.ListenAndServeTLS loads the PEM.
+// autoSelfSigned: a self-signed certificate generated and reused when tls_auto_self_sign is set; for local/testing use only.
 func prepareMainServerTLS(cfg *config.ServerConfig, configDir string) (mode mainTLSMode, tlsConf *tls.Config, certFile, keyFile string, err error) {
 	if cfg == nil || !config.MainWebUIUsesHTTPS(cfg) {
 		return mainTLSOff, nil, "", "", nil
@@ -40,14 +40,14 @@ func prepareMainServerTLS(cfg *config.ServerConfig, configDir string) (mode main
 	certFile = strings.TrimSpace(cfg.TLSCertPath)
 	keyFile = strings.TrimSpace(cfg.TLSKeyPath)
 	if certFile != "" && keyFile != "" {
-		// 证书由 ListenAndServeTLS 从文件加载；此处仅提供最小 TLS 配置供 http2.ConfigureServer 合并 ALPN。
+		// The certificate is loaded from files by ListenAndServeTLS; here only a minimal TLS config is provided so http2.ConfigureServer can merge ALPN.
 		return mainTLSFromFiles, &tls.Config{MinVersion: tls.VersionTLS12}, certFile, keyFile, nil
 	}
 	if cfg.TLSAutoSelfSign {
 		path := filepath.Join(configDir, "data", "tls", "self-signed.pem")
 		cert, certErr := loadOrCreateMainServerSelfSignedCert(path)
 		if certErr != nil {
-			return mainTLSOff, nil, "", "", fmt.Errorf("读取或保存自签 TLS 证书 %s: %w", path, certErr)
+			return mainTLSOff, nil, "", "", fmt.Errorf("Failed to read or save self-signed TLS certificate %s: %w", path, certErr)
 		}
 		tlsConf = &tls.Config{
 			MinVersion:   tls.VersionTLS12,
@@ -55,7 +55,7 @@ func prepareMainServerTLS(cfg *config.ServerConfig, configDir string) (mode main
 		}
 		return mainTLSAutoSelfSigned, tlsConf, "", "", nil
 	}
-	return mainTLSOff, nil, "", "", fmt.Errorf("server: 已启用 TLS（tls_enabled / tls_auto_self_sign / 证书路径），请设置 tls_cert_path 与 tls_key_path，或将 tls_auto_self_sign 设为 true（仅测试环境）")
+	return mainTLSOff, nil, "", "", fmt.Errorf("server: TLS is enabled (tls_enabled / tls_auto_self_sign / certificate paths). Set tls_cert_path and tls_key_path, or set tls_auto_self_sign to true (test environments only)")
 }
 
 func loadOrCreateMainServerSelfSignedCert(path string) (tls.Certificate, error) {

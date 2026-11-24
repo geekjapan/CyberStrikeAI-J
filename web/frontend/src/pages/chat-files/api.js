@@ -1,5 +1,5 @@
 /**
- * 对话附件（chat_uploads）接口封装：列表、上传、目录、内容、下载、导出与路径解析。
+ * Conversation attachment (chat_uploads) API wrapper: list, upload, directory, content, download, export and path resolution.
  */
 import { api, downloadFile } from '../../lib/http';
 
@@ -38,7 +38,7 @@ export function downloadFileByPath(path, filename) {
     return downloadFile('/chat-uploads/download', { query: { path }, filename });
 }
 
-/** 取二进制内容（图片预览用），返回 objectURL，调用方负责 revoke。 */
+/** Fetch binary content (for image preview) and return an objectURL; the caller must revoke it. */
 export async function fetchBlobUrl(path) {
     const response = await api.raw('/chat-uploads/download', { query: { path }, timeout: 120000 });
     const blob = await response.blob();

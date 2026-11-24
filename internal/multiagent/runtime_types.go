@@ -10,8 +10,8 @@ type RunResult struct {
 	RuntimeCompletionReason string
 	Response                string
 	MCPExecutionIDs         []string
-	LastAgentTraceInput     string // 已序列化的消息带（JSON）：原生循环或 Agent 均写入，供续跑/攻击链等恢复上下文
-	LastAgentTraceOutput    string // 本轮助手侧对外展示文本（摘要或最终回复）
+	LastAgentTraceInput     string // Serialized message list (JSON): written by both the native loop and Agents, for restoring context on resume, attack chain, etc.
+	LastAgentTraceOutput    string // This turn's assistant-facing display text (summary or final reply)
 	Finalized               bool
 	Status                  string
 	CompletionReason        string

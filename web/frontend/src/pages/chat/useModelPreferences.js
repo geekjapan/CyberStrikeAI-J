@@ -7,10 +7,10 @@ export const REASONING_EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'];
 
 export function reasoningSummary(t, mode, effort) {
     if (mode !== 'off' && effort) {
-        const labels = { low: '低', medium: '中', high: '高', xhigh: '超高', max: 'ultra' };
+        const labels = { low: 'Low', medium: 'Medium', high: 'High', xhigh: 'Extra high', max: 'ultra' };
         return t(`chat.reasoningEffortLabels.${effort}`, null, labels[effort]);
     }
-    const labels = { default: '跟随系统', off: '关闭', on: '开启', auto: '自动' };
+    const labels = { default: 'Use system default', off: 'Off', on: 'On', auto: 'Auto' };
     return t(`chat.reasoningMode${mode[0].toUpperCase()}${mode.slice(1)}`, null, labels[mode]);
 }
 

@@ -1,4 +1,4 @@
-/** 关联会话：打开会话、沉淀攻击链、解除项目绑定。 */
+/** Linked conversations: open a conversation, promote the attack chain, unlink from the project. */
 import { useNavigate } from 'react-router-dom';
 import { Button, Space, Tag, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
@@ -28,9 +28,9 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
 
     const promote = (record) => {
         confirmAction({
-            title: t('projects.promoteAttackChain', null, '沉淀攻击链'),
-            content: t('projects.confirmPromoteAttackChain', null, '将该对话的攻击链沉淀到本项目？会创建/更新事实与关系边。'),
-            okText: t('projects.promoteAttackChain', null, '沉淀攻击链'),
+            title: t('projects.promoteAttackChain', null, 'Promote chain'),
+            content: t('projects.confirmPromoteAttackChain', null, 'Promote this conversation\'s attack chain into the project? Facts and edges will be created or updated.'),
+            okText: t('projects.promoteAttackChain', null, 'Promote chain'),
             danger: false,
             onOk: async () => {
                 try {
@@ -39,11 +39,11 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
                         facts_created: result?.facts_created || 0,
                         facts_updated: result?.facts_updated || 0,
                         edges_created: result?.edges_created || 0
-                    }, `已沉淀：新建 ${result?.facts_created || 0} / 更新 ${result?.facts_updated || 0} / 边 ${result?.edges_created || 0}`));
+                    }, 'Promoted: {{facts_created}} new / {{facts_updated}} updated / {{edges_created}} edges'));
                     conversations.reload({ silent: true });
                     onChanged?.();
                 } catch (error) {
-                    toastError(errText(error, t('projects.promoteAttackChainFailed', null, '沉淀失败')));
+                    toastError(errText(error, t('projects.promoteAttackChainFailed', null, 'Promote failed')));
                 }
             }
         });
@@ -51,17 +51,17 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
 
     const unbind = (record) => {
         confirmAction({
-            title: t('projects.unbind', null, '解绑'),
-            content: t('projects.confirmUnbindConversation', null, '解除该对话与当前项目的绑定？'),
-            okText: t('projects.unbind', null, '解绑'),
+            title: t('projects.unbind', null, 'Unbind'),
+            content: t('projects.confirmUnbindConversation', null, 'Unbind this conversation from current project?'),
+            okText: t('projects.unbind', null, 'Unbind'),
             onOk: async () => {
                 try {
                     await api.put(`/conversations/${record.id}/project`, { projectId: '' });
-                    toastSuccess(t('projects.projectUnbound', null, '已解除项目绑定'));
+                    toastSuccess(t('projects.projectUnbound', null, 'Project unbound'));
                     conversations.reload({ silent: true });
                     onChanged?.();
                 } catch (error) {
-                    toastError(errText(error, t('projects.unbindFailed', null, '解绑失败')));
+                    toastError(errText(error, t('projects.unbindFailed', null, 'Unbind failed')));
                 }
             }
         });
@@ -69,7 +69,7 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
 
     const columns = [
         {
-            title: t('projects.titleLabel', null, '标题'),
+            title: t('projects.titleLabel', null, 'Title'),
             dataIndex: 'title',
             render: (value, record) => (
                 <button
@@ -78,7 +78,7 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
                     onClick={() => navigate(`/chat?conversation=${encodeURIComponent(record.id)}`)}
                     title={value || record.id}
                 >
-                    {value || t('projects.untitledConversation', null, '未命名对话')}
+                    {value || t('projects.untitledConversation', null, 'Untitled conversation')}
                 </button>
             )
         },
@@ -89,7 +89,7 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
             render: value => <Text type="tertiary" size="small"><code>{value}</code></Text>
         },
         {
-            title: t('projects.updated', null, '更新'),
+            title: t('projects.updated', null, 'Updated'),
             dataIndex: 'updated_at',
             width: 170,
             render: (value, record) => (
@@ -97,7 +97,7 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
             )
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 280,
             render: (value, record) => (
@@ -107,25 +107,25 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
                         theme="borderless"
                         onClick={() => navigate(`/chat?conversation=${encodeURIComponent(record.id)}`)}
                     >
-                        {t('projects.open', null, '打开')}
+                        {t('projects.open', null, 'Open')}
                     </Button>
                     <Button
                         size="small"
                         theme="borderless"
                         disabled={!canWrite}
-                        title={t('projects.promoteAttackChainTitle', null, '将对话攻击链沉淀为项目事实与边')}
+                        title={t('projects.promoteAttackChainTitle', null, 'Promote conversation attack chain to project facts')}
                         onClick={() => promote(record)}
                     >
-                        {t('projects.promoteAttackChain', null, '沉淀攻击链')}
+                        {t('projects.promoteAttackChain', null, 'Promote chain')}
                     </Button>
                     <Button
                         size="small"
                         theme="borderless"
                         disabled={!canWriteChat}
-                        title={t('projects.unbindProjectTitle', null, '解除项目绑定')}
+                        title={t('projects.unbindProjectTitle', null, 'Unbind project')}
                         onClick={() => unbind(record)}
                     >
-                        {t('projects.unbind', null, '解绑')}
+                        {t('projects.unbind', null, 'Unbind')}
                     </Button>
                 </Space>
             )
@@ -134,8 +134,8 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
 
     return (
         <SectionCard
-            title={t('projects.tabConversations', null, '关联对话')}
-            description={t('projects.boundConversationsHint', null, '绑定到本项目的对话；点击可打开会话')}
+            title={t('projects.tabConversations', null, 'Bound conversations')}
+            description={t('projects.boundConversationsHint', null, 'Conversations bound to this project; click to open')}
             extra={<Tag size="small" color="blue" type="light">{rows.length}</Tag>}
         >
             <ErrorBanner error={errorProp(conversations.error)} onRetry={conversations.reload} />
@@ -145,7 +145,7 @@ export default function ConversationsPanel({ projectId, canWrite, onChanged }) {
                 rowKey="id"
                 loading={conversations.loading}
                 pagination={{ pageSize: 10 }}
-                emptyText={t('projects.noBoundConversations', null, '暂无绑定对话；在对话页选择本项目即可关联')}
+                emptyText={t('projects.noBoundConversations', null, 'No bound conversations yet; select this project in chat to bind')}
                 onRefresh={() => conversations.reload()}
             />
         </SectionCard>

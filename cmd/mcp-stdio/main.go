@@ -14,17 +14,17 @@ import (
 )
 
 func main() {
-	var configPath = flag.String("config", "config.yaml", "配置文件路径")
+	var configPath = flag.String("config", "config.yaml", "Path to the configuration file")
 	flag.Parse()
 
-	// 加载配置
+	// Load config
 	cfg, err := config.Load(*configPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "加载配置失败: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Failed to load configuration: %v\n", err)
 		os.Exit(1)
 	}
 
-	// 初始化日志（stdio 模式下使用 stderr 输出日志，避免干扰 JSON-RPC 通信）
+	// Initialize logging (in stdio mode, logs go to stderr to avoid interfering with JSON-RPC communication)
 	log := logger.New(cfg.Log.Level, "stderr", logger.DiagnosticOptions{
 		Dir:           cfg.Log.DiagnosticDir,
 		Disabled:      cfg.Log.DiagnosticDisabled,
@@ -32,27 +32,27 @@ func main() {
 	})
 	defer log.Sync()
 
-	// 创建MCP服务器
+	// Create MCP server
 	mcpServer := mcp.NewServer(log.Logger)
 	guard, err := toolguard.NewManager(cfg.EffectiveToolGuard())
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "初始化调用拦截失败: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Failed to initialize call interception: %v\n", err)
 		os.Exit(1)
 	}
 	mcpServer.SetToolGuard(guard)
 
-	// 创建安全工具执行器
+	// Create security tool executor
 	executor := security.NewExecutor(&cfg.Security, mcpServer, log.Logger)
 
-	// 注册工具
+	// Register tools
 	executor.RegisterTools(mcpServer)
 	mcp.RegisterExecutionControlTools(mcpServer, nil)
 
-	log.Logger.Info("MCP服务器（stdio模式）已启动，等待消息...")
+	log.Logger.Info("MCP server (stdio mode) started, waiting for messages...")
 
-	// 运行 stdio 循环
+	// Run stdio loop
 	if err := mcpServer.HandleStdio(); err != nil {
-		log.Logger.Error("MCP服务器运行失败", zap.Error(err))
+		log.Logger.Error("MCP server failed to run", zap.Error(err))
 		os.Exit(1)
 	}
 }

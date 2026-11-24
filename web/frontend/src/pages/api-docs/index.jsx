@@ -78,20 +78,20 @@ export default function ApiDocsPage() {
     return (
         <div className="api-docs-page">
             <PageHeader
-                title={t('apiDocs.title', null, 'API 文档')}
-                description={spec?.info?.description || 'CyberStrikeAI 开放接口'}
-                extra={<Button icon={<IconRefresh />} onClick={load} loading={loading}>{t('common.refresh', null, '刷新')}</Button>}
+                title={t('apiDocs.title', null, 'API Docs')}
+                description={spec?.info?.description || t('ui.apiDocs.defaultDescription', null, 'CyberStrikeAI open API')}
+                extra={<Button icon={<IconRefresh />} onClick={load} loading={loading}>{t('common.refresh', null, 'Refresh')}</Button>}
             />
             <div className="api-docs-layout">
                 <Card className="api-docs-sidebar" bordered={false}>
                     <Space vertical style={{ width: '100%' }} spacing={8}>
-                        <Input prefix={<IconSearch />} value={keyword} onChange={setKeyword} placeholder="搜索路径或说明" />
+                        <Input prefix={<IconSearch />} value={keyword} onChange={setKeyword} placeholder={t('ui.apiDocs.searchPlaceholder', null, 'Search paths or descriptions')} />
                         <Select
                             value={method}
                             onChange={setMethod}
                             style={{ width: '100%' }}
                             optionList={[
-                                { value: 'all', label: '全部方法' },
+                                { value: 'all', label: t('ui.apiDocs.allMethods', null, 'All methods') },
                                 ...['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].map(item => ({ value: item, label: item }))
                             ]}
                         />
@@ -113,7 +113,7 @@ export default function ApiDocsPage() {
                                 ))}
                             </div>
                         ))}
-                        {!loading && grouped.length === 0 && <Text type="tertiary">没有匹配的接口</Text>}
+                        {!loading && grouped.length === 0 && <Text type="tertiary">{t('ui.apiDocs.noMatch', null, 'No matching endpoints')}</Text>}
                     </div>
                 </Card>
                 <div className="api-docs-detail">
@@ -124,21 +124,21 @@ export default function ApiDocsPage() {
                                 <Tag color={METHOD_COLOR[selected.method.toLowerCase()]}>{selected.method}</Tag>
                                 <code className="api-docs-detail-path">{selected.path}</code>
                             </div>
-                            <Paragraph>{selected.summary || '无说明'}</Paragraph>
+                            <Paragraph>{selected.summary || t('ui.apiDocs.noSummary', null, 'No description')}</Paragraph>
                             <Tabs type="line">
-                                <Tabs.TabPane itemKey="params" tab="参数">
+                                <Tabs.TabPane itemKey="params" tab={t('ui.apiDocs.tabParams', null, 'Parameters')}>
                                     <JsonViewer value={selected.operation.parameters || []} title="Request Parameters" collapsed />
                                 </Tabs.TabPane>
-                                <Tabs.TabPane itemKey="body" tab="请求体">
+                                <Tabs.TabPane itemKey="body" tab={t('ui.apiDocs.tabBody', null, 'Request body')}>
                                     <JsonViewer value={selected.operation.requestBody || {}} title="Request Body" collapsed />
                                 </Tabs.TabPane>
-                                <Tabs.TabPane itemKey="responses" tab="响应">
+                                <Tabs.TabPane itemKey="responses" tab={t('ui.apiDocs.tabResponses', null, 'Responses')}>
                                     <JsonViewer value={selected.operation.responses || {}} title="Responses" collapsed />
                                 </Tabs.TabPane>
                             </Tabs>
                         </Card>
                     ) : (
-                        <Card bordered={false}><Text type="tertiary">{loading ? '加载中…' : '选择左侧接口查看详情'}</Text></Card>
+                        <Card bordered={false}><Text type="tertiary">{loading ? t('ui.apiDocs.loading', null, 'Loading…') : t('ui.apiDocs.selectHint', null, 'Select an endpoint on the left to see details')}</Text></Card>
                     )}
                 </div>
             </div>
