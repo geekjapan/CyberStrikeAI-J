@@ -4,14 +4,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 export const LANGUAGES = [
-    { id: 'zh-CN', label: '简体中文' },
     { id: 'en-US', label: 'English' },
+    { id: 'ja-JP', label: '日本語' },
+    { id: 'zh-CN', label: '简体中文' },
     { id: 'ru-RU', label: 'Русский' },
     { id: 'ar-SA', label: 'العربية' }
 ];
 
 const STORAGE_KEY = 'csai_lang';
-const DEFAULT_LANG = 'zh-CN';
+const DEFAULT_LANG = 'en-US';
+const FALLBACK_LANGS = ['en-US', 'ja-JP', 'zh-CN'];
 const RESOURCE_PREFIX = '/static/i18n';
 const cache = new Map();
 
@@ -22,6 +24,7 @@ export function detectLanguage() {
     } catch (error) { /* storage unavailable */ }
     const nav = String(navigator.language || '').toLowerCase();
     if (nav.startsWith('zh')) return 'zh-CN';
+    if (nav.startsWith('ja')) return 'ja-JP';
     if (nav.startsWith('ru')) return 'ru-RU';
     if (nav.startsWith('ar')) return 'ar-SA';
     if (nav.startsWith('en')) return 'en-US';
@@ -55,16 +58,20 @@ function interpolate(template, vars) {
 const I18nContext = createContext({ lang: DEFAULT_LANG, t: key => key, ready: false, setLanguage: () => {} });
 
 export function I18nProvider({ children }) {
-    const [lang, setLang] = useState(detectLanguage);
+    const [lang, setLang] = useState(() => {
+        const detected = detectLanguage();
+        document.documentElement.lang = detected; // 首次渲染前就绪，供 format.js 取格式语言
+        return detected;
+    });
     const [resources, setResources] = useState({});
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
-        Promise.all([loadResource(lang), loadResource(DEFAULT_LANG), loadResource('en-US')])
-            .then(([current, fallback, english]) => {
+        Promise.all([loadResource(lang), ...FALLBACK_LANGS.map(loadResource)])
+            .then(([current, ...fallbacks]) => {
                 if (cancelled) return;
-                setResources({ current, fallback, english });
+                setResources({ current, fallbacks });
                 setReady(true);
             });
         document.documentElement.lang = lang;
@@ -75,9 +82,8 @@ export function I18nProvider({ children }) {
 
     const t = useCallback((key, vars, fallback) => {
         if (!key) return fallback ?? '';
-        const value = lookup(resources.current, key)
-            ?? lookup(resources.fallback, key)
-            ?? lookup(resources.english, key);
+        let value = lookup(resources.current, key);
+        for (const resource of resources.fallbacks || []) value ??= lookup(resource, key);
         if (value === undefined) return fallback ?? key;
         return interpolate(value, vars);
     }, [resources]);
@@ -85,6 +91,7 @@ export function I18nProvider({ children }) {
     const setLanguage = useCallback(next => {
         if (!next || next === lang) return;
         setReady(false);
+        document.documentElement.lang = next;
         setLang(next);
         window.dispatchEvent(new CustomEvent('csai:languagechange', { detail: { lang: next } }));
     }, [lang]);

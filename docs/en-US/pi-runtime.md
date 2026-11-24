@@ -1,5 +1,7 @@
 # Pi runtime
 
+[中文](../zh-CN/pi-runtime.md) | [日本語](../ja-JP/pi-runtime.md)
+
 CyberStrikeAI uses Pi 1.5.2 as its only runtime. Go owns business state, permissions, MCP execution, evidence, and delivery checks; an isolated Node worker hosts the Pi SDK.
 
 Prefer public APIs from the pinned Pi SDK. Add host or worker logic where project permissions, business records, or compatibility require it.

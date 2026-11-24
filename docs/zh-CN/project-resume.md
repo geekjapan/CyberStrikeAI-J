@@ -1,6 +1,6 @@
 # 项目续聊与成果复用
 
-[English](../en-US/project-resume.md)
+[English](../en-US/project-resume.md) | [日本語](../ja-JP/project-resume.md)
 
 同一项目第二天继续任务时，应先恢复已有成果，再执行新的工作。仅保留聊天摘要不足以恢复脚本参数、依赖、成功证据和已经验证过的失败路线。
 

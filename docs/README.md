@@ -1,6 +1,6 @@
 # CyberStrikeAI Documentation
 
-[中文](#中文文档) | [English](#english-documentation)
+[中文](#中文文档) | [English](#english-documentation) | [日本語](#日本語ドキュメント)
 
 CyberStrikeAI documentation is organized by user journey. Start with deployment, then move to the topic that matches your task.
 
@@ -92,6 +92,50 @@ CyberStrikeAI documentation is organized by user journey. Start with deployment,
 - [Contributing](en-US/contributing-guide.md)
 - [Release Process](en-US/release-process.md)
 
+## 日本語ドキュメント
+
+### 目的から選ぶ
+
+- **すぐに試す**：[デプロイガイド](ja-JP/deployment.md) → [設定リファレンス](ja-JP/configuration.md) → [トラブルシューティング](ja-JP/troubleshooting.md)
+- **本番デプロイ**：[設定プロファイル](ja-JP/configuration-profiles.md) → [セキュリティ強化](ja-JP/security-hardening.md) → [運用 Runbooks](ja-JP/runbooks.md) → [監査と監視](ja-JP/audit-and-monitoring.md)
+- **連携と自動化**：[API リファレンス](ja-JP/api-reference.md) → [API Recipes](ja-JP/api-recipes.md) → [MCP フェデレーション](ja-JP/mcp-federation.md)
+- **開発に参加する**：[開発者ガイド](ja-JP/developer-guide.md) → [テストガイド](ja-JP/testing.md) → [コントリビューション規約](ja-JP/contributing-guide.md)
+
+### 中核概念とオーケストレーション
+
+- [アーキテクチャ](ja-JP/architecture.md)
+- [セキュリティモデル](ja-JP/security-model.md)
+- [エージェントとロール](ja-JP/agent-and-role-guide.md)
+- [Skills ガイド](ja-JP/skills-guide.md)
+- [Pi マルチエージェント](ja-JP/MULTI_AGENT_PI.md)
+- [ブラックボードとコンテキストメモリ](ja-JP/blackboard-context-memory.md)
+- [エージェントの最終回答ガバナンス](ja-JP/agent-finalization-best-practices.md)
+- [ワークフロー](ja-JP/workflow-graph.md)
+- [呼び出しブロックルール](ja-JP/tool-call-guard.md)
+- [ツール実行ガバナンス](ja-JP/tool-execution-governance.md)
+- [ヒューマンインザループのベストプラクティス](ja-JP/hitl-best-practices.md)
+
+### 機能ガイド
+
+- [資産管理](ja-JP/asset-management.md)
+- [プロジェクトタスクの再開](ja-JP/project-resume.md)
+- [トークン使用量の分析](ja-JP/token-usage-monitoring.md)
+- [ナレッジベース](ja-JP/knowledge-base.md)
+- [RBAC 権限管理](ja-JP/rbac.md)
+- [ボット連携](ja-JP/robot.md)
+- [ビジョン分析](ja-JP/VISION.md)
+- [WebShell 管理](ja-JP/webshell.md)
+- [C2 の使い方](ja-JP/c2.md)
+
+### 開発とリリース
+
+- [開発者ガイド](ja-JP/developer-guide.md)
+- [プラグイン開発](ja-JP/plugin-development.md)
+- [フロントエンドの国際化](ja-JP/frontend-i18n.md)
+- [テストガイド](ja-JP/testing.md)
+- [コントリビューション規約](ja-JP/contributing-guide.md)
+- [リリースプロセス](ja-JP/release-process.md)
+
 ## Documentation conventions
 
 - Commands assume the repository root unless stated otherwise.
@@ -102,5 +146,5 @@ CyberStrikeAI documentation is organized by user journey. Start with deployment,
 
 - 公开文档面向用户和贡献者，保留使用指南、稳定接口与架构说明、兼容性说明和发布记录。内部任务阶段记录、对话确认、一次性核查表和本地验证流水账应保存在仓库外，不作为产品文档提交。
 - Public docs serve users and contributors: usage guides, stable API and architecture references, compatibility notes, and release records. Keep internal task journals, conversation approvals, one-off review sheets, and local verification logs outside the repository.
-- 中英文指南使用相同文件名，并提供语言切换链接；各语言索引覆盖对应的全部指南。
-- Chinese and English guides use matching filenames and language-switch links; each locale index covers all guides in that language.
+- 中文、英文与日文指南使用相同文件名，并提供语言切换链接；各语言索引覆盖对应的全部指南。
+- Chinese, English, and Japanese guides use matching filenames and language-switch links; each locale index covers all guides in that language.

@@ -1,5 +1,7 @@
 # 审计与监控
 
+[English](../en-US/audit-and-monitoring.md) | [日本語](../ja-JP/audit-and-monitoring.md)
+
 CyberStrikeAI 有两类常用可观测数据：平台操作审计和工具执行监控。二者用途不同，建议同时开启。
 
 ## 平台审计

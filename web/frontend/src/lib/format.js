@@ -41,25 +41,31 @@ export const STATUS_COLOR = {
     archived: 'grey'
 };
 
-export function formatDateTime(value, locale = 'zh-CN') {
+// 日期与数字格式跟随界面语言，未知时用 en-US；ar-SA 默认是伊斯兰历，这里固定公历。
+export function currentLocale() {
+    const lang = (typeof document !== 'undefined' && document.documentElement.lang) || 'en-US';
+    return lang === 'ar-SA' ? 'ar-SA-u-ca-gregory' : lang;
+}
+
+export function formatDateTime(value, locale = currentLocale()) {
     if (!value) return '—';
     const date = value instanceof Date ? value : new Date(value);
     if (!Number.isFinite(date.getTime())) return '—';
-    return date.toLocaleString(locale, { hour12: false });
+    return date.toLocaleString(locale, { hourCycle: 'h23' });
 }
 
-export function formatDate(value, locale = 'zh-CN') {
+export function formatDate(value, locale = currentLocale()) {
     if (!value) return '—';
     const date = value instanceof Date ? value : new Date(value);
     if (!Number.isFinite(date.getTime())) return '—';
     return date.toLocaleDateString(locale);
 }
 
-export function formatTime(value, locale = 'zh-CN') {
+export function formatTime(value, locale = currentLocale()) {
     if (!value) return '—';
     const date = value instanceof Date ? value : new Date(value);
     if (!Number.isFinite(date.getTime())) return '—';
-    return date.toLocaleTimeString(locale, { hour12: false });
+    return date.toLocaleTimeString(locale, { hourCycle: 'h23' });
 }
 
 export function relativeTime(value, t) {
@@ -85,7 +91,7 @@ export function formatBytes(bytes) {
     return `${size.toFixed(size >= 100 ? 0 : 1)} ${units[index]}`;
 }
 
-export function formatNumber(value, locale = 'zh-CN') {
+export function formatNumber(value, locale = currentLocale()) {
     const number = Number(value);
     if (!Number.isFinite(number)) return '—';
     return number.toLocaleString(locale);

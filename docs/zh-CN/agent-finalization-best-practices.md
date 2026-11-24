@@ -1,5 +1,7 @@
 # 原生 Agent 运行收尾与任务验收
 
+[English](../en-US/agent-finalization-best-practices.md) | [日本語](../ja-JP/agent-finalization-best-practices.md)
+
 Pi 的 `agent_settled` 表示本次模型运行不再自动继续。业务任务是否完成，仍由 Go 的运行状态、工具记录和验收条件决定。
 
 ## 单次运行

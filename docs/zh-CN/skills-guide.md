@@ -1,5 +1,7 @@
 # Skills 指南
 
+[English](../en-US/skills-guide.md) | [日本語](../ja-JP/skills-guide.md)
+
 Skills 用于给 Agent 提供可按需加载的专题能力、流程说明、模板和参考资料。它适合承载稳定方法论，而不是一次性任务输入。
 
 ## 目录结构

@@ -1,5 +1,7 @@
 # Pi Token 用量监控
 
+[English](../en-US/token-usage-monitoring.md) | [日本語](../ja-JP/token-usage-monitoring.md)
+
 模型用量来自 Pi 返回的 usage，Go 在模型轮次结束后汇总，通过 `agent_usage_summary` 写入现有统计和时间线。辅助 HTTP 调用与供应商账单可能有不同覆盖范围，因此本地统计不等于账户账单。
 
 ## 口径

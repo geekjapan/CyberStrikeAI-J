@@ -1,6 +1,6 @@
 # MCP Federation
 
-[中文](../zh-CN/mcp-federation.md)
+[中文](../zh-CN/mcp-federation.md) | [日本語](../ja-JP/mcp-federation.md)
 
 CyberStrikeAI uses MCP as the primary tool protocol. Tools can be built-in, YAML-backed, Skill-local, or provided by external MCP servers.
 

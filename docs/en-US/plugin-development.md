@@ -1,6 +1,6 @@
 # Plugin Development
 
-[中文](../zh-CN/plugin-development.md)
+[中文](../zh-CN/plugin-development.md) | [日本語](../ja-JP/plugin-development.md)
 
 Plugins live under `plugins/`. The repo ships two reference implementations: **Burp Suite extension** and **Chromium DevTools extension**. Integrations typically use HTTP APIs, MCP servers, or resource packs (tools, roles, Skills, agents).
 

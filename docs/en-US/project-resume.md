@@ -1,6 +1,6 @@
 # Resuming project conversations and reusing results
 
-[中文](../zh-CN/project-resume.md)
+[中文](../zh-CN/project-resume.md) | [日本語](../ja-JP/project-resume.md)
 
 When continuing work on the same project the next day, restore existing results before starting new work. A chat summary alone cannot recover script parameters, dependencies, success evidence, or previously tested unsuccessful approaches.
 

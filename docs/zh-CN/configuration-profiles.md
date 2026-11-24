@@ -1,6 +1,6 @@
 # 配置画像
 
-[English](../en-US/configuration-profiles.md)
+[English](../en-US/configuration-profiles.md) | [日本語](../ja-JP/configuration-profiles.md)
 
 本文给出几套常用配置画像。它们不是完整 `config.yaml`，而是部署时最容易影响安全和可用性的关键段落。
 

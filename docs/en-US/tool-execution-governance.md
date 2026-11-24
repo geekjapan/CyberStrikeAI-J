@@ -1,5 +1,7 @@
 # Tool Execution Governance
 
+[中文](../zh-CN/tool-execution-governance.md) | [日本語](../ja-JP/tool-execution-governance.md)
+
 [Back to English documentation](README.md)
 
 This document describes how CyberStrikeAI governs long-running tools, blocking MCP calls, oversized outputs, cancellation, and context restore. The goal is to preserve standard Agent/Pi tool semantics while preventing tool hangs, context blowups, oversized database records, and unsafe resume behavior.

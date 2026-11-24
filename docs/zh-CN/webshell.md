@@ -1,5 +1,7 @@
 # WebShell 管理
 
+[English](../en-US/webshell.md) | [日本語](../ja-JP/webshell.md)
+
 WebShell 管理用于保存授权目标的 WebShell 连接，并通过 Web 页面或 Agent 工具执行命令、文件操作和上下文分析。
 
 ## 基本流程

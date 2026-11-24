@@ -1,5 +1,7 @@
 # 测试指南
 
+[English](../en-US/testing.md) | [日本語](../ja-JP/testing.md)
+
 CyberStrikeAI 的测试包括 Go 单测、配置验证、API 手测、MCP 工具验证和前端冒烟测试。
 
 ## Go 单测

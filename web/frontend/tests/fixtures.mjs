@@ -19,7 +19,7 @@ export const UI_PERMISSIONS = [
     'project:write', 'vulnerability:write'
 ];
 
-const translations = new Map(['zh-CN', 'en-US'].map(lang => [
+const translations = new Map(['zh-CN', 'en-US', 'ja-JP'].map(lang => [
     lang, JSON.parse(readFileSync(new URL(`../../static/i18n/${lang}.json`, import.meta.url), 'utf8'))
 ]));
 // Use the real dictionaries, not stubbed translations that hide localization changes.
@@ -254,7 +254,7 @@ class MockApi {
             entry.status = response.status ?? 200;
             return;
         }
-        const language = /^\/static\/i18n\/(zh-CN|en-US)\.json$/.exec(url.pathname)?.[1];
+        const language = /^\/static\/i18n\/(zh-CN|en-US|ja-JP)\.json$/.exec(url.pathname)?.[1];
         if (method === 'GET' && language) return route.fulfill({ json: translations.get(language) });
         // Only local Vite modules/documents and static visual assets may reach the dev server.
         // fetch/XHR outside the explicitly mocked endpoints is never passed through.

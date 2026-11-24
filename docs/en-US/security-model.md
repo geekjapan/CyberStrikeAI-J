@@ -1,6 +1,6 @@
 # Security Model
 
-[中文](../zh-CN/security-model.md)
+[中文](../zh-CN/security-model.md) | [日本語](../ja-JP/security-model.md)
 
 CyberStrikeAI is not a generic chatbot. It is a high-privilege security automation system with command execution, MCP tools, WebShell management, optional C2, batch tasks, and multi-agent orchestration.
 

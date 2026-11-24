@@ -1,6 +1,6 @@
 # 中文文档
 
-[文档首页](../README.md) | [English](../en-US/README.md)
+[文档首页](../README.md) | [English](../en-US/README.md) | [日本語](../ja-JP/README.md)
 
 ## 按目标开始
 

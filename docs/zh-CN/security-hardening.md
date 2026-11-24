@@ -1,6 +1,6 @@
 # 安全加固指南
 
-[English](../en-US/security-hardening.md)
+[English](../en-US/security-hardening.md) | [日本語](../ja-JP/security-hardening.md)
 
 本文给出 CyberStrikeAI 上线前和持续运行中的安全加固清单。
 

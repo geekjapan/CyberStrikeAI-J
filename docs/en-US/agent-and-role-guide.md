@@ -1,6 +1,6 @@
 # Agent and Role Guide
 
-[中文](../zh-CN/agent-and-role-guide.md)
+[中文](../zh-CN/agent-and-role-guide.md) | [日本語](../ja-JP/agent-and-role-guide.md)
 
 Agent behavior is shaped by roles, Markdown sub-agents, Skills, tool visibility, and HITL policy.
 

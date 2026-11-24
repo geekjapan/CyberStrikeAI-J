@@ -1,5 +1,7 @@
 # Pi 原生运行时
 
+[English](../en-US/pi-runtime.md) | [日本語](../ja-JP/pi-runtime.md)
+
 CyberStrikeAI 仅使用 Pi 1.5.2（`@earendil-works/pi-coding-agent`、`pi-ai`），Go 保留业务、权限、工具执行和证据管理。
 
 维护时优先使用当前锁定版本的 Pi SDK 公共接口。只有需要项目权限、业务记录或兼容行为时，才在宿主或 Worker 增加逻辑。

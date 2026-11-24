@@ -1,5 +1,7 @@
 # 安全模型
 
+[English](../en-US/security-model.md) | [日本語](../ja-JP/security-model.md)
+
 CyberStrikeAI 面向授权安全测试场景，内置命令执行、MCP 工具、WebShell、C2、批量任务和多代理编排等能力。部署者必须把它当作高权限安全工具管理，而不是普通聊天应用。
 
 ## 信任边界

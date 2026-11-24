@@ -26,6 +26,7 @@ func TestFrontendRoutes(t *testing.T) {
 		{"/static/logo.png", "", http.StatusOK},
 		{"/static/site.webmanifest", "", http.StatusOK},
 		{"/static/i18n/en-US.json", "", http.StatusOK},
+		{"/static/i18n/ja-JP.json", "", http.StatusOK},
 		{"/static/app/", "", http.StatusOK},
 		{"/static/js/chat.js", "", http.StatusNotFound},
 	} {

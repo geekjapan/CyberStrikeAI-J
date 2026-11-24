@@ -1,5 +1,7 @@
 # Native Agent finalization and task acceptance
 
+[中文](../zh-CN/agent-finalization-best-practices.md) | [日本語](../ja-JP/agent-finalization-best-practices.md)
+
 Pi `agent_settled` ends automatic model work for the current run. Go still decides whether the business result can be finalized.
 
 `internal/agentfinalizer` keeps runtime failure, cancellation and iteration-limit outcomes separate from candidate assistant text. Pending tool executions, empty responses and missing required execution evidence prevent completion. Specialist output must be checked against execution receipts; `exit.final_result` does not bypass finalization.

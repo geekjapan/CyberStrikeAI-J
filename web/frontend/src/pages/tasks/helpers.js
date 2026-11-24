@@ -1,4 +1,5 @@
 /** 任务页私有工具：状态字典、进度计算、错误文本归一化。 */
+import { currentLocale } from '../../lib/format';
 
 export const QUEUE_STATUS = {
     pending: { label: '待执行', color: 'amber' },
@@ -69,7 +70,7 @@ export function queueStatusView(queue) {
     const base = QUEUE_STATUS[String(queue?.status || '')] || { label: queue?.status || '—', color: 'grey' };
     const cronOn = queue?.scheduleMode === 'cron' && queue?.scheduleEnabled !== false;
     const nextRun = queue?.nextRunAt ? new Date(queue.nextRunAt) : null;
-    const nextText = nextRun && Number.isFinite(nextRun.getTime()) ? nextRun.toLocaleString('zh-CN', { hour12: false }) : '';
+    const nextText = nextRun && Number.isFinite(nextRun.getTime()) ? nextRun.toLocaleString(currentLocale(), { hourCycle: 'h23' }) : '';
     const stats = queueStats(queue);
     const blockedNote = stats.blocked > 0 ? (queue?.lastRunError || `${stats.blocked} 项受阻`) : '';
     if (stats.blocked > 0 && stats.completed === 0 && stats.failed === 0) {

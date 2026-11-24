@@ -1,5 +1,7 @@
 # 发布流程
 
+[English](../en-US/release-process.md) | [日本語](../ja-JP/release-process.md)
+
 本文用于维护者或部署者发布、升级和回滚 CyberStrikeAI。
 
 ## 版本准备

@@ -1,5 +1,7 @@
 # Pi 长上下文与项目续接记录
 
+[English](../en-US/blackboard-context-memory.md) | [日本語](../ja-JP/blackboard-context-memory.md)
+
 Pi 的 SessionManager 保存完整 JSONL 会话和压缩条目，工作上下文由当前分支及压缩结果重建。模型上下文窗口与完整会话记录是不同的数据层。
 
 ## 自动续接

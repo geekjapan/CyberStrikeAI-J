@@ -1,5 +1,7 @@
 # 插件开发
 
+[English](../en-US/plugin-development.md) | [日本語](../ja-JP/plugin-development.md)
+
 CyberStrikeAI 当前仓库中的插件主要位于 `plugins/`，已有 **Burp Suite 扩展**与 **Chromium 浏览器扩展** 两个参考实现。插件通常通过 HTTP API、MCP 或本地文件与主应用集成。
 
 ## 目录

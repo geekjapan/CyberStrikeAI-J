@@ -1,6 +1,6 @@
 # CyberStrikeAI Robot / Chatbot Guide
 
-[中文](../zh-CN/robot.md)
+[中文](../zh-CN/robot.md) | [日本語](../ja-JP/robot.md)
 
 This guide covers **Personal WeChat, WeCom, DingTalk, Lark, Telegram, Slack, Discord, and QQ Bot**, including platform connectivity, RBAC identity binding, service-account allowlists, commands, verification, and troubleshooting.
 

@@ -1,6 +1,6 @@
 # CyberStrikeAI Workflows Guide
 
-[中文](../zh-CN/workflow-graph.md)
+[中文](../zh-CN/workflow-graph.md) | [日本語](../ja-JP/workflow-graph.md)
 
 This document explains how to use **Workflows**: building workflows on the canvas, configuring node types, passing data between nodes, and binding a workflow to a role for automatic execution.
 

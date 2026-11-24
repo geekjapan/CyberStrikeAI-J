@@ -1,5 +1,7 @@
 # Tool call blocking
 
+[中文](../zh-CN/tool-call-guard.md) | [日本語](../ja-JP/tool-call-guard.md)
+
 The **Security** sidebar groups the existing **Human in the loop** page with **Call blocking**. Call blocking checks internal MCP tools, external MCP tools, and HTTP MCP calls immediately before execution, independently of HITL approvals and allowlists.
 
 The standalone `cmd/mcp-stdio` service also loads these rules. As a separate process, it requires a restart to pick up settings saved by the web application.

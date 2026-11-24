@@ -2,6 +2,7 @@ import { useId, useMemo, useRef } from 'react';
 import { Banner, Button, Popover, Select, Tag, TextArea, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconArrowUp, IconChevronDown, IconDesktop, IconFolder, IconPaperclip, IconPlus, IconShield, IconStop, IconUser } from '@douyinfe/semi-icons';
 import { useT } from '../../lib/i18n';
+import { currentLocale } from '../../lib/format';
 import { modelChannelName } from '../../lib/model-channel';
 import { ModelSettings } from './ChatSettings';
 import { reasoningSummary } from './useModelPreferences';
@@ -94,7 +95,7 @@ export default function Composer({
         const list = (Array.isArray(roles) ? roles : []).filter(item => item?.name);
         const named = list
             .filter(item => item.enabled !== false && item.name !== '默认')
-            .sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+            .sort((a, b) => a.name.localeCompare(b.name, currentLocale()));
         const fallback = list.find(item => item.name === '默认');
         const toOption = item => ({
             value: item.name === '默认' ? '' : item.name,

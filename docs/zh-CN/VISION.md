@@ -1,5 +1,7 @@
 # 视觉分析（analyze_image）
 
+[English](../en-US/VISION.md) | [日本語](../ja-JP/VISION.md)
+
 ## 概述
 
 - **工具名**：`analyze_image`（MCP 内置）

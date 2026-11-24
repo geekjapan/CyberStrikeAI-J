@@ -104,7 +104,7 @@ function NotificationsBell({ navigate }) {
 
     const load = async () => {
         try {
-            const summary = await api.get('/notifications/summary', { limit: 80, lang: document.documentElement.lang || 'zh-CN' });
+            const summary = await api.get('/notifications/summary', { limit: 80, lang: document.documentElement.lang || 'en-US' });
             const list = Array.isArray(summary?.items) ? summary.items : [];
             setItems(list);
             setPending(summary?.unreadCount ?? list.filter(item => !item.read).length);

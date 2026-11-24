@@ -1,6 +1,6 @@
 # Knowledge Base
 
-[中文](../zh-CN/knowledge-base.md)
+[中文](../zh-CN/knowledge-base.md) | [日本語](../ja-JP/knowledge-base.md)
 
 The knowledge base turns local security notes, playbooks, vulnerability guides, and organizational standards into retrievable context for Agents.
 

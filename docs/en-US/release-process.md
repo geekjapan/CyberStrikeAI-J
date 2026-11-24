@@ -1,6 +1,6 @@
 # Release Process
 
-[中文](../zh-CN/release-process.md)
+[中文](../zh-CN/release-process.md) | [日本語](../ja-JP/release-process.md)
 
 Use this guide for maintainers and operators preparing upgrades or releases.
 

@@ -1,6 +1,6 @@
 # 贡献规范
 
-[English](../en-US/contributing-guide.md)
+[English](../en-US/contributing-guide.md) | [日本語](../ja-JP/contributing-guide.md)
 
 本文定义向 CyberStrikeAI 增加功能、接口、工具、前端页面或文档时的基本要求。
 

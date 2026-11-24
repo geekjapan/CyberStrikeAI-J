@@ -1,5 +1,7 @@
 # 知识库
 
+[English](../en-US/knowledge-base.md) | [日本語](../ja-JP/knowledge-base.md)
+
 知识库用于把本地安全知识、漏洞手册、测试方法和组织经验转成可检索上下文，供 Agent 在任务中按需引用。
 
 ## 启用

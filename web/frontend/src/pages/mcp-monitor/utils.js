@@ -1,4 +1,5 @@
 /** MCP 监控页展示工具：状态映射、工具名归一化、耗时与成功率计算。 */
+import { currentLocale } from '../../lib/format';
 
 export const STATUS_VALUES = ['completed', 'running', 'queued', 'failed', 'blocked', 'hard_timeout', 'cancelled', 'orphaned'];
 
@@ -122,7 +123,7 @@ export function formatBucketLabel(iso, range) {
 }
 
 export function formatBucketTooltip(point, t) {
-    const time = point?.t ? new Date(point.t).toLocaleString('zh-CN', { hour12: false }) : '—';
+    const time = point?.t ? new Date(point.t).toLocaleString(currentLocale(), { hourCycle: 'h23' }) : '—';
     return t('mcpMonitor.timelineTooltip', {
         time,
         total: point?.total || 0,

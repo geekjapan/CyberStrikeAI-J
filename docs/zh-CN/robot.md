@@ -1,6 +1,6 @@
 # CyberStrikeAI 机器人使用说明
 
-[English](../en-US/robot.md)
+[English](../en-US/robot.md) | [日本語](../ja-JP/robot.md)
 
 本文档说明如何通过**个人微信、企业微信、钉钉、飞书、Telegram、Slack、Discord 和 QQ 机器人**使用 CyberStrikeAI，包括平台接入、RBAC 身份绑定、服务账号白名单、命令、验证与故障排查。
 

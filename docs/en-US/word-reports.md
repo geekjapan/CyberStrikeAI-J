@@ -1,5 +1,7 @@
 # Vulnerability report download
 
+[中文](../zh-CN/word-reports.md) | [日本語](../ja-JP/word-reports.md)
+
 Click the download icon beside a vulnerability. A dialog offers **Markdown (.md)** and **Word (.docx)**. Choosing a format downloads only that finding. Cancel or Escape dismisses the dialog without downloading. A failed download leaves the dialog available for retry.
 
 Markdown retains the existing content, UI language and filename. Word includes the selected finding's metadata, description, prerequisites, reproduction steps, evidence, impact, remediation and retest records. Original statuses remain intact. Evidence is plain text; embedded HTML, Markdown formatting and screenshots are not rendered.

@@ -1,5 +1,7 @@
 # 异步对话 API
 
+[English](../en-US/async-conversation-api.md) | [日本語](../ja-JP/async-conversation-api.md)
+
 长任务使用 `POST /api/agent/runs`（单代理）或 `POST /api/multi-agent/runs`（多代理，需启用配置）。请求体与对应同步接口相同；支持已有 conversationId，省略时创建会话。原同步接口仍等待最终结果，连接断开会取消同步执行。
 
 ```sh

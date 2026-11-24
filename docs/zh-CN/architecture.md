@@ -1,5 +1,7 @@
 # 架构说明
 
+[English](../en-US/architecture.md) | [日本語](../ja-JP/architecture.md)
+
 CyberStrikeAI 是一个以 Web 管理面为入口、以 Agent 和 MCP 工具为执行核心的安全测试编排平台。
 
 ## 总览

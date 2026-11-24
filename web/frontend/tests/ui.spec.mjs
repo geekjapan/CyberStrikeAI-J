@@ -1190,9 +1190,12 @@ test('project: list height follows the active detail tab', async ({ page, mockAp
     for (const name of [label('projects.tabSettings', '设置'), label('projects.tabConversations', '关联对话'), label('projects.tabFacts', '事实黑板')]) {
         await main.getByRole('tab', { name, exact: true }).click();
         await ready(page);
-        const listBox = await main.locator('.project-list-card').boundingBox();
-        const detailBottom = await main.locator('.project-detail .cs-section-card').last().boundingBox();
-        expect(Math.abs(listBox.y + listBox.height - detailBottom.y - detailBottom.height)).toBeLessThanOrEqual(1);
+        // The list height is synced after the tab content lays out, so poll instead of measuring once.
+        await expect(async () => {
+            const listBox = await main.locator('.project-list-card').boundingBox();
+            const detailBottom = await main.locator('.project-detail .cs-section-card').last().boundingBox();
+            expect(Math.abs(listBox.y + listBox.height - detailBottom.y - detailBottom.height)).toBeLessThanOrEqual(1);
+        }).toPass({ timeout: 5_000 });
     }
     expect(mockApi.writes()).toEqual([]);
 });

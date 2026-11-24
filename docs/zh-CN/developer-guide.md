@@ -1,5 +1,7 @@
 # 开发者指南
 
+[English](../en-US/developer-guide.md) | [日本語](../ja-JP/developer-guide.md)
+
 本文面向二次开发者，说明项目结构、启动方式、主要扩展点和开发习惯。
 
 ## 项目结构

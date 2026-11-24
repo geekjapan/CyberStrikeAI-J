@@ -1,5 +1,7 @@
 # 排错指南
 
+[English](../en-US/troubleshooting.md) | [日本語](../ja-JP/troubleshooting.md)
+
 本文按现象列出常见问题。优先查看服务日志、浏览器控制台和 `/api-docs` 中的接口响应。
 
 ## 无法访问页面
