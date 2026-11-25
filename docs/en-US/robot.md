@@ -15,15 +15,16 @@ The current web UI has no bot settings screen. Configure bots by editing the `ro
 - The file is read once at startup and is not watched, so restart the CyberStrikeAI process after every edit.
 - A platform connects only when `enabled: true` and its credentials are non-empty. An enabled platform with empty credentials is silently skipped.
 - `robots.<platform>.auth` is validated at startup: an unknown `mode`, a `service_account` without `service_user_id` or without senders in `allowed_external_users`, and duplicate or `*` entries all stop the server from starting.
-- `config.example.yaml` has a commented `robots:` template.
+- The `service_user_id` of every platform in `service_account` mode (even a platform that is not enabled) must be an existing, enabled RBAC user. Otherwise the server stops with `robots.<platform>.auth.service_user_id must point to an enabled RBAC user`.
+- `config.example.yaml` has an active `robots:` block for every platform, with `enabled: false` and `auth.mode: user_binding`. Only the `service_user_id` and `allowed_external_users` examples under `wechat` are commented out. Set `enabled: true` and fill in the credentials to use a platform.
 
 **Calling `PUT /api/config`**
 
-- `GET /api/config` returns the current `robots` block **including secrets** and needs `config:read`. `PUT /api/config` and `POST /api/config/apply` need `config:write`.
+- `GET /api/config` returns the current `robots` block and needs `config:read`. Secrets that are set (`bot_token`, `app_token`, `client_secret`, `app_secret`, `verify_token`, and for WeCom `token`, `encoding_aes_key`, `secret`) are replaced by `********`; empty secrets stay empty. When you send the block back with `PUT /api/config`, `********` means "keep the stored value". If you send `********` for a secret that this instance does not hold, the request fails with `400` and asks for a new value, so type a new value instead. `PUT /api/config` and `POST /api/config/apply` need `config:write`.
 - `PUT /api/config` with a `robots` object validates it (WeCom token when enabled; `auth` rules; the service user must exist and be enabled), **replaces the whole `robots` object** in memory, and writes `config.yaml`. Send the full block, not just the platform you changed.
 - `PUT` alone does **not** restart bot connections. `POST /api/config/apply` does (it restarts every long-lived bot connection and also reloads other settings such as tools).
 - `PUT` does **not** write `auth` (`mode`, `service_user_id`, `allowed_external_users`) to `config.yaml`. Such a change lives only in the running process and is lost on restart. Edit `auth` in the YAML file.
-- Every save (`PUT`, or a successful WeChat QR binding) rewrites the `robots` keys in `config.yaml` from the running process. If you edited the YAML by hand, restart before you call any of these APIs, or your edits are overwritten.
+- Every configuration save rewrites the `robots` keys in `config.yaml` from the running process. This includes `PUT /api/config` (which the web UI sends when you save settings), the other saves made from the UI or API (update source, human-in-the-loop defaults and tool whitelist), and a successful WeChat QR binding. The one exception is `auth`, which is never written. If you edited the YAML by hand, restart before you save anything from the UI or API, or your edits are overwritten.
 
 ```bash
 # Log in (see api-recipes.md, Recipe 1) and keep the token
@@ -37,7 +38,7 @@ curl -sk https://127.0.0.1:8080/api/config -H "Authorization: Bearer <token>" \
 curl -k -X PUT https://127.0.0.1:8080/api/config \
   -H "Authorization: Bearer <token>" -H "Content-Type: application/json" -d @robots.json
 curl -k -X POST https://127.0.0.1:8080/api/config/apply -H "Authorization: Bearer <token>"
-rm robots.json   # it contains secrets
+rm robots.json   # contains the new bot token you typed above
 ```
 
 The login response contains `token`. The commands below use the same `https://127.0.0.1:8080` base URL and `Authorization: Bearer <token>` header; adjust them for your deployment. "Restart" in the platform sections below means restarting the process, or `POST /api/config/apply` if you changed the settings through `PUT /api/config`.
@@ -51,12 +52,14 @@ After the platform connection works, configure the business identity before send
 1. Send `whoami` to the bot and copy the `Sender ID` line exactly. The ID format depends on the platform (Personal WeChat: `xxxx@im.wechat`; DingTalk, Lark, Slack: `t:<tenant>|u:<user>`; Telegram, Discord, QQ direct chat: `u:<id>`).
 2. In `config.yaml`, set that platform's `auth` block:
 
+   > **Warning:** every allowlisted sender acts as the `service_user_id` user. If that user is `admin`, the bot sender holds every permission. Create a dedicated RBAC user that has only the permissions the bot needs (see [rbac.md](rbac.md)) and use its ID. Use `admin` only for a private bot that only you can reach.
+
    ```yaml
    robots:
      wechat:   # or dingtalk, lark, wecom, telegram, slack, discord, qq
        auth:
          mode: service_account
-         service_user_id: admin          # RBAC user ID, not a display name
+         service_user_id: <service-user-id>   # RBAC user ID, not a display name
          allowed_external_users:
            - "<Sender ID copied from whoami>"
    ```
@@ -248,7 +251,7 @@ robots:
 
 **Binding steps (in order)**
 
-No step needs the web UI. The only thing that needs a screen is showing the QR image so your phone can scan it. The calls need `robot:write` with global scope (status: `robot:read`), and the QR session lives only in the server's memory for about 5 minutes (do not restart CyberStrikeAI in between).
+No step needs the web UI. The only thing that needs a screen is showing the QR image so your phone can scan it. The `POST` calls (request a QR code, submit the pairing code) need `robot:write` with global scope. The status poll in step 3 is a `GET`, so it needs `robot:write` but works with any scope. Only `GET /api/robot/wechat/status` (step 5) needs just `robot:read`. The QR session lives only in the server's memory for about 5 minutes (do not restart CyberStrikeAI in between).
 
 1. **Request a QR code**
 
@@ -470,9 +473,9 @@ Codes are stored only as hashes and are single-use. The server rejects an expire
 1. Connect the bot to its messaging platform.
 2. Have each intended sender run `whoami` and copy the exact `Sender ID`. For Personal WeChat it usually resembles `xxxx@im.wechat`; never substitute `ilink_bot_id` or configured `ilink_user_id`.
 3. In `config.yaml`, set `auth.mode: service_account` under that platform.
-4. Set `service_user_id` to the RBAC **user ID**, not its display name. `admin` is allowed; every allowlisted sender then receives full platform permissions.
+4. Set `service_user_id` to the RBAC **user ID**, not its display name. Prefer a dedicated non-admin user that has only the permissions the bot needs. `admin` is allowed, but every allowlisted sender then receives full platform permissions, so use it only for a private, single-person bot.
 5. Add one exact sender ID per item in `allowed_external_users`. Matching is case-sensitive; `*` wildcards, empty items, and duplicates are rejected.
-6. Restart CyberStrikeAI and run `whoami` again to verify the effective user, roles, and scope. If the service user does not exist or is disabled, startup does not complain, but every sender is denied (`PUT /api/config` rejects such a configuration).
+6. Restart CyberStrikeAI and run `whoami` again to verify the effective user, roles, and scope. If the service user does not exist or is disabled, the server refuses to start with `robots.<platform>.auth.service_user_id must point to an enabled RBAC user` (and `PUT /api/config` rejects such a configuration). The user is looked up again for every message. If someone disables or deletes the service user while the server is running, every sender is denied from the next message on and `whoami` shows `Auth status: denied`; no restart is needed. To recover, enable or recreate the user, or point `service_user_id` at another enabled user and restart.
 
 Example:
 
@@ -481,7 +484,7 @@ robots:
   wechat:
     auth:
       mode: service_account
-      service_user_id: admin
+      service_user_id: <service-user-id>
       allowed_external_users:
         - "o9cq806s32Sm2_kyOmkyaV7Rn1lU@im.wechat"
 ```
@@ -531,7 +534,13 @@ The Chinese command words used by earlier versions still work as aliases for the
 
 Any other text is sent to the AI as a user message, same as in the web UI (e.g. penetration testing, security analysis).
 
-Group messages are authorized as the actual sender, never as a group ID. In service-account mode, explicitly allowlisted senders intentionally share the configured account.
+Group messages are authorized as the individual sender, not as the group as a whole. Whether the sender ID is the same in a direct chat and in a group depends on the platform:
+
+- Telegram, Discord, and QQ add the group to the sender ID in group chats: `g:<chat>|u:<id>` (Discord: `g:<guild>|u:<id>`; QQ: `g:<group>|u:<id>`). In a direct chat the ID is `u:<id>`. An allowlist entry or binding made in a direct chat therefore does **not** match the same person in a group, and the other way round.
+- Slack, Lark, and DingTalk use the same ID (`t:<tenant>|u:<user>`) in direct chats and groups. (Lark uses `o:` or `n:` instead of `u:` when the platform sends only an open ID or union ID.)
+- DingTalk and Lark fall back to a conversation or chat ID (`t:<tenant>|c:<conversation>`) only when the platform sends no user ID, `allow_conversation_id_fallback` (DingTalk) or `allow_chat_id_fallback` (Lark) is `true`, and `robots.session.strict_user_identity` is `false` (it is `true` by default). Such an ID identifies the conversation, not a person.
+
+Always run `whoami` in the chat where the bot will be used (the direct chat or the group itself) and copy the `Sender ID` from there. In service-account mode, explicitly allowlisted senders intentionally share the configured account.
 
 ---
 
@@ -576,7 +585,7 @@ robots:
     enabled: true
     auth:
       mode: service_account
-      service_user_id: admin
+      service_user_id: <service-user-id>   # a dedicated user with limited permissions; admin only for a private single-person bot
       allowed_external_users:
         - "exact sender ID copied from whoami"
     bot_token: "your_bot_token@im.bot:..."
@@ -698,7 +707,7 @@ Check in this order:
 2. In `user_binding`, request a code with `POST /api/auth/robot-binding-code` (Section 4.2) and send the complete bind command from the same platform identity. Regenerate expired or already-used codes.
 3. In `service_account`, copy the exact sender ID from `whoami` into that platform's allowlist. Preserve case, tenant prefixes, and suffixes such as `@im.wechat`.
 4. If an effective user is shown but permissions are missing, grant at least `agent:execute`, `chat:read`, and `chat:write` for normal AI chat.
-5. If the service user (`service_user_id`) is missing or disabled, `PUT /api/config` rejects the configuration, while a hand-edited `config.yaml` starts normally and every sender is denied.
+5. If the service user (`service_user_id`) is missing or disabled, `PUT /api/config` rejects the configuration and the server refuses to start with a hand-edited `config.yaml` (`robots.<platform>.auth.service_user_id must point to an enabled RBAC user`). If the user is disabled or deleted while the server is running, every sender is denied from the next message on. Enable or recreate the user, or choose another enabled user.
 6. If `admin` is denied, the usual cause is an allowlist mismatch—not insufficient admin permissions.
 
 ---
@@ -709,7 +718,7 @@ Check in this order:
 - **WeChat QR expired**: QR codes last ~5 minutes; regenerate instead of reusing an old one.  
 - **Wrong bot type**: The “Custom” bot added in a DingTalk **group** (Webhook + sign secret) **cannot** be used for two-way chat. Only the **enterprise internal app** bot from the open platform is supported.  
 - **Configuration not applied**: Restart the process after editing `config.yaml`; after `PUT /api/config`, also call `POST /api/config/apply` (`PUT` alone does not restart connections, and it does not persist `auth`).  
-- **Bot ID used as sender ID**: Copy the sender ID from `whoami`; do not use `ilink_bot_id`, configured `ilink_user_id`, a group ID, or a display name.  
+- **Bot ID used as sender ID**: Copy the sender ID from `whoami`; do not use `ilink_bot_id`, configured `ilink_user_id`, or a display name, and do not copy a group or conversation ID by hand. Run `whoami` in the chat where the bot will be used.  
 - **Reusing an expired code**: Codes last five minutes and are single-use; generating a new code immediately invalidates the old one.  
 - **Assuming service-account users are isolated**: All allowlisted senders share that account's conversations and owned resources. Use `user_binding` for isolation.  
 - **Assuming admin removes the allowlist**: It does not. The sender must still match exactly, but every matching sender gets full permissions.  

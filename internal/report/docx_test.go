@@ -79,6 +79,46 @@ func TestWordReportEscapesEvidenceAndHonorsSections(t *testing.T) {
 		}
 	}
 }
+
+// Non-ASCII text must survive into word/document.xml unescaped and as valid XML.
+func TestWordReportKeepsNonASCIITitleAndFinding(t *testing.T) {
+	template := DefaultTemplate()
+	// Japanese stays: multi-byte text must be written to the document as is.
+	template.Title = "脆弱性レポート"
+	v := &database.Vulnerability{Title: "SQLインジェクション", Severity: "high", Status: "open"}
+	data, err := Render(template, Snapshot{GeneratedAt: time.Now(), Findings: []*database.Vulnerability{v}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc []byte
+	for _, f := range z.File {
+		if f.Name != "word/document.xml" {
+			continue
+		}
+		r, err := f.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		doc, err = io.ReadAll(r)
+		r.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := xml.Unmarshal(doc, new(struct{})); err != nil {
+		t.Fatalf("document.xml is not valid XML: %v", err)
+	}
+	for _, text := range []string{"脆弱性レポート", "SQLインジェクション"} { // Japanese stays: multi-byte handling
+		if !bytes.Contains(doc, []byte(text)) {
+			t.Errorf("document.xml lost %q", text)
+		}
+	}
+}
+
 func TestWordReportRejectsOversizedInput(t *testing.T) {
 	if _, err := Render(DefaultTemplate(), Snapshot{Summary: strings.Repeat("x", 8*1024*1024+1)}); err == nil {
 		t.Fatal("oversized report accepted")

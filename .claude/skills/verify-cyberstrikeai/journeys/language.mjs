@@ -3,8 +3,9 @@
 export default async ({ page, expect, shot, base }) => {
     await expect(page.getByText('Dashboard', { exact: true }).first()).toBeVisible();
     await page.locator('header').getByRole('button', { name: 'en-US' }).click();
-    const items = await page.getByRole('menuitem').allTextContents();
+    const items = await page.locator('.semi-dropdown-menu').getByRole('menuitem').allTextContents();
     await shot('language-menu');
+    if (items.join('|') !== 'English|日本語') throw new Error(`language menu is ${items.join('|')}`);
     await page.getByRole('menuitem', { name: '日本語' }).click();
     await expect(page.getByText('ダッシュボード', { exact: true }).first()).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja-JP');
@@ -24,5 +25,5 @@ export default async ({ page, expect, shot, base }) => {
     await expect(page.getByText('Dashboard', { exact: true }).first()).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en-US');
     await shot('english-from-settings');
-    return { menu: items.filter(t => /^(English|日本語)$/.test(t)), saved };
+    return { menu: items, saved };
 };

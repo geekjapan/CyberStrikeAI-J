@@ -147,7 +147,7 @@ func TestFrontendKeysExistInEnglishLocale(t *testing.T) {
 // the translation resources, and in the few data lines that must be Chinese to
 // work (keywords matching Chinese input, query examples, CJK test payloads).
 // testdata/cjk_allowlist.txt lists them: "dir/ *" allows a whole tree,
-// "path N" allows exactly N lines containing Han characters.  After a
+// "path N" allows exactly N lines containing Chinese or Japanese characters.  After a
 // deliberate change, regenerate the per-file counts with
 //
 //	UPDATE_CJK_ALLOWLIST=1 go test ./internal/handler -run TestRepositoryIsEnglish
@@ -184,7 +184,7 @@ func TestRepositoryIsEnglish(t *testing.T) {
 	}
 	out, err := exec.Command("git", "-C", root, "ls-files", "-co", "--exclude-standard", "-z").Output()
 	if err != nil {
-		t.Skipf("git ls-files: %v", err)
+		t.Fatalf("git ls-files: %v", err)
 	}
 	found := map[string]int{}
 files:
@@ -202,11 +202,11 @@ files:
 			continue
 		}
 		for _, line := range bytes.Split(data, []byte("\n")) {
-			if bytes.IndexFunc(line, func(r rune) bool { return unicode.Is(unicode.Han, r) }) >= 0 {
+			if bytes.IndexFunc(line, isCJK) >= 0 {
 				found[path]++
 			}
 		}
-		if strings.IndexFunc(path, func(r rune) bool { return unicode.Is(unicode.Han, r) }) >= 0 {
+		if strings.IndexFunc(path, isCJK) >= 0 {
 			t.Errorf("%s: file names must be English", path)
 		}
 	}
@@ -239,4 +239,10 @@ files:
 			t.Errorf("%s: no longer contains such lines; remove it from %s", path, listPath)
 		}
 	}
+}
+
+// isCJK reports Chinese and Japanese letters. Kana counts too, so Japanese
+// written without kanji is caught.
+func isCJK(r rune) bool {
+	return unicode.In(r, unicode.Han, unicode.Hiragana, unicode.Katakana)
 }

@@ -15,15 +15,16 @@
 - ファイルは起動時に一度だけ読み込まれ、変更は監視されません。編集したら必ず CyberStrikeAI のプロセスを再起動してください。
 - プラットフォームが接続されるのは、`enabled: true` で、かつ認証情報が空でない場合だけです。有効にしても認証情報が空だと、エラーも出ずに接続がスキップされます。
 - `robots.<platform>.auth` は起動時に検証されます。未知の `mode`、`service_user_id` または `allowed_external_users` のない `service_account`、重複する項目や `*` を含む項目があると、サーバーは起動しません。
-- `config.example.yaml` に、コメントアウトされた `robots:` のひな形があります。
+- `service_account` モードにしたすべてのプラットフォーム（そのプラットフォーム自体が無効でも対象です）の `service_user_id` は、存在し、かつ有効な RBAC ユーザーでなければなりません。そうでない場合、サーバーは `robots.<platform>.auth.service_user_id must point to an enabled RBAC user` というエラーで起動しません。
+- `config.example.yaml` には、すべてのプラットフォームについて、`enabled: false` かつ `auth.mode: user_binding` の有効な `robots:` ブロックがあります。コメントアウトされているのは、`wechat` 配下の `service_user_id` と `allowed_external_users` の例だけです。プラットフォームを使うには、`enabled: true` にして認証情報を入力してください。
 
 **`PUT /api/config` を呼び出す場合**
 
-- `GET /api/config` は、現在の `robots` ブロックを**シークレットを含めて**返します（`config:read` が必要）。`PUT /api/config` と `POST /api/config/apply` には `config:write` が必要です。
+- `GET /api/config` は、現在の `robots` ブロックを返します（`config:read` が必要）。設定済みのシークレット（`bot_token`、`app_token`、`client_secret`、`app_secret`、`verify_token`、WeCom では `token`、`encoding_aes_key`、`secret`）は `********` に置き換えられ、空のシークレットは空のまま返ります。ブロックを `PUT /api/config` で送り返すとき、`********` は「保存済みの値を維持する」という意味になります。このインスタンスが保持していないシークレットに `********` を送ると、`400` で新しい値の入力を求められるため、その場合は新しい値を入力してください。`PUT /api/config` と `POST /api/config/apply` には `config:write` が必要です。
 - `robots` を含む `PUT /api/config` は、内容を検証したうえで（有効時の WeCom Token、`auth` のルール、サービスユーザーが存在し有効であること）、メモリ上の **`robots` オブジェクト全体を置き換え**、`config.yaml` に書き込みます。変更したプラットフォームだけでなく、ブロック全体を送ってください。
 - `PUT` だけではボットの接続は再起動**されません**。再起動するのは `POST /api/config/apply` です（長時間接続しているすべてのボット接続を再起動し、ツールなどほかの設定も再読み込みします）。
 - `PUT` は `auth`（`mode`、`service_user_id`、`allowed_external_users`）を `config.yaml` に書き込み**ません**。API で変更した `auth` は実行中のプロセスにだけ反映され、再起動すると失われます。`auth` は YAML ファイルで編集してください。
-- 保存（`PUT`、または WeChat の QR 連携の成功）のたびに、`config.yaml` の `robots` のキーが実行中のプロセスの値で書き直されます。YAML を手で編集した場合は、これらの API を呼ぶ前に再起動してください。そうしないと、編集内容が上書きされます。
+- 設定を保存するたびに、`config.yaml` の `robots` のキーが実行中のプロセスの値で書き直されます。対象には、`PUT /api/config`（Web 画面で設定を保存すると送信されます）、Web 画面や API から行うそのほかの保存（アップデート元、ヒューマンインザループの既定値とツールのホワイトリスト）、WeChat の QR 連携の成功が含まれます。例外は `auth` で、これは書き込まれません。YAML を手で編集した場合は、Web 画面や API で何かを保存する前に再起動してください。そうしないと、編集内容が上書きされます。
 
 ```bash
 # ログインしてトークンを取得します（api-recipes.md の Recipe 1 を参照）
@@ -37,7 +38,7 @@ curl -sk https://127.0.0.1:8080/api/config -H "Authorization: Bearer <token>" \
 curl -k -X PUT https://127.0.0.1:8080/api/config \
   -H "Authorization: Bearer <token>" -H "Content-Type: application/json" -d @robots.json
 curl -k -X POST https://127.0.0.1:8080/api/config/apply -H "Authorization: Bearer <token>"
-rm robots.json   # シークレットが含まれています
+rm robots.json   # 上で入力した新しいボットトークンが含まれています
 ```
 
 ログインのレスポンスには `token` が含まれます。以降のコマンドも同じベース URL `https://127.0.0.1:8080` と `Authorization: Bearer <token>` ヘッダーを使います。環境に合わせて読み替えてください。以降のプラットフォーム別の節にある「再起動」は、プロセスの再起動を指します。`PUT /api/config` で設定を変更した場合は `POST /api/config/apply` を呼び出します。
@@ -51,12 +52,14 @@ rm robots.json   # シークレットが含まれています
 1. ボットに `whoami` を送信し、`Sender ID` の行をそのままコピーします。ID の形式はプラットフォームによって異なります（個人 WeChat は `xxxx@im.wechat`、DingTalk / Lark / Slack は `t:<tenant>|u:<user>`、Telegram / Discord / QQ の個別チャットは `u:<id>`）。
 2. `config.yaml` で、そのプラットフォームの `auth` ブロックを設定します。
 
+   > **警告:** ホワイトリストに登録した送信者は、すべて `service_user_id` のユーザーとして動作します。そのユーザーが `admin` だと、ボットの送信者はすべての権限を持つことになります。ボットに必要な権限だけを持つ専用の RBAC ユーザーを作成し（[rbac.md](rbac.md) を参照）、その ID を指定してください。`admin` を使ってよいのは、自分だけが使う非公開のボットに限ります。
+
    ```yaml
    robots:
      wechat:   # dingtalk、lark、wecom、telegram、slack、discord、qq も同様です
        auth:
          mode: service_account
-         service_user_id: admin          # 表示名ではなく RBAC ユーザー ID
+         service_user_id: <service-user-id>   # 表示名ではなく RBAC ユーザー ID
          allowed_external_users:
            - "<whoami からコピーした Sender ID>"
    ```
@@ -250,7 +253,7 @@ robots:
 
 **連携手順（順番に実施してください）**
 
-Web 画面を使う手順はありません。画面が必要なのは、スマートフォンでスキャンできるように QR 画像を表示するときだけです。以下の API 呼び出しには、グローバルスコープの `robot:write` 権限が必要です（状態の確認は `robot:read`）。QR のセッションはサーバーのメモリ上にだけ約 5 分間保持されるため、その間は CyberStrikeAI を再起動しないでください。
+Web 画面を使う手順はありません。画面が必要なのは、スマートフォンでスキャンできるように QR 画像を表示するときだけです。`POST` の呼び出し（QR コードの取得、ペアリングコードの送信）には、グローバルスコープの `robot:write` 権限が必要です。手順 3 の状態ポーリングは `GET` なので、`robot:write` は必要ですが、スコープは問いません。`robot:read` だけで呼べるのは、`GET /api/robot/wechat/status`（手順 5）だけです。QR のセッションはサーバーのメモリ上にだけ約 5 分間保持されるため、その間は CyberStrikeAI を再起動しないでください。
 
 1. **QR コードを取得する**
 
@@ -499,9 +502,9 @@ chat:write
 1. まず、ボットをプラットフォームに正常に接続します。
 2. 対象の利用者がボットに `whoami` を送信し、返された `Sender ID` をコピーします。個人 WeChat の ID は通常 `xxxx@im.wechat` の形式です。必ずコマンドの返り値を使用してください。`ilink_bot_id` や設定内の `ilink_user_id` で代用してはいけません。
 3. `config.yaml` の該当プラットフォームで `auth.mode: service_account` を設定します。
-4. `service_user_id` に、RBAC の**ユーザー ID** を入力します（表示名ではありません）。`admin` を入力することもできます。この場合、ホワイトリストの送信者はプラットフォームの全権限を持つことになります。
+4. `service_user_id` に、RBAC の**ユーザー ID** を入力します（表示名ではありません）。ボットに必要な権限だけを持つ、`admin` ではない専用ユーザーを指定することをお勧めします。`admin` も指定できますが、その場合、ホワイトリストの送信者はプラットフォームの全権限を持つことになるため、自分だけが使う非公開のボットに限ってください。
 5. `allowed_external_users` に、1 項目につき 1 つ、完全な ID を入力します。完全一致で、大文字と小文字が区別されます。`*` ワイルドカード、空の項目、重複は受け付けられません。
-6. CyberStrikeAI を再起動し、もう一度 `whoami` を送信して、実際のユーザー、ロール、リソース範囲が正しいことを確認します。サービスユーザーが存在しない、または無効化されている場合、起動時にはエラーになりませんが、すべての送信者が拒否されます（`PUT /api/config` ではこのような設定は拒否されます）。
+6. CyberStrikeAI を再起動し、もう一度 `whoami` を送信して、実際のユーザー、ロール、リソース範囲が正しいことを確認します。サービスユーザーが存在しない、または無効化されている場合、サーバーは `robots.<platform>.auth.service_user_id must point to an enabled RBAC user` というエラーで起動しません（`PUT /api/config` でもこのような設定は拒否されます）。ユーザーはメッセージを受け取るたびに確認し直されます。サーバーの実行中にサービスユーザーが無効化または削除された場合は、次のメッセージからすべての送信者が拒否され、`whoami` は `Auth status: denied` を表示します。再起動は不要です。復旧するには、ユーザーを有効化または再作成するか、`service_user_id` を有効な別のユーザーに変更して再起動してください。
 
 例:
 
@@ -510,7 +513,7 @@ robots:
   wechat:
     auth:
       mode: service_account
-      service_user_id: admin
+      service_user_id: <service-user-id>
       allowed_external_users:
         - "o9cq806s32Sm2_kyOmkyaV7Rn1lU@im.wechat"
 ```
@@ -566,7 +569,13 @@ whoami
 
 上記のコマンド以外の**任意のテキストを入力する**と、ユーザーメッセージとして AI に送信されます。Web 画面での会話と同じロジックです（ペネトレーションテスト / セキュリティ分析など）。
 
-グループチャットのメッセージは、実際の送信者で認可され、グループ ID は業務 ID として使用されません。ただしサービスアカウントモードは例外で、ホワイトリストの送信者は、設定されたサービスアカウントの権限とリソースを明示的に共有します。
+グループチャットのメッセージは、グループ全体ではなく、個々の送信者として認可されます。個別チャットとグループで送信者 ID が同じになるかどうかは、プラットフォームによって異なります。
+
+- Telegram、Discord、QQ は、グループチャットでは送信者 ID にグループを含めます。Telegram は `g:<chat>|u:<id>`、Discord は `g:<guild>|u:<id>`、QQ は `g:<group>|u:<id>` です。個別チャットでは `u:<id>` です。そのため、個別チャットで登録したホワイトリストの項目や紐付けは、同じ人のグループでの発言には**一致しません**。逆も同様です。
+- Slack、Lark、DingTalk は、個別チャットでもグループでも同じ ID（`t:<tenant>|u:<user>`）です。（Lark は、プラットフォームがオープン ID またはユニオン ID しか送ってこない場合、`u:` の代わりに `o:` または `n:` を使います。）
+- DingTalk と Lark が会話 ID またはチャット ID（`t:<tenant>|c:<conversation>`）に切り替わるのは、プラットフォームがユーザー ID を送ってこない場合で、かつ `allow_conversation_id_fallback`（DingTalk）または `allow_chat_id_fallback`（Lark）が `true`、`robots.session.strict_user_identity` が `false`（デフォルトは `true`）のときだけです。この ID が識別するのは、人ではなく会話です。
+
+必ず、ボットを実際に使うチャット（個別チャット、またはそのグループ）で `whoami` を送信し、そこに表示された `Sender ID` をコピーしてください。サービスアカウントモードでは、ホワイトリストの送信者が、設定されたサービスアカウントの権限とリソースを明示的に共有します。
 
 ---
 
@@ -611,7 +620,7 @@ robots:
     enabled: true
     auth:
       mode: service_account
-      service_user_id: admin
+      service_user_id: <service-user-id>   # 権限を絞った専用ユーザー。admin は自分だけが使う非公開のボットに限ります
       allowed_external_users:
         - "whoami からコピーした完全な送信者 ID"
     bot_token: "your_bot_token@im.bot:..."
@@ -733,7 +742,7 @@ curl -k -X POST https://127.0.0.1:8080/api/robot/test \
 2. `user_binding` で未紐付けと表示される場合: `POST /api/auth/robot-binding-code` で紐付けコードを取得し（4.2 を参照）、同じプラットフォームアカウントで完全な紐付けコマンドを送信します。紐付けコードが期限切れ、または使用済みの場合は再生成してください。
 3. `service_account` でホワイトリストによる拒否と表示される場合: `whoami` が返した完全な送信者 ID を、そのまま現在のプラットフォームのホワイトリストに追加します。大文字と小文字、テナントのプレフィックス、`@im.wechat` などのサフィックスに注意してください。
 4. 実際の ID は表示されるが権限不足と表示される場合: その RBAC ユーザーのロールと権限を確認します。通常の AI 会話には、最低でも `agent:execute`、`chat:read`、`chat:write` が必要です。
-5. サービスアカウント（`service_user_id`）が存在しない、または無効化されている場合: `PUT /api/config` はその設定を拒否しますが、手動で編集した `config.yaml` は問題なく起動し、すべての送信者が拒否されます。ユーザーを復旧するか、有効化されている別の RBAC ユーザーを選択してください。
+5. サービスアカウント（`service_user_id`）が存在しない、または無効化されている場合: `PUT /api/config` はその設定を拒否し、手動で編集した `config.yaml` ではサーバーが `robots.<platform>.auth.service_user_id must point to an enabled RBAC user` というエラーで起動しません。サーバーの実行中にユーザーが無効化または削除された場合は、次のメッセージからすべての送信者が拒否されます。ユーザーを有効化または再作成するか、有効化されている別の RBAC ユーザーを選択してください。
 6. `admin` を使用しているのに拒否される場合: 多くは admin の権限不足ではなく、送信者が完全一致のホワイトリストに含まれていないことが原因です。
 
 ---
@@ -744,7 +753,7 @@ curl -k -X POST https://127.0.0.1:8080/api/robot/test \
 - **個人 WeChat の QR コードの期限切れ**: QR コードの有効期間は約 5 分です。期限が切れたら再生成し、古いコードをスキャンし続けないでください。  
 - **ボットの種類の取り違え**: DingTalk の**グループ内**で追加した「カスタム」ボット（Webhook + 署名）は、会話には**使用できません**。本プログラムは **オープンプラットフォームの「企業内部アプリ」** のボットのみに対応しています。  
 - **変更後に再起動していない**: `config.yaml` を編集したらプロセスを再起動してください。`PUT /api/config` で変更した場合は、続けて `POST /api/config/apply` も呼び出してください（`PUT` だけでは接続は再起動されず、`auth` も保存されません）。  
-- **Bot ID を送信者 ID と取り違える**: サービスアカウントのホワイトリストには、`whoami` コマンドが返す「送信者 ID」を入力する必要があります。`ilink_bot_id`、`ilink_user_id`、グループ ID、表示ニックネームは入力しないでください。  
+- **Bot ID を送信者 ID と取り違える**: サービスアカウントのホワイトリストには、`whoami` コマンドが返す「送信者 ID」を入力する必要があります。`ilink_bot_id`、`ilink_user_id`、表示ニックネームは入力しないでください。グループ ID や会話 ID を手で書き写すのも避け、ボットを実際に使うチャットで `whoami` を送信してください。  
 - **紐付けコードの期限切れ後に使い続ける**: 紐付けコードの有効期間は 5 分で、一度しか使用できません。新しく生成したコードにより、古いコードは直ちに無効になります。  
 - **サービスアカウントでデータが分離されると誤解する**: 同じサービスアカウントのホワイトリストに含まれる送信者は、そのアカウントの会話と `own` スコープのリソースを共有します。分離が必要な場合は `user_binding` を使用してください。  
 - **admin を設定すると誰でも使えるようになる**: そうはなりません。サービスアカウントが `admin` であっても、送信者はホワイトリストと完全に一致している必要があります。ただし、ホワイトリストに含まれる人は全権限を持つことになります。  

@@ -50,6 +50,10 @@ func TestRobotUsersAreResourceIsolated(t *testing.T) {
 	if got := h.HandleMessage("wecom", "alice", "whoami"); !strings.Contains(got, "Robot Alice") || !strings.Contains(got, alice.ID) || !strings.Contains(got, "user_binding") {
 		t.Fatalf("bound identity output is incomplete: %s", got)
 	}
+	// Legacy Chinese command word ("whoami") from earlier versions must give the same reply.
+	if got := h.HandleMessage("wecom", "alice", "身份"); got != h.HandleMessage("wecom", "alice", "whoami") || !strings.Contains(got, alice.ID) {
+		t.Fatalf("legacy identity command differs from whoami: %s", got)
+	}
 
 	conversationID, _ := h.getOrCreateConversation("wecom", "alice", "alice conversation", aliceAccess)
 	if conversationID == "" {
@@ -116,8 +120,20 @@ func TestRobotServiceAccountRequiresExactSenderAllowlist(t *testing.T) {
 	if got := h.HandleMessage("lark", "t:tenant|u:denied", "list"); !strings.Contains(got, "allowlist") {
 		t.Fatalf("non-allowlisted sender was not denied: %s", got)
 	}
+	// Legacy Chinese command word ("list") from earlier versions must behave the same.
+	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "列表"); strings.Contains(got, "allowlist") || strings.Contains(got, "not yet bound") ||
+		got != h.HandleMessage("lark", "t:tenant|u:allowed", "list") {
+		t.Fatalf("legacy list command differs from list: %s", got)
+	}
+	if got := h.HandleMessage("lark", "t:tenant|u:denied", "列表"); !strings.Contains(got, "allowlist") {
+		t.Fatalf("legacy list command bypassed the allowlist: %s", got)
+	}
 	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "bind ABCD-1234"); !strings.Contains(got, "service account mode") {
 		t.Fatalf("service-account robot accepted user binding: %s", got)
+	}
+	// Legacy Chinese command word ("bind") from earlier versions must be refused the same way.
+	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "绑定 ABCD-1234"); !strings.Contains(got, "service account mode") {
+		t.Fatalf("service-account robot accepted legacy user binding: %s", got)
 	}
 	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "whoami"); !strings.Contains(got, "Robot Service") || !strings.Contains(got, serviceUser.ID) || !strings.Contains(got, "service_account") {
 		t.Fatalf("service-account identity output is incomplete: %s", got)
@@ -134,5 +150,9 @@ func TestRobotServiceAccountRequiresExactSenderAllowlist(t *testing.T) {
 	adminHandler := NewRobotHandler(adminCfg, db, nil, zap.NewNop())
 	if got := adminHandler.HandleMessage("lark", "t:tenant|u:owner", "whoami"); !strings.Contains(got, "admin") || !strings.Contains(got, "Auth status: authorized") {
 		t.Fatalf("allowlisted admin service account was denied: %s", got)
+	}
+	// Legacy Chinese command word ("whoami") from earlier versions must give the same reply.
+	if got := adminHandler.HandleMessage("lark", "t:tenant|u:owner", "身份"); !strings.Contains(got, "admin") || !strings.Contains(got, "Auth status: authorized") {
+		t.Fatalf("legacy identity command was denied for the admin service account: %s", got)
 	}
 }

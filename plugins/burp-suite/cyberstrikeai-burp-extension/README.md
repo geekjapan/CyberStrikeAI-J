@@ -87,7 +87,7 @@ If you already have Gradle available, you can still use `build.gradle` to build.
 2) Fill in:
    - **Host**: for example `127.0.0.1`
    - **Port**: for example `8080`
-   - **HTTPS**: checked by default (matches `tls_enabled` / the self-signed certificate in `config.yaml`); the extension automatically trusts local self-signed certificates, so no import is needed
+   - **HTTPS**: checked by default (matches `tls_enabled` in `config.yaml`). The extension does not verify TLS certificates for any host (see the TLS limitation under Notes), so a self-signed certificate works without an import
    - **Username**: the web login username, default `admin`; for a custom account, enter your own username
    - **Password**: that account's web login password; do not combine it with the username
 3) Click **Validate**
@@ -102,7 +102,8 @@ After you change the connection settings or the account credentials, click **Val
 
 ### Notes
 
-- Default connection is `https://127.0.0.1:8080` (**HTTPS** checked). Self-signed / local certs are trusted automatically (no import).
+- Default connection is `https://127.0.0.1:8080` (**HTTPS** checked).
+- **TLS limitation: certificates are not verified.** `SslTrustAll.java` accepts every certificate chain and turns off hostname verification for every HTTPS host you enter, not only for local or self-signed ones. The username and password you type are sent over that connection (`POST /api/auth/login`), and so is the Bearer token on every later request. Anyone who can intercept the network path can impersonate the server and read them. Use the extension only against a server on `localhost` or on a network you trust.
 - Uncheck **HTTPS** only if your server runs plain HTTP.
 - It uses **Bearer Token** authentication obtained from the configured password.
 
@@ -115,7 +116,7 @@ After you change the connection settings or the account credentials, click **Val
 - **Validate fails / 401**
   - Confirm the username and password match the web login
   - Confirm the IP/port is reachable (for example, the browser can open `https://IP:PORT/`)
-  - Check **HTTPS** when the server has TLS enabled (checked by default); self-signed certificates do not need to be imported manually
+  - Check **HTTPS** when the server has TLS enabled (checked by default); a certificate import is not needed because certificates are not verified (see the TLS limitation under Notes)
   - If the deployment is still plain HTTP, uncheck **HTTPS**
 
 - **After choosing Deep, Plan-Execute, or Supervisor, the server says "Multi-agent is not enabled"**

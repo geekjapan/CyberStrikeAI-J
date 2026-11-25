@@ -170,7 +170,7 @@ test.describe('project graph on a phone', () => {
         await search.fill(finding.id);
         await search.press('Enter');
         const side = card.getByRole('complementary', { name: 'Node details' });
-        await expect(side.getByRole('button', { name: 'Edit' })).toBeDisabled();
+        await expect(side.getByRole('button', { name: 'Edit', exact: true })).toBeDisabled();
         await expect(side.getByText('→ Outgoing')).toBeVisible();
         expect(await card.evaluate(node => node.scrollWidth)).toBeLessThanOrEqual(await card.evaluate(node => node.clientWidth) + 1);
         await card.screenshot({ path: testInfo.outputPath('project-graph-mobile-dark.png') });
@@ -181,7 +181,7 @@ test.describe('project graph on a phone', () => {
         await expect(card.getByText('Nodes: 3 | Edges: 1', { exact: true })).toBeVisible();
         await expect(side).toHaveCount(0);
         await card.getByRole('button', { name: 'Links', exact: true }).click();
-        await expect(card.getByRole('button', { name: 'Delete' })).toBeDisabled();
+        await expect(card.getByRole('button', { name: 'Delete', exact: true })).toBeDisabled();
         expect(mockApi.writes()).toEqual([]);
     });
 });

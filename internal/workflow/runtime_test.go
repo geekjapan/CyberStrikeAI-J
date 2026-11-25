@@ -2,6 +2,7 @@ package workflow
 
 import (
 	"context"
+	"fmt"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -36,7 +37,11 @@ func linearStartOutputGraph() string {
 }`
 }
 
-func conditionBranchGraph() string {
+// conditionBranchGraph builds a condition graph whose two outgoing edges are
+// described by edgeYes / edgeNo (extra JSON fields such as label or config).
+// The "no" edge is listed first so that the position-based fallback of
+// conditionBranchAllowed gives the wrong answer unless the label is understood.
+func conditionBranchGraph(edgeYes, edgeNo string) string {
 	return `{
   "nodes": [
     {"id": "start-1", "type": "start", "label": "Start", "position": {"x": 0, "y": 0}, "config": {}},
@@ -46,8 +51,8 @@ func conditionBranchGraph() string {
   ],
   "edges": [
     {"id": "e1", "source": "start-1", "target": "cond-1"},
-    {"id": "e2", "source": "cond-1", "target": "out-yes", "label": "Yes"},
-    {"id": "e3", "source": "cond-1", "target": "out-no", "label": "No"}
+    {"id": "e3", "source": "cond-1", "target": "out-no", ` + edgeNo + `},
+    {"id": "e2", "source": "cond-1", "target": "out-yes", ` + edgeYes + `}
   ],
   "config": {"schema_version": 1}
 }`
@@ -266,27 +271,33 @@ func TestExecuteGraph_conditionBranch(t *testing.T) {
 	ctx := context.Background()
 	SetCheckpointDir(t.TempDir())
 	db := testWorkflowDB(t)
-	createTestWorkflowRun(t, db, "run-yes")
-	createTestWorkflowRun(t, db, "run-no")
-	g, err := parseGraph(conditionBranchGraph())
-	if err != nil {
-		t.Fatal(err)
+	variants := []struct{ name, edgeYes, edgeNo string }{
+		{"english labels", `"label": "Yes"`, `"label": "No"`},
+		// Chinese stays: branch labels of workflows stored by earlier versions are Chinese.
+		{"legacy chinese labels", `"label": "是"`, `"label": "否"`},
+		// Chinese stays: branch config values of workflows stored by earlier versions are Chinese.
+		{"legacy chinese config branch", `"label": "A", "config": {"branch": "是"}`, `"label": "B", "config": {"branch": "否"}`},
 	}
-
-	stateYes := newWorkflowLocalState(map[string]interface{}{"message": "yes"}, "run-yes")
-	if err := executeGraph(ctx, RunArgs{DB: db}, "run-yes", "test-wf-branch", 1, g, stateYes); err != nil {
-		t.Fatalf("execute yes: %v", err)
-	}
-	if got := stateYes.Outputs["branch"]; got != "yes" {
-		t.Fatalf("yes branch output = %v", got)
-	}
-
-	stateNo := newWorkflowLocalState(map[string]interface{}{"message": "no"}, "run-no")
-	if err := executeGraph(ctx, RunArgs{DB: db}, "run-no", "test-wf-branch", 1, g, stateNo); err != nil {
-		t.Fatalf("execute no: %v", err)
-	}
-	if got := stateNo.Outputs["branch"]; got != "no" {
-		t.Fatalf("no branch output = %v", got)
+	for i, v := range variants {
+		graph := conditionBranchGraph(v.edgeYes, v.edgeNo)
+		if err := ValidateGraphJSON(ctx, graph); err != nil {
+			t.Fatalf("%s: validate: %v", v.name, err)
+		}
+		g, err := parseGraph(graph)
+		if err != nil {
+			t.Fatalf("%s: %v", v.name, err)
+		}
+		for _, in := range []string{"yes", "no"} {
+			runID := fmt.Sprintf("run-%d-%s", i, in)
+			createTestWorkflowRun(t, db, runID)
+			state := newWorkflowLocalState(map[string]interface{}{"message": in}, runID)
+			if err := executeGraph(ctx, RunArgs{DB: db}, runID, "test-wf-branch", 1, g, state); err != nil {
+				t.Fatalf("%s: execute %s: %v", v.name, in, err)
+			}
+			if got := state.Outputs["branch"]; got != in {
+				t.Errorf("%s: %s branch output = %v", v.name, in, got)
+			}
+		}
 	}
 }
 

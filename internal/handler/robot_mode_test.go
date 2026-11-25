@@ -97,28 +97,81 @@ func TestRobotDoctorSeparatesInternalToolsFromHTTPMCP(t *testing.T) {
 	}
 }
 
-// Every command word of earlier versions still resolves to a recognized
-// English command, alone or with an argument.
+// Every command word of earlier versions still resolves to the English command
+// and permission it had before the English base. The expectations are written
+// out by hand (taken from the pre-English-base handler), not read from
+// legacyRobotCommands, so deleting a table entry fails this test.
+// The Chinese inputs stay on purpose: they are legacy user input that must
+// keep working.
 func TestLegacyRobotCommandsStillWork(t *testing.T) {
-	for _, c := range legacyRobotCommands {
-		if c.alone != "" {
-			if got := canonicalRobotCommand(c.word); got != c.alone {
-				t.Errorf("%q -> %q, want %q", c.word, got, c.alone)
-			}
-			if _, ok := robotCommandPermission(c.word); !ok && c.alone != "unbind" {
-				t.Errorf("%q is not a recognized command", c.word)
-			}
+	cases := []struct {
+		input      string // legacy Chinese input
+		canonical  string
+		permission string
+		recognized bool // false: handled before the permission check (bind, unbind)
+	}{
+		// Words that stand alone.
+		{"漏洞提醒", "vuln alerts", "vulnerability:read", true},
+		{"对话列表", "list", "chat:read", true},
+		{"角色列表", "roles", "roles:read", true},
+		{"模式列表", "modes", "agent:execute", true},
+		{"项目列表", "projects", "project:read", true},
+		{"解除项目", "unbind project", "project:write", true},
+		{"新对话", "new", "chat:write", true},
+		{"帮助", "help", "", true},
+		{"列表", "list", "chat:read", true},
+		{"清空", "clear", "chat:write", true},
+		{"状态", "status", "chat:read", true},
+		{"停止", "stop", "agent:execute", true},
+		{"角色", "roles", "roles:read", true},
+		{"模式", "modes", "agent:execute", true},
+		{"版本", "version", "", true},
+		{"项目", "projects", "project:read", true},
+		{"解绑", "unbind", "", false},
+		{"身份", "whoami", "", true},
+		{"任务", "task", "chat:read", true},
+		{"权限", "permissions", "", true},
+		{"诊断", "doctor", "config:read", true},
+		{"确认", "confirm", "", true},
+		{"取消", "cancel", "", true},
+		{"？", "help", "", true}, // full-width question mark
+		// Words followed by an argument.
+		{"漏洞提醒 on", "vuln alerts on", "vulnerability:read", true},
+		{"切换角色 admin", "role admin", "roles:read", true},
+		{"切换模式 deep", "mode deep", "agent:execute", true},
+		{"绑定项目 P1", "bind project P1", "project:write", true},
+		{"新建项目 My project", "new project My project", "project:write", true},
+		{"重命名 New title", "rename New title", "chat:write", true},
+		{"切换 conv-1", "switch conv-1", "chat:read", true},
+		{"继续 conv-1", "continue conv-1", "chat:read", true},
+		{"角色 admin", "role admin", "roles:read", true},
+		{"模式 deep", "mode deep", "agent:execute", true},
+		{"删除 conv-1", "delete conv-1", "chat:delete", true},
+		{"绑定 ABCD-1234", "bind ABCD-1234", "", false},
+	}
+	for _, c := range cases {
+		if got := canonicalRobotCommand(c.input); got != c.canonical {
+			t.Errorf("canonicalRobotCommand(%q) = %q, want %q", c.input, got, c.canonical)
 		}
-		if c.withArg != "" {
-			if got := canonicalRobotCommand(c.word + " x y"); got != c.withArg+" x y" {
-				t.Errorf("%q with an argument -> %q, want %q", c.word, got, c.withArg+" x y")
-			}
-			if _, ok := robotCommandPermission(c.word + " x"); !ok && c.withArg != "bind" {
-				t.Errorf("%q with an argument is not a recognized command", c.word)
-			}
+		permission, recognized := robotCommandPermission(c.input)
+		if permission != c.permission || recognized != c.recognized {
+			t.Errorf("robotCommandPermission(%q) = (%q, %v), want (%q, %v)", c.input, permission, recognized, c.permission, c.recognized)
 		}
 	}
-	if got := canonicalRobotCommand("scan example.com"); got != "scan example.com" {
-		t.Errorf("free text was rewritten to %q", got)
+
+	// Not commands: unchanged text, not recognized.
+	for _, input := range []string{
+		"当前",               // "current" was never a command
+		"切换",               // an argument is required
+		"绑定",               // an argument is required
+		"解绑 x",             // unbind takes no argument
+		"scan example.com", // free text goes to the agent
+	} {
+		if got := canonicalRobotCommand(input); got != input {
+			t.Errorf("canonicalRobotCommand(%q) rewrote non-command to %q", input, got)
+		}
+		if _, recognized := robotCommandPermission(input); recognized {
+			t.Errorf("%q must not be a recognized command", input)
+		}
 	}
 }
