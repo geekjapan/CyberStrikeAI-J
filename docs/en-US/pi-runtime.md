@@ -1,6 +1,6 @@
 # Pi runtime
 
-[中文](../zh-CN/pi-runtime.md) | [日本語](../ja-JP/pi-runtime.md)
+[日本語](../ja-JP/pi-runtime.md)
 
 CyberStrikeAI uses Pi 1.5.2 as its only runtime. Go owns business state, permissions, MCP execution, evidence, and delivery checks; an isolated Node worker hosts the Pi SDK.
 
@@ -35,4 +35,4 @@ Chat agents, specialists and workflow Agent nodes use Pi. User steering goes thr
 
 Workflow now uses a native DAG and versioned JSON checkpoints. Old Eino Workflow binary checkpoints cannot be resumed by this version; finish those runs before upgrading, or export their material and start new Pi tasks. Knowledge retrieval and indexing use native domain types and HTTP embeddings. Old configuration keys are read as data migration only; saving emits the native skills/runtime keys. Legacy URL aliases call the same Pi handlers and cannot select a different engine.
 
-See the [Chinese implementation and validation guide](../zh-CN/pi-runtime.md) for protocol, recovery and test details. Local fixtures establish functional behavior, not live-provider reliability, refusal-rate improvements or production acceptance.
+See the [Japanese implementation and validation guide](../ja-JP/pi-runtime.md) (the detailed guide is available in Japanese only) for protocol, recovery and test details. Local fixtures establish functional behavior, not live-provider reliability, refusal-rate improvements or production acceptance.

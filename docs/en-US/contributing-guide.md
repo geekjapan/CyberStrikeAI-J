@@ -1,6 +1,6 @@
 # Contributing Guide
 
-[中文](../zh-CN/contributing-guide.md) | [日本語](../ja-JP/contributing-guide.md)
+[日本語](../ja-JP/contributing-guide.md)
 
 This guide defines baseline expectations when adding features, APIs, tools, frontend pages, or docs.
 
@@ -8,7 +8,7 @@ This guide defines baseline expectations when adding features, APIs, tools, fron
 
 - New features need documentation.
 - New APIs need OpenAPI updates.
-- New frontend text needs zh-CN and en-US i18n.
+- New frontend text needs en-US and ja-JP i18n.
 - New config must state hot-apply behavior.
 - New high-risk tools must define HITL policy.
 - New DB fields must be compatible with old databases.
@@ -50,7 +50,7 @@ For YAML tools and Go MCP tools:
 ## New Frontend Page Checklist
 
 - Reuse `apiFetch`, modal, notifications, and existing state patterns.
-- Add all visible text to `zh-CN.json` and `en-US.json`.
+- Add all visible text to `en-US.json` and `ja-JP.json`.
 - Include loading, empty, and error states.
 - Confirm destructive/high-risk actions.
 - Avoid overflow in long English labels.
@@ -95,17 +95,17 @@ Each important feature should document:
 Use matching filenames for translations of the same topic. If a translation is unavailable, label the available language in navigation instead of linking to a missing file:
 
 ```text
-docs/zh-CN/
 docs/en-US/
+docs/ja-JP/
 ```
 
 Update:
 
 - `docs/README.md`
-- `docs/zh-CN/README.md`
 - `docs/en-US/README.md`
+- `docs/ja-JP/README.md`
 
-Before submitting documentation changes, verify local links, fenced code blocks, bilingual filename parity, locale index coverage, and the Go version documented by the root READMEs. Keep versioned examples derived from authoritative files such as `go.mod` and `config.example.yaml` whenever possible.
+Before submitting documentation changes, verify local links, fenced code blocks, English/Japanese filename parity, locale index coverage, and the Go version documented by the root READMEs. Keep versioned examples derived from authoritative files such as `go.mod` and `config.example.yaml` whenever possible.
 
 ## Review Focus
 

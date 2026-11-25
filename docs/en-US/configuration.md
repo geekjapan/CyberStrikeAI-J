@@ -1,6 +1,6 @@
 # Configuration Reference
 
-[中文](../zh-CN/configuration.md) | [日本語](../ja-JP/configuration.md)
+[日本語](../ja-JP/configuration.md)
 
 The main configuration file is `config.yaml`. Many fields are editable through the Web settings page, but not every field has the same hot-apply behavior.
 

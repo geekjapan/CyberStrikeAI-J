@@ -175,6 +175,7 @@ func TestBuildFileCommand_LinuxBranch(t *testing.T) {
 	in = base
 	in.Action = "write"
 	in.Path = "/tmp/w.txt"
+	// Chinese stays: non-ASCII content must round-trip through the base64 command.
 	in.Content = "hello 世界"
 	cmd, _ = h.buildFileCommand(in)
 	b64 := base64.StdEncoding.EncodeToString([]byte("hello 世界"))
@@ -281,6 +282,7 @@ func TestBuildFileCommand_WindowsBranch(t *testing.T) {
 	in = base
 	in.Action = "write"
 	in.Path = `C:\out.txt`
+	// Chinese stays: non-ASCII content must round-trip through the base64 command.
 	in.Content = "hello 世界"
 	cmd, _ = h.buildFileCommand(in)
 	wantB64 := base64.StdEncoding.EncodeToString([]byte("hello 世界"))

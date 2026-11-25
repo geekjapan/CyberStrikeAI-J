@@ -1,6 +1,6 @@
 # アーキテクチャ
 
-[English](../en-US/architecture.md) | [中文](../zh-CN/architecture.md)
+[English](../en-US/architecture.md)
 
 CyberStrikeAI は、Web 管理画面を入口とし、エージェントと MCP ツールを実行の中核とする、セキュリティテストのオーケストレーションプラットフォームです。
 

@@ -1,6 +1,6 @@
 # 運用 Runbooks
 
-[English](../en-US/runbooks.md) | [中文](../zh-CN/runbooks.md)
+[English](../en-US/runbooks.md)
 
 Runbook は、「実際のタスクに直面したときに、そのとおりに実行する」手順チェックリストです。本書は、CyberStrikeAI で最もよくある運用およびセキュリティテストの操作を扱います。
 

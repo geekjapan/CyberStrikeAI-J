@@ -115,7 +115,7 @@ func levelBySeverity(sev string) string {
 	}
 }
 
-// requestLang returns the notification text language: "zh", "ja"; everything else (including the default) is "en".
+// requestLang returns the notification text language: "ja"; everything else (including the default) is "en".
 func requestLang(c *gin.Context) string {
 	return apimsg.Lang(c)
 }

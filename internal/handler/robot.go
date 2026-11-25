@@ -33,40 +33,61 @@ import (
 	"go.uber.org/zap"
 )
 
+// legacyRobotCommands maps the Chinese command words of earlier versions to the
+// English commands.  A word matches alone or followed by an argument; longer
+// words come first so that a shared prefix resolves to the longer command.
+var legacyRobotCommands = []struct{ word, alone, withArg string }{
+	{"漏洞提醒", "vuln alerts", "vuln alerts"},
+	{"切换角色", "", "role"},
+	{"切换模式", "", "mode"},
+	{"对话列表", "list", ""},
+	{"角色列表", "roles", ""},
+	{"模式列表", "modes", ""},
+	{"项目列表", "projects", ""},
+	{"绑定项目", "", "bind project"},
+	{"新建项目", "", "new project"},
+	{"解除项目", "unbind project", ""},
+	{"新对话", "new", ""},
+	{"重命名", "", "rename"},
+	{"帮助", "help", ""},
+	{"列表", "list", ""},
+	{"切换", "", "switch"},
+	{"继续", "", "continue"},
+	{"清空", "clear", ""},
+	{"状态", "status", ""},
+	{"停止", "stop", ""},
+	{"角色", "roles", "role"},
+	{"模式", "modes", "mode"},
+	{"删除", "", "delete"},
+	{"版本", "version", ""},
+	{"项目", "projects", ""},
+	{"绑定", "", "bind"},
+	{"解绑", "unbind", ""},
+	{"身份", "whoami", ""},
+	{"任务", "task", ""},
+	{"权限", "permissions", ""},
+	{"诊断", "doctor", ""},
+	{"确认", "confirm", ""},
+	{"取消", "cancel", ""},
+	{"？", "help", ""},
+}
+
+// canonicalRobotCommand rewrites a legacy command word to its English command
+// and returns any other text unchanged.
+func canonicalRobotCommand(text string) string {
+	for _, c := range legacyRobotCommands {
+		if text == c.word && c.alone != "" {
+			return c.alone
+		}
+		if c.withArg != "" && strings.HasPrefix(text, c.word+" ") {
+			return c.withArg + text[len(c.word):]
+		}
+	}
+	return text
+}
+
 const (
-	robotCmdHelp          = "帮助" // Chinese bot commands are user input and stay Chinese
-	robotCmdList          = "列表"
-	robotCmdListAlt       = "对话列表"
-	robotCmdSwitch        = "切换"
-	robotCmdContinue      = "继续"
-	robotCmdNew           = "新对话"
-	robotCmdClear         = "清空"
-	robotCmdStatus        = "状态"
-	robotCmdStop          = "停止"
-	robotCmdRoles         = "角色"
-	robotCmdRolesList     = "角色列表"
-	robotCmdSwitchRole    = "切换角色"
-	robotCmdModes         = "模式"
-	robotCmdModesList     = "模式列表"
-	robotCmdSwitchMode    = "切换模式"
-	robotCmdDelete        = "删除"
-	robotCmdVersion       = "版本"
-	robotCmdProjects      = "项目"
-	robotCmdProjectsList  = "项目列表"
-	robotCmdBindProject   = "绑定项目"
-	robotCmdNewProject    = "新建项目"
-	robotCmdUnbindProject = "解除项目"
-	robotCmdBindUser      = "绑定"
-	robotCmdUnbindUser    = "解绑"
-	robotCmdIdentity      = "身份"
-	robotCmdTask          = "任务"
-	robotCmdRename        = "重命名"
-	robotCmdPermissions   = "权限"
-	robotCmdDoctor        = "诊断"
-	robotCmdConfirm       = "确认"
-	robotCmdCancel        = "取消"
-	robotCmdVulnAlerts    = "漏洞提醒"
-	robotBindingCodeTTL   = 5 * time.Minute
+	robotBindingCodeTTL = 5 * time.Minute
 )
 
 type robotPendingConfirmation struct {
@@ -194,7 +215,7 @@ func (h *RobotHandler) robotAccessDeniedMessage(platform string) string {
 	if h.config.Robots.AuthorizationFor(platform).EffectiveMode() == config.RobotAuthModeServiceAccount {
 		return "The current platform account is not on this bot's service account allowlist, or the service account is unavailable."
 	}
-	return "The current platform account is not yet bound to a CyberStrikeAI user. Generate a binding code in the web UI first, then send: bind XXXX-XXXX"
+	return "The current platform account is not yet bound to a CyberStrikeAI user. Get a binding code with POST /api/auth/robot-binding-code first, then send: bind XXXX-XXXX"
 }
 
 func (h *RobotHandler) loadSessionBinding(sk string) (convID, role, agentMode string) {
@@ -472,7 +493,7 @@ func (h *RobotHandler) cmdHelp(platform, userID string) string {
 	b.WriteString("[General]\n")
 	b.WriteString("· help — Show this help\n")
 	b.WriteString("· version — Show the current version\n")
-	b.WriteString("· bind <code> — Bind your web UI RBAC user\n")
+	b.WriteString("· bind <code> — Bind your CyberStrikeAI user\n")
 	b.WriteString("· unbind — Request to unbind the account (confirmation required)\n")
 	b.WriteString("· whoami — Show the platform sender, auth mode and the current effective RBAC identity\n")
 	if can("chat:read") || can("chat:write") || can("chat:delete") {
@@ -1061,7 +1082,7 @@ func (h *RobotHandler) cmdIdentity(platform, userID string) string {
 			b.WriteString("Auth status: denied (sender is not on the allowlist, or the service account is unavailable)")
 		} else {
 			b.WriteString("Auth status: not bound\n")
-			b.WriteString("Tip: generate a binding code in the web UI, then send \"bind XXXX-XXXX\"")
+			b.WriteString("Tip: get a binding code with POST /api/auth/robot-binding-code, then send \"bind XXXX-XXXX\"")
 		}
 		return b.String()
 	}
@@ -1087,41 +1108,34 @@ func (h *RobotHandler) cmdIdentity(platform, userID string) string {
 }
 
 func robotCommandPermission(text string) (string, bool) {
+	text = canonicalRobotCommand(text)
 	switch {
-	case text == robotCmdHelp || text == "help" || text == "？" || text == "?", text == robotCmdVersion || text == "version", text == robotCmdIdentity || text == "whoami":
+	case text == "help", text == "?", text == "version", text == "whoami":
 		return "", true
-	case text == robotCmdList || text == robotCmdListAlt || text == "list",
-		strings.HasPrefix(text, robotCmdSwitch+" "), strings.HasPrefix(text, robotCmdContinue+" "),
-		strings.HasPrefix(text, "switch "), strings.HasPrefix(text, "continue "),
-		text == robotCmdStatus || text == "status", text == robotCmdTask || text == "task":
+	case text == "list", strings.HasPrefix(text, "switch "), strings.HasPrefix(text, "continue "),
+		text == "status", text == "task":
 		return "chat:read", true
-	case text == robotCmdNew || text == "new", text == robotCmdClear || text == "clear",
-		strings.HasPrefix(text, robotCmdRename+" "), strings.HasPrefix(text, "rename "):
+	case text == "new", text == "clear", strings.HasPrefix(text, "rename "):
 		return "chat:write", true
-	case strings.HasPrefix(text, robotCmdDelete+" "), strings.HasPrefix(text, "delete "):
+	case strings.HasPrefix(text, "delete "):
 		return "chat:delete", true
-	case text == robotCmdStop || text == "stop":
+	case text == "stop":
 		return "agent:execute", true
-	case text == robotCmdRoles || text == robotCmdRolesList || text == "roles",
-		strings.HasPrefix(text, robotCmdRoles+" "), strings.HasPrefix(text, robotCmdSwitchRole+" "), strings.HasPrefix(text, "role "):
+	case text == "roles", strings.HasPrefix(text, "role "):
 		return "roles:read", true
-	case text == robotCmdModes || text == robotCmdModesList || text == "modes",
-		strings.HasPrefix(text, robotCmdModes+" "), strings.HasPrefix(text, robotCmdSwitchMode+" "), strings.HasPrefix(text, "mode "):
+	case text == "modes", strings.HasPrefix(text, "mode "):
 		return "agent:execute", true
-	case text == robotCmdPermissions || text == "permissions":
+	case text == "permissions":
 		return "", true
-	case text == robotCmdConfirm || text == "confirm", text == robotCmdCancel || text == "cancel":
+	case text == "confirm", text == "cancel":
 		return "", true
-	case text == robotCmdDoctor || text == "doctor":
+	case text == "doctor":
 		return "config:read", true
-	case text == robotCmdProjects || text == robotCmdProjectsList || text == "projects":
+	case text == "projects":
 		return "project:read", true
-	case text == robotCmdVulnAlerts || strings.HasPrefix(text, robotCmdVulnAlerts+" "),
-		text == "vuln alerts" || strings.HasPrefix(text, "vuln alerts "):
+	case text == "vuln alerts", strings.HasPrefix(text, "vuln alerts "):
 		return "vulnerability:read", true
-	case text == robotCmdUnbindProject || text == "unbind project",
-		strings.HasPrefix(text, robotCmdNewProject+" "), strings.HasPrefix(text, "new project "),
-		strings.HasPrefix(text, robotCmdBindProject+" "), strings.HasPrefix(text, "bind project "):
+	case text == "unbind project", strings.HasPrefix(text, "new project "), strings.HasPrefix(text, "bind project "):
 		return "project:write", true
 	default:
 		return "", false
@@ -1138,7 +1152,7 @@ func (h *RobotHandler) cmdBindUser(platform, userID, code string) string {
 	}
 	user, err := h.db.ConsumeRobotBindingCode(platform, userID, hashRobotBindingCode(code))
 	if err != nil {
-		return "Binding failed: the binding code is invalid, already used or expired. Generate a new one in the web UI."
+		return "Binding failed: the binding code is invalid, already used or expired. Get a new one with POST /api/auth/robot-binding-code."
 	}
 	// Never carry an old synthetic-owner conversation into the RBAC identity.
 	sk := h.sessionKey(platform, userID)
@@ -1245,11 +1259,12 @@ func (h *RobotHandler) cmdCancelConfirmation(platform, userID string) string {
 
 // handleRobotCommand handles the bot's built-in commands; if a command matches, it returns (reply text, true), otherwise ("", false)
 func (h *RobotHandler) handleRobotCommand(platform, userID, text string) (string, bool) {
-	if (strings.HasPrefix(text, robotCmdBindUser+" ") || strings.HasPrefix(text, "bind ")) && !strings.HasPrefix(text, "bind project ") {
-		parts := strings.SplitN(text, " ", 2)
-		return h.cmdBindUser(platform, userID, strings.TrimSpace(parts[1])), true
+	text = canonicalRobotCommand(text)
+	arg := func(command string) string { return strings.TrimSpace(text[len(command):]) }
+	if strings.HasPrefix(text, "bind ") && !strings.HasPrefix(text, "bind project ") {
+		return h.cmdBindUser(platform, userID, arg("bind ")), true
 	}
-	if text == robotCmdUnbindUser || text == "unbind" {
+	if text == "unbind" {
 		return h.cmdUnbindUser(platform, userID), true
 	}
 	if permission, recognized := robotCommandPermission(text); recognized && permission != "" {
@@ -1262,113 +1277,60 @@ func (h *RobotHandler) handleRobotCommand(platform, userID, text string) (string
 		}
 	}
 	switch {
-	case text == robotCmdVulnAlerts || text == "vuln alerts":
+	case text == "vuln alerts":
 		return h.cmdVulnerabilityAlerts(platform, userID, ""), true
-	case strings.HasPrefix(text, robotCmdVulnAlerts+" "):
-		return h.cmdVulnerabilityAlerts(platform, userID, strings.TrimSpace(text[len(robotCmdVulnAlerts)+1:])), true
 	case strings.HasPrefix(text, "vuln alerts "):
-		return h.cmdVulnerabilityAlerts(platform, userID, strings.TrimSpace(text[len("vuln alerts "):])), true
-	case text == robotCmdHelp || text == "help" || text == "？" || text == "?":
+		return h.cmdVulnerabilityAlerts(platform, userID, arg("vuln alerts ")), true
+	case text == "help" || text == "?":
 		return h.cmdHelp(platform, userID), true
-	case text == robotCmdIdentity || text == "whoami":
+	case text == "whoami":
 		return h.cmdIdentity(platform, userID), true
-	case text == robotCmdConfirm || text == "confirm":
+	case text == "confirm":
 		return h.cmdConfirm(platform, userID), true
-	case text == robotCmdCancel || text == "cancel":
+	case text == "cancel":
 		return h.cmdCancelConfirmation(platform, userID), true
-	case text == robotCmdList || text == robotCmdListAlt || text == "list":
+	case text == "list":
 		return h.cmdList(platform, userID), true
-	case strings.HasPrefix(text, robotCmdSwitch+" ") || strings.HasPrefix(text, robotCmdContinue+" ") || strings.HasPrefix(text, "switch ") || strings.HasPrefix(text, "continue "):
-		var id string
-		switch {
-		case strings.HasPrefix(text, robotCmdSwitch+" "):
-			id = strings.TrimSpace(text[len(robotCmdSwitch)+1:])
-		case strings.HasPrefix(text, robotCmdContinue+" "):
-			id = strings.TrimSpace(text[len(robotCmdContinue)+1:])
-		case strings.HasPrefix(text, "switch "):
-			id = strings.TrimSpace(text[7:])
-		default:
-			id = strings.TrimSpace(text[9:])
-		}
-		return h.cmdSwitch(platform, userID, id), true
-	case text == robotCmdNew || text == "new":
+	case strings.HasPrefix(text, "switch "):
+		return h.cmdSwitch(platform, userID, arg("switch ")), true
+	case strings.HasPrefix(text, "continue "):
+		return h.cmdSwitch(platform, userID, arg("continue ")), true
+	case text == "new":
 		return h.cmdNew(platform, userID), true
-	case text == robotCmdClear || text == "clear":
+	case text == "clear":
 		return h.cmdClear(platform, userID), true
-	case text == robotCmdStatus || text == "status":
+	case text == "status":
 		return h.cmdStatus(platform, userID), true
-	case text == robotCmdTask || text == "task":
+	case text == "task":
 		return h.cmdTask(platform, userID), true
-	case strings.HasPrefix(text, robotCmdRename+" ") || strings.HasPrefix(text, "rename "):
-		var title string
-		if strings.HasPrefix(text, robotCmdRename+" ") {
-			title = strings.TrimSpace(text[len(robotCmdRename)+1:])
-		} else {
-			title = strings.TrimSpace(text[len("rename "):])
-		}
-		return h.cmdRename(platform, userID, title), true
-	case text == robotCmdStop || text == "stop":
+	case strings.HasPrefix(text, "rename "):
+		return h.cmdRename(platform, userID, arg("rename ")), true
+	case text == "stop":
 		return h.cmdStop(platform, userID), true
-	case text == robotCmdRoles || text == robotCmdRolesList || text == "roles":
+	case text == "roles":
 		return h.cmdRoles(), true
-	case strings.HasPrefix(text, robotCmdRoles+" ") || strings.HasPrefix(text, robotCmdSwitchRole+" ") || strings.HasPrefix(text, "role "):
-		var roleName string
-		switch {
-		case strings.HasPrefix(text, robotCmdRoles+" "):
-			roleName = strings.TrimSpace(text[len(robotCmdRoles)+1:])
-		case strings.HasPrefix(text, robotCmdSwitchRole+" "):
-			roleName = strings.TrimSpace(text[len(robotCmdSwitchRole)+1:])
-		default:
-			roleName = strings.TrimSpace(text[5:])
-		}
-		return h.cmdSwitchRole(platform, userID, roleName), true
-	case text == robotCmdModes || text == robotCmdModesList || text == "modes":
+	case strings.HasPrefix(text, "role "):
+		return h.cmdSwitchRole(platform, userID, arg("role ")), true
+	case text == "modes":
 		return h.cmdModes(platform, userID), true
-	case strings.HasPrefix(text, robotCmdModes+" ") || strings.HasPrefix(text, robotCmdSwitchMode+" ") || strings.HasPrefix(text, "mode "):
-		var mode string
-		switch {
-		case strings.HasPrefix(text, robotCmdModes+" "):
-			mode = strings.TrimSpace(text[len(robotCmdModes)+1:])
-		case strings.HasPrefix(text, robotCmdSwitchMode+" "):
-			mode = strings.TrimSpace(text[len(robotCmdSwitchMode)+1:])
-		default:
-			mode = strings.TrimSpace(text[5:])
-		}
-		return h.cmdSwitchMode(platform, userID, mode), true
-	case text == robotCmdPermissions || text == "permissions":
+	case strings.HasPrefix(text, "mode "):
+		return h.cmdSwitchMode(platform, userID, arg("mode ")), true
+	case text == "permissions":
 		return h.cmdPermissions(platform, userID), true
-	case text == robotCmdDoctor || text == "doctor":
+	case text == "doctor":
 		return h.cmdDoctor(), true
-	case strings.HasPrefix(text, robotCmdDelete+" ") || strings.HasPrefix(text, "delete "):
-		var convID string
-		if strings.HasPrefix(text, robotCmdDelete+" ") {
-			convID = strings.TrimSpace(text[len(robotCmdDelete)+1:])
-		} else {
-			convID = strings.TrimSpace(text[7:])
-		}
-		return h.cmdDelete(platform, userID, convID), true
-	case text == robotCmdVersion || text == "version":
+	case strings.HasPrefix(text, "delete "):
+		return h.cmdDelete(platform, userID, arg("delete ")), true
+	case text == "version":
 		return h.cmdVersion(), true
-	case text == robotCmdProjects || text == robotCmdProjectsList || text == "projects":
+	case text == "projects":
 		return h.cmdProjects(platform, userID), true
-	case text == robotCmdUnbindProject || text == "unbind project":
+	case text == "unbind project":
 		return h.cmdUnbindProject(platform, userID), true
-	case strings.HasPrefix(text, robotCmdNewProject+" ") || strings.HasPrefix(text, "new project "):
-		var name string
-		if strings.HasPrefix(text, robotCmdNewProject+" ") {
-			name = strings.TrimSpace(text[len(robotCmdNewProject)+1:])
-		} else {
-			name = strings.TrimSpace(text[len("new project "):])
-		}
-		return h.cmdNewProject(platform, userID, name), true
-	case strings.HasPrefix(text, robotCmdBindProject+" ") || strings.HasPrefix(text, "bind project "):
-		var idOrName string
-		if strings.HasPrefix(text, robotCmdBindProject+" ") {
-			idOrName = strings.TrimSpace(text[len(robotCmdBindProject)+1:])
-		} else {
-			idOrName = strings.TrimSpace(text[len("bind project "):])
-		}
-		return h.cmdBindProject(platform, userID, idOrName), true
+	case strings.HasPrefix(text, "new project "):
+		return h.cmdNewProject(platform, userID, arg("new project ")), true
+	case strings.HasPrefix(text, "bind project "):
+		return h.cmdBindProject(platform, userID, arg("bind project ")), true
 	default:
 		return "", false
 	}

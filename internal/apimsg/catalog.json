@@ -1,6524 +1,4559 @@
 {
  "\n\n--- body ---\n%v": {
-  "zh": "\n\n--- 正文 ---\n%v",
   "ja": "\n\n--- 本文 ---\n%v"
  },
  "\nRelation edges (from -> this fact):\n": {
-  "zh": "\n关系边（from → 本 fact）:\n",
   "ja": "\nリレーションエッジ（from → この fact）:\n"
  },
  "\nRelation edges: %v": {
-  "zh": "\n关系边: %v",
   "ja": "\nリレーションエッジ: %v"
  },
  "\nRule: %s (%s)\nMatched content: %q": {
-  "zh": "\n规则: %s (%s)\n匹配内容: %q",
   "ja": "\nルール: %s (%s)\n一致した内容: %q"
  },
  "\nrelated_vulnerability_id: %s": {
-  "zh": "\nrelated_vulnerability_id: %s",
   "ja": "\nrelated_vulnerability_id: %s"
  },
  "\nsource_conversation_id: %s": {
-  "zh": "\nsource_conversation_id: %s",
   "ja": "\nsource_conversation_id: %s"
  },
  "%d consecutive knowledge items failed to index; there may be a configuration problem (e.g. wrong embedding model configuration, invalid API key, insufficient balance). First failed item: %s, error: %v": {
-  "zh": "连续 %d 个知识项索引失败，可能存在配置问题（如嵌入模型配置错误、API 密钥无效、余额不足等）。第一个失败项：%s, 错误：%v",
   "ja": "ナレッジ項目のインデックス作成が %d 件連続して失敗しました。設定に問題がある可能性があります（埋め込みモデルの設定誤り、API キーが無効、残高不足など）。最初に失敗した項目: %s、エラー: %v"
  },
- "%d files backed up (replaced ones are in %s/overwritten/, operator files will be put back unchanged)": {
-  "zh": "%d 个文件已留底（被替换的在 %s/overwritten/，运维者的会原样放回）"
- },
- "%d source files have local changes; the automatic update will not overwrite them. Commit or revert these files, then update.": {
-  "zh": "有 %d 个源码文件被本地改过，自动更新不会覆盖它们。先提交或还原这些文件再更新。"
- },
  "%s (%s): invalid regular expression: %w": {
-  "zh": "%s（%s）：正则表达式无效：%w",
   "ja": "%s（%s）: 正規表現が無効です: %w"
  },
- "%s (default branch %s) has %d new commits: %s -> %s": {
-  "zh": "%s（默认分支 %s）有 %d 个新提交：%s → %s"
- },
  "%s cannot be negative": {
-  "zh": "%s 不能为负数",
   "ja": "%s は負の値にできません"
  },
  "%s exceeds the length limit (%d characters)": {
-  "zh": "%s超出长度限制（%d 字）",
   "ja": "%s が文字数の上限（%d 文字）を超えています"
  },
- "%s has a symlink or a directory/file conflict; local content kept, please handle it manually first": {
-  "zh": "%s 存在符号链接或目录/文件冲突，已保留本地内容，请先人工处理"
- },
  "%s is not cgroup v2": {
-  "zh": "%s 不是 cgroup v2",
   "ja": "%s は cgroup v2 ではありません"
  },
  "%s must be a string": {
-  "zh": "%s 必须为字符串",
   "ja": "%s は文字列である必要があります"
  },
  "%s must be an RFC3339 time or YYYY-MM-DD": {
-  "zh": "%s 必须是 RFC3339 时间或 YYYY-MM-DD",
   "ja": "%s は RFC3339 形式の日時または YYYY-MM-DD で指定してください"
  },
  "%s node \"%s\" cannot have outgoing edges": {
-  "zh": "%s 节点「%s」不能有出边",
   "ja": "%s ノード「%s」に出力エッジを設定することはできません"
  },
  "%s node \"%s\" requires at least one incoming edge": {
-  "zh": "%s 节点「%s」至少需要一条入边",
   "ja": "%s ノード「%s」には少なくとも 1 本の入力エッジが必要です"
  },
  "%s.auth.allowed_external_users contains duplicate users": {
-  "zh": "%s.auth.allowed_external_users 包含重复用户",
   "ja": "%s.auth.allowed_external_users に重複するユーザーが含まれています"
  },
  "%s.auth.allowed_external_users must contain at least one real sender": {
-  "zh": "%s.auth.allowed_external_users 至少配置一个真实发送者",
   "ja": "%s.auth.allowed_external_users には実在の送信者を 1 人以上設定してください"
  },
  "%s.auth.allowed_external_users must not contain empty values or wildcards": {
-  "zh": "%s.auth.allowed_external_users 不允许空值或通配符",
   "ja": "%s.auth.allowed_external_users には空の値やワイルドカードを含められません"
  },
  "%s.auth.mode must be user_binding or service_account": {
-  "zh": "%s.auth.mode 仅支持 user_binding 或 service_account",
   "ja": "%s.auth.mode は user_binding または service_account のみ指定できます"
  },
  "%s.auth.service_user_id is required": {
-  "zh": "%s.auth.service_user_id 不能为空",
   "ja": "%s.auth.service_user_id は必須です"
  },
  "%s.context_profile only supports auto, economy, custom, local, or local_auto": {
-  "zh": "%s.context_profile 只支持 auto、economy、custom、local 或 local_auto",
   "ja": "%s.context_profile は auto、economy、custom、local、local_auto のみ指定できます"
  },
  "%s.context_window must not be negative": {
-  "zh": "%s.context_window 不能为负数",
   "ja": "%s.context_window は負の値にできません"
  },
- "%s/%s (%s %s) has %d files: %d local versions will be replaced by the target version, %d operator files will be staged and put back": {
-  "zh": "%s/%s（%s %s）共 %d 个文件：%d 个本机版本会被目标版本替换，%d 个运维者文件先暂存再放回"
- },
  "%s: duplicate id %q": {
-  "zh": "%s：id %q 重复",
   "ja": "%s: id %q が重複しています"
  },
  "%s: id must be nonempty and at most %d bytes": {
-  "zh": "%s：id 不能为空且最多 %d 字节",
   "ja": "%s: id は空にできず、最大 %d バイトです"
  },
  "%s: id must not have surrounding whitespace": {
-  "zh": "%s：id 前后不能有空白字符",
   "ja": "%s: id の前後に空白は使用できません"
  },
  "%s: message must be at most %d bytes": {
-  "zh": "%s：message 最多 %d 字节",
   "ja": "%s: message は最大 %d バイトです"
  },
  "%s: name must be nonempty and at most %d bytes": {
-  "zh": "%s：name 不能为空且最多 %d 字节",
   "ja": "%s: name は空にできず、最大 %d バイトです"
  },
  "%s: pattern must be nonempty and at most %d bytes": {
-  "zh": "%s：pattern 不能为空且最多 %d 字节",
   "ja": "%s: pattern は空にできず、最大 %d バイトです"
  },
  "%v is not configured: set api_key in config.yaml, or set the environment variable %v": {
-  "zh": "%v 未配置：请在 config.yaml 中填写 api_key，或设置环境变量 %v",
   "ja": "%v が設定されていません: config.yaml に api_key を入力するか、環境変数 %v を設定してください"
  },
  "%v: %v": {
-  "zh": "%v: %v",
   "ja": "%v: %v"
  },
- "%v; restoring local content also failed: %v": {
-  "zh": "%v；恢复本地内容又失败：%v"
- },
  "(Untitled)": {
-  "zh": "（无标题）",
   "ja": "（無題）"
  },
  "<persisted-output>\nOutput too large (%d). Full output saved to: %s\nUse %s with offset/limit to read parts of the file.\nPreview (first %d):\n%s\n\nPreview (last %d):\n%s\n\n</persisted-output>": {
-  "zh": "<persisted-output>\n输出过大（%d）。完整输出已保存到：%s\n请使用 %s 配合 offset/limit 读取文件的部分内容。\n预览（前 %d）：\n%s\n\n预览（后 %d）：\n%s\n\n</persisted-output>",
   "ja": "<persisted-output>\n出力が大きすぎます（%d）。完全な出力の保存先: %s\n%s を offset/limit 付きで使用して、ファイルの一部を読み取ってください。\nプレビュー（先頭 %d）:\n%s\n\nプレビュー（末尾 %d）:\n%s\n\n</persisted-output>"
  },
  "A human rejected this tool call; the model will continue iterating based on the feedback": {
-  "zh": "人工拒绝本次工具调用，模型将基于反馈继续迭代",
   "ja": "担当者がこのツール呼び出しを拒否しました。モデルはフィードバックに基づいて反復を続けます"
  },
  "A main agent definition already exists: %s. Delete it or unmark it as the main agent first": {
-  "zh": "已存在主代理定义：%s，请先删除或取消其主代理标记",
   "ja": "メインエージェントの定義が既に存在します（%s）。先に削除するか、メインエージェントの指定を解除してください"
  },
  "A new session was created": {
-  "zh": "新会话已建立",
   "ja": "新しいセッションが確立されました"
  },
  "A running task cannot be deleted": {
-  "zh": "执行中的任务不能删除",
   "ja": "実行中のタスクは削除できません"
  },
  "A running task cannot be edited": {
-  "zh": "执行中的任务不能编辑",
   "ja": "実行中のタスクは編集できません"
  },
  "A single queue can hold at most %d tasks": {
-  "zh": "单个队列最多 %d 条任务",
   "ja": "1 つのキューには最大 %d 件のタスクを登録できます"
  },
  "A storage cleanup is already in progress": {
-  "zh": "已有一轮存储清理正在执行",
   "ja": "ストレージのクリーンアップがすでに実行中です"
  },
  "A task is already running in this conversation, please try again later": {
-  "zh": "当前会话已有任务正在执行中，请稍后再试",
   "ja": "この会話ではすでにタスクが実行中です。しばらくしてからもう一度お試しください"
  },
  "AI channel not found: %s": {
-  "zh": "AI 通道不存在: %s",
   "ja": "AI チャネルが見つかりません: %s"
  },
  "AI client is not initialized": {
-  "zh": "AI 客户端未初始化",
   "ja": "AI クライアントが初期化されていません"
  },
  "AI generation failed: %w": {
-  "zh": "AI生成失败: %w",
   "ja": "AI の生成に失敗しました: %w"
  },
  "AI model is not configured: please set openai.api_key and openai.model in system settings (OpenAI-compatible APIs such as DeepSeek are supported)": {
-  "zh": "未配置 AI 模型：请在系统设置中填写 openai.api_key 与 openai.model（支持 OpenAI 兼容 API，如 DeepSeek）",
   "ja": "AI モデルが設定されていません。システム設定で openai.api_key と openai.model を入力してください（DeepSeek など OpenAI 互換 API に対応しています）"
  },
  "AI parsing failed (upstream returned non-200), please check the model configuration or try again later": {
-  "zh": "AI 解析失败（上游返回非 200），请检查模型配置或稍后重试",
   "ja": "AI の解析に失敗しました（上流が 200 以外を返しました）。モデル設定を確認するか、しばらくしてからもう一度お試しください"
  },
  "AI parsing failed: %v": {
-  "zh": "AI 解析失败: %v",
   "ja": "AI の解析に失敗しました: %v"
  },
  "AI response could not be parsed as JSON. Try again later or rephrase your description": {
-  "zh": "AI 返回内容无法解析为 JSON，请稍后重试或换个描述方式",
   "ja": "AI の応答を JSON として解析できません。しばらくしてから再試行するか、説明を変えてお試しください"
  },
  "AI returned no valid result": {
-  "zh": "AI 未返回有效结果",
   "ja": "AI から有効な結果が返されませんでした"
  },
  "API Key is required": {
-  "zh": "API Key 不能为空",
   "ja": "API Key は必須です"
  },
  "API Key is required (set vision.api_key or openai.api_key)": {
-  "zh": "API Key 不能为空（可填写 vision.api_key 或 openai.api_key）",
   "ja": "API Key は必須です（vision.api_key または openai.api_key を指定してください）"
  },
  "API URL must be a complete URL including https:// or http://": {
-  "zh": "API 地址必须是包含 https:// 或 http:// 的完整 URL",
   "ja": "API の URL は https:// または http:// を含む完全な URL である必要があります"
  },
  "API response format is not as expected, please check that the Base URL is correct": {
-  "zh": "API 响应格式不符合预期，请检查 Base URL 是否正确",
   "ja": "API レスポンスの形式が想定と異なります。Base URL が正しいか確認してください"
  },
  "API response is missing the choices field, please check that the Base URL path is correct": {
-  "zh": "API 响应缺少 choices 字段，请检查 Base URL 路径是否正确",
   "ja": "API レスポンスに choices フィールドがありません。Base URL のパスが正しいか確認してください"
  },
  "API response is missing the choices field, please check the Base URL and vision model name": {
-  "zh": "API 响应缺少 choices 字段，请检查 Base URL 与视觉模型名称",
   "ja": "API レスポンスに choices フィールドがありません。Base URL とビジョンモデル名を確認してください"
  },
  "API returned an error (HTTP %d): %s": {
-  "zh": "API 返回错误 (HTTP %d): %s",
   "ja": "API がエラーを返しました (HTTP %d): %s"
  },
  "API returned no valid response": {
-  "zh": "API未返回有效响应",
   "ja": "API から有効な応答が返されませんでした"
  },
  "Access permissions are not configured": {
-  "zh": "未配置访问权限",
   "ja": "アクセス権限が設定されていません"
  },
- "Adopt directory %s into update source %s": {
-  "zh": "把目录 %s 接入更新源 %s"
- },
  "Agent ID is already used by file %s": {
-  "zh": "Agent ID 已被文件 %s 使用",
   "ja": "Agent ID はファイル %s で既に使用されています"
  },
  "Agent ID must be 1–64 letters, digits, hyphens, or underscores, and start with a letter or digit": {
-  "zh": "Agent ID 必须为 1–64 个字母、数字、连字符或下划线，且以字母或数字开头",
   "ja": "Agent ID は 1〜64 文字の英字、数字、ハイフン、アンダースコアで、英字または数字で始める必要があります"
  },
  "Agent instructions are required": {
-  "zh": "智能体指令不能为空",
   "ja": "エージェントの指示は必須です"
  },
  "Agent name is required": {
-  "zh": "智能体 name 不能为空",
   "ja": "エージェントの name は必須です"
  },
  "Agent node \"%s\" requires an output variable name": {
-  "zh": "Agent 节点「%s」必须填写输出变量名",
   "ja": "エージェントノード「%s」には出力変数名が必要です"
  },
  "Agent node \"%s\" requires node instructions or input bindings": {
-  "zh": "Agent 节点「%s」必须填写节点指令或输入绑定",
   "ja": "エージェントノード「%s」にはノードの指示または入力バインディングが必要です"
  },
  "Agent trace is empty; the messages table will be used": {
-  "zh": "代理轨迹为空，将使用消息表",
   "ja": "エージェントのトレースが空のため、メッセージテーブルを使用します"
  },
- "Allowlisted platform sender runs the agent with the bot service account": {
-  "zh": "白名单平台发送者使用机器人服务账号执行 Agent"
- },
  "An edge cannot point to itself": {
-  "zh": "边不能指向自身",
   "ja": "エッジは自分自身を指せません"
  },
  "An edge cannot point to itself: %s": {
-  "zh": "边不能指向自身: %s",
   "ja": "エッジは自分自身を指せません: %s"
  },
  "An indexing task is already in progress": {
-  "zh": "索引任务已在进行中",
   "ja": "インデックス作成タスクがすでに実行中です"
  },
  "An indexing task is already running. Please wait for it to finish": {
-  "zh": "已有索引任务正在进行，请等待完成",
   "ja": "インデックス作成タスクがすでに実行中です。完了までお待ちください"
  },
  "An update is already in progress": {
-  "zh": "已有一次更新在进行中",
   "ja": "既に更新が実行中です"
  },
  "An update is in progress; cannot roll back at the same time": {
-  "zh": "更新进行中，不能同时回滚",
   "ja": "更新の実行中は同時にロールバックできません"
  },
  "An update is in progress; cannot switch the update source": {
-  "zh": "更新进行中，不能切换更新源",
   "ja": "更新の実行中は更新ソースを切り替えられません"
  },
  "An update is in progress; wait for it to finish before restarting": {
-  "zh": "更新进行中，等它结束再重启",
   "ja": "更新の実行中です。完了してから再起動してください"
  },
- "An update, check or rollback is already running for this install directory, please retry later": {
-  "zh": "此安装目录已有更新、检查或回滚正在执行，请稍后重试"
- },
  "Approval timed out and was rejected automatically for safety; the model will continue iterating based on the feedback": {
-  "zh": "审批超时，安全起见已自动拒绝，模型将基于反馈继续迭代",
   "ja": "承認がタイムアウトしたため、安全のため自動的に拒否されました。モデルはフィードバックに基づいて反復を続けます"
  },
  "Asset #%d is invalid: %w": {
-  "zh": "第 %d 个资产无效: %w",
   "ja": "%d 番目の資産が無効です: %w"
  },
  "Asset list is required": {
-  "zh": "资产列表不能为空",
   "ja": "資産リストは必須です"
  },
  "Asset not found": {
-  "zh": "资产不存在",
   "ja": "資産が見つかりません"
  },
  "Asset not found or not authorized to delete": {
-  "zh": "资产不存在或无权删除",
   "ja": "資産が見つからないか、削除する権限がありません"
  },
  "Asset not found or not authorized to scan": {
-  "zh": "资产不存在或无权扫描",
   "ja": "資産が見つからないか、スキャンする権限がありません"
  },
  "Asset target is required": {
-  "zh": "资产目标不能为空",
   "ja": "資産ターゲットは必須です"
  },
  "At least one of conversation_id or task_id is required": {
-  "zh": "conversation_id 或 task_id 至少需要一个",
   "ja": "conversation_id または task_id のいずれか 1 つは必須です"
  },
  "At least one of host, ip, or domain is required": {
-  "zh": "host、ip、domain 至少需要一个",
   "ja": "host、ip、domain のいずれか 1 つ以上が必要です"
  },
  "At least one resource ID is required": {
-  "zh": "至少需要一个资源 ID",
   "ja": "リソース ID が少なくとも 1 つ必要です"
  },
  "At least two distinct assets are required": {
-  "zh": "至少需要两个不同资产",
   "ja": "異なる資産が少なくとも 2 件必要です"
  },
  "At most %d attachments are allowed": {
-  "zh": "附件最多 %d 个",
   "ja": "添付ファイルは最大 %d 個までです"
  },
  "At most %d resources can be granted at a time": {
-  "zh": "一次最多授权 %d 个资源",
   "ja": "一度に認可できるリソースは最大 %d 件です"
  },
  "At most 50 tags are allowed": {
-  "zh": "最多 50 个标签",
   "ja": "タグは最大 50 個までです"
  },
  "Attachment %s has no content or serverPath": {
-  "zh": "附件 %s 缺少内容或未提供 serverPath",
   "ja": "添付ファイル %s にコンテンツがないか、serverPath が指定されていません"
  },
  "Attachment %s: %w": {
-  "zh": "附件 %s: %w",
   "ja": "添付ファイル %s: %w"
  },
  "Attachment has changed, please upload it again": {
-  "zh": "附件已变更，请重新上传",
   "ja": "添付ファイルが変更されました。もう一度アップロードしてください"
  },
  "Attachment must be a regular file": {
-  "zh": "附件必须是普通文件",
   "ja": "添付ファイルは通常のファイルである必要があります"
  },
  "Attack chain is being generated, please try again later": {
-  "zh": "攻击链正在生成中，请稍后再试",
   "ja": "攻撃チェーンを生成中です。しばらくしてからもう一度お試しください"
  },
  "Audit agent approved, continuing execution": {
-  "zh": "审计 Agent 已通过，继续执行",
   "ja": "監査エージェントが承認しました。実行を続行します"
  },
  "Audit agent has made a decision": {
-  "zh": "审计 Agent 已裁决",
   "ja": "監査エージェントが判断を下しました"
  },
  "Audit agent is reviewing this request": {
-  "zh": "审计 Agent 正在审查此请求",
   "ja": "監査エージェントがこのリクエストを確認しています"
  },
  "Audit agent rejected this tool call": {
-  "zh": "审计 Agent 拒绝本次工具调用",
   "ja": "監査エージェントがこのツール呼び出しを拒否しました"
  },
  "Audit log ID list is required": {
-  "zh": "审计日志 ID 列表不能为空",
   "ja": "監査ログ ID のリストは必須です"
  },
  "Audit model is not configured": {
-  "zh": "审计模型未配置",
   "ja": "監査モデルが設定されていません"
  },
  "Audit record not found": {
-  "zh": "审计记录不存在",
   "ja": "監査記録が見つかりません"
  },
- "Authentication failed": {
-  "zh": "鉴权失败"
- },
- "Backup of content to restore does not exist: %s": {
-  "zh": "待恢复内容的备份不存在：%s"
- },
  "Batch deletion succeeded": {
-  "zh": "批量删除成功",
   "ja": "一括削除に成功しました"
  },
  "Batch task queue deleted": {
-  "zh": "批量任务队列已删除",
   "ja": "バッチタスクのキューを削除しました"
  },
  "Batch tasks have been paused": {
-  "zh": "批量任务已暂停",
   "ja": "バッチタスクを一時停止しました"
  },
  "Batch tasks have restarted": {
-  "zh": "批量任务已重新开始执行",
   "ja": "バッチタスクの実行を再開しました"
  },
  "Batch tasks have started": {
-  "zh": "批量任务已开始执行",
   "ja": "バッチタスクの実行を開始しました"
  },
  "Binding confirmed but bot_token is missing": {
-  "zh": "绑定确认成功但缺少 bot_token",
   "ja": "連携は確認されましたが、bot_token がありません"
  },
  "Binding not found": {
-  "zh": "绑定不存在",
   "ja": "バインドが見つかりません"
  },
  "Binding succeeded; WeChat bot enabled": {
-  "zh": "绑定成功，微信机器人已启用",
   "ja": "連携に成功しました。WeChat ボットを有効にしました"
  },
  "Bot authentication service unavailable": {
-  "zh": "机器人鉴权服务不可用",
   "ja": "ボット認証サービスは利用できません"
  },
- "Bot platform account bound successfully": {
-  "zh": "机器人平台账号绑定成功"
- },
- "Bot platform account unbound successfully": {
-  "zh": "机器人平台账号解绑成功"
- },
  "Bot sender is not in the service account allowlist": {
-  "zh": "机器人发送者不在服务账号白名单中",
   "ja": "ボットの送信者がサービスアカウントの許可リストにありません"
  },
  "Both sides of expression %q are required: %s": {
-  "zh": "表达式 %q 两侧不能为空: %s",
   "ja": "式 %q の両辺は必須です: %s"
  },
  "Both sides of the matches expression are required: %s": {
-  "zh": "matches 表达式两侧不能为空: %s",
   "ja": "matches 式の両辺は必須です: %s"
  },
- "Build failed, binary kept at the original version:\n%v": {
-  "zh": "编译失败，二进制保持原版本：\n%v"
- },
  "Built-in system roles cannot be modified. Create a custom role instead": {
-  "zh": "系统内置角色不可修改，请创建自定义角色",
   "ja": "システム組み込みロールは変更できません。カスタムロールを作成してください"
  },
  "C2 HITL approval timed out; the dangerous task was rejected automatically": {
-  "zh": "C2 HITL 审批超时，危险任务已被自动拒绝",
   "ja": "C2 の HITL 承認がタイムアウトしたため、危険なタスクは自動的に拒否されました"
  },
  "C2 approval was cancelled": {
-  "zh": "C2 审批已取消",
   "ja": "C2 の承認はキャンセルされました"
  },
  "C2 is turned off in system settings": {
-  "zh": "C2 功能已在系统设置中关闭",
   "ja": "C2 機能はシステム設定で無効になっています"
  },
  "C2 new session online": {
-  "zh": "C2 新会话上线",
   "ja": "C2 新規セッションがオンライン"
  },
  "C2 profile mutation requires global scope": {
-  "zh": "修改 C2 配置需要全局范围",
   "ja": "C2 プロファイルの変更にはグローバルスコープが必要です"
  },
  "Call interception configuration version is missing. Refresh the page and try again": {
-  "zh": "缺少调用拦截配置版本，请刷新页面后重试",
   "ja": "呼び出し遮断設定のバージョンがありません。ページを更新してから再試行してください"
  },
  "Call interception service is not initialized": {
-  "zh": "调用拦截服务未初始化",
   "ja": "呼び出し遮断サービスが初期化されていません"
  },
- "Calling tool: %s": {
-  "zh": "调用工具：%s"
- },
  "Cancel request submitted; the task will stop after the current step completes.": {
-  "zh": "已提交取消请求，任务将在当前步骤完成后停止。",
   "ja": "キャンセルリクエストを送信しました。現在のステップの完了後にタスクが停止します。"
  },
- "Cannot determine the remote default branch: %v": {
-  "zh": "无法确定远端默认分支：%v"
- },
- "Cannot lock the install directory: %v": {
-  "zh": "无法锁定安装目录：%v"
- },
- "Cannot read the adoption recovery record: %v": {
-  "zh": "无法读取接入恢复记录：%v"
- },
- "Cannot read the local file to adopt; directory not modified: %v: %v": {
-  "zh": "无法读取待接入的本地文件，未修改目录：%v: %v"
- },
- "Cannot read the pending-build state: %v": {
-  "zh": "无法读取待编译状态：%v"
- },
- "Cannot read the rollback recovery record: %v": {
-  "zh": "无法读取回滚恢复记录：%v"
- },
- "Cannot read the rollback state: %v": {
-  "zh": "无法读取回滚状态：%v"
- },
- "Cannot record the binary to be swapped in: %v": {
-  "zh": "无法记录待换入二进制：%v"
- },
  "Cannot start task: %w": {
-  "zh": "无法启动任务: %w",
   "ja": "タスクを開始できません: %w"
  },
- "Cannot start the binary on disk: %v": {
-  "zh": "无法启动磁盘上的二进制：%v"
- },
  "Cannot uniquely determine the saved credential, please select a channel or enter an API Key": {
-  "zh": "无法唯一确定已保存凭据，请选择通道或填写 API Key",
   "ja": "保存済みの認証情報を一意に特定できません。チャネルを選択するか、API Key を入力してください"
  },
- "Cannot update the adoption recovery state: %v": {
-  "zh": "无法更新接入恢复状态：%v"
- },
- "Cannot update the pending-build state: %v": {
-  "zh": "无法更新待编译状态：%v"
- },
- "Cannot verify the new binary: %v": {
-  "zh": "无法校验新二进制：%v"
- },
- "Cannot verify the pre-update binary: %v": {
-  "zh": "无法校验更新前二进制：%v"
- },
- "Cannot write the adoption recovery state: %v": {
-  "zh": "无法写入接入恢复状态：%v"
- },
- "Cannot write the pending-build state: %v": {
-  "zh": "无法写入待编译状态：%v"
- },
- "Cannot write the rollback recovery record; source and binary not modified: %v": {
-  "zh": "无法写入回滚恢复记录，未修改源码或二进制：%v"
- },
- "Cannot write the update state file; rollback will be unavailable: %v": {
-  "zh": "无法写入更新状态文件，回滚将不可用：%v"
- },
  "Channel has no saved credential, please enter an API Key": {
-  "zh": "通道没有已保存凭据，请填写 API Key",
   "ja": "チャネルに保存済みの認証情報がありません。API Key を入力してください"
  },
  "Channel no longer exists, please refresh the configuration and try again": {
-  "zh": "通道已不存在，请刷新配置后重试",
   "ja": "チャネルが存在しなくなりました。設定を再読み込みしてからもう一度お試しください"
  },
  "Check the pairing digits in WeChat on your phone and enter them below": {
-  "zh": "请在手机微信查看配对数字，并在下方输入",
   "ja": "スマートフォンの WeChat でペアリング用の数字を確認し、下に入力してください"
  },
- "Checking install directory %s (local branch %s / update source %s / commit %s)": {
-  "zh": "检查安装目录 %s（本机分支 %s / 更新源 %s / 提交 %s）"
- },
  "Ciphertext length is not a multiple of the block size": {
-  "zh": "密文长度不是块大小的倍数",
   "ja": "暗号文の長さがブロックサイズの倍数ではありません"
  },
  "Claude (Anthropic Messages API) does not support context window detection, please enter it manually": {
-  "zh": "Claude (Anthropic Messages API) 不提供上下文窗口探测，请手动填写",
   "ja": "Claude (Anthropic Messages API) ではコンテキストウィンドウを検出できません。手動で入力してください"
  },
  "Claude (Anthropic Messages API) does not support fetching the model list automatically, please enter it manually": {
-  "zh": "Claude (Anthropic Messages API) 不支持自动获取模型列表，请手动填写",
   "ja": "Claude (Anthropic Messages API) ではモデル一覧を自動取得できません。手動で入力してください"
  },
  "Claude model/messages are required": {
-  "zh": "必须提供 Claude model/messages",
   "ja": "Claude の model/messages が必要です"
  },
  "Claude stream error: %s": {
-  "zh": "Claude 流式错误: %s",
   "ja": "Claude ストリームエラー: %s"
  },
  "Cleared statistics for all skills": {
-  "zh": "已清空所有Skills统计信息",
   "ja": "すべてのスキルの統計情報をクリアしました"
  },
  "Cleared statistics for skill '%s'": {
-  "zh": "已清空skill '%s' 的统计信息",
   "ja": "スキル '%s' の統計情報をクリアしました"
  },
  "Client not found: %s": {
-  "zh": "客户端不存在: %s",
   "ja": "クライアントが見つかりません: %s"
  },
  "Command is too long": {
-  "zh": "命令过长",
   "ja": "コマンドが長すぎます"
  },
- "Command rejected by OPSEC rule (matched: %s)": {
-  "zh": "命令被 OPSEC 规则拒绝 (匹配: %s)"
- },
  "Concurrency must be between 1 and %d": {
-  "zh": "并发数必须为 1–%d",
   "ja": "同時実行数は 1～%d の範囲で指定してください"
  },
  "Condition check: %s -> no": {
-  "zh": "条件判断：%s → 否",
   "ja": "条件チェック: %s → いいえ"
  },
  "Condition check: %s -> yes": {
-  "zh": "条件判断：%s → 是",
   "ja": "条件チェック: %s → はい"
  },
  "Condition expression contains an empty segment": {
-  "zh": "条件表达式存在空片段",
   "ja": "条件式に空の部分があります"
  },
  "Condition expression is required": {
-  "zh": "条件表达式不能为空",
   "ja": "条件式は必須です"
  },
  "Condition expression template brackets do not match: %s": {
-  "zh": "条件表达式模板括号不匹配: %s",
   "ja": "条件式テンプレートの括弧が対応していません: %s"
  },
  "Condition node \"%s\" has a duplicate branch label: %s": {
-  "zh": "条件节点「%s」存在重复分支标签: %s",
   "ja": "条件ノード「%s」に重複した分岐ラベルがあります: %s"
  },
  "Condition node \"%s\" has an invalid expression: %w": {
-  "zh": "条件节点「%s」表达式非法: %w",
   "ja": "条件ノード「%s」の式が無効です: %w"
  },
  "Condition node \"%s\" requires 1 to 2 outgoing edges (yes/no)": {
-  "zh": "条件节点「%s」需要 1 到 2 条出边（是/否）",
   "ja": "条件ノード「%s」には 1〜2 本の出力エッジ（はい/いいえ）が必要です"
  },
  "Condition node \"%s\" requires an expression": {
-  "zh": "条件节点「%s」必须填写表达式",
   "ja": "条件ノード「%s」には式が必要です"
  },
  "Configuration applied": {
-  "zh": "配置已应用",
   "ja": "設定を適用しました"
  },
  "Configuration deleted": {
-  "zh": "配置已删除",
   "ja": "設定を削除しました"
  },
  "Configuration file %s not found, and template %s was not found": {
-  "zh": "配置文件 %s 不存在，且未找到模板 %s",
   "ja": "設定ファイル %s が見つからず、テンプレート %s も見つかりません"
  },
  "Configuration is missing command or url, and type/transport is not specified": {
-  "zh": "配置缺少 command 或 url，且未指定 type/transport",
   "ja": "設定に command または url がなく、type/transport も指定されていません"
  },
  "Configuration not found": {
-  "zh": "配置不存在",
   "ja": "設定が見つかりません"
  },
  "Configuration not found: %s": {
-  "zh": "配置不存在: %s",
   "ja": "設定が見つかりません: %s"
  },
  "Configuration saving was not wired up for this launch, so the update source cannot be changed": {
-  "zh": "本次启动没有接入配置保存，更新源改不了",
   "ja": "今回の起動では設定の保存が接続されていないため、更新ソースを変更できません"
  },
  "Configuration updated": {
-  "zh": "配置已更新",
   "ja": "設定を更新しました"
  },
  "Connection failed: %v": {
-  "zh": "连接失败: %v",
   "ja": "接続に失敗しました: %v"
  },
  "Connection failed: %w": {
-  "zh": "连接失败: %w",
   "ja": "接続に失敗しました: %w"
  },
  "Context restored, resuming...": {
-  "zh": "已恢复上下文，正在续跑…",
   "ja": "コンテキストを復元しました。再開しています…"
  },
  "Conversation %v completed": {
-  "zh": "会话 %v 已完成",
   "ja": "会話 %v が完了しました"
  },
  "Conversation %v has been running over 15 minutes": {
-  "zh": "会话 %v 运行超过 15 分钟",
   "ja": "会話 %v の実行が 15 分を超えています"
  },
  "Conversation %v has pending HITL approval": {
-  "zh": "会话 %v 的审批中断待处理",
   "ja": "会話 %v に承認待ちの HITL があります"
  },
  "Conversation is already bound to another project": {
-  "zh": "对话已绑定其他项目",
   "ja": "会話はすでに別のプロジェクトに紐づいています"
  },
  "Conversation not found": {
-  "zh": "对话不存在",
   "ja": "会話が見つかりません"
  },
- "Create conversation": {
-  "zh": "创建对话"
- },
  "Created": {
-  "zh": "已创建",
   "ja": "作成しました"
  },
  "Cron scheduling is not enabled for this queue": {
-  "zh": "队列未启用 cron 调度",
   "ja": "このキューでは Cron スケジュールが有効になっていません"
  },
  "Current password and new password are required": {
-  "zh": "当前密码和新密码均不能为空",
   "ja": "現在のパスワードと新しいパスワードは必須です"
  },
  "Current password is incorrect": {
-  "zh": "当前密码不正确",
   "ja": "現在のパスワードが正しくありません"
  },
  "Database connection is not configured": {
-  "zh": "数据库连接未配置",
   "ja": "データベース接続が設定されていません"
  },
- "Delete batch task queue": {
-  "zh": "删除批量任务队列"
- },
- "Delete conversation": {
-  "zh": "删除对话"
- },
- "Delete external MCP configuration": {
-  "zh": "删除外部 MCP 配置"
- },
- "Delete vulnerability record": {
-  "zh": "删除漏洞记录"
- },
  "Deleted": {
-  "zh": "已删除",
   "ja": "削除しました"
  },
  "Deleted successfully": {
-  "zh": "删除成功",
   "ja": "削除しました"
  },
  "Deletion is irreversible. To run a real cleanup, pass both dry_run=false and confirm=true": {
-  "zh": "删除不可逆，执行真实清理必须同时传 dry_run=false 与 confirm=true",
   "ja": "削除は元に戻せません。実際にクリーンアップを実行するには、dry_run=false と confirm=true の両方を指定してください"
  },
- "Detected {match}; attacking government websites is prohibited. Check the target and authorization scope, and switch to an authorized non-government target.": {
-  "zh": "识别到 {match}，禁止攻击政府网站。请检查目标与授权范围，并更换为已获授权的非政府目标。"
- },
- "Directory adopted into %s/%s (%s) and binary replaced": {
-  "zh": "目录已接入 %s/%s（%s）并换好二进制"
- },
- "Directory adopted into %s/%s (%s); rebuild skipped as requested": {
-  "zh": "目录已接入 %s/%s（%s）；按请求跳过重新编译"
- },
- "Directory adopted into %s/%s (%s); this machine has no Go toolchain, binary not rebuilt": {
-  "zh": "目录已接入 %s/%s（%s）；本机没有 Go 工具链，二进制未重编"
- },
  "Duplicate asset list is required": {
-  "zh": "重复资产列表不能为空",
   "ja": "重複資産リストは必須です"
  },
  "Duplicate header name": {
-  "zh": "重复的请求头名称",
   "ja": "ヘッダー名が重複しています"
  },
  "Duplicate vulnerability ID": {
-  "zh": "重复的漏洞 ID",
   "ja": "脆弱性 ID が重複しています"
  },
  "Edge \"%s\" cannot be a self-loop": {
-  "zh": "连线「%s」不能自环",
   "ja": "エッジ「%s」を自己ループにすることはできません"
  },
  "Edge \"%s\" references a nonexistent source node: %s": {
-  "zh": "连线「%s」引用了不存在的源节点: %s",
   "ja": "エッジ「%s」が存在しない始点ノードを参照しています: %s"
  },
  "Edge \"%s\" references a nonexistent target node: %s": {
-  "zh": "连线「%s」引用了不存在的目标节点: %s",
   "ja": "エッジ「%s」が存在しない終点ノードを参照しています: %s"
  },
  "Edge not found": {
-  "zh": "边不存在",
   "ja": "エッジが見つかりません"
  },
  "Either command (stdio mode) or url + type (http/sse mode) is required": {
-  "zh": "需要指定 command（stdio模式）或 url + type（http/sse模式）",
   "ja": "command（stdio モード）または url + type（http/sse モード）のいずれかを指定してください"
  },
  "Embedder is not initialized": {
-  "zh": "嵌入器未初始化",
   "ja": "エンベッダーが初期化されていません"
  },
  "Enter a retest prompt (up to 20000 bytes)": {
-  "zh": "请输入复测提示词（最多 20000 字节）",
   "ja": "再テスト用のプロンプトを入力してください（最大 20000 バイト）"
  },
  "Execution failed: %v": {
-  "zh": "执行失败: %v",
   "ja": "実行に失敗しました: %v"
  },
  "Execution interrupted (service restart or session ended)": {
-  "zh": "执行已中断（服务重启或会话结束）",
   "ja": "実行が中断されました（サービスの再起動またはセッションの終了）"
  },
  "Execution interrupted (session ended)": {
-  "zh": "执行已中断（会话已结束）",
   "ja": "実行が中断されました（セッションが終了しました）"
  },
  "Execution record ID is required": {
-  "zh": "执行记录ID不能为空",
   "ja": "実行記録 ID は必須です"
  },
  "Execution record ID list is required": {
-  "zh": "执行记录ID列表不能为空",
   "ja": "実行記録 ID のリストは必須です"
  },
  "Execution record deleted": {
-  "zh": "执行记录已删除",
   "ja": "実行記録を削除しました"
  },
  "Execution record deleted (if it existed)": {
-  "zh": "执行记录已删除（如果存在）",
   "ja": "実行記録を削除しました（存在した場合）"
  },
  "Execution record deleted successfully": {
-  "zh": "成功删除执行记录",
   "ja": "実行記録を削除しました"
  },
  "Execution record not found": {
-  "zh": "执行记录未找到",
   "ja": "実行記録が見つかりません"
  },
  "Execution record not found or already deleted": {
-  "zh": "执行记录不存在或已被删除",
   "ja": "実行記録が見つからないか、既に削除されています"
  },
  "External MCP client is not connected: %s (status: %s)": {
-  "zh": "外部MCP客户端未连接: %s (状态: %s)",
   "ja": "外部 MCP クライアントが接続されていません: %s (状態: %s)"
  },
  "External MCP client not found: %s": {
-  "zh": "外部MCP客户端不存在: %s",
   "ja": "外部 MCP クライアントが見つかりません: %s"
  },
  "External MCP configuration not found": {
-  "zh": "外部MCP配置不存在",
   "ja": "外部 MCP の設定が見つかりません"
  },
  "External MCP connection failed: %s": {
-  "zh": "外部MCP连接失败: %s",
   "ja": "外部 MCP への接続に失敗しました: %s"
  },
  "External MCP connection failed: %s (error: %s)": {
-  "zh": "外部MCP连接失败: %s (错误: %s)",
   "ja": "外部 MCP への接続に失敗しました: %s (エラー: %s)"
  },
  "External MCP has no cached tools: %s": {
-  "zh": "外部MCP无缓存工具: %s",
   "ja": "外部 MCP にキャッシュされたツールがありません: %s"
  },
  "External MCP service %s is temporarily circuit-broken; retry in about %s": {
-  "zh": "外部MCP服务 %s 已临时熔断，预计 %s 后重试",
   "ja": "外部 MCP サービス %s は一時的に遮断されています。%s 後に再試行されます"
  },
  "External MCP start request submitted, connecting in the background": {
-  "zh": "外部MCP启动请求已提交，正在后台连接中",
   "ja": "外部 MCP の起動リクエストを送信しました。バックグラウンドで接続中です"
  },
  "External MCP status unknown: %s (status: %s)": {
-  "zh": "外部MCP状态未知: %s (状态: %s)",
   "ja": "外部 MCP の状態が不明です: %s (状態: %s)"
  },
  "External MCP stopped": {
-  "zh": "外部MCP已停止",
   "ja": "外部 MCP を停止しました"
  },
  "External tool not found": {
-  "zh": "外部工具未找到",
   "ja": "外部ツールが見つかりません"
  },
  "FOFA base_url is invalid: %v": {
-  "zh": "FOFA base_url 无效: %v",
   "ja": "FOFA base_url が無効です: %v"
  },
  "FOFA is not configured: enter the FOFA API Key under Asset Management in system settings, or set the FOFA_API_KEY environment variable": {
-  "zh": "FOFA 未配置：请在系统设置的资产管理中填写 FOFA API Key，或设置环境变量 FOFA_API_KEY",
   "ja": "FOFA が設定されていません: システム設定の資産管理で FOFA API Key を入力するか、環境変数 FOFA_API_KEY を設定してください"
  },
  "FOFA returned a non-2xx status: %d": {
-  "zh": "FOFA 返回非 2xx: %d",
   "ja": "FOFA が 2xx 以外のステータスを返しました: %d"
  },
  "FOFA returned an error": {
-  "zh": "FOFA 返回错误",
   "ja": "FOFA がエラーを返しました"
  },
  "Fact is not deprecated": {
-  "zh": "事实未处于废弃状态",
   "ja": "ファクトは廃止状態ではありません"
  },
  "Fact not found": {
-  "zh": "事实不存在",
   "ja": "ファクトが見つかりません"
  },
  "Fact saved.\nfact_key: %s\nid: %s\nconfidence: %s": {
-  "zh": "事实已保存。\nfact_key: %s\nid: %s\nconfidence: %s",
   "ja": "事実を保存しました。\nfact_key: %s\nid: %s\nconfidence: %s"
  },
  "Failed to add batch task: %w": {
-  "zh": "添加批量任务失败: %w",
   "ja": "バッチタスクの追加に失敗しました: %w"
  },
  "Failed to add column %s.%s (original structure and data preserved; check column constraints and default values): %w": {
-  "zh": "补齐字段 %s.%s 失败（保留原结构和数据，请检查字段约束及默认值）: %w",
   "ja": "列 %s.%s の追加に失敗しました（元の構造とデータは保持されています。列の制約とデフォルト値を確認してください）: %w"
  },
  "Failed to add edge: %w": {
-  "zh": "添加边失败: %w",
   "ja": "エッジの追加に失敗しました: %w"
  },
  "Failed to add index %s: %w": {
-  "zh": "补齐索引 %s 失败: %w",
   "ja": "インデックス %s の追加に失敗しました: %w"
  },
  "Failed to add message: %w": {
-  "zh": "添加消息失败: %w",
   "ja": "メッセージの追加に失敗しました: %w"
  },
  "Failed to add or update configuration: %v": {
-  "zh": "添加或更新配置失败: %v",
   "ja": "設定の追加または更新に失敗しました: %v"
  },
  "Failed to add process detail: %w": {
-  "zh": "添加过程详情失败: %w",
   "ja": "処理詳細の追加に失敗しました: %w"
  },
- "Failed to add remote: %v": {
-  "zh": "添加远端失败：%v"
- },
  "Failed to add task: %w": {
-  "zh": "添加任务失败: %w",
   "ja": "タスクの追加に失敗しました: %w"
  },
  "Failed to apply tool guard configuration: %v": {
-  "zh": "应用调用拦截配置失败: %v",
   "ja": "呼び出し遮断設定の適用に失敗しました: %v"
  },
  "Failed to authorize asset: %w": {
-  "zh": "授权资产失败: %w",
   "ja": "資産の認可に失敗しました: %w"
  },
  "Failed to authorize new asset: %w": {
-  "zh": "授权新资产失败: %w",
   "ja": "新しい資産の認可に失敗しました: %w"
  },
- "Failed to back up %s: %v": {
-  "zh": "备份 %s 失败：%v"
- },
  "Failed to backfill message update times: %w": {
-  "zh": "回填消息更新时间失败: %w",
   "ja": "メッセージ更新日時の補完に失敗しました: %w"
  },
  "Failed to backfill model Token usage: %w": {
-  "zh": "回填模型Token用量失败: %w",
   "ja": "モデルの Token 使用量の補完に失敗しました: %w"
  },
  "Failed to backfill vulnerability targets: %w": {
-  "zh": "回填漏洞目标失败: %w",
   "ja": "脆弱性の対象の補完に失敗しました: %w"
  },
  "Failed to batch delete execution records: %v": {
-  "zh": "批量删除执行记录失败: %v",
   "ja": "実行記録の一括削除に失敗しました: %v"
  },
  "Failed to begin transaction: %w": {
-  "zh": "开始事务失败: %w",
   "ja": "トランザクションの開始に失敗しました: %w"
  },
  "Failed to bulk delete HITL audit logs: %w": {
-  "zh": "批量删除人机协同审计日志失败: %w",
   "ja": "HITL 監査ログの一括削除に失敗しました: %w"
  },
  "Failed to bulk delete vulnerabilities: %w": {
-  "zh": "批量删除漏洞失败: %w",
   "ja": "脆弱性の一括削除に失敗しました: %w"
  },
  "Failed to call LLM: %w": {
-  "zh": "调用大模型失败: %w",
   "ja": "LLM の呼び出しに失敗しました: %w"
  },
  "Failed to cancel pending tasks in bulk: %w": {
-  "zh": "批量取消 pending 任务失败: %w",
   "ja": "保留中の pending タスクの一括キャンセルに失敗しました: %w"
  },
- "Failed to change password: current password is incorrect": {
-  "zh": "修改密码失败：当前密码不正确"
- },
  "Failed to check asset deduplication key: %w": {
-  "zh": "检查资产去重键失败: %w",
   "ja": "資産の重複排除キーの確認に失敗しました: %w"
  },
  "Failed to check configuration file: %w": {
-  "zh": "检查配置文件失败: %w",
   "ja": "設定ファイルの確認に失敗しました: %w"
  },
  "Failed to check configuration template: %w": {
-  "zh": "检查配置模板失败: %w",
   "ja": "設定テンプレートの確認に失敗しました: %w"
  },
  "Failed to check index: %w": {
-  "zh": "检查索引失败：%w",
   "ja": "インデックスの確認に失敗しました: %w"
  },
  "Failed to clean up expired HITL audit logs: %w": {
-  "zh": "清理过期人机协同审计日志失败: %w",
   "ja": "期限切れの HITL 監査ログの削除に失敗しました: %w"
  },
  "Failed to clean up fact-vulnerability links: %w": {
-  "zh": "清理事实漏洞关联失败: %w",
   "ja": "ファクトと脆弱性の関連の削除に失敗しました: %w"
  },
  "Failed to clear HITL audit logs: %w": {
-  "zh": "清空人机协同审计日志失败: %w",
   "ja": "HITL 監査ログの消去に失敗しました: %w"
  },
  "Failed to clear old edges: %w": {
-  "zh": "清除旧边失败: %w",
   "ja": "古いエッジの削除に失敗しました: %w"
  },
  "Failed to clear old incoming edges: %w": {
-  "zh": "清除旧入边失败: %w",
   "ja": "古い入力エッジの削除に失敗しました: %w"
  },
  "Failed to clear statistics: %v": {
-  "zh": "清空统计信息失败: %v",
   "ja": "統計情報のクリアに失敗しました: %v"
  },
  "Failed to commit SQLite schema completion: %w": {
-  "zh": "提交 SQLite 结构补齐失败: %w",
   "ja": "SQLite スキーマ補完のコミットに失敗しました: %w"
  },
  "Failed to commit transaction: %w": {
-  "zh": "提交事务失败: %w",
   "ja": "トランザクションのコミットに失敗しました: %w"
  },
  "Failed to complete table %s: %w": {
-  "zh": "补齐表 %s 失败: %w",
   "ja": "テーブル %s の補完に失敗しました: %w"
  },
  "Failed to compute process detail anchor position: %w": {
-  "zh": "计算过程详情锚点位置失败: %w",
   "ja": "処理詳細のアンカー位置の計算に失敗しました: %w"
  },
  "Failed to configure HTTP/2 for the main server: %w": {
-  "zh": "主服务 HTTP/2 配置失败: %w",
   "ja": "メインサーバーの HTTP/2 設定に失敗しました: %w"
  },
  "Failed to configure database PRAGMA: %w": {
-  "zh": "配置数据库 PRAGMA 失败: %w",
   "ja": "データベースの PRAGMA の設定に失敗しました: %w"
  },
  "Failed to configure knowledge base database PRAGMA: %w": {
-  "zh": "配置知识库数据库 PRAGMA 失败: %w",
   "ja": "ナレッジベースのデータベースの PRAGMA 設定に失敗しました: %w"
  },
  "Failed to connect to database: %w": {
-  "zh": "连接数据库失败: %w",
   "ja": "データベースへの接続に失敗しました: %w"
  },
  "Failed to connect to knowledge base database: %w": {
-  "zh": "连接知识库数据库失败: %w",
   "ja": "ナレッジベースのデータベースへの接続に失敗しました: %w"
  },
  "Failed to count active projects: %w": {
-  "zh": "统计活跃项目失败: %w",
   "ja": "アクティブなプロジェクト数の集計に失敗しました: %w"
  },
  "Failed to count batch task queues: %w": {
-  "zh": "统计批量任务队列总数失败: %w",
   "ja": "バッチタスクキューの総数の集計に失敗しました: %w"
  },
  "Failed to count conversations: %w": {
-  "zh": "统计对话失败: %w",
   "ja": "会話の集計に失敗しました: %w"
  },
  "Failed to count facts: %w": {
-  "zh": "统计事实失败: %w",
   "ja": "ファクト数の集計に失敗しました: %w"
  },
  "Failed to count process details: %w": {
-  "zh": "统计过程详情失败: %w",
   "ja": "処理詳細の集計に失敗しました: %w"
  },
  "Failed to count projects: %w": {
-  "zh": "统计项目失败: %w",
   "ja": "プロジェクト数の集計に失敗しました: %w"
  },
  "Failed to count queues: %w": {
-  "zh": "统计队列总数失败: %w",
   "ja": "キューの総数の集計に失敗しました: %w"
  },
  "Failed to count tool call details: %w": {
-  "zh": "统计工具调用详情失败: %w",
   "ja": "ツール呼び出し詳細の集計に失敗しました: %w"
  },
  "Failed to count total vulnerabilities: %w": {
-  "zh": "统计漏洞总数失败: %w",
   "ja": "脆弱性の総数の集計に失敗しました: %w"
  },
  "Failed to count vulnerabilities: %w": {
-  "zh": "统计漏洞失败: %w",
   "ja": "脆弱性数の集計に失敗しました: %w"
  },
  "Failed to create SKILL.md: %v": {
-  "zh": "创建 SKILL.md 失败: %v",
   "ja": "SKILL.md の作成に失敗しました: %v"
  },
  "Failed to create asset: %w": {
-  "zh": "创建资产失败: %w",
   "ja": "資産の作成に失敗しました: %w"
  },
  "Failed to create batch task queue: %w": {
-  "zh": "创建批量任务队列失败: %w",
   "ja": "バッチタスクキューの作成に失敗しました: %w"
  },
  "Failed to create batch task: %w": {
-  "zh": "创建批量任务失败: %w",
   "ja": "バッチタスクの作成に失敗しました: %w"
  },
  "Failed to create configuration directory: %w": {
-  "zh": "创建配置目录失败: %w",
   "ja": "設定ディレクトリの作成に失敗しました: %w"
  },
  "Failed to create configuration file: %w": {
-  "zh": "创建配置文件失败: %w",
   "ja": "設定ファイルの作成に失敗しました: %w"
  },
  "Failed to create conversation attachment directory: %w": {
-  "zh": "创建会话附件目录失败: %w",
   "ja": "会話の添付ファイルディレクトリの作成に失敗しました: %w"
  },
  "Failed to create conversation: %w": {
-  "zh": "创建对话失败: %w",
   "ja": "会話の作成に失敗しました: %w"
  },
  "Failed to create database directory: %w": {
-  "zh": "创建数据库目录失败: %w",
   "ja": "データベースディレクトリの作成に失敗しました: %w"
  },
  "Failed to create directory: %w": {
-  "zh": "创建目录失败: %w",
   "ja": "ディレクトリの作成に失敗しました: %w"
  },
  "Failed to create fact: %w": {
-  "zh": "创建事实失败: %w",
   "ja": "ファクトの作成に失敗しました: %w"
  },
  "Failed to create knowledge base database directory: %w": {
-  "zh": "创建知识库数据库目录失败: %w",
   "ja": "ナレッジベースのデータベースディレクトリの作成に失敗しました: %w"
  },
  "Failed to create knowledge base directory: %w": {
-  "zh": "创建知识库目录失败: %w",
   "ja": "ナレッジベースのディレクトリの作成に失敗しました: %w"
  },
  "Failed to create project: %w": {
-  "zh": "创建项目失败: %w",
   "ja": "プロジェクトの作成に失敗しました: %w"
  },
  "Failed to create request: %v": {
-  "zh": "创建请求失败: %v",
   "ja": "リクエストの作成に失敗しました: %v"
  },
  "Failed to create retest branch": {
-  "zh": "创建复测分支失败",
   "ja": "再テストブランチの作成に失敗しました"
  },
  "Failed to create role directory: %w": {
-  "zh": "创建角色目录失败: %w",
   "ja": "ロールディレクトリの作成に失敗しました: %w"
  },
  "Failed to create skill directory: %v": {
-  "zh": "创建skill目录失败: %v",
   "ja": "スキルディレクトリの作成に失敗しました: %v"
  },
  "Failed to create the C2 HITL approval record; execution was refused for safety: %w": {
-  "zh": "C2 HITL 审批记录创建失败，安全起见拒绝执行: %w",
   "ja": "C2 の HITL 承認レコードを作成できなかったため、安全のため実行を拒否しました: %w"
  },
  "Failed to create upload directory: %w": {
-  "zh": "创建上传目录失败: %w",
   "ja": "アップロードディレクトリの作成に失敗しました: %w"
  },
  "Failed to create vulnerability: %w": {
-  "zh": "创建漏洞失败: %w",
   "ja": "脆弱性の作成に失敗しました: %w"
  },
  "Failed to create workflow node run: %w": {
-  "zh": "创建工作流节点运行失败: %w",
   "ja": "ワークフローのノード実行の作成に失敗しました: %w"
  },
  "Failed to create workflow run: %w": {
-  "zh": "创建工作流运行失败: %w",
   "ja": "ワークフロー実行の作成に失敗しました: %w"
  },
  "Failed to decode attachment %s: %w": {
-  "zh": "附件 %s 解码失败: %w",
   "ja": "添付ファイル %s のデコードに失敗しました: %w"
  },
  "Failed to delete assets in bulk": {
-  "zh": "批量删除资产失败",
   "ja": "資産の一括削除に失敗しました"
  },
  "Failed to delete batch task queue: %w": {
-  "zh": "删除批量任务队列失败: %w",
   "ja": "バッチタスクキューの削除に失敗しました: %w"
  },
  "Failed to delete batch task: %w": {
-  "zh": "删除批量任务失败: %w",
   "ja": "バッチタスクの削除に失敗しました: %w"
  },
  "Failed to delete bot conversation binding: %w": {
-  "zh": "删除机器人会话绑定失败: %w",
   "ja": "ボットの会話バインドの削除に失敗しました: %w"
  },
  "Failed to delete conversation: %w": {
-  "zh": "删除对话失败: %w",
   "ja": "会話の削除に失敗しました: %w"
  },
  "Failed to delete duplicate assets": {
-  "zh": "删除重复资产失败",
   "ja": "重複資産の削除に失敗しました"
  },
  "Failed to delete execution record: %v": {
-  "zh": "删除执行记录失败: %v",
   "ja": "実行記録の削除に失敗しました: %v"
  },
  "Failed to delete knowledge item: %w": {
-  "zh": "删除知识项失败: %w",
   "ja": "ナレッジ項目の削除に失敗しました: %w"
  },
  "Failed to delete process detail: %w": {
-  "zh": "删除过程详情失败: %w",
   "ja": "処理詳細の削除に失敗しました: %w"
  },
  "Failed to delete project: %w": {
-  "zh": "删除项目失败: %w",
   "ja": "プロジェクトの削除に失敗しました: %w"
  },
  "Failed to delete retrieval log: %w": {
-  "zh": "删除检索日志失败: %w",
   "ja": "検索ログの削除に失敗しました: %w"
  },
  "Failed to delete skill: %v": {
-  "zh": "删除skill失败: %v",
   "ja": "スキルの削除に失敗しました: %v"
  },
  "Failed to delete task: %w": {
-  "zh": "删除任务失败: %w",
   "ja": "タスクの削除に失敗しました: %w"
  },
  "Failed to delete vulnerability: %w": {
-  "zh": "删除漏洞失败: %w",
   "ja": "脆弱性の削除に失敗しました: %w"
  },
  "Failed to delete workflow: %w": {
-  "zh": "删除工作流失败: %w",
   "ja": "ワークフローの削除に失敗しました: %w"
  },
  "Failed to flush stdout: %w": {
-  "zh": "刷新 stdout 失败: %w",
   "ja": "stdout のフラッシュに失敗しました: %w"
  },
  "Failed to generate MCP authentication key: %w": {
-  "zh": "生成 MCP 鉴权密钥失败: %w",
   "ja": "MCP 認証キーの生成に失敗しました: %w"
  },
  "Failed to generate Word report": {
-  "zh": "生成 Word 报告失败",
   "ja": "Word レポートの生成に失敗しました"
  },
  "Failed to generate attack chain: %v": {
-  "zh": "生成攻击链失败: %v",
   "ja": "攻撃チェーンの生成に失敗しました: %v"
  },
  "Failed to generate binding code": {
-  "zh": "生成绑定码失败",
   "ja": "バインドコードの生成に失敗しました"
  },
  "Failed to generate test image": {
-  "zh": "生成测试图片失败",
   "ja": "テスト画像の生成に失敗しました"
  },
  "Failed to get QR code: %v": {
-  "zh": "获取二维码失败: %v",
   "ja": "QR コードの取得に失敗しました: %v"
  },
  "Failed to get agent trace: %w": {
-  "zh": "获取代理轨迹失败: %w",
   "ja": "エージェントトレースの取得に失敗しました: %w"
  },
  "Failed to get bot binding": {
-  "zh": "获取机器人绑定失败",
   "ja": "ボットのバインドの取得に失敗しました"
  },
  "Failed to get categories: %w": {
-  "zh": "获取分类失败: %w",
   "ja": "カテゴリの取得に失敗しました: %w"
  },
  "Failed to get conversation messages: %w": {
-  "zh": "获取对话消息失败: %w",
   "ja": "会話メッセージの取得に失敗しました: %w"
  },
  "Failed to get current working directory: %w": {
-  "zh": "获取当前工作目录失败: %w",
   "ja": "現在の作業ディレクトリの取得に失敗しました: %w"
  },
  "Failed to get deleted row count: %w": {
-  "zh": "获取删除条数失败: %w",
   "ja": "削除件数の取得に失敗しました: %w"
  },
  "Failed to get execution record: %v": {
-  "zh": "获取执行记录失败: %v",
   "ja": "実行記録の取得に失敗しました: %v"
  },
  "Failed to get external MCP tools and no cache available: %w": {
-  "zh": "获取外部MCP工具失败且无缓存: %w",
   "ja": "外部 MCP ツールの取得に失敗し、キャッシュもありません: %w"
  },
  "Failed to get external MCP tools: %w": {
-  "zh": "获取外部MCP工具失败: %w",
   "ja": "外部 MCP ツールの取得に失敗しました: %w"
  },
  "Failed to get knowledge item: %w": {
-  "zh": "获取知识项失败：%w",
   "ja": "ナレッジ項目の取得に失敗しました: %w"
  },
  "Failed to get knowledge items for category %s: %w": {
-  "zh": "获取分类 %s 的知识项失败: %w",
   "ja": "カテゴリ %s のナレッジ項目の取得に失敗しました: %w"
  },
  "Failed to get project name: %w": {
-  "zh": "获取项目名称失败: %w",
   "ja": "プロジェクト名の取得に失敗しました: %w"
  },
  "Failed to get project: %w": {
-  "zh": "获取项目失败: %w",
   "ja": "プロジェクトの取得に失敗しました: %w"
  },
  "Failed to get severity statistics: %w": {
-  "zh": "获取严重程度统计失败: %w",
   "ja": "重大度の統計の取得に失敗しました: %w"
  },
  "Failed to get status statistics: %w": {
-  "zh": "获取状态统计失败: %w",
   "ja": "ステータスの統計の取得に失敗しました: %w"
  },
  "Failed to get task list": {
-  "zh": "获取任务列表失败",
   "ja": "タスク一覧の取得に失敗しました"
  },
  "Failed to get total knowledge item count: %w": {
-  "zh": "获取知识项总数失败: %w",
   "ja": "ナレッジ項目の総数の取得に失敗しました: %w"
  },
  "Failed to get total vulnerability count: %w": {
-  "zh": "获取总漏洞数失败: %w",
   "ja": "脆弱性の総数の取得に失敗しました: %w"
  },
  "Failed to get vulnerability: %w": {
-  "zh": "获取漏洞失败: %w",
   "ja": "脆弱性の取得に失敗しました: %w"
  },
  "Failed to initialize RBAC: %w": {
-  "zh": "初始化RBAC失败: %w",
   "ja": "RBAC の初期化に失敗しました: %w"
  },
  "Failed to initialize call interception rules: %w": {
-  "zh": "初始化调用拦截规则: %w",
   "ja": "呼び出しインターセプトルールの初期化に失敗しました: %w"
  },
  "Failed to initialize database: %w": {
-  "zh": "初始化数据库失败: %w",
   "ja": "データベースの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base database: %w": {
-  "zh": "初始化知识库数据库失败: %w",
   "ja": "ナレッジベースのデータベースの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base embedder: %w": {
-  "zh": "初始化知识库嵌入器失败: %w",
   "ja": "ナレッジベースのエンベッダーの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base indexer: %w": {
-  "zh": "初始化知识库索引器失败: %w",
   "ja": "ナレッジベースのインデクサーの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base retrieval pipeline: %w": {
-  "zh": "初始化知识库检索流水线失败: %w",
   "ja": "ナレッジベースの検索パイプラインの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base tables: %w": {
-  "zh": "初始化知识库表失败: %w",
   "ja": "ナレッジベースのテーブルの初期化に失敗しました: %w"
  },
  "Failed to initialize knowledge base: %v": {
-  "zh": "初始化知识库失败: %v",
   "ja": "ナレッジベースの初期化に失敗しました: %v"
  },
  "Failed to initialize tables: %w": {
-  "zh": "初始化表失败: %w",
   "ja": "テーブルの初期化に失敗しました: %w"
  },
  "Failed to insert knowledge item: %w": {
-  "zh": "插入知识项失败: %w",
   "ja": "ナレッジ項目の挿入に失敗しました: %w"
  },
  "Failed to iterate historical model Token usage: %w": {
-  "zh": "遍历历史模型Token用量失败: %w",
   "ja": "過去のモデル Token 使用量の走査に失敗しました: %w"
  },
  "Failed to iterate model Token usage details: %w": {
-  "zh": "遍历模型Token用量明细失败: %w",
   "ja": "モデルの Token 使用量の明細の走査に失敗しました: %w"
  },
  "Failed to iterate model Token usage groups: %w": {
-  "zh": "遍历模型Token用量分组失败: %w",
   "ja": "モデルの Token 使用量グループの走査に失敗しました: %w"
  },
  "Failed to iterate tool execution summaries: %w": {
-  "zh": "遍历工具执行摘要失败: %w",
   "ja": "ツール実行サマリーの走査に失敗しました: %w"
  },
  "Failed to keep previous binary: %w": {
-  "zh": "保留旧二进制失败：%w",
   "ja": "以前のバイナリの保持に失敗しました: %w"
  },
- "Failed to land the target content; the recovery record is kept and updating again can recover: %v": {
-  "zh": "落地目标内容失败，已保留恢复记录，再次更新可恢复：%v"
- },
  "Failed to list projects: %w": {
-  "zh": "列出项目失败: %w",
   "ja": "プロジェクト一覧の取得に失敗しました: %w"
  },
  "Failed to load TLS certificate: %w": {
-  "zh": "加载 TLS 证书: %w",
   "ja": "TLS 証明書の読み込みに失敗しました: %w"
  },
  "Failed to load attack chain edges: %w": {
-  "zh": "加载攻击链边失败: %w",
   "ja": "攻撃チェーンのエッジの読み込みに失敗しました: %w"
  },
  "Failed to load attack chain nodes: %w": {
-  "zh": "加载攻击链节点失败: %w",
   "ja": "攻撃チェーンのノードの読み込みに失敗しました: %w"
  },
  "Failed to load messages: %w": {
-  "zh": "加载消息失败: %w",
   "ja": "メッセージの読み込みに失敗しました: %w"
  },
  "Failed to load role configurations from roles directory: %w": {
-  "zh": "从角色目录加载角色配置失败: %w",
   "ja": "ロールディレクトリからのロール設定の読み込みに失敗しました: %w"
  },
  "Failed to load tool configurations from tools directory: %w": {
-  "zh": "从工具目录加载工具配置失败: %w",
   "ja": "ツールディレクトリからのツール設定の読み込みに失敗しました: %w"
  },
  "Failed to migrate historical security interception records: %w": {
-  "zh": "迁移历史安全拦截记录失败: %w",
   "ja": "過去のセキュリティ遮断記録の移行に失敗しました: %w"
  },
  "Failed to migrate vulnerability conversation foreign keys: %w": {
-  "zh": "迁移漏洞会话外键失败: %w",
   "ja": "脆弱性の会話外部キーの移行に失敗しました: %w"
  },
- "Failed to move %s aside: %v": {
-  "zh": "移开 %s 失败：%v"
- },
  "Failed to move attachment into conversation directory: %w": {
-  "zh": "将附件移入会话目录失败: %w",
   "ja": "添付ファイルの会話ディレクトリへの移動に失敗しました: %w"
  },
  "Failed to move file: %w": {
-  "zh": "移动文件失败: %w",
   "ja": "ファイルの移動に失敗しました: %w"
  },
  "Failed to open database: %w": {
-  "zh": "打开数据库失败: %w",
   "ja": "データベースを開けませんでした: %w"
  },
  "Failed to open knowledge base database: %w": {
-  "zh": "打开知识库数据库失败: %w",
   "ja": "ナレッジベースのデータベースを開けませんでした: %w"
  },
  "Failed to parse FOFA response: %v": {
-  "zh": "解析 FOFA 响应失败: %v",
   "ja": "FOFA レスポンスの解析に失敗しました: %v"
  },
  "Failed to parse JSON: %w": {
-  "zh": "解析JSON失败: %w",
   "ja": "JSON の解析に失敗しました: %w"
  },
  "Failed to parse LLM workflow JSON: %w": {
-  "zh": "解析大模型工作流 JSON 失败: %w",
   "ja": "LLM のワークフロー JSON の解析に失敗しました: %w"
  },
  "Failed to parse Quake response: %v": {
-  "zh": "解析 Quake 响应失败: %v",
   "ja": "Quake レスポンスの解析に失敗しました: %v"
  },
  "Failed to parse Shodan response: %v": {
-  "zh": "解析 Shodan 响应失败: %v",
   "ja": "Shodan レスポンスの解析に失敗しました: %v"
  },
  "Failed to parse ZoomEye response: %v": {
-  "zh": "解析 ZoomEye 响应失败: %v",
   "ja": "ZoomEye レスポンスの解析に失敗しました: %v"
  },
  "Failed to parse agent trace JSON: %w": {
-  "zh": "解析代理轨迹 JSON 失败: %w",
   "ja": "エージェントのトレース JSON の解析に失敗しました: %w"
  },
  "Failed to parse columns of table %s: %w": {
-  "zh": "解析表 %s 字段失败: %w",
   "ja": "テーブル %s の列の解析に失敗しました: %w"
  },
  "Failed to parse configuration file: %w": {
-  "zh": "解析配置文件失败: %w",
   "ja": "設定ファイルの解析に失敗しました: %w"
  },
  "Failed to parse conversation placeholders: %w": {
-  "zh": "解析对话占位符失败: %w",
   "ja": "会話プレースホルダーの解析に失敗しました: %w"
  },
  "Failed to parse graph JSON: %v": {
-  "zh": "graph JSON 解析失败: %v",
   "ja": "graph JSON の解析に失敗しました: %v"
  },
  "Failed to parse latest SQLite schema: %w": {
-  "zh": "解析最新 SQLite 结构失败: %w",
   "ja": "最新の SQLite スキーマの解析に失敗しました: %w"
  },
  "Failed to parse prompt placeholders: %w": {
-  "zh": "解析提示词占位符失败: %w",
   "ja": "プロンプトプレースホルダーの解析に失敗しました: %w"
  },
  "Failed to parse retest prompt": {
-  "zh": "解析复测提示词失败",
   "ja": "再テストプロンプトの解析に失敗しました"
  },
  "Failed to parse role configuration: %w": {
-  "zh": "解析角色配置失败: %w",
   "ja": "ロール設定の解析に失敗しました: %w"
  },
  "Failed to parse tool configuration: %w": {
-  "zh": "解析工具配置失败: %w",
   "ja": "ツール設定の解析に失敗しました: %w"
  },
  "Failed to parse workflow graph: %w": {
-  "zh": "解析工作流图失败: %w",
   "ja": "ワークフローグラフの解析に失敗しました: %w"
  },
  "Failed to prepare single-task execution: %w": {
-  "zh": "准备单条执行失败: %w",
   "ja": "単一タスク実行の準備に失敗しました: %w"
  },
  "Failed to preserve extra vulnerability column %s: %w": {
-  "zh": "保留漏洞额外字段 %s 失败: %w",
   "ja": "脆弱性の追加列 %s の保持に失敗しました: %w"
  },
  "Failed to preserve vulnerability data: %w": {
-  "zh": "保留漏洞数据失败: %w",
   "ja": "脆弱性データの保持に失敗しました: %w"
  },
  "Failed to query affected assets: %w": {
-  "zh": "查询受影响资产失败: %w",
   "ja": "影響を受ける資産の取得に失敗しました: %w"
  },
  "Failed to query affected vulnerability conversations: %w": {
-  "zh": "查询受影响漏洞会话失败: %w",
   "ja": "影響を受ける脆弱性の会話の取得に失敗しました: %w"
  },
  "Failed to query asset list: %w": {
-  "zh": "查询资产列表失败: %w",
   "ja": "資産一覧の取得に失敗しました: %w"
  },
  "Failed to query attack chain edges: %w": {
-  "zh": "查询攻击链边失败: %w",
   "ja": "攻撃チェーンのエッジの取得に失敗しました: %w"
  },
  "Failed to query attack chain nodes: %w": {
-  "zh": "查询攻击链节点失败: %w",
   "ja": "攻撃チェーンのノードの取得に失敗しました: %w"
  },
  "Failed to query batch task queue list: %w": {
-  "zh": "查询批量任务队列列表失败: %w",
   "ja": "バッチタスクキュー一覧の取得に失敗しました: %w"
  },
  "Failed to query batch task queue: %w": {
-  "zh": "查询批量任务队列失败: %w",
   "ja": "バッチタスクキューの取得に失敗しました: %w"
  },
  "Failed to query batch tasks: %w": {
-  "zh": "查询批量任务失败: %w",
   "ja": "バッチタスクの取得に失敗しました: %w"
  },
  "Failed to query bot conversation binding: %w": {
-  "zh": "查询机器人会话绑定失败: %w",
   "ja": "ボットの会話バインドの取得に失敗しました: %w"
  },
  "Failed to query categories: %w": {
-  "zh": "查询分类失败: %w",
   "ja": "カテゴリのクエリに失敗しました: %w"
  },
  "Failed to query conversation ID suggestions: %w": {
-  "zh": "查询会话ID建议失败: %w",
   "ja": "会話 ID の候補の取得に失敗しました: %w"
  },
  "Failed to query conversation list: %w": {
-  "zh": "查询对话列表失败: %w",
   "ja": "会話一覧の取得に失敗しました: %w"
  },
  "Failed to query conversation project: %w": {
-  "zh": "查询对话项目失败: %w",
   "ja": "会話のプロジェクトの取得に失敗しました: %w"
  },
  "Failed to query conversation tag suggestions: %w": {
-  "zh": "查询对话标签建议失败: %w",
   "ja": "会話タグの候補の取得に失敗しました: %w"
  },
  "Failed to query conversation title: %w": {
-  "zh": "查询对话标题失败: %w",
   "ja": "会話タイトルの取得に失敗しました: %w"
  },
  "Failed to query conversation: %w": {
-  "zh": "查询对话失败: %w",
   "ja": "会話の取得に失敗しました: %w"
  },
  "Failed to query historical model Token usage: %w": {
-  "zh": "查询历史模型Token用量失败: %w",
   "ja": "過去のモデル Token 使用量の取得に失敗しました: %w"
  },
  "Failed to query indexed item count: %w": {
-  "zh": "查询已索引项数失败: %w",
   "ja": "インデックス済み項目数のクエリに失敗しました: %w"
  },
  "Failed to query iteration details: %w": {
-  "zh": "查询迭代详情失败: %w",
   "ja": "イテレーション詳細の取得に失敗しました: %w"
  },
  "Failed to query knowledge items: %w": {
-  "zh": "查询知识项失败：%w",
   "ja": "ナレッジ項目のクエリに失敗しました: %w"
  },
  "Failed to query messages: %w": {
-  "zh": "查询消息失败: %w",
   "ja": "メッセージの取得に失敗しました: %w"
  },
  "Failed to query model Token usage details: %w": {
-  "zh": "查询模型Token用量明细失败: %w",
   "ja": "モデルの Token 使用量の明細の取得に失敗しました: %w"
  },
  "Failed to query model Token usage groups: %w": {
-  "zh": "查询模型Token用量分组失败: %w",
   "ja": "モデルの Token 使用量グループの取得に失敗しました: %w"
  },
  "Failed to query model Token usage summary: %w": {
-  "zh": "查询模型Token用量汇总失败: %w",
   "ja": "モデルの Token 使用量サマリーの取得に失敗しました: %w"
  },
  "Failed to query process detail anchor: %w": {
-  "zh": "查询过程详情锚点失败: %w",
   "ja": "処理詳細のアンカーの取得に失敗しました: %w"
  },
  "Failed to query process detail durations: %w": {
-  "zh": "查询过程详情耗时失败: %w",
   "ja": "処理詳細の所要時間の取得に失敗しました: %w"
  },
  "Failed to query process detail final states: %w": {
-  "zh": "查询过程详情终态失败: %w",
   "ja": "処理詳細の最終状態の取得に失敗しました: %w"
  },
  "Failed to query process details: %w": {
-  "zh": "查询过程详情失败: %w",
   "ja": "処理詳細の取得に失敗しました: %w"
  },
  "Failed to query project ID suggestions: %w": {
-  "zh": "查询项目ID建议失败: %w",
   "ja": "プロジェクト ID の候補の取得に失敗しました: %w"
  },
  "Failed to query project conversations: %w": {
-  "zh": "查询项目对话失败: %w",
   "ja": "プロジェクトの会話の取得に失敗しました: %w"
  },
  "Failed to query queue ID suggestions: %w": {
-  "zh": "查询队列ID建议失败: %w",
   "ja": "キュー ID の候補の取得に失敗しました: %w"
  },
  "Failed to query queue list: %w": {
-  "zh": "查询队列列表失败: %w",
   "ja": "キュー一覧の取得に失敗しました: %w"
  },
  "Failed to query recent facts: %w": {
-  "zh": "查询近期事实失败: %w",
   "ja": "最近のファクトの取得に失敗しました: %w"
  },
  "Failed to query retrieval logs: %w": {
-  "zh": "查询检索日志失败: %w",
   "ja": "検索ログのクエリに失敗しました: %w"
  },
  "Failed to query task ID suggestions: %w": {
-  "zh": "查询任务ID建议失败: %w",
   "ja": "タスク ID の候補の取得に失敗しました: %w"
  },
  "Failed to query task tag suggestions: %w": {
-  "zh": "查询任务标签建议失败: %w",
   "ja": "タスクタグの候補の取得に失敗しました: %w"
  },
  "Failed to query tool execution summaries: %w": {
-  "zh": "查询工具执行摘要失败: %w",
   "ja": "ツール実行サマリーの取得に失敗しました: %w"
  },
  "Failed to query total knowledge item count: %w": {
-  "zh": "查询知识项总数失败: %w",
   "ja": "ナレッジ項目の総数のクエリに失敗しました: %w"
  },
  "Failed to query unindexed knowledge items: %w": {
-  "zh": "查询未索引知识项失败：%w",
   "ja": "未インデックスのナレッジ項目のクエリに失敗しました: %w"
  },
  "Failed to query vectors: %w": {
-  "zh": "查询向量失败: %w",
   "ja": "ベクトルのクエリに失敗しました: %w"
  },
  "Failed to query vulnerability ID suggestions: %w": {
-  "zh": "查询漏洞ID建议失败: %w",
   "ja": "脆弱性 ID の候補の取得に失敗しました: %w"
  },
  "Failed to query vulnerability list: %w": {
-  "zh": "查询漏洞列表失败: %w",
   "ja": "脆弱性一覧の取得に失敗しました: %w"
  },
  "Failed to query workflow list: %w": {
-  "zh": "查询工作流列表失败: %w",
   "ja": "ワークフロー一覧の取得に失敗しました: %w"
  },
  "Failed to query workflow node runs: %w": {
-  "zh": "查询工作流节点运行失败: %w",
   "ja": "ワークフローのノード実行の取得に失敗しました: %w"
  },
  "Failed to query workflow runs awaiting approval: %w": {
-  "zh": "查询等待审批的工作流运行失败: %w",
   "ja": "承認待ちのワークフロー実行の取得に失敗しました: %w"
  },
  "Failed to query workflow runs: %w": {
-  "zh": "查询工作流运行失败: %w",
   "ja": "ワークフロー実行の取得に失敗しました: %w"
  },
  "Failed to query workflow: %w": {
-  "zh": "查询工作流失败: %w",
   "ja": "ワークフローの取得に失敗しました: %w"
  },
  "Failed to re-initialize knowledge base: %v": {
-  "zh": "重新初始化知识库失败: %v",
   "ja": "ナレッジベースの再初期化に失敗しました: %v"
  },
  "Failed to read attachment %s: %w": {
-  "zh": "读取附件 %s: %w",
   "ja": "添付ファイル %s の読み取りに失敗しました: %w"
  },
  "Failed to read configuration file: %w": {
-  "zh": "读取配置文件失败: %w",
   "ja": "設定ファイルの読み取りに失敗しました: %w"
  },
  "Failed to read configuration template: %w": {
-  "zh": "读取配置模板失败: %w",
   "ja": "設定テンプレートの読み取りに失敗しました: %w"
  },
  "Failed to read file: %w": {
-  "zh": "读取文件失败: %w",
   "ja": "ファイルの読み取りに失敗しました: %w"
  },
  "Failed to read or save self-signed TLS certificate %s: %w": {
-  "zh": "读取或保存自签 TLS 证书 %s: %w",
   "ja": "自己署名 TLS 証明書 %s の読み取りまたは保存に失敗しました: %w"
  },
  "Failed to read retest branch": {
-  "zh": "读取复测分支失败",
   "ja": "再テストブランチの読み取りに失敗しました"
  },
  "Failed to read retest context: %w": {
-  "zh": "读取复测上下文失败: %w",
   "ja": "再テストコンテキストの読み取りに失敗しました: %w"
  },
  "Failed to read roles directory: %w": {
-  "zh": "读取角色目录失败: %w",
   "ja": "ロールディレクトリの読み取りに失敗しました: %w"
  },
- "Failed to read the remote default branch: %v": {
-  "zh": "读取远端默认分支失败：%v"
- },
  "Failed to read tools directory: %w": {
-  "zh": "读取工具目录失败: %w",
   "ja": "ツールディレクトリの読み取りに失敗しました: %w"
  },
  "Failed to read vulnerability": {
-  "zh": "读取漏洞失败",
   "ja": "脆弱性の読み取りに失敗しました"
  },
  "Failed to read vulnerability targets: %w": {
-  "zh": "读取漏洞目标失败: %w",
   "ja": "脆弱性の対象の読み取りに失敗しました: %w"
  },
  "Failed to record schedule trigger time: %w": {
-  "zh": "记录调度触发时间失败: %w",
   "ja": "スケジュールのトリガー時刻の記録に失敗しました: %w"
  },
  "Failed to record workflow approval decision: %w": {
-  "zh": "记录工作流审批决定失败: %w",
   "ja": "ワークフローの承認判断の記録に失敗しました: %w"
  },
  "Failed to refresh asset risk scores: %w": {
-  "zh": "刷新资产风险分数失败: %w",
   "ja": "資産のリスクスコアの更新に失敗しました: %w"
  },
  "Failed to refresh asset scan status: %w": {
-  "zh": "刷新资产扫描状态失败: %w",
   "ja": "資産のスキャンステータスの更新に失敗しました: %w"
  },
  "Failed to refresh asset vulnerability counts: %w": {
-  "zh": "刷新资产漏洞数量失败: %w",
   "ja": "資産の脆弱性数の更新に失敗しました: %w"
  },
  "Failed to reload tool config: %v": {
-  "zh": "重新加载工具配置失败: %v",
   "ja": "ツール設定の再読み込みに失敗しました: %v"
  },
  "Failed to reset batch task queue status: %w": {
-  "zh": "重置批量任务队列状态失败: %w",
   "ja": "バッチタスクキューのステータスのリセットに失敗しました: %w"
  },
  "Failed to reset batch task status: %w": {
-  "zh": "重置批量任务状态失败: %w",
   "ja": "バッチタスクのステータスのリセットに失敗しました: %w"
  },
  "Failed to reset queue": {
-  "zh": "重置队列失败",
   "ja": "キューのリセットに失敗しました"
  },
- "Failed to restore %s: %v": {
-  "zh": "恢复 %s 失败：%v"
- },
  "Failed to run role binding flow: %v": {
-  "zh": "启动角色绑定流程失败: %v",
   "ja": "ロール紐付けフローの実行に失敗しました: %v"
  },
  "Failed to save agent trace: %w": {
-  "zh": "保存代理轨迹失败: %w",
   "ja": "エージェントトレースの保存に失敗しました: %w"
  },
  "Failed to save config: %v": {
-  "zh": "保存配置失败: %v",
   "ja": "設定の保存に失敗しました: %v"
  },
  "Failed to save configuration file: %w": {
-  "zh": "保存配置文件失败: %w",
   "ja": "設定ファイルの保存に失敗しました: %w"
  },
  "Failed to save extended request fields for AI channel %s: %w": {
-  "zh": "保存 AI 通道 %s 的扩展请求字段失败: %w",
   "ja": "AI チャネル %s の拡張リクエストフィールドの保存に失敗しました: %w"
  },
  "Failed to save retest prompt": {
-  "zh": "保存复测提示词失败",
   "ja": "再テストプロンプトの保存に失敗しました"
  },
  "Failed to save task queue: %w": {
-  "zh": "保存任务队列失败: %w",
   "ja": "タスクキューの保存に失敗しました: %w"
  },
  "Failed to save the project resume record; the Pi session record is still kept": {
-  "zh": "保存项目续接记录失败；Pi 会话记录仍保留",
   "ja": "プロジェクト再開レコードの保存に失敗しました。Pi セッションレコードは保持されています"
  },
  "Failed to save tool guard configuration: %v": {
-  "zh": "保存调用拦截配置失败: %v",
   "ja": "呼び出し遮断設定の保存に失敗しました: %v"
  },
  "Failed to save uploaded file: %w": {
-  "zh": "保存上传文件失败: %w",
   "ja": "アップロードファイルの保存に失敗しました: %w"
  },
  "Failed to save user message: %w": {
-  "zh": "保存用户消息失败: %w",
   "ja": "ユーザーメッセージの保存に失敗しました: %w"
  },
  "Failed to save workflow: %w": {
-  "zh": "保存工作流失败: %w",
   "ja": "ワークフローの保存に失敗しました: %w"
  },
  "Failed to scan batch task queue: %w": {
-  "zh": "扫描批量任务队列失败: %w",
   "ja": "バッチタスクキューのスキャンに失敗しました: %w"
  },
  "Failed to scan batch tasks: %w": {
-  "zh": "扫描批量任务失败: %w",
   "ja": "バッチタスクのスキャンに失敗しました: %w"
  },
  "Failed to scan categories: %w": {
-  "zh": "扫描分类失败: %w",
   "ja": "カテゴリのスキャンに失敗しました: %w"
  },
  "Failed to scan conversations: %w": {
-  "zh": "扫描对话失败: %w",
   "ja": "会話のスキャンに失敗しました: %w"
  },
  "Failed to scan historical model Token usage: %w": {
-  "zh": "扫描历史模型Token用量失败: %w",
   "ja": "過去のモデル Token 使用量のスキャンに失敗しました: %w"
  },
  "Failed to scan iteration details: %w": {
-  "zh": "扫描迭代详情失败: %w",
   "ja": "イテレーション詳細のスキャンに失敗しました: %w"
  },
  "Failed to scan knowledge item IDs: %w": {
-  "zh": "扫描知识项 ID 失败：%w",
   "ja": "ナレッジ項目 ID のスキャンに失敗しました: %w"
  },
  "Failed to scan knowledge items: %w": {
-  "zh": "扫描知识项失败: %w",
   "ja": "ナレッジ項目のスキャンに失敗しました: %w"
  },
  "Failed to scan messages: %w": {
-  "zh": "扫描消息失败: %w",
   "ja": "メッセージのスキャンに失敗しました: %w"
  },
  "Failed to scan model Token usage details: %w": {
-  "zh": "扫描模型Token用量明细失败: %w",
   "ja": "モデルの Token 使用量の明細のスキャンに失敗しました: %w"
  },
  "Failed to scan model Token usage groups: %w": {
-  "zh": "扫描模型Token用量分组失败: %w",
   "ja": "モデルの Token 使用量グループのスキャンに失敗しました: %w"
  },
  "Failed to scan process details: %w": {
-  "zh": "扫描过程详情失败: %w",
   "ja": "処理詳細のスキャンに失敗しました: %w"
  },
  "Failed to scan retrieval logs: %w": {
-  "zh": "扫描检索日志失败: %w",
   "ja": "検索ログのスキャンに失敗しました: %w"
  },
  "Failed to scan tool execution summaries: %w": {
-  "zh": "扫描工具执行摘要失败: %w",
   "ja": "ツール実行サマリーのスキャンに失敗しました: %w"
  },
  "Failed to scan unindexed knowledge item IDs: %w": {
-  "zh": "扫描未索引知识项 ID 失败：%w",
   "ja": "未インデックスのナレッジ項目 ID のスキャンに失敗しました: %w"
  },
  "Failed to scan workflow: %w": {
-  "zh": "扫描工作流失败: %w",
   "ja": "ワークフローのスキャンに失敗しました: %w"
  },
  "Failed to search knowledge items: %w": {
-  "zh": "搜索知识项失败: %w",
   "ja": "ナレッジ項目の検索に失敗しました: %w"
  },
  "Failed to send error response: %w": {
-  "zh": "发送错误响应失败: %w",
   "ja": "エラーレスポンスの送信に失敗しました: %w"
  },
  "Failed to send response: %w": {
-  "zh": "发送响应失败: %w",
   "ja": "レスポンスの送信に失敗しました: %w"
  },
  "Failed to serialize MCP execution IDs: %w": {
-  "zh": "序列化MCP执行ID失败: %w",
   "ja": "MCP 実行 ID のシリアライズに失敗しました: %w"
  },
  "Failed to serialize configuration": {
-  "zh": "配置序列化失败",
   "ja": "設定のシリアライズに失敗しました"
  },
  "Failed to serialize process detail data: %w": {
-  "zh": "序列化过程详情数据失败: %w",
   "ja": "処理詳細データのシリアライズに失敗しました: %w"
  },
  "Failed to set branch permissions": {
-  "zh": "设置分支权限失败",
   "ja": "ブランチの権限の設定に失敗しました"
  },
- "Failed to set branch tracking: %v": {
-  "zh": "设置分支跟踪失败：%v"
- },
  "Failed to set conversation project: %w": {
-  "zh": "设置对话项目失败: %w",
   "ja": "会話のプロジェクトの設定に失敗しました: %w"
  },
  "Failed to set journal_size_limit: %w": {
-  "zh": "设置 journal_size_limit 失败: %w",
   "ja": "journal_size_limit の設定に失敗しました: %w"
  },
  "Failed to set wal_autocheckpoint: %w": {
-  "zh": "设置 wal_autocheckpoint 失败: %w",
   "ja": "wal_autocheckpoint の設定に失敗しました: %w"
  },
  "Failed to start": {
-  "zh": "启动失败",
   "ja": "開始に失敗しました"
  },
  "Failed to start C2: %v": {
-  "zh": "C2 启动失败: %v",
   "ja": "C2 の起動に失敗しました: %v"
  },
  "Failed to swap in new binary: %w": {
-  "zh": "换入新二进制失败：%w",
   "ja": "新しいバイナリの入れ替えに失敗しました: %w"
  },
  "Failed to unlink assets from project: %w": {
-  "zh": "解除资产项目关联失败: %w",
   "ja": "資産とプロジェクトの関連付けの解除に失敗しました: %w"
  },
  "Failed to unlink the C2 listener from the project: %w": {
-  "zh": "解除 C2 监听器项目关联失败: %w",
   "ja": "C2 リスナーとプロジェクトの関連付けを解除できませんでした: %w"
  },
  "Failed to unlink the WebShell from the project: %w": {
-  "zh": "解除 WebShell 项目关联失败: %w",
   "ja": "WebShell とプロジェクトの関連付けを解除できませんでした: %w"
  },
  "Failed to unlink vulnerabilities from project: %w": {
-  "zh": "解除漏洞项目关联失败: %w",
   "ja": "脆弱性とプロジェクトの関連付けの解除に失敗しました: %w"
  },
  "Failed to update SKILL.md: %v": {
-  "zh": "更新 SKILL.md 失败: %v",
   "ja": "SKILL.md の更新に失敗しました: %v"
  },
  "Failed to update asset risk cache: %w": {
-  "zh": "更新资产风险缓存失败: %w",
   "ja": "資産のリスクキャッシュの更新に失敗しました: %w"
  },
  "Failed to update asset: %w": {
-  "zh": "更新资产失败: %w",
   "ja": "資産の更新に失敗しました: %w"
  },
  "Failed to update assets in bulk": {
-  "zh": "批量更新资产失败",
   "ja": "資産の一括更新に失敗しました"
  },
  "Failed to update assistant message: %w": {
-  "zh": "更新助手消息失败: %w",
   "ja": "アシスタントメッセージの更新に失敗しました: %w"
  },
  "Failed to update batch task message: %w": {
-  "zh": "更新批量任务消息失败: %w",
   "ja": "バッチタスクのメッセージの更新に失敗しました: %w"
  },
  "Failed to update batch task queue current index: %w": {
-  "zh": "更新批量任务队列当前索引失败: %w",
   "ja": "バッチタスクキューの現在のインデックスの更新に失敗しました: %w"
  },
  "Failed to update batch task queue metadata: %w": {
-  "zh": "更新批量任务队列元数据失败: %w",
   "ja": "バッチタスクキューのメタデータの更新に失敗しました: %w"
  },
  "Failed to update batch task queue status: %w": {
-  "zh": "更新批量任务队列状态失败: %w",
   "ja": "バッチタスクキューのステータスの更新に失敗しました: %w"
  },
  "Failed to update batch task schedule configuration: %w": {
-  "zh": "更新批量任务调度配置失败: %w",
   "ja": "バッチタスクのスケジュール設定の更新に失敗しました: %w"
  },
  "Failed to update batch task schedule switch: %w": {
-  "zh": "更新批量任务调度开关失败: %w",
   "ja": "バッチタスクのスケジュールスイッチの更新に失敗しました: %w"
  },
  "Failed to update batch task status: %w": {
-  "zh": "更新批量任务状态失败: %w",
   "ja": "バッチタスクのステータスの更新に失敗しました: %w"
  },
  "Failed to update conversation mode: %w": {
-  "zh": "更新对话模式失败: %w",
   "ja": "会話のモードの更新に失敗しました: %w"
  },
  "Failed to update conversation pinned state: %w": {
-  "zh": "更新对话置顶状态失败: %w",
   "ja": "会話のピン留め状態の更新に失敗しました: %w"
  },
  "Failed to update conversation role: %w": {
-  "zh": "更新对话角色失败: %w",
   "ja": "会話のロールの更新に失敗しました: %w"
  },
  "Failed to update conversation time: %w": {
-  "zh": "更新对话时间失败: %w",
   "ja": "会話の日時の更新に失敗しました: %w"
  },
  "Failed to update conversation title: %w": {
-  "zh": "更新对话标题失败: %w",
   "ja": "会話タイトルの更新に失敗しました: %w"
  },
  "Failed to update fact: %w": {
-  "zh": "更新事实失败: %w",
   "ja": "ファクトの更新に失敗しました: %w"
  },
  "Failed to update knowledge item: %w": {
-  "zh": "更新知识项失败: %w",
   "ja": "ナレッジ項目の更新に失敗しました: %w"
  },
  "Failed to update primary asset": {
-  "zh": "更新主资产失败",
   "ja": "主資産の更新に失敗しました"
  },
  "Failed to update process detail: %w": {
-  "zh": "更新过程详情失败: %w",
   "ja": "処理詳細の更新に失敗しました: %w"
  },
  "Failed to update project: %w": {
-  "zh": "更新项目失败: %w",
   "ja": "プロジェクトの更新に失敗しました: %w"
  },
  "Failed to update task message: %w": {
-  "zh": "更新任务消息失败: %w",
   "ja": "タスクメッセージの更新に失敗しました: %w"
  },
  "Failed to update user password": {
-  "zh": "更新用户密码失败",
   "ja": "ユーザーのパスワードの更新に失敗しました"
  },
  "Failed to update vulnerability: %w": {
-  "zh": "更新漏洞失败: %w",
   "ja": "脆弱性の更新に失敗しました: %w"
  },
  "Failed to update workflow HITL waiting status: %w": {
-  "zh": "更新工作流 HITL 等待状态失败: %w",
   "ja": "ワークフローの HITL 待機ステータスの更新に失敗しました: %w"
  },
  "Failed to update workflow node run: %w": {
-  "zh": "更新工作流节点运行失败: %w",
   "ja": "ワークフローのノード実行の更新に失敗しました: %w"
  },
  "Failed to update workflow run status: %w": {
-  "zh": "更新工作流运行状态失败: %w",
   "ja": "ワークフロー実行のステータスの更新に失敗しました: %w"
  },
  "Failed to update workflow run: %w": {
-  "zh": "更新工作流运行失败: %w",
   "ja": "ワークフロー実行の更新に失敗しました: %w"
  },
  "Failed to validate vulnerability association": {
-  "zh": "校验漏洞关联失败",
   "ja": "脆弱性の関連付けの検証に失敗しました"
  },
  "Failed to vectorize query: %w": {
-  "zh": "向量化查询失败: %w",
   "ja": "クエリのベクトル化に失敗しました: %w"
  },
  "Failed to verify workflow binding: %w": {
-  "zh": "无法验证工作流绑定: %w",
   "ja": "ワークフローのバインドを検証できません: %w"
  },
  "Failed to write agent file": {
-  "zh": "写入智能体文件失败",
   "ja": "エージェントファイルの書き込みに失敗しました"
  },
  "Failed to write bot conversation binding: %w": {
-  "zh": "写入机器人会话绑定失败: %w",
   "ja": "ボットの会話バインドの書き込みに失敗しました: %w"
  },
  "Failed to write edge: %w": {
-  "zh": "写入边失败: %w",
   "ja": "エッジの書き込みに失敗しました: %w"
  },
  "Failed to write file %s: %w": {
-  "zh": "写入文件 %s 失败: %w",
   "ja": "ファイル %s の書き込みに失敗しました: %w"
  },
  "Failed to write file: %w": {
-  "zh": "写入文件失败: %w",
   "ja": "ファイルの書き込みに失敗しました: %w"
  },
  "Failed to write last run error: %w": {
-  "zh": "写入最近运行错误失败: %w",
   "ja": "最後の実行エラーの書き込みに失敗しました: %w"
  },
  "Failed to write model Token usage: %w": {
-  "zh": "写入模型Token用量失败: %w",
   "ja": "モデルの Token 使用量の書き込みに失敗しました: %w"
  },
  "Failed to write schedule error message: %w": {
-  "zh": "写入调度错误信息失败: %w",
   "ja": "スケジュールのエラーメッセージの書き込みに失敗しました: %w"
  },
- "Failed to write the version number to config.yaml (does not affect this update): %v": {
-  "zh": "版本号写入 config.yaml 失败（不影响本次更新）：%v"
- },
- "Fast-forward merge failed, and restoring local content also failed: %v": {
-  "zh": "快进合并失败，恢复本地内容又失败：%v"
- },
- "Fast-forward merge failed: %v\n%s": {
-  "zh": "快进合并失败：%v\n%s"
- },
- "Fetch failed: %v": {
-  "zh": "拉取失败：%v"
- },
  "Field %s has no saved credential, please enter a new value": {
-  "zh": "字段 %s 没有已保存凭据，请填写新的值",
   "ja": "フィールド %s に保存済みの認証情報がありません。新しい値を入力してください"
  },
  "File already exists": {
-  "zh": "文件已存在",
   "ja": "ファイルは既に存在します"
  },
  "File not found": {
-  "zh": "文件不存在",
   "ja": "ファイルが見つかりません"
  },
  "Final reply check has not converged, continuing from the existing trace...": {
-  "zh": "最终回复检查尚未收敛，正在基于已有轨迹继续执行…",
   "ja": "最終回答のチェックが収束していません。既存のトレースから続行しています…"
  },
  "Findings are required": {
-  "zh": "发现记录不能为空",
   "ja": "発見事項は必須です"
  },
  "Full index rebuild started and will run in the background": {
-  "zh": "全量索引重建已开始，将在后台进行",
   "ja": "フルインデックスの再構築を開始しました。バックグラウンドで実行されます"
  },
- "Generate a one-time bot binding code": {
-  "zh": "生成机器人一次性绑定码"
- },
- "HEAD changed after the adoption was interrupted; the state has been preserved": {
-  "zh": "接入中断后 HEAD 发生变化，已保留现场"
- },
- "HEAD changed after the rollback was interrupted; refusing to overwrite later commits": {
-  "zh": "回滚中断后 HEAD 已经变了，拒绝覆盖后续提交"
- },
- "HEAD has changed since that update (now %s); rollback would only revert to the pre-update commit, so it is refused.": {
-  "zh": "自那次更新之后 HEAD 已经变了（现在是 %s），回滚只会撤到更新前的提交，因此拒绝执行。"
- },
  "HITL Pending Approval": {
-  "zh": "HITL 待审批",
   "ja": "HITL 承認待ち"
  },
  "HITL approval triggered": {
-  "zh": "命中人机协同审批",
   "ja": "HITL 承認がトリガーされました"
  },
  "HITL configuration persistence is unavailable": {
-  "zh": "HITL 配置持久化不可用",
   "ja": "HITL 設定の永続化は利用できません"
  },
  "HITL policy persistence is unavailable": {
-  "zh": "HITL 策略持久化不可用",
   "ja": "HITL ポリシーの永続化は利用できません"
  },
  "HITL rejected: %v": {
-  "zh": "人机协同审批已拒绝: %v",
   "ja": "HITL 承認で拒否されました: %v"
  },
  "Header credential scope mismatch": {
-  "zh": "请求头凭据范围不匹配",
   "ja": "ヘッダー認証情報のスコープが一致しません"
  },
- "Human approval": {
-  "zh": "人工审批"
- },
  "Human approval granted, continuing execution": {
-  "zh": "人工确认通过，继续执行",
   "ja": "人による承認が完了しました。実行を続行します"
  },
- "Human approval passed, continuing execution": {
-  "zh": "人工审批已通过，继续执行"
- },
- "Human confirmation node passed": {
-  "zh": "人工确认节点已通过"
- },
  "Idempotency-Key must contain 1–200 bytes": {
-  "ja": "Idempotency-Key は 1～200 バイトで指定してください",
-  "zh": "Idempotency-Key 必须为 1–200 字节"
- },
- "If external MCP tools are not shown, check the connection status or click the refresh button": {
-  "zh": "如果外部MCP工具未显示，请检查连接状态或点击刷新按钮"
+  "ja": "Idempotency-Key は 1～200 バイトで指定してください"
  },
  "Image exceeds the limit of 8 MiB per image or 12 MiB in total per request": {
-  "zh": "图片超过单张 8 MiB 或单次合计 12 MiB 的限制",
   "ja": "画像が 1 枚あたり 8 MiB、または 1 回あたり合計 12 MiB の上限を超えています"
  },
  "Image resolution is too large": {
-  "zh": "图片分辨率过大",
   "ja": "画像の解像度が大きすぎます"
  },
  "Incorrect username or password": {
-  "zh": "密码错误",
   "ja": "ユーザー名またはパスワードが正しくありません"
  },
  "Index build started and will run in the background": {
-  "zh": "索引构建已开始，将在后台进行",
   "ja": "インデックスの構築を開始しました。バックグラウンドで実行されます"
  },
  "Index write failed (knowledge item: %s): %v": {
-  "zh": "索引写入失败 (知识项：%s): %v",
   "ja": "インデックスの書き込みに失敗しました (ナレッジ項目: %s): %v"
  },
  "Indexing chain is not initialized": {
-  "zh": "索引链未初始化",
   "ja": "インデックスチェーンが初期化されていません"
  },
- "Install directory does not exist or is not a directory: %v": {
-  "zh": "安装目录不存在或不是目录：%v"
- },
- "Install directory does not exist: %v": {
-  "zh": "安装目录不存在：%v"
- },
  "Insufficient permissions": {
-  "zh": "权限不足",
   "ja": "権限が不足しています"
  },
- "Insufficient recovery evidence; binary and record preserved: %v": {
-  "zh": "恢复证据不足，已保留二进制和记录：%v"
- },
  "Interactive WebSocket terminal is not supported on Windows; use POST /terminal/run or /terminal/run/stream instead.": {
-  "ja": "Windows ではインタラクティブな WebSocket ターミナルはサポートされていません。代わりに POST /terminal/run または /terminal/run/stream を使用してください",
-  "zh": "Windows 不支持交互式 WebSocket 终端，请改用 POST /terminal/run 或 /terminal/run/stream。"
+  "ja": "Windows ではインタラクティブな WebSocket ターミナルはサポートされていません。代わりに POST /terminal/run または /terminal/run/stream を使用してください"
  },
  "Invalid Agent ID format": {
-  "zh": "Agent ID 格式无效",
   "ja": "Agent ID の形式が無効です"
  },
  "Invalid PKCS7 padding": {
-  "zh": "无效的 PKCS7 填充",
   "ja": "PKCS7 パディングが無効です"
  },
  "Invalid agent name: %w": {
-  "zh": "智能体名称无效: %w",
   "ja": "エージェント名が無効です: %w"
  },
  "Invalid attachment directory": {
-  "zh": "附件目录无效",
   "ja": "添付ファイルのディレクトリが無効です"
  },
  "Invalid attachment path": {
-  "zh": "附件路径无效",
   "ja": "添付ファイルのパスが無効です"
  },
  "Invalid bot authentication mode": {
-  "zh": "机器人鉴权模式无效",
   "ja": "ボットの認証モードが無効です"
  },
  "Invalid call interception configuration: %w": {
-  "zh": "调用拦截配置无效: %w",
   "ja": "呼び出しインターセプト設定が無効です: %w"
  },
  "Invalid cron expression: %v": {
-  "zh": "无效的 Cron 表达式: %v",
   "ja": "Cron 式が無効です: %v"
  },
  "Invalid edge type: %s": {
-  "zh": "无效的 edge type: %s",
   "ja": "edge type が無効です: %s"
  },
  "Invalid fact_key format: only letters, digits, and . _ / - are allowed, and it must start with a letter or digit (camelCase is supported)": {
-  "zh": "fact_key 格式无效，仅允许字母、数字及 . _ / -，且须以字母或数字开头（支持驼峰命名）",
   "ja": "fact_key の形式が無効です。使用できるのは英字、数字、および . _ / - のみで、先頭は英字または数字にする必要があります（キャメルケースも使用できます）"
  },
  "Invalid file name": {
-  "zh": "非法文件名",
   "ja": "ファイル名が無効です"
  },
- "Invalid file path: %v": {
-  "zh": "文件路径不合法：%v"
- },
  "Invalid header credential placeholder": {
-  "zh": "无效的请求头凭据占位符",
   "ja": "ヘッダー認証情報のプレースホルダーが無効です"
  },
  "Invalid image format": {
-  "zh": "图片格式无效",
   "ja": "画像形式が無効です"
  },
  "Invalid image input mode": {
-  "zh": "图片输入模式无效",
   "ja": "画像入力モードが無効です"
  },
  "Invalid matches regular expression: %w": {
-  "zh": "matches 正则非法: %w",
   "ja": "matches の正規表現が無効です: %w"
  },
  "Invalid mode parameter. Allowed values: missing, full": {
-  "zh": "无效的 mode 参数，可选值：missing、full",
   "ja": "mode パラメーターが無効です。指定可能な値: missing、full"
  },
  "Invalid parameters": {
-  "zh": "参数非法",
   "ja": "パラメーターが無効です"
  },
  "Invalid repository address (only https/http/ssh/git/file:// or a local absolute path are allowed)": {
-  "zh": "仓库地址不合法（只允许 https/http/ssh/git/file:// 或本机绝对路径）",
   "ja": "リポジトリのアドレスが無効です（https/http/ssh/git/file:// またはローカルの絶対パスのみ指定できます）"
  },
  "Invalid request body: the command field is required": {
-  "zh": "请求体无效，需要 command 字段",
   "ja": "リクエストボディが無効です。command フィールドが必要です"
  },
  "Invalid request parameters: %v": {
-  "zh": "无效的请求参数: %v",
   "ja": "リクエストパラメーターが無効です: %v"
  },
  "Invalid session": {
-  "zh": "会话无效",
   "ja": "セッションが無効です"
  },
  "Invalid source fact_key (%s): %w": {
-  "zh": "source fact_key 无效 (%s): %w",
   "ja": "source fact_key が無効です (%s): %w"
  },
  "Invalid target fact_key (%s): %w": {
-  "zh": "target fact_key 无效 (%s): %w",
   "ja": "target fact_key が無効です (%s): %w"
  },
  "Invalid tool guard configuration: %v": {
-  "zh": "无效的调用拦截配置: %v",
   "ja": "呼び出し遮断設定が無効です: %v"
  },
  "Invalid tool name format: %s": {
-  "zh": "无效的工具名称格式: %s",
   "ja": "ツール名の形式が無効です: %s"
  },
  "Invalid trial match parameters: %v": {
-  "zh": "无效的试匹配参数: %v",
   "ja": "試行マッチのパラメーターが無効です: %v"
  },
  "Invalid version number: %q": {
-  "zh": "版本号不合法：%q",
   "ja": "バージョン番号が無効です: %q"
  },
  "Invalid working directory": {
-  "zh": "工作目录无效",
   "ja": "作業ディレクトリが無効です"
  },
  "Iteration ended, automatically terminated tool executions that were still running.": {
-  "zh": "迭代结束，已自动终止仍在运行的工具执行。",
   "ja": "イテレーションが終了したため、実行中だったツールの実行を自動的に終了しました。"
  },
  "JSONPath brackets do not match": {
-  "zh": "JSONPath 方括号不匹配",
   "ja": "JSONPath の角括弧が対応していません"
  },
  "JSONPath is required": {
-  "zh": "JSONPath 不能为空",
   "ja": "JSONPath は必須です"
  },
  "JSONPath/JQ function format must be jsonpath(value, \"$.path\") or jq(value, \".path\")": {
-  "zh": "JSONPath/JQ 函数格式应为 jsonpath(value, \"$.path\") 或 jq(value, \".path\")",
   "ja": "JSONPath/JQ 関数の形式は jsonpath(value, \"$.path\") または jq(value, \".path\") である必要があります"
  },
  "JSONPath/JQ path must start with $ or .": {
-  "zh": "JSONPath/JQ 路径必须以 $ 或 . 开头",
   "ja": "JSONPath/JQ のパスは $ または . で始まる必要があります"
  },
  "Jitter must satisfy 0 <= min <= max": {
-  "zh": "Jitter 必须满足 0 <= min <= max",
   "ja": "Jitter は 0 <= min <= max を満たす必要があります"
  },
  "Knowledge base is not enabled. Enable knowledge retrieval in system settings": {
-  "zh": "知识库功能未启用，请前往系统设置启用知识检索功能",
   "ja": "ナレッジベース機能が有効になっていません。システム設定でナレッジ検索機能を有効にしてください"
  },
  "Knowledge base path is not configured": {
-  "zh": "知识库路径未配置",
   "ja": "ナレッジベースのパスが設定されていません"
  },
  "Knowledge item not found": {
-  "zh": "知识项不存在",
   "ja": "ナレッジ項目が見つかりません"
  },
  "LLM JSON is missing graph.nodes": {
-  "zh": "大模型 JSON 缺少 graph.nodes",
   "ja": "LLM の JSON に graph.nodes がありません"
  },
  "LLM generation failed: %v": {
-  "zh": "大模型生成失败: %v",
   "ja": "LLM による生成に失敗しました: %v"
  },
  "LLM response is empty": {
-  "zh": "大模型响应为空",
   "ja": "LLM の応答が空です"
  },
  "LLM returned no candidate results": {
-  "zh": "大模型未返回候选结果",
   "ja": "LLM から候補結果が返されませんでした"
  },
  "Last scan time updated; the related vulnerability count is computed automatically from vulnerabilities saved in the current scan conversation": {
-  "zh": "上次扫描时间已更新；相关漏洞数由当前扫描对话中已保存的漏洞自动计算",
   "ja": "最終スキャン日時を更新しました。関連する脆弱性数は、現在のスキャン会話で保存された脆弱性から自動的に計算されます"
  },
  "Line %d has an empty type or fact_key": {
-  "zh": "第 %d 行 type 或 fact_key 为空",
   "ja": "%d 行目の type または fact_key が空です"
  },
  "Line %d has an invalid format; expected type: fact_key": {
-  "zh": "第 %d 行格式无效，应为 type: fact_key",
   "ja": "%d 行目の形式が無効です。type: fact_key の形式にしてください"
  },
- "Listener is already running": {
-  "zh": "监听器已在运行"
- },
- "Listener is not running": {
-  "zh": "监听器未运行"
- },
- "Listener not found": {
-  "zh": "监听器不存在"
- },
  "Listener type %s does not support %s one-liners; choose a compatible type": {
-  "zh": "监听器类型 %s 不支持 %s 类型的 oneliner，请选择兼容的类型",
   "ja": "リスナー種別 %s は %s 形式の oneliner に対応していません。対応する種別を選択してください"
  },
  "Listener type %s does not support %s; compatible types: %v": {
-  "zh": "监听器类型 %s 不支持 %s，兼容类型: %v",
   "ja": "リスナー種別 %s は %s に対応していません。対応する種別: %v"
  },
- "Local content restored, but the pending-build marker cannot be cleared: %v": {
-  "zh": "本地内容已恢复，但无法清除待编译标记：%v"
- },
- "Local files changed after the adoption was interrupted; the state has been preserved: %v": {
-  "zh": "接入中断后本地文件发生变化，已保留现场：%v"
- },
- "Local files changed before backup; adoption not performed: %v": {
-  "zh": "备份前本地文件发生变化，未执行接入：%v"
- },
- "Local files changed before backup; rollback not performed: %v": {
-  "zh": "备份前本地文件发生变化，未执行回滚：%v"
- },
- "Local files changed before backup; update not performed: %v": {
-  "zh": "备份前本地文件发生变化，未执行更新：%v"
- },
- "Local is %d commits ahead and %d commits behind: this would be a merge, not a download. Resolve it manually and retry.": {
-  "zh": "本地领先 %d 个提交、落后 %d 个提交：这是合并而不是下载，请手工处理后重试。"
- },
- "Log out": {
-  "zh": "退出登录"
- },
  "Logged out": {
-  "zh": "已退出登录",
   "ja": "ログアウトしました"
  },
- "Login failed: wrong password": {
-  "zh": "登录失败：密码错误"
- },
- "Login password changed": {
-  "zh": "登录密码已修改"
- },
  "Login session not found or expired": {
-  "zh": "登录会话不存在或已过期",
   "ja": "ログインセッションが見つからないか期限切れです"
  },
  "Login session not found or expired; please regenerate the QR code": {
-  "zh": "登录会话不存在或已过期，请重新生成二维码",
   "ja": "ログインセッションが見つからないか期限切れです。QR コードを再生成してください"
  },
- "Login successful": {
-  "zh": "登录成功"
- },
  "Long Running Task": {
-  "zh": "长时间运行任务",
   "ja": "長時間実行中のタスク"
  },
  "Max iterations cannot be negative": {
-  "zh": "最大迭代数不能为负数",
   "ja": "最大反復回数は負の値にできません"
  },
  "Maximum retries reached (%d): %v": {
-  "zh": "达到最大重试次数 (%d): %v",
   "ja": "最大再試行回数に達しました (%d): %v"
  },
  "Merge group not found or you have no permission to modify all members": {
-  "zh": "归并组不存在或无权修改全部成员",
   "ja": "統合グループが見つからないか、すべてのメンバーを変更する権限がありません"
  },
  "Merged records must belong to the same project": {
-  "zh": "归并记录必须属于同一项目",
   "ja": "統合するレコードは同じプロジェクトに属している必要があります"
  },
  "Merged result would exceed 30 tags": {
-  "zh": "合并后标签超过 30 个",
   "ja": "統合後のタグが 30 個を超えます"
  },
  "Merged user addition with the latest trace, continuing reasoning...": {
-  "zh": "已合并用户补充与最新轨迹，正在继续推理…",
   "ja": "ユーザーの追加内容を最新のトレースにマージしました。推論を続行しています…"
  },
  "Message length out of range": {
-  "zh": "消息长度越界",
   "ja": "メッセージ長が範囲外です"
  },
  "Messages parsed from the agent trace are empty": {
-  "zh": "从代理轨迹解析的消息为空",
   "ja": "エージェントのトレースから解析したメッセージが空です"
  },
  "Missing CREATE TABLE column definitions": {
-  "zh": "缺少 CREATE TABLE 字段定义",
   "ja": "CREATE TABLE の列定義がありません"
  },
  "Model identity or address has changed, please re-enter header credentials": {
-  "zh": "模型身份或地址已改变，请重新填写请求头凭据",
   "ja": "モデルの識別情報またはアドレスが変更されました。ヘッダー認証情報を再入力してください"
  },
  "Model is required": {
-  "zh": "模型不能为空",
   "ja": "モデルは必須です"
  },
  "Model output reached the length limit; the reply for this turn is incomplete.": {
-  "zh": "模型输出达到长度上限，本轮回复未完成。",
   "ja": "モデルの出力が長さの上限に達したため、このターンの返信は未完了です。"
  },
  "More than %d assets matched. Narrow the filter": {
-  "zh": "匹配资产超过 %d 条，请缩小筛选范围",
   "ja": "一致した資産が %d 件を超えています。絞り込み条件を狭めてください"
  },
  "Multi-agent is not enabled. Set multi_agent.enabled: true in config.yaml": {
-  "zh": "多代理未启用，请在 config.yaml 中设置 multi_agent.enabled: true",
   "ja": "マルチエージェントが有効になっていません。config.yaml で multi_agent.enabled: true を設定してください"
  },
  "Multi-agent is not enabled; enable multi_agent.enabled in settings or config.yaml": {
-  "zh": "多代理未启用，请在设置或 config.yaml 中开启 multi_agent.enabled",
   "ja": "マルチエージェントが有効になっていません。設定または config.yaml で multi_agent.enabled を有効にしてください"
  },
  "Must be an array of strings": {
-  "zh": "必须是字符串数组",
   "ja": "文字列の配列で指定してください"
  },
  "Name is required": {
-  "zh": "名称不能为空",
   "ja": "名前は必須です"
  },
  "New Vulnerability (%v)": {
-  "zh": "新漏洞（%v）",
   "ja": "新しい脆弱性（%v）"
  },
  "New password must be at least 8 characters": {
-  "zh": "新密码长度至少需要 8 位",
   "ja": "新しいパスワードは 8 文字以上にしてください"
  },
  "New password must differ from the old password": {
-  "zh": "新密码不能与旧密码相同",
   "ja": "新しいパスワードは古いパスワードと異なるものにしてください"
  },
  "No in-progress tool execution found, or the call has already finished": {
-  "zh": "未找到进行中的工具执行或该调用已结束",
   "ja": "実行中のツールが見つからないか、その呼び出しはすでに終了しています"
  },
  "No permission to access one or more execution records": {
-  "zh": "无权访问一个或多个执行记录",
   "ja": "1 件以上の実行記録にアクセスする権限がありません"
  },
  "No permission to access the target project or source conversation": {
-  "zh": "无权访问目标项目或来源对话",
   "ja": "対象プロジェクトまたは元の会話にアクセスする権限がありません"
  },
  "No permission to access this vulnerability": {
-  "zh": "无权访问该漏洞",
   "ja": "この脆弱性にアクセスする権限がありません"
  },
  "No permission to create or run a retest branch for this vulnerability": {
-  "zh": "无权创建或执行该漏洞的复测分支",
   "ja": "この脆弱性の再テストブランチを作成または実行する権限がありません"
  },
  "No permission to create vulnerabilities in this conversation": {
-  "zh": "无权在该对话下创建漏洞",
   "ja": "この会話に脆弱性を作成する権限がありません"
  },
  "No permission to create vulnerabilities in this project": {
-  "zh": "无权在该项目下创建漏洞",
   "ja": "このプロジェクトに脆弱性を作成する権限がありません"
  },
  "No permission to link to the target project": {
-  "zh": "无权关联目标项目",
   "ja": "対象プロジェクトに関連付ける権限がありません"
  },
  "No permission to write to the conversation": {
-  "zh": "无权写入对话",
   "ja": "会話への書き込み権限がありません"
  },
  "No previous binary: %s": {
-  "zh": "没有旧二进制：%s",
   "ja": "以前のバイナリがありません: %s"
  },
  "No restart hook was provided for this launch. After setup is complete, restart the service with an external process manager": {
-  "zh": "本次启动没有提供重启钩子，接入完成后请由外部进程管理器重启服务",
   "ja": "今回の起動では再起動フックが提供されていません。接続完了後に外部プロセスマネージャーでサービスを再起動してください"
  },
  "No restart hook was provided for this launch. After the update completes, restart the service with an external process manager": {
-  "zh": "本次启动没有提供重启钩子，更新完成后请由外部进程管理器重启服务",
   "ja": "今回の起動では再起動フックが提供されていません。更新完了後に外部プロセスマネージャーでサービスを再起動してください"
  },
  "No restart hook was provided for this launch. Restart the service with an external process manager": {
-  "zh": "本次启动没有提供重启钩子，请由外部进程管理器重启服务",
   "ja": "今回の起動では再起動フックが提供されていません。外部プロセスマネージャーでサービスを再起動してください"
  },
  "No running task found": {
-  "zh": "未找到正在执行的任务",
   "ja": "実行中のタスクが見つかりません"
  },
  "No running tool execution found, or the task has already finished": {
-  "zh": "未找到进行中的工具执行，或该任务已结束",
   "ja": "実行中のツール実行が見つからないか、タスクは既に終了しています"
  },
  "No saved API Key": {
-  "zh": "没有已保存的 API Key",
   "ja": "保存済みの API Key がありません"
  },
  "No saved header credential": {
-  "zh": "没有已保存的请求头凭据",
   "ja": "保存済みのヘッダー認証情報がありません"
  },
- "No update record to roll back": {
-  "zh": "没有可回滚的更新记录"
- },
  "No valid tasks": {
-  "zh": "没有有效的任务",
   "ja": "有効なタスクがありません"
  },
  "No vulnerabilities to delete under the current filters": {
-  "zh": "当前筛选条件下没有可删除的漏洞",
   "ja": "現在のフィルター条件に該当する削除可能な脆弱性がありません"
  },
  "Node \"%s\" can have at most one default branch among its conditional outgoing edges": {
-  "zh": "节点「%s」的条件出边最多只能有一条默认分支",
   "ja": "ノード「%s」の条件付き出力エッジには、デフォルト分岐を最大 1 つしか設定できません"
  },
  "Node \"%s\" cannot reach an output/end node": {
-  "zh": "节点「%s」无法到达 output/end 终点",
   "ja": "ノード「%s」は output/end ノードに到達できません"
  },
  "Node \"%s\" did not continue execution": {
-  "zh": "节点「%s」未继续执行",
   "ja": "ノード「%s」は実行を継続しませんでした"
  },
  "Node \"%s\" failed: %s": {
-  "zh": "节点「%s」失败: %s",
   "ja": "ノード「%s」が失敗しました: %s"
  },
  "Node \"%s\" has an invalid edge condition: %w": {
-  "zh": "节点「%s」的连线条件非法: %w",
   "ja": "ノード「%s」のエッジ条件が無効です: %w"
  },
  "Node \"%s\" has no outgoing edges; connect it to an output/end node": {
-  "zh": "节点「%s」没有出边；请连接到 output/end 节点",
   "ja": "ノード「%s」に出力エッジがありません。output/end ノードに接続してください"
  },
  "Node \"%s\" is missing a node type": {
-  "zh": "节点「%s」缺少节点类型",
   "ja": "ノード「%s」にノードタイプがありません"
  },
  "Node \"%s\" is unreachable: it is not connected from the start node": {
-  "zh": "节点「%s」不可达：没有从开始节点连通到该节点",
   "ja": "ノード「%s」に到達できません。開始ノードから接続されていません"
  },
  "Node \"%s\" is unreachable: non-start nodes must have incoming edges": {
-  "zh": "节点「%s」不可达：非开始节点必须有入边",
   "ja": "ノード「%s」に到達できません。開始ノード以外には入力エッジが必要です"
  },
  "Node \"%s\" must declare a join strategy when it has multiple upstream nodes": {
-  "zh": "节点「%s」有多个上游时必须声明汇聚策略",
   "ja": "ノード「%s」に複数の上流ノードがある場合は、集約戦略を指定する必要があります"
  },
  "Node \"%s\" uses an unknown join strategy: %s": {
-  "zh": "节点「%s」使用了未知汇聚策略: %s",
   "ja": "ノード「%s」が不明な集約戦略を使用しています: %s"
  },
  "Node \"%s\" uses an unknown node type: %s": {
-  "zh": "节点「%s」使用了未知节点类型: %s",
   "ja": "ノード「%s」が不明なノードタイプを使用しています: %s"
  },
  "Node finished: %s (%s)": {
-  "zh": "节点完成：%s（%s）",
   "ja": "ノード完了: %s（%s）"
  },
  "Node run id is required": {
-  "zh": "节点运行 id 不能为空",
   "ja": "ノード実行の id は必須です"
  },
  "Node run id, run_id, and node_id are required": {
-  "zh": "节点运行 id、run_id 和 node_id 不能为空",
   "ja": "ノード実行の id、run_id、node_id は必須です"
  },
  "Not a regular executable file: %s": {
-  "zh": "不是普通可执行文件：%s",
   "ja": "通常の実行可能ファイルではありません: %s"
  },
  "Not allowed to access this WebShell connection": {
-  "zh": "无权访问该 WebShell 连接",
   "ja": "この WebShell 接続へのアクセス権限がありません"
  },
  "Not allowed to access this connection": {
-  "zh": "无权访问该连接",
   "ja": "この接続へのアクセス権限がありません"
  },
  "Not allowed to link the target conversation": {
-  "zh": "无权关联目标对话",
   "ja": "対象の会話を関連付ける権限がありません"
  },
  "Not authorized to access attachment %s": {
-  "zh": "无权访问附件 %s",
   "ja": "添付ファイル %s にアクセスする権限がありません"
  },
  "Not authorized to access the target project": {
-  "zh": "无权访问目标项目",
   "ja": "対象プロジェクトにアクセスする権限がありません"
  },
  "Not authorized to access this WebShell connection": {
-  "zh": "无权访问此 WebShell 连接",
   "ja": "この WebShell 接続にアクセスする権限がありません"
  },
  "Not authorized to access this conversation": {
-  "zh": "无权访问该对话",
   "ja": "この会話にアクセスする権限がありません"
  },
  "Not authorized to bind this project": {
-  "zh": "无权绑定该项目",
   "ja": "このプロジェクトにバインドする権限がありません"
  },
  "Not authorized to link this conversation": {
-  "zh": "无权关联该对话",
   "ja": "この会話に関連付ける権限がありません"
  },
  "Not authorized to link this task queue": {
-  "zh": "无权关联该任务队列",
   "ja": "このタスクキューに関連付ける権限がありません"
  },
  "Not connected": {
-  "zh": "未连接",
   "ja": "未接続"
  },
  "Number of assets to merge must be between 2 and 100": {
-  "zh": "合并资产数量必须在 2-100 之间",
   "ja": "統合する資産の数は 2～100 の範囲で指定してください"
  },
  "Only a safe path subset is supported; wildcards, recursion and expressions are not supported": {
-  "zh": "仅支持安全路径子集，不支持通配符、递归或表达式",
   "ja": "安全なパスのサブセットのみサポートされます。ワイルドカード、再帰、式はサポートされません"
  },
  "Only completed or cancelled queues can be rerun": {
-  "zh": "仅已完成或已取消的队列可以重跑",
   "ja": "再実行できるのは完了またはキャンセル済みのキューのみです"
  },
  "OpenAI client is not initialized": {
-  "zh": "OpenAI客户端未初始化",
   "ja": "OpenAI クライアントが初期化されていません"
  },
  "OpenAI model %q requires /v1/responses for function tools and does not support reasoning_effort=none; this backend uses /v1/chat/completions: select a compatible model": {
-  "zh": "OpenAI 模型 %q 的函数工具需要 /v1/responses，且不支持 reasoning_effort=none；当前后端使用 /v1/chat/completions，请选择兼容的模型",
   "ja": "OpenAI モデル %q は関数ツールに /v1/responses が必要で、reasoning_effort=none をサポートしません。このバックエンドは /v1/chat/completions を使用するため、互換性のあるモデルを選択してください"
  },
  "OpenAI model %q requires reasoning_effort=none for function tools in /v1/chat/completions: set reasoning mode to off; reasoning with function tools requires /v1/responses": {
-  "zh": "OpenAI 模型 %q 在 /v1/chat/completions 中使用函数工具时需要 reasoning_effort=none：请将推理模式设为关闭；带函数工具的推理需要 /v1/responses",
   "ja": "OpenAI モデル %q は /v1/chat/completions で関数ツールを使う場合、reasoning_effort=none が必要です。推論モードをオフにしてください。関数ツールを伴う推論には /v1/responses が必要です"
  },
  "Original conversation not found": {
-  "zh": "原始对话不存在",
   "ja": "元の会話が見つかりません"
  },
  "Outgoing edges of condition node \"%s\" must be labeled yes/no or true/false": {
-  "zh": "条件节点「%s」的出边必须标记为是/否或 true/false",
   "ja": "条件ノード「%s」の出力エッジには、はい/いいえ または true/false のラベルが必要です"
  },
  "Output node \"%s\" requires an output variable name": {
-  "zh": "输出节点「%s」必须填写输出变量名",
   "ja": "出力ノード「%s」には出力変数名が必要です"
  },
  "Pairing code submitted; please keep waiting for binding": {
-  "zh": "已提交配对码，请继续等待绑定",
   "ja": "ペアリングコードを送信しました。連携が完了するまでお待ちください"
  },
  "Parse error": {
-  "ja": "解析エラー",
-  "zh": "解析错误"
+  "ja": "解析エラー"
  },
  "Parsing %v response failed: %v": {
-  "zh": "解析 %v 响应失败: %v",
   "ja": "%v レスポンスの解析に失敗しました: %v"
  },
  "Password is required": {
-  "zh": "密码不能为空",
   "ja": "パスワードを入力してください"
  },
  "Password must be at least 8 characters": {
-  "zh": "密码长度至少需要 8 位",
   "ja": "パスワードは 8 文字以上である必要があります"
  },
  "Password updated, please sign in again with the new password": {
-  "zh": "密码已更新，请使用新密码重新登录",
   "ja": "パスワードを更新しました。新しいパスワードで再度ログインしてください"
  },
  "Pausing the current reasoning has been requested; user additions will be merged into the context and execution will continue automatically (no need to stop the whole turn).": {
-  "zh": "已请求暂停当前推理；用户补充将合并到上下文并自动继续执行（无需整轮停止）。",
   "ja": "現在の推論の一時停止をリクエストしました。ユーザーの補足はコンテキストに統合され、自動的に実行が続行されます（ターン全体を停止する必要はありません）。"
  },
  "Pending build state is corrupted: %w": {
-  "zh": "待编译状态格式损坏: %w",
   "ja": "ビルド待ち状態が破損しています: %w"
  },
  "Pi %s requires at least one configured sub-agent": {
-  "zh": "Pi %s 至少需要配置一个子代理",
   "ja": "Pi %s には少なくとも1つのサブエージェントの設定が必要です"
  },
  "Pi agent is nil": {
-  "zh": "Pi 代理为空",
   "ja": "Pi エージェントが nil です"
  },
  "Pi agent/config is nil": {
-  "zh": "Pi 代理/配置为空",
   "ja": "Pi エージェント/設定が nil です"
  },
  "Pi build produced no worker: %w": {
-  "zh": "Pi 构建未生成 worker: %w",
   "ja": "Pi のビルドで worker が生成されませんでした: %w"
  },
  "Pi protocol failure: %s": {
-  "zh": "Pi 协议失败: %s",
   "ja": "Pi プロトコルエラー: %s"
  },
  "Pi request exceeds protocol record limit": {
-  "zh": "Pi 请求超出协议记录大小限制",
   "ja": "Pi リクエストがプロトコルレコードの上限を超えています"
  },
  "Pi requires Node.js >=22.19": {
-  "zh": "Pi 需要 Node.js >=22.19",
   "ja": "Pi には Node.js >=22.19 が必要です"
  },
  "Pi requires Node.js >=22.19: %w": {
-  "zh": "Pi 需要 Node.js >=22.19: %w",
   "ja": "Pi には Node.js >=22.19 が必要です: %w"
  },
  "Pi returned an empty result": {
-  "zh": "Pi 返回了空结果",
   "ja": "Pi が空の結果を返しました"
  },
  "Pi returned no background proposal": {
-  "zh": "Pi 未返回后台提案",
   "ja": "Pi がバックグラウンドの提案を返しませんでした"
  },
  "Pi runtime build failed: %w\n%s": {
-  "zh": "Pi 运行时构建失败: %w\n%s",
   "ja": "Pi ランタイムのビルドに失敗しました: %w\n%s"
  },
  "Pi runtime error: %s": {
-  "zh": "Pi 运行时错误: %s",
   "ja": "Pi ランタイムエラー: %s"
  },
  "Pi runtime protocol mismatch": {
-  "zh": "Pi 运行时协议不匹配",
   "ja": "Pi ランタイムのプロトコルが一致しません"
  },
  "Pi runtime readiness check failed; verify Node.js >=22.19 and rebuild with bash scripts/build-pi-runtime.sh": {
-  "zh": "Pi 运行时就绪检查失败；请确认 Node.js >=22.19，并使用 bash scripts/build-pi-runtime.sh 重新构建",
   "ja": "Pi ランタイムの準備確認に失敗しました。Node.js >=22.19 を確認し、bash scripts/build-pi-runtime.sh で再ビルドしてください"
  },
  "Pi sub-agent has no ID": {
-  "zh": "Pi 子代理没有 ID",
   "ja": "Pi サブエージェントに ID がありません"
  },
  "Pi token usage summary": {
-  "zh": "Pi 令牌用量汇总",
   "ja": "Pi トークン使用量のサマリー"
  },
  "Pi tool call has no identity": {
-  "zh": "Pi 工具调用缺少标识",
   "ja": "Pi のツール呼び出しに識別子がありません"
  },
  "Pi tool concurrency limit exceeded": {
-  "zh": "超出 Pi 工具并发上限",
   "ja": "Pi ツールの同時実行数の上限を超えました"
  },
  "Pi tool name collision: %s": {
-  "zh": "Pi 工具名称冲突: %s",
   "ja": "Pi ツール名が衝突しています: %s"
  },
  "Pi worker closed stdout before handshake": {
-  "zh": "Pi worker 在握手前关闭了 stdout",
   "ja": "Pi worker がハンドシェイク前に stdout を閉じました"
  },
  "Pi worker closed stdout without a result": {
-  "zh": "Pi worker 在返回结果前关闭了 stdout",
   "ja": "Pi worker が結果を返す前に stdout を閉じました"
  },
  "Pi worker does not exist: %s": {
-  "zh": "Pi worker 不存在: %s",
   "ja": "Pi worker が存在しません: %s"
  },
  "Pi worker missing; run bash scripts/build-pi-runtime.sh, or configure agent_runtime.worker_path": {
-  "zh": "缺少 Pi worker；请运行 bash scripts/build-pi-runtime.sh，或配置 agent_runtime.worker_path",
   "ja": "Pi worker が見つかりません。bash scripts/build-pi-runtime.sh を実行するか、agent_runtime.worker_path を設定してください"
  },
  "Pi worker startup timeout": {
-  "zh": "Pi worker 启动超时",
   "ja": "Pi worker の起動がタイムアウトしました"
  },
  "Plaintext is too short": {
-  "zh": "明文过短",
   "ja": "平文が短すぎます"
  },
  "Please log in first": {
-  "zh": "请先登录",
   "ja": "先にログインしてください"
  },
  "Please provide a reason for the split": {
-  "zh": "请填写拆分理由",
   "ja": "分割の理由を入力してください"
  },
  "Please specify a channel or model credential scope to restore headers": {
-  "zh": "请指定通道或模型凭据范围以恢复请求头",
   "ja": "ヘッダーを復元するには、チャネルまたはモデルの認証情報スコープを指定してください"
  },
  "Please stop the current task before deleting the conversation turn": {
-  "zh": "请先停止当前任务，再删除对话轮次",
   "ja": "会話のターンを削除する前に、現在のタスクを停止してください"
  },
  "Points to other facts:\n": {
-  "zh": "指向其他事实:\n",
   "ja": "他の fact を指しています:\n"
  },
- "Port already in use": {
-  "zh": "端口已被占用"
- },
  "Primary asset does not exist or you lack permission to update it": {
-  "zh": "主资产不存在或无权更新",
   "ja": "主資産が存在しないか、更新する権限がありません"
  },
  "Primary asset is required": {
-  "zh": "主资产不能为空",
   "ja": "主資産は必須です"
  },
  "Primary asset not found or not authorized": {
-  "zh": "主资产不存在或无权访问",
   "ja": "メイン資産が見つからないか、アクセス権限がありません"
  },
  "Process detail not found": {
-  "zh": "过程详情不存在",
   "ja": "処理詳細が見つかりません"
  },
  "Process detail not found: %s": {
-  "zh": "过程详情不存在: %s",
   "ja": "処理詳細が見つかりません: %s"
  },
- "Profile not found": {
-  "zh": "Profile 不存在"
- },
  "Project name is required": {
-  "zh": "项目名称不能为空",
   "ja": "プロジェクト名は必須です"
  },
  "Project not found": {
-  "zh": "项目不存在",
   "ja": "プロジェクトが見つかりません"
  },
  "Project resume record saved": {
-  "zh": "已保存项目续接记录",
   "ja": "プロジェクト再開レコードを保存しました"
  },
  "Provide the config to test": {
-  "zh": "请提供待测试的 config",
   "ja": "テスト対象の config を指定してください"
  },
  "Provide the selected records, a name, and a merge reason": {
-  "zh": "请提供选中记录、名称和归并理由",
   "ja": "選択したレコード、名前、統合理由を指定してください"
  },
  "QR code expired; please regenerate it": {
-  "zh": "二维码已过期，请重新生成",
   "ja": "QR コードの有効期限が切れました。再生成してください"
  },
  "Quake base_url is invalid: %v": {
-  "zh": "Quake base_url 无效: %v",
   "ja": "Quake base_url が無効です: %v"
  },
  "Query is required": {
-  "zh": "查询不能为空",
   "ja": "クエリは必須です"
  },
  "Queue has running tasks, cannot modify approval settings": {
-  "zh": "队列有正在执行的任务，无法修改审批设置",
   "ja": "キューに実行中のタスクがあるため、承認設定を変更できません"
  },
  "Queue is running or not ready, cannot add task": {
-  "zh": "队列正在执行或未就绪，无法添加任务",
   "ja": "キューが実行中か準備できていないため、タスクを追加できません"
  },
  "Queue is running or not ready, cannot delete task": {
-  "zh": "队列正在执行或未就绪，无法删除任务",
   "ja": "キューが実行中か準備できていないため、タスクを削除できません"
  },
  "Queue is running or not ready, cannot edit task": {
-  "zh": "队列正在执行或未就绪，无法编辑任务",
   "ja": "キューが実行中か準備できていないため、タスクを編集できません"
  },
  "Queue is running or not ready, cannot run a single task": {
-  "zh": "队列正在执行或未就绪，无法单条执行",
   "ja": "キューが実行中か準備できていないため、単一タスクを実行できません"
  },
  "Queue is running, cannot modify": {
-  "zh": "队列正在运行中，无法修改",
   "ja": "キューが実行中のため変更できません"
  },
  "Queue not found": {
-  "zh": "队列不存在",
   "ja": "キューが見つかりません"
  },
  "Queue not found or cannot be paused": {
-  "zh": "队列不存在或无法暂停",
   "ja": "キューが見つからないか、一時停止できません"
  },
- "RBAC denied access": {
-  "zh": "RBAC 拒绝访问"
- },
  "RBAC service unavailable, cannot validate robot service account": {
-  "zh": "RBAC 服务不可用，无法校验机器人服务账号",
   "ja": "RBAC サービスが利用できないため、ロボットのサービスアカウントを検証できません"
  },
  "Reading %v response failed: %v": {
-  "zh": "读取 %v 响应失败: %v",
   "ja": "%v レスポンスの読み取りに失敗しました: %v"
  },
- "Rebuild skipped as requested; source updated, the external build process will produce the binary after restart": {
-  "zh": "按请求跳过重新编译；源码已更新，重启后由外部构建流程产出二进制"
- },
  "Record is already merged; split the original merge group first": {
-  "zh": "记录已归并，请先拆分原归并组",
   "ja": "レコードはすでに統合されています。先に元の統合グループを分割してください"
  },
- "Recovery evidence no longer matches after the build; state preserved: %v": {
-  "zh": "编译后恢复证据不再匹配，已保留现场：%v"
- },
- "Remote has no branch %s": {
-  "zh": "远端没有分支 %s"
- },
  "Report body exceeds the 8 MiB limit; please narrow the scope": {
-  "zh": "报告正文超过 8 MiB 限制，请缩小范围",
   "ja": "レポート本文が 8 MiB の上限を超えています。範囲を絞ってください"
  },
  "Report exceeds the limit of 2000 findings": {
-  "zh": "报告超过 2000 条发现限制",
   "ja": "レポートが 2000 件の発見事項の上限を超えています"
  },
  "Report title is required": {
-  "zh": "报告标题不能为空",
   "ja": "レポートタイトルは必須です"
  },
  "Request body is not valid JSON": {
-  "zh": "请求体不是合法 JSON",
   "ja": "リクエストボディが有効な JSON ではありません"
  },
  "Request body must be JSON containing platform, user_id, and text": {
-  "zh": "请求体需为 JSON，包含 platform、user_id、text",
   "ja": "リクエストボディは platform、user_id、text を含む JSON である必要があります"
  },
  "Request body must be JSON, e.g. {\"note\":\"description\"}; an empty object is allowed": {
-  "zh": "请求体须为 JSON，例如 {\"note\":\"说明\"}，可为空对象",
   "ja": "リクエストボディは JSON である必要があります。例: {\"note\":\"説明\"}（空のオブジェクトも可）"
  },
  "Request failed: %w": {
-  "zh": "请求失败: %w",
   "ja": "リクエストに失敗しました: %w"
  },
  "Request is required": {
-  "zh": "请求不能为空",
   "ja": "リクエストは必須です"
  },
  "Request must contain exactly one JSON object": {
-  "zh": "请求必须只包含一个 JSON 对象",
   "ja": "リクエストには JSON オブジェクトを 1 つだけ含める必要があります"
  },
  "Resource ID is required": {
-  "zh": "资源 ID 不能为空",
   "ja": "リソース ID は必須です"
  },
  "Resource ID matches multiple types: %s (%s, %s)": {
-  "zh": "资源 ID 同时匹配多个类型: %s (%s, %s)",
   "ja": "リソース ID が複数のタイプに一致します: %s (%s, %s)"
  },
  "Resource authorization service is unavailable": {
-  "zh": "资源鉴权服务不可用",
   "ja": "リソース認可サービスが利用できません"
  },
  "Resource grant not found or already revoked": {
-  "zh": "资源授权不存在或已撤销",
   "ja": "リソースの認可が見つからないか、すでに取り消されています"
  },
  "Resource not found: %s": {
-  "zh": "资源不存在: %s",
   "ja": "リソースが見つかりません: %s"
  },
  "Resource not found: %s/%s": {
-  "zh": "资源不存在: %s/%s",
   "ja": "リソースが見つかりません: %s/%s"
  },
  "Restored the default update source (official repository)": {
-  "zh": "已恢复默认更新源（官方仓库）",
   "ja": "既定の更新ソース（公式リポジトリ）に戻しました"
  },
  "Retrieval log not found": {
-  "zh": "检索日志不存在",
   "ja": "検索ログが見つかりません"
  },
- "Revoke bot platform account binding": {
-  "zh": "撤销机器人平台账号绑定"
- },
  "Robot account is missing agent:execute, chat:read or chat:write permission": {
-  "zh": "机器人账号缺少 agent:execute、chat:read 或 chat:write 权限",
   "ja": "ロボットアカウントに agent:execute、chat:read、chat:write のいずれかの権限がありません"
  },
  "Robot conversation mode %s requires Agent multi-agent to be enabled": {
-  "zh": "机器人对话模式 %s 需要启用 Agent 多代理",
   "ja": "ロボットの会話モード %s には Agent マルチエージェントの有効化が必要です"
  },
  "Role already exists": {
-  "zh": "角色已存在",
   "ja": "ロールは既に存在します"
  },
  "Role created": {
-  "zh": "角色已创建",
   "ja": "ロールを作成しました"
  },
  "Role deleted": {
-  "zh": "角色已删除",
   "ja": "ロールを削除しました"
  },
  "Role is not bound to a workflow": {
-  "zh": "角色未绑定工作流",
   "ja": "ロールにワークフローが紐付けられていません"
  },
  "Role name cannot contain control characters": {
-  "zh": "角色名称不能包含控制字符",
   "ja": "ロール名に制御文字は使用できません"
  },
  "Role name cannot contain path or special file name characters": {
-  "zh": "角色名称不能包含路径或文件名特殊字符",
   "ja": "ロール名にパスやファイル名の特殊文字は使用できません"
  },
  "Role name cannot exceed %d characters": {
-  "zh": "角色名不能超过 %d 个字符",
   "ja": "ロール名は %d 文字以内にしてください"
  },
  "Role name cannot have leading or trailing spaces and cannot exceed 64 characters": {
-  "zh": "角色名称不能包含首尾空格，长度不能超过 64 个字符",
   "ja": "ロール名の先頭・末尾に空白は使用できません。また 64 文字を超えることはできません"
  },
  "Role name conflicts with an existing role's file name": {
-  "zh": "角色名称与已有角色的文件名冲突",
   "ja": "ロール名が既存ロールのファイル名と競合しています"
  },
  "Role name is required": {
-  "zh": "角色名称不能为空",
   "ja": "ロール名は必須です"
  },
  "Role not found": {
-  "zh": "角色不存在",
   "ja": "ロールが見つかりません"
  },
  "Role updated": {
-  "zh": "角色已更新",
   "ja": "ロールを更新しました"
  },
  "Rollback recovery record is missing the binary recovery decision": {
-  "zh": "回滚恢复记录缺少二进制恢复决策",
   "ja": "ロールバック復旧記録にバイナリ復旧の判断がありません"
  },
- "Run controlled handling": {
-  "zh": "执行受控处置"
- },
  "Running branch '%s' -> %s": {
-  "zh": "执行分支「%s」→ %s",
   "ja": "ブランチ「%s」を実行 → %s"
  },
  "SKILL.md front matter: %w": {
-  "zh": "SKILL.md front matter：%w",
   "ja": "SKILL.md front matter: %w"
  },
  "SKILL.md front matter: description is required": {
-  "zh": "SKILL.md front matter：description 为必填项",
   "ja": "SKILL.md front matter: description は必須です"
  },
  "SKILL.md front matter: name is required": {
-  "zh": "SKILL.md front matter：name 为必填项",
   "ja": "SKILL.md front matter: name は必須です"
  },
  "SKILL.md front matter: unsupported key %q (allowed: name, description, license, compatibility, metadata, allowed-tools — see https://agentskills.io/specification.md)": {
-  "zh": "SKILL.md front matter：不支持的键 %q（允许：name, description, license, compatibility, metadata, allowed-tools — 参见 https://agentskills.io/specification.md）",
   "ja": "SKILL.md front matter: サポートされていないキー %q（使用可能: name, description, license, compatibility, metadata, allowed-tools — https://agentskills.io/specification.md を参照）"
  },
  "SKILL.md is empty": {
-  "zh": "SKILL.md 为空",
   "ja": "SKILL.md が空です"
  },
  "SKILL.md must start with YAML front matter (---) per Agent Skills standard": {
-  "zh": "按 Agent Skills 标准，SKILL.md 必须以 YAML front matter（---）开头",
   "ja": "Agent Skills 標準に従い、SKILL.md は YAML front matter（---）で始まる必要があります"
  },
  "SKILL.md name %q must match directory name %q (Agent Skills spec)": {
-  "zh": "SKILL.md 的 name %q 必须与目录名 %q 一致（Agent Skills 规范）",
   "ja": "SKILL.md の name %q はディレクトリ名 %q と一致する必要があります（Agent Skills 仕様）"
  },
  "SKILL.md: front matter must end with a line containing only ---": {
-  "zh": "SKILL.md：front matter 必须以仅包含 --- 的一行结束",
   "ja": "SKILL.md: front matter は --- のみの行で終わる必要があります"
  },
  "SKILL.md: markdown body after front matter must not be empty": {
-  "zh": "SKILL.md：front matter 之后的 Markdown 正文不能为空",
   "ja": "SKILL.md: front matter の後の Markdown 本文を空にすることはできません"
  },
  "Save failed: %v": {
-  "zh": "保存失败：%v",
   "ja": "保存に失敗しました: %v"
  },
  "Saved": {
-  "zh": "已保存",
   "ja": "保存しました"
  },
  "Scan complete. Indexing %d newly added or updated knowledge items": {
-  "zh": "扫描完成，开始索引 %d 个新添加或更新的知识项",
   "ja": "スキャンが完了しました。新規追加または更新された %d 件のナレッジ項目のインデックス作成を開始します"
  },
  "Scan complete. No new or updated items need indexing": {
-  "zh": "扫描完成，没有需要索引的新项或更新项",
   "ja": "スキャンが完了しました。インデックス対象の新規項目または更新項目はありません"
  },
  "Scan conversation is required": {
-  "zh": "扫描对话不能为空",
   "ja": "スキャン会話は必須です"
  },
  "Scan the QR code with WeChat and confirm the binding": {
-  "zh": "请使用微信扫描二维码并确认绑定",
   "ja": "WeChat で QR コードをスキャンし、連携を確認してください"
  },
  "Search keyword is required": {
-  "zh": "搜索关键字不能为空",
   "ja": "検索キーワードは必須です"
  },
  "Select 2-100 records and provide a vulnerability name and a merge reason": {
-  "zh": "请选择 2–100 条记录，并填写漏洞名称和归并理由",
   "ja": "2〜100 件のレコードを選択し、脆弱性名と統合の理由を入力してください"
  },
  "Server configuration is not loaded": {
-  "zh": "服务器配置未加载",
   "ja": "サーバー設定が読み込まれていません"
  },
- "Session already has %d queued/running tasks, exceeding the concurrency limit %d": {
-  "zh": "会话已有 %d 个排队/执行中的任务，超过并发上限 %d"
- },
  "Session configuration saved, but writing to config.yaml failed: %v": {
-  "zh": "会话配置已保存，但写入 config.yaml 失败: %v",
   "ja": "セッション設定は保存されましたが、config.yaml への書き込みに失敗しました: %v"
  },
  "Session created": {
-  "zh": "会话已创建",
   "ja": "セッションを作成しました"
  },
  "Session ended without a captured assistant body, auto-resuming in %d s (attempt %d/%d)...": {
-  "zh": "会话已结束但未捕获到助手正文，%d 秒后第 %d/%d 次自动续跑…",
   "ja": "セッションはアシスタント本文を取得できないまま終了しました。%d 秒後に自動再開します（%d/%d 回目）…"
  },
  "Session expired": {
-  "zh": "会话已过期",
   "ja": "セッションの有効期限が切れました"
  },
- "Session is offline, cannot dispatch task": {
-  "zh": "会话已离线，无法下发任务"
- },
- "Session not found": {
-  "zh": "会话不存在"
- },
  "Shodan base_url is invalid: %v": {
-  "zh": "Shodan base_url 无效: %v",
   "ja": "Shodan base_url が無効です: %v"
  },
  "Single-item execution started": {
-  "zh": "已开始单条执行",
   "ja": "1 件の実行を開始しました"
  },
  "Skill already exists": {
-  "zh": "skill已存在",
   "ja": "スキルは既に存在します"
  },
  "Skill created": {
-  "zh": "skill已创建",
   "ja": "スキルを作成しました"
  },
  "Skill deleted": {
-  "zh": "skill已删除",
   "ja": "スキルを削除しました"
  },
  "Skill deleted; binding automatically removed from %d roles: %s": {
-  "zh": "skill已删除，已自动从 %d 个角色中移除绑定: %s",
   "ja": "スキルを削除しました。%d 個のロールから紐付けを自動的に削除しました: %s"
  },
  "Skill directory name must consist of lowercase letters, digits, and hyphens (same as the Agent Skills name)": {
-  "zh": "skill 目录名须为小写字母、数字、连字符（与 Agent Skills name 一致）",
   "ja": "スキルのディレクトリ名は小文字の英字、数字、ハイフンのみ使用できます（Agent Skills の name と同じ）"
  },
  "Skill name is required": {
-  "zh": "skill名称不能为空",
   "ja": "スキル名は必須です"
  },
  "Skill updated": {
-  "zh": "skill已更新",
   "ja": "スキルを更新しました"
  },
  "Skipping branch '%s' -> %s": {
-  "zh": "跳过分支「%s」→ %s",
   "ja": "ブランチ「%s」をスキップ → %s"
  },
  "Some assets do not exist or you lack permission to delete them": {
-  "zh": "部分资产不存在或无权删除",
   "ja": "一部の資産が存在しないか、削除する権限がありません"
  },
  "Some assets do not exist or you lack permission to update them": {
-  "zh": "部分资产不存在或无权更新",
   "ja": "一部の資産が存在しないか、更新する権限がありません"
  },
  "Some assets were not found or not authorized": {
-  "zh": "部分资产不存在或无权访问",
   "ja": "一部の資産が見つからないか、アクセス権限がありません"
  },
  "Some duplicate assets do not exist or you lack permission to delete them": {
-  "zh": "部分重复资产不存在或无权删除",
   "ja": "一部の重複資産が存在しないか、削除する権限がありません"
  },
- "Source and binary were rolled back, but restoring the version failed; fix config write access and retry the rollback: %v": {
-  "zh": "源码和二进制已回滚，但版本恢复失败；修复配置写入后重试回滚：%v"
- },
- "Source updated, but this machine has no Go toolchain, so it cannot build automatically. Install go and click update once more to add the binary.": {
-  "zh": "源码已更新，但本机没有 Go 工具链，无法自动编译。装好 go 后再点一次更新即可补上二进制。"
- },
- "Staged %d local content files (roles/skills/tools/data/config); they will be put back after the update": {
-  "zh": "已暂存 %d 个本地内容文件（roles/skills/tools/数据/配置），更新完成后放回"
- },
- "Start": {
-  "zh": "开始"
- },
  "Start node \"%s\" cannot have incoming edges": {
-  "zh": "开始节点「%s」不能有入边",
   "ja": "開始ノード「%s」に入力エッジを設定することはできません"
  },
  "Start node \"%s\" requires at least one outgoing edge": {
-  "zh": "开始节点「%s」至少需要一条出边",
   "ja": "開始ノード「%s」には少なくとも 1 本の出力エッジが必要です"
  },
- "Started running workflow '%s'": {
-  "zh": "开始运行流程「%s」"
- },
  "Starting Agent multi-agent...": {
-  "zh": "正在启动 Agent 多代理...",
   "ja": "Agent マルチエージェントを起動しています..."
  },
  "Starting Pi single agent (ChatModelAgent)...": {
-  "zh": "正在启动 Pi 单代理（ChatModelAgent）...",
   "ja": "Pi シングルエージェント（ChatModelAgent）を起動しています..."
  },
- "Starting binary build (dependencies are downloaded on first run, which may take a few minutes)": {
-  "zh": "开始编译二进制（首次会下载依赖，可能需要几分钟）"
- },
- "Starting node: %s": {
-  "zh": "开始节点：%s"
- },
  "Storage cleanup is not initialized": {
-  "zh": "存储清理未初始化",
   "ja": "ストレージクリーンアップが初期化されていません"
  },
  "System configuration is not initialized": {
-  "zh": "系统配置未初始化",
   "ja": "システム設定が初期化されていません"
  },
  "Table %s column %s has no definition": {
-  "zh": "表 %s 字段 %s 缺少定义",
   "ja": "テーブル %[1]s の列 %[2]s に定義がありません"
  },
  "Task Completed": {
-  "zh": "任务完成",
   "ja": "タスク完了"
  },
  "Task Execution Failed": {
-  "zh": "任务执行失败",
   "ja": "タスク実行失敗"
  },
  "Task added": {
-  "zh": "任务已添加",
   "ja": "タスクを追加しました"
  },
  "Task approval was rejected and execution was stopped.": {
-  "zh": "任务审批已拒绝，执行已停止。",
   "ja": "タスクの承認が拒否されたため、実行を停止しました。"
  },
  "Task completed: %s": {
-  "zh": "任务完成: %s",
   "ja": "タスクが完了しました: %s"
  },
  "Task deleted": {
-  "zh": "任务已删除",
   "ja": "タスクを削除しました"
  },
  "Task does not belong to the specified queue": {
-  "zh": "任务不属于指定队列",
   "ja": "タスクは指定されたキューに属していません"
  },
  "Task execution failed and was stopped.": {
-  "zh": "任务执行失败，已停止。",
   "ja": "タスクの実行に失敗したため、停止しました。"
  },
  "Task execution timed out and was terminated automatically.": {
-  "zh": "任务执行超时，已自动终止。",
   "ja": "タスクの実行がタイムアウトしたため、自動的に終了しました。"
  },
  "Task failed: %s (%s)": {
-  "zh": "任务失败: %s (%s)",
   "ja": "タスクが失敗しました: %s (%s)"
  },
  "Task interrupted by a service restart.": {
-  "zh": "任务因服务重启已中断。",
   "ja": "サービスの再起動によりタスクが中断されました。"
  },
  "Task interrupted by a service restart; approval cancelled.": {
-  "zh": "任务因服务重启已中断，审批已取消。",
   "ja": "サービスの再起動によりタスクが中断され、承認はキャンセルされました。"
  },
- "Task is already running and cannot be canceled": {
-  "zh": "任务已在执行，无法取消"
- },
  "Task is ready, but automatic start failed: %v": {
-  "zh": "任务已准备就绪，但自动启动失败: %v",
   "ja": "タスクの準備は完了しましたが、自動開始に失敗しました: %v"
  },
  "Task is ready, but the queue does not exist": {
-  "zh": "任务已准备就绪，但队列不存在",
   "ja": "タスクの準備は完了しましたが、キューが存在しません"
  },
  "Task list is required": {
-  "zh": "任务列表不能为空",
   "ja": "タスクリストは必須です"
  },
  "Task message is required": {
-  "zh": "任务消息不能为空",
   "ja": "タスクメッセージは必須です"
  },
  "Task not found": {
-  "zh": "任务不存在",
   "ja": "タスクが見つかりません"
  },
  "Task timed out waiting for approval and was rejected automatically.": {
-  "zh": "任务等待审批超时，已自动拒绝。",
   "ja": "承認待ちでタイムアウトしたため、タスクは自動的に拒否されました。"
  },
  "Task updated": {
-  "zh": "任务已更新",
   "ja": "タスクを更新しました"
  },
  "Task was canceled by the user; subsequent operations have stopped.": {
-  "zh": "任务已被用户取消，后续操作已停止。",
   "ja": "タスクはユーザーによってキャンセルされ、以降の操作は停止しました。"
  },
  "Termination of the current execute command has been requested; reasoning for this turn will continue after the command returns.": {
-  "zh": "已请求终止当前 execute 命令；命令返回后本轮推理将继续。",
   "ja": "現在の execute コマンドの終了をリクエストしました。コマンドが結果を返した後、このターンの推論は続行されます。"
  },
  "Termination of the current tool call has been requested; reasoning for this turn will continue after the tool returns (same as terminating from the MCP monitor page).": {
-  "zh": "已请求终止当前工具调用；工具返回后本轮推理将继续（与 MCP 监控页终止一致）。",
   "ja": "現在のツール呼び出しの終了をリクエストしました。ツールが結果を返した後、このターンの推論は続行されます（MCP モニターページでの終了と同じです）。"
  },
  "Termination signal sent": {
-  "zh": "已发送终止信号",
   "ja": "終了シグナルを送信しました"
  },
- "The binary commit in the update record does not belong to this update": {
-  "zh": "更新记录里的二进制提交不属于这次更新"
- },
- "The binary commit in the update record does not exist: %v": {
-  "zh": "更新记录里的二进制提交不存在：%v"
- },
- "The binary commit of the old recovery record does not belong to this update; state preserved": {
-  "zh": "旧恢复记录的二进制提交不属于这次更新，已保留现场"
- },
- "The binary is already the current version, but the old pending-build marker cannot be cleared: %v": {
-  "zh": "二进制已经是当前版本，但无法清除旧待编译标记：%v"
- },
- "The binary is already the current version, but the pending-build marker cannot be cleared: %v": {
-  "zh": "二进制已经是当前版本，但无法清除待编译标记：%v"
- },
- "The binary is already the current version, but the rollback state cannot be updated: %v": {
-  "zh": "二进制已经是当前版本，但无法更新回滚状态：%v"
- },
  "The binary on disk does not exist; cannot restart": {
-  "zh": "磁盘上的二进制不存在，无法重启",
   "ja": "ディスク上のバイナリが存在しないため、再起動できません"
  },
  "The binary on disk matches the running process; there is no pending version": {
-  "zh": "磁盘上的二进制与当前进程一致，没有待生效的版本",
   "ja": "ディスク上のバイナリは実行中のプロセスと同一です。適用待ちのバージョンはありません"
  },
- "The binary was swapped in, but the pending-build marker cannot be cleared: %v": {
-  "zh": "二进制已换入，但无法清除待编译标记：%v"
- },
- "The binary was swapped in, but the rollback state cannot be updated: %v": {
-  "zh": "二进制已换入，但无法更新回滚状态：%v"
- },
- "The binary was swapped in, but the rollback state cannot be written back: %v": {
-  "zh": "二进制已换入，但无法补写回滚状态：%v"
- },
  "The bound platform account has been disabled": {
-  "zh": "绑定的平台账号已被禁用",
   "ja": "バインドされたプラットフォームアカウントは無効化されています"
  },
- "The branch in the adoption recovery record is invalid": {
-  "zh": "接入恢复记录的分支不合法"
- },
  "The built-in administrator cannot be disabled": {
-  "zh": "内置管理员不能停用",
   "ja": "組み込み管理者は無効化できません"
  },
  "The built-in administrator must keep the administrator role": {
-  "zh": "内置管理员必须保留管理员角色",
   "ja": "組み込み管理者は管理者ロールを保持する必要があります"
  },
  "The call interception configuration was modified by another user; your changes were not saved. Refresh the page to get the latest configuration and try again": {
-  "zh": "调用拦截配置已被其他用户修改，本次修改未保存。请刷新页面获取最新配置后重试",
   "ja": "呼び出し遮断設定は他のユーザーによって変更されたため、今回の変更は保存されませんでした。ページを更新して最新の設定を取得してから再試行してください"
  },
- "The commit in the pending-build state does not exist: %v": {
-  "zh": "待编译状态里的提交不存在：%v"
- },
- "The commit in the update record does not exist in this repository: %v": {
-  "zh": "更新记录里的提交在本仓库不存在：%v"
- },
- "The current binary does not match the old recovery record; state preserved": {
-  "zh": "当前二进制与旧恢复记录不一致，已保留现场"
- },
- "The current binary does not match the pre-update record; refusing to roll back the source when versions cannot be paired": {
-  "zh": "当前二进制与更新前记录不一致，拒绝在无法配对版本时回滚源码"
- },
  "The current conversation is not bound to a project, so project blackboard tools are unavailable. Select a project in the conversation first, or create a conversation with a project": {
-  "zh": "当前对话未绑定项目，无法使用项目黑板工具，请先在对话中选择项目或创建带项目的对话",
   "ja": "現在の会話はプロジェクトに紐づいていないため、プロジェクトブラックボードツールは使用できません。先に会話でプロジェクトを選択するか、プロジェクト付きの会話を作成してください"
  },
  "The current conversation is not bound to a project, so vulnerabilities cannot be listed by project. Use scope=conversation, or bind a project to the conversation first": {
-  "zh": "当前对话未绑定项目，无法按项目列出漏洞；请使用 scope=conversation，或先在对话中绑定项目",
   "ja": "現在の会話はプロジェクトに紐づいていないため、プロジェクト単位で脆弱性を一覧表示できません。scope=conversation を使用するか、先に会話にプロジェクトを紐づけてください"
  },
  "The current conversation is not bound to a project. Select a project in the conversation first, or create a conversation with a project": {
-  "zh": "当前对话未绑定项目，请先在对话中选择项目或创建带项目的对话",
   "ja": "現在の会話はプロジェクトに紐づいていません。先に会話でプロジェクトを選択するか、プロジェクト付きの会話を作成してください"
  },
  "The current queue status does not allow scheduled execution": {
-  "zh": "当前队列状态不允许被调度执行",
   "ja": "現在のキューの状態ではスケジュール実行できません"
  },
  "The dangerous C2 task was rejected by a reviewer": {
-  "zh": "C2 危险任务被人工拒绝",
   "ja": "危険な C2 タスクは担当者により拒否されました"
  },
  "The default role cannot be deleted": {
-  "zh": "不能删除默认角色",
   "ja": "デフォルトロールは削除できません"
  },
- "The directory was adopted into the update source, but this machine has no Go toolchain, so it cannot rebuild. Install go and click update once more to add the binary.": {
-  "zh": "目录已接入更新源，但本机没有 Go 工具链，无法重新编译。装好 go 后再点一次更新即可补上二进制。"
- },
- "The existing binary changed after the rollback was interrupted; state preserved": {
-  "zh": "回滚中断后现有二进制发生变化，已保留现场"
- },
- "The existing binary changed during the build; refusing to overwrite. Make sure no other update is running": {
-  "zh": "编译期间现有二进制发生变化，拒绝覆盖；请确认没有另一场更新在运行"
- },
- "The install directory already has .git metadata; adoption will not overwrite it. Check the repository state manually first": {
-  "zh": "安装目录已存在 .git 元数据，接入不会覆盖它；请先人工检查仓库状态"
- },
  "The listener does not have allow_legacy_shell enabled: tcp_reverse accepts only CSB1-encrypted Beacons (AES-GCM + Token) by default. Generate a beacon with build, or enable allow_legacy_shell explicitly (not recommended on public networks)": {
-  "zh": "监听器未开启 allow_legacy_shell：tcp_reverse 默认仅接受 CSB1 加密 Beacon（AES-GCM + Token）；请用 build 生成 beacon，或显式开启 allow_legacy_shell（公网不推荐）",
   "ja": "リスナーで allow_legacy_shell が有効になっていません。tcp_reverse は既定で CSB1 暗号化 Beacon（AES-GCM + Token）のみを受け付けます。build で beacon を生成するか、allow_legacy_shell を明示的に有効にしてください（公開ネットワークでは非推奨）"
  },
  "The model request will be retried in %s (%d/%d).": {
-  "zh": "模型请求将在 %s 后重试（%d/%d）。",
   "ja": "モデルリクエストは %s 後に再試行されます（%d/%d）。"
  },
- "The old binary backup does not match the recovery record; state preserved, refusing to rewrite the rollback record": {
-  "zh": "旧二进制备份与恢复记录不一致，已保留现场，拒绝改写回滚记录"
- },
- "The old pending-build marker belongs to %s, but the current source is already %s; refusing to reinterpret the rollback record": {
-  "zh": "旧待编译标记属于 %s，但当前源码已经是 %s，拒绝重解释回滚记录"
- },
- "The old recovery record lacks the binary hash, so it cannot be confirmed that the current binary is from before the update; the current binary and .prev are kept, please verify manually before restoring": {
-  "zh": "旧恢复记录缺少二进制哈希，无法确认当前二进制属于更新前版本；已保留当前二进制和 .prev，请人工核对后恢复"
- },
  "The original conversation is still running. Wait for it to finish or stop it before retesting": {
-  "zh": "原始对话仍在执行，请等待完成或停止后再复测",
   "ja": "元の会話がまだ実行中です。完了を待つか停止してから再テストしてください"
  },
  "The original conversation no longer exists; cannot create a retest branch": {
-  "zh": "原始对话已不存在，无法创建复测分支",
   "ja": "元の会話が存在しないため、再テストブランチを作成できません"
  },
- "The pending-build target is %s, but the current source is %s; refusing to overwrite the binary with the wrong version": {
-  "zh": "待编译目标是 %s，但当前源码是 %s，拒绝用错版本覆盖二进制"
- },
  "The plan for this turn still has steps marked \"pending\" or \"in progress\", so the final reply has not been delivered yet. Check the step statuses in the plan.": {
-  "zh": "本轮计划仍有标记为「待执行」或「进行中」的步骤，最终回复暂未交付。请核对计划中的步骤状态。",
   "ja": "このターンのプランに「保留中」または「進行中」のステップが残っているため、最終返信はまだ提供されていません。プランのステップの状態を確認してください。"
  },
- "The previous rollback is not finished yet; retry the rollback first, then run the update": {
-  "zh": "上一次回滚尚未完成，请先重试回滚，再执行更新"
- },
- "The previous update left no old binary, so the binary cannot be rolled back (the source can still be handled with git)": {
-  "zh": "上一次更新没有留下旧二进制，无法回滚二进制（源码仍可用 git 处理）"
- },
  "The queue executor is still running; try deleting again later": {
-  "zh": "队列执行器仍在运行，请稍后再删除",
   "ja": "キューのエグゼキューターがまだ実行中です。しばらくしてから削除してください"
  },
  "The queue is configured for Agent multi-agent mode, but multi-agent is not enabled in the system": {
-  "zh": "当前队列配置为 Agent 多代理，但系统未启用多代理",
   "ja": "キューは Agent マルチエージェントモードに設定されていますが、システムでマルチエージェントが有効になっていません"
  },
  "The queue is running and cannot be deleted": {
-  "zh": "队列正在运行中，无法删除",
   "ja": "キューの実行中は削除できません"
  },
  "The queue is running; the schedule configuration cannot be modified": {
-  "zh": "队列正在运行中，无法修改调度配置",
   "ja": "キューの実行中はスケジュール設定を変更できません"
  },
  "The queue status does not allow starting": {
-  "zh": "队列状态不允许启动",
   "ja": "キューの状態では開始できません"
  },
- "The recovery record requires the binary to be absent, but the state does not match; record preserved": {
-  "zh": "恢复记录要求二进制不存在，但现场不匹配；已保留记录"
- },
- "The rollback backup does not match the recovery record; state preserved": {
-  "zh": "回滚备份与恢复记录不一致，已保留现场"
- },
- "The rollback binary does not match the update record; refusing to move the source back to a version that cannot be paired": {
-  "zh": "回滚二进制与更新记录不一致，拒绝把源码回到无法配对的版本"
- },
- "The rollback commit in the update record does not exist: %v": {
-  "zh": "更新记录里的回滚提交不存在：%v"
- },
  "The schedule expression is required when Cron scheduling is enabled": {
-  "zh": "启用 Cron 调度时，调度表达式不能为空",
   "ja": "Cron スケジュールを有効にする場合、スケジュール式は必須です"
  },
  "The selected assets share no common domain, IP or Host, so they cannot be treated as duplicates": {
-  "zh": "所选资产没有共同域名、IP 或 Host，不能判定为重复资产",
   "ja": "選択した資産には共通のドメイン、IP、Host がないため、重複資産とは判定できません"
  },
- "The service may be temporarily unavailable, the tool list is empty": {
-  "zh": "服务可能暂时不可用，工具列表为空"
- },
  "The session already has a running task; cannot start a batch sub-task in parallel on this session": {
-  "zh": "会话已有任务正在执行，无法在该会话上并行启动批量子任务",
   "ja": "このセッションには実行中のタスクが既にあるため、このセッションでバッチサブタスクを並行して開始できません"
  },
- "The source commit changed during the build; refusing to swap in a binary that cannot be paired": {
-  "zh": "编译期间源码提交发生变化，拒绝换入无法配对的二进制"
- },
- "The source had local changes during the build; binary and backup preserved, please handle these changes first": {
-  "zh": "编译期间源码发生本地改动，已保留二进制和备份，请先处理这些改动"
- },
- "The source is in place (%s) but the binary is still old: this machine has no Go toolchain, so it cannot catch up on the build. Install go and click update once more to add the binary.": {
-  "zh": "源码已经就位（%s），但二进制还是旧的：本机没有 Go 工具链，无法补编译。装好 go 后再点一次更新即可补上二进制。"
- },
- "The source is in place (%s); the binary was added this time": {
-  "zh": "源码已经就位（%s），本次补上了二进制"
- },
- "The target commit would overwrite a local untracked source file; update refused: %v": {
-  "zh": "目标提交会覆盖本地未跟踪的源码文件，已拒绝更新：%v"
- },
- "The target service may not be running yet, which is normal. After it starts, connect manually from the UI, or wait for automatic retry": {
-  "zh": "目标服务可能尚未启动，这是正常的。服务启动后可通过界面手动连接，或等待自动重试"
- },
  "The task has not met the conditions for a final reply, so no success conclusion is generated.": {
-  "zh": "任务尚未达到最终回复条件，暂不生成成功结论。",
   "ja": "タスクが最終返信の条件を満たしていないため、成功の結論は生成されません。"
  },
  "The tool was submitted to run in the background, but this wait reached its limit.\n\nexecution_id: %s\ntool: %s\nstatus: %s\nwait_timeout: %s\nelapsed: %s\n\nYou can keep reasoning, switch to other tools, or call wait_tool_execution to keep waiting on this execution_id; you can also call cancel_tool_execution to cancel it.": {
-  "zh": "工具已提交到后台执行，但本次等待已到达上限。\n\nexecution_id: %s\ntool: %s\nstatus: %s\nwait_timeout: %s\nelapsed: %s\n\n你可以继续推理、改用其他工具，或调用 wait_tool_execution 继续等待该 execution_id；也可以调用 cancel_tool_execution 取消。",
   "ja": "ツールはバックグラウンド実行として送信されましたが、今回の待機が上限に達しました。\n\nexecution_id: %s\ntool: %s\nstatus: %s\nwait_timeout: %s\nelapsed: %s\n\n推論を続ける、別のツールに切り替える、または wait_tool_execution を呼び出してこの execution_id の待機を続けることができます。cancel_tool_execution を呼び出してキャンセルすることもできます。"
  },
- "The update commit in the update record does not exist: %v": {
-  "zh": "更新记录里的更新提交不存在：%v"
- },
- "The update commit of the old pending-build marker does not exist: %v": {
-  "zh": "旧待编译标记对应的更新提交不存在：%v"
- },
  "The version format cannot be replaced in place (the configuration failed to parse after the change, or read back as %q). Write aborted; the original file is unchanged": {
-  "zh": "version 的写法无法就地替换（改后配置解析失败或读回为 %q），已放弃写入，原文件未改动",
   "ja": "version の記述形式はその場で置換できません（変更後に設定の解析に失敗したか、読み戻した値が %q でした）。書き込みを中止しました。元のファイルは変更されていません"
  },
  "The vulnerability and the original conversation belong to different projects. Check project ownership first": {
-  "zh": "漏洞与原始对话所属项目不一致，请先检查项目归属",
   "ja": "脆弱性と元の会話の所属プロジェクトが一致しません。先にプロジェクトの所属を確認してください"
  },
  "The workflow bound to the role was not found": {
-  "zh": "角色绑定的工作流不存在",
   "ja": "ロールにバインドされたワークフローが見つかりません"
  },
- "The workflow was rejected at approval node '%s'.": {
-  "zh": "工作流已在审批节点「%s」被拒绝。"
- },
- "There are local source changes; rollback would overwrite them": {
-  "zh": "有本地源码改动，回滚会覆盖它们"
- },
  "There is no unique saved header credential": {
-  "zh": "没有唯一的已保存请求头凭据",
   "ja": "一意に特定できる保存済みのヘッダー認証情報がありません"
  },
  "There is no unique saved header credential, please enter a new value": {
-  "zh": "没有唯一的已保存请求头凭据，请填写新的值",
   "ja": "一意に特定できる保存済みのヘッダー認証情報がありません。新しい値を入力してください"
  },
- "There was no binary before this update; cannot use the .prev left by another update to roll back": {
-  "zh": "这次更新之前没有二进制，不能使用其它更新留下的 .prev 回滚"
- },
  "This WeChat account is already bound; no need to bind again": {
-  "zh": "该微信已绑定过，无需重复绑定",
   "ja": "この WeChat アカウントはすでに連携済みのため、再度連携する必要はありません"
  },
  "This conversation has no attack chain yet. Generate one in the conversation first": {
-  "zh": "该对话尚无攻击链，请先在对话中生成攻击链",
   "ja": "この会話にはまだ攻撃チェーンがありません。先に会話で攻撃チェーンを生成してください"
  },
- "This directory is already a git working tree: use 'One-click update', no adoption needed": {
-  "zh": "这个目录已经是 git 工作树：用「一键更新」，不需要接入"
- },
- "This directory is not a git working tree; cannot update automatically": {
-  "zh": "这个目录不是 git 工作树，无法自动更新"
- },
  "Title cannot exceed %d characters": {
-  "zh": "标题不能超过 %d 个字符",
   "ja": "タイトルは %d 文字以内にしてください"
  },
  "Title is required": {
-  "zh": "标题不能为空",
   "ja": "タイトルは必須です"
  },
  "Too many consecutive indexing failures: %v": {
-  "zh": "连续索引失败次数过多：%v",
   "ja": "インデックス作成の連続失敗回数が多すぎます: %v"
  },
  "Too many knowledge items failed to index (%d/%d); there may be a configuration problem. First failed item: %s, error: %v": {
-  "zh": "索引失败的知识项过多 (%d/%d)，可能存在配置问题。第一个失败项：%s, 错误：%v",
   "ja": "インデックス作成に失敗したナレッジ項目が多すぎます (%d/%d)。設定に問題がある可能性があります。最初に失敗した項目: %s、エラー: %v"
  },
  "Tool %s not found": {
-  "zh": "工具 %s 未找到",
   "ja": "ツール %s が見つかりません"
  },
  "Tool %s not found or not enabled": {
-  "zh": "工具 %s 未找到或未启用",
   "ja": "ツール %s が見つからないか有効ではありません"
  },
  "Tool %v execution failed": {
-  "zh": "工具 %v 执行失败",
   "ja": "ツール %v の実行に失敗しました"
  },
  "Tool %v is waiting for approval": {
-  "zh": "工具 %v 等待审批",
   "ja": "ツール %v が承認待ちです"
  },
  "Tool command is required": {
-  "zh": "工具命令不能为空",
   "ja": "ツールコマンドは必須です"
  },
  "Tool name is required": {
-  "zh": "工具名称不能为空",
   "ja": "ツール名は必須です"
  },
  "Tool node \"%s\" has invalid parameter JSON: %w": {
-  "zh": "工具节点「%s」参数 JSON 非法: %w",
   "ja": "ツールノード「%s」のパラメータ JSON が無効です: %w"
  },
  "Tool node \"%s\" must select an MCP tool": {
-  "zh": "工具节点「%s」必须选择 MCP 工具",
   "ja": "ツールノード「%s」では MCP ツールを選択する必要があります"
  },
  "Tool node \"%s\" timeout must be a positive integer": {
-  "zh": "工具节点「%s」超时时间必须是正整数",
   "ja": "ツールノード「%s」のタイムアウトは正の整数である必要があります"
  },
  "Tool node timeout must be a valid positive integer number of seconds": {
-  "zh": "工具节点超时时间必须是有效正整数秒",
   "ja": "ツールノードのタイムアウトは有効な正の整数（秒）である必要があります"
  },
  "Tool not found": {
-  "zh": "工具未找到",
   "ja": "ツールが見つかりません"
  },
  "Tools that were still running were cancelled during finalization; the task is not complete.": {
-  "zh": "收尾时取消了仍在运行的工具，任务未完成。",
   "ja": "終了処理中に、まだ実行中だったツールがキャンセルされました。タスクは完了していません。"
  },
  "TypeSafe API Key is required": {
-  "zh": "TypeSafe API Key 不能为空",
   "ja": "TypeSafe API Key は必須です"
  },
  "Unable to access update source repository %s: %s": {
-  "zh": "无法访问更新源仓库 %s：%s",
   "ja": "更新元リポジトリ %s にアクセスできません: %s"
  },
  "Unable to create client: unsupported transport mode": {
-  "zh": "无法创建客户端：不支持的传输模式",
   "ja": "クライアントを作成できません: サポートされていない転送モードです"
  },
  "Unable to determine the current conversation. Use the project fact tools within a conversation context": {
-  "zh": "无法确定当前对话，请在对话上下文中使用项目事实工具",
   "ja": "現在の会話を特定できません。会話のコンテキスト内でプロジェクトファクトツールを使用してください"
  },
  "Unable to determine the current conversation. Use the vulnerability query tools within a conversation context": {
-  "zh": "无法确定当前对话，请在对话上下文中使用漏洞查询工具",
   "ja": "現在の会話を特定できません。会話のコンテキスト内で脆弱性クエリツールを使用してください"
  },
  "Unable to determine the default branch of the update source repository: %s": {
-  "zh": "无法确定更新源仓库的默认分支：%s",
   "ja": "更新元リポジトリのデフォルトブランチを特定できません: %s"
  },
  "Unable to determine the project scope of the current conversation": {
-  "zh": "无法确定当前对话的项目范围",
   "ja": "現在の会話のプロジェクト範囲を特定できません"
  },
  "Unable to safely remove the version number; the original configuration is unchanged": {
-  "zh": "无法安全移除版本号，原配置未改动",
   "ja": "バージョン番号を安全に削除できません。元の設定は変更されていません"
  },
  "Unauthorized access": {
-  "zh": "未授权访问",
   "ja": "アクセスが許可されていません"
  },
  "Unauthorized; please sign in first": {
-  "zh": "未授权访问，请先登录",
   "ja": "認証されていません。先にログインしてください"
  },
  "Unclosed SQL comment": {
-  "zh": "未闭合 SQL 注释",
   "ja": "SQL コメントが閉じられていません"
  },
  "Unclosed SQL quote": {
-  "zh": "未闭合 SQL 引号",
   "ja": "SQL の引用符が閉じられていません"
  },
  "Unix launch gates are unavailable on Windows": {
-  "zh": "Windows 上不支持 Unix 启动门",
   "ja": "Windows では Unix の起動ゲートは利用できません"
  },
  "Unknown channel, cannot restore header credential": {
-  "zh": "未知通道，无法恢复请求头凭据",
   "ja": "不明なチャネルのため、ヘッダー認証情報を復元できません"
  },
  "Unknown cleanup category": {
-  "zh": "未知的清理类别",
   "ja": "不明なクリーンアップカテゴリです"
  },
  "Unknown credential scope": {
-  "zh": "未知凭据范围",
   "ja": "認証情報のスコープが不明です"
  },
  "Unknown permission: %s": {
-  "zh": "未知权限: %s",
   "ja": "不明な権限です: %s"
  },
  "Unknown tool": {
-  "zh": "未知工具",
   "ja": "不明なツール"
  },
- "Unsupported listener type": {
-  "zh": "不支持的监听器类型"
- },
  "Unsupported provider, options: fofa, zoomeye, quake, shodan": {
-  "zh": "provider 不支持，可选：fofa、zoomeye、quake、shodan",
   "ja": "provider はサポートされていません。指定可能な値: fofa、zoomeye、quake、shodan"
  },
  "Unsupported queue approval setting: %s": {
-  "zh": "不支持的队列审批设置: %s",
   "ja": "サポートされていないキューの承認設定です: %s"
  },
  "Unsupported resource type: %s": {
-  "zh": "不支持的资源类型: %s",
   "ja": "サポートされていないリソースタイプです: %s"
  },
  "Unsupported robot agent mode: %s": {
-  "zh": "不支持的机器人代理模式: %s",
   "ja": "サポートされていないロボットのエージェントモードです: %s"
  },
  "Unsupported transport mode: %s (supported: stdio, sse, http)": {
-  "zh": "不支持的传输模式: %s（支持: stdio, sse, http）",
   "ja": "サポートされていない転送モードです: %s（サポート: stdio, sse, http）"
  },
  "Unsupported transport mode: %s, supported modes: http, stdio, sse": {
-  "zh": "不支持的传输模式: %s，支持的模式: http, stdio, sse",
   "ja": "サポートされていないトランスポートモードです: %s（サポートされるモード: http、stdio、sse）"
  },
- "Update can only operate on the git repository root, please use: %v": {
-  "zh": "更新只能操作 git 仓库根目录，请使用：%v"
- },
- "Update check failed: %v": {
-  "zh": "检查更新失败：%v"
- },
- "Update external MCP configuration": {
-  "zh": "更新外部 MCP 配置"
- },
- "Update source repository address is invalid (only https/http/ssh/git/file:// or a local absolute path is allowed)": {
-  "zh": "更新源仓库地址不合法（只允许 https/http/ssh/git/file:// 或本机绝对路径）"
- },
  "Update source saved: %v": {
-  "zh": "更新源已保存: %v",
   "ja": "更新ソースを保存しました: %v"
  },
- "Updated %d commits and replaced the binary: %s -> %s": {
-  "zh": "已更新 %d 个提交并换好二进制：%s → %s"
- },
  "Updated successfully": {
-  "zh": "更新成功",
   "ja": "更新しました"
  },
  "Upstream node \"%s\" failed; join strategy fail_fast aborted": {
-  "zh": "上游节点「%s」失败，汇聚策略 fail_fast 中止",
   "ja": "上流ノード「%s」が失敗したため、集約戦略 fail_fast により中止しました"
  },
  "Use a saved connection or enter a new connection password": {
-  "zh": "请使用已保存连接或填写新的连接口令",
   "ja": "保存済みの接続を使用するか、新しい接続パスワードを入力してください"
  },
  "User for robots.%s.auth.service_user_id is disabled": {
-  "zh": "robots.%s.auth.service_user_id 对应用户已禁用",
   "ja": "robots.%s.auth.service_user_id に対応するユーザーは無効化されています"
  },
  "User for robots.%s.auth.service_user_id not found": {
-  "zh": "robots.%s.auth.service_user_id 对应用户不存在",
   "ja": "robots.%s.auth.service_user_id に対応するユーザーが見つかりません"
  },
  "User not found": {
-  "zh": "用户不存在",
   "ja": "ユーザーが見つかりません"
  },
  "Username is required and must not exceed 64 characters": {
-  "zh": "用户名不能为空，且不能超过 64 个字符",
   "ja": "ユーザー名は必須で、64 文字以内で入力してください"
  },
  "VectorRetriever: nil retriever": {
-  "zh": "VectorRetriever: 检索器为空",
   "ja": "VectorRetriever: リトリーバーが nil です"
  },
- "Version number updated with the new code: %s -> %s (config.yaml, takes effect in the page header after restart)": {
-  "zh": "版本号已随新代码更新：%s → %s（config.yaml，重启后页头生效）"
- },
- "Version number written to config.yaml with the new code: %s (takes effect in the page header after restart)": {
-  "zh": "版本号随新代码写入 config.yaml：%s（重启后页头生效）"
- },
  "Vision model is required": {
-  "zh": "视觉模型不能为空",
   "ja": "ビジョンモデルは必須です"
  },
  "Vulnerability foreign key migration verification failed; original data preserved": {
-  "zh": "漏洞外键迁移校验失败，已保留原数据",
   "ja": "脆弱性の外部キー移行の検証に失敗しました。元のデータは保持されています"
  },
  "Vulnerability not found": {
-  "zh": "漏洞不存在",
   "ja": "脆弱性が見つかりません"
  },
  "Vulnerability not found or you have no permission to merge it": {
-  "zh": "漏洞不存在或无权归并",
   "ja": "脆弱性が見つからないか、統合する権限がありません"
  },
- "Waiting for human confirmation: %v": {
-  "zh": "等待人工确认：%v"
- },
  "WeChat server did not return a valid QR code": {
-  "zh": "微信服务器未返回有效二维码",
   "ja": "微信サーバーが有効な QR コードを返しませんでした"
  },
  "WebShell connection not found": {
-  "zh": "未找到该 WebShell 连接",
   "ja": "WebShell 接続が見つかりません"
  },
  "Windows tasks require Job Object containment": {
-  "zh": "Windows 任务需要 Job Object 隔离",
   "ja": "Windows のタスクには Job Object による封じ込めが必要です"
  },
- "Workflow '%s' run completed": {
-  "zh": "流程「%s」运行完成"
- },
  "Workflow ID already exists": {
-  "zh": "工作流 ID 已存在",
   "ja": "ワークフロー ID はすでに存在します"
  },
  "Workflow ID cannot be changed by editing": {
-  "zh": "工作流 ID 不允许通过编辑更改",
   "ja": "ワークフロー ID は編集で変更できません"
  },
  "Workflow ID must start with a letter or digit, contain only letters, digits, underscores and hyphens, and be at most 128 bytes": {
-  "zh": "工作流 ID 必须以字母或数字开头，仅含字母、数字、下划线、连字符，且不超过 128 字节",
   "ja": "ワークフロー ID は英数字で始まり、英数字・アンダースコア・ハイフンのみを含み、128 バイト以内である必要があります"
  },
  "Workflow bound to the role is disabled: %s": {
-  "zh": "角色绑定的工作流已禁用: %s",
   "ja": "ロールに紐付けられたワークフローは無効化されています: %s"
  },
  "Workflow bound to the role not found: %s": {
-  "zh": "角色绑定的工作流不存在: %s",
   "ja": "ロールに紐付けられたワークフローが見つかりません: %s"
  },
  "Workflow contains a cycle; Workflow orchestration must be a DAG: %s": {
-  "zh": "工作流存在环路，Workflow 编排必须是 DAG: %s",
   "ja": "ワークフローに循環があります。ワークフローのオーケストレーションは DAG である必要があります: %s"
  },
  "Workflow contains a cycle; workflow orchestration must be a DAG: %s": {
-  "zh": "工作流包含环；工作流编排必须是 DAG：%s",
   "ja": "ワークフローに循環があります。ワークフローのオーケストレーションは DAG である必要があります: %s"
  },
  "Workflow contains a duplicate edge ID: %s": {
-  "zh": "工作流存在重复连线 ID: %s",
   "ja": "ワークフローに重複したエッジ ID があります: %s"
  },
  "Workflow contains a duplicate node ID: %s": {
-  "zh": "工作流存在重复节点 ID: %s",
   "ja": "ワークフローに重複したノード ID があります: %s"
  },
  "Workflow contains an edge with an empty source or target": {
-  "zh": "工作流存在源或目标为空的连线",
   "ja": "ワークフローに始点または終点が空のエッジがあります"
  },
  "Workflow contains an empty node ID": {
-  "zh": "工作流存在空节点 ID",
   "ja": "ワークフローに空のノード ID があります"
  },
  "Workflow definition not found": {
-  "zh": "工作流定义不存在",
   "ja": "ワークフロー定義が見つかりません"
  },
  "Workflow deleted": {
-  "zh": "工作流已删除",
   "ja": "ワークフローを削除しました"
  },
  "Workflow generated by the LLM failed validation: %s": {
-  "zh": "大模型生成的工作流未通过校验: %s",
   "ja": "LLM が生成したワークフローが検証に失敗しました: %s"
  },
  "Workflow generator has not loaded the platform AI configuration": {
-  "zh": "工作流生成器未加载平台 AI 配置",
   "ja": "ワークフロージェネレーターにプラットフォームの AI 設定が読み込まれていません"
  },
  "Workflow graph cannot be compiled: %v": {
-  "zh": "工作流图无法编译: %v",
   "ja": "ワークフローグラフをコンパイルできません: %v"
  },
  "Workflow graph is empty": {
-  "zh": "工作流图为空",
   "ja": "ワークフローグラフが空です"
  },
  "Workflow has no nodes": {
-  "zh": "工作流没有节点",
   "ja": "ワークフローにノードがありません"
  },
  "Workflow id and name are required": {
-  "zh": "工作流 id 和 name 不能为空",
   "ja": "ワークフローの id と name は必須です"
  },
  "Workflow id is required": {
-  "zh": "工作流 id 不能为空",
   "ja": "ワークフローの id は必須です"
  },
  "Workflow is empty": {
-  "zh": "工作流为空",
   "ja": "ワークフローが空です"
  },
  "Workflow is still referenced by a role; unbind it first": {
-  "zh": "工作流仍被角色引用，请先解除绑定",
   "ja": "ワークフローがロールから参照されています。先に紐付けを解除してください"
  },
  "Workflow node run is empty": {
-  "zh": "工作流节点运行为空",
   "ja": "ワークフローのノード実行が空です"
  },
  "Workflow not found": {
-  "zh": "工作流不存在",
   "ja": "ワークフローが見つかりません"
  },
  "Workflow requirement is required": {
-  "zh": "工作流需求不能为空",
   "ja": "ワークフローの要件は必須です"
  },
  "Workflow requires at least one output node": {
-  "zh": "工作流至少需要一个输出节点",
   "ja": "ワークフローには少なくとも 1 つの出力ノードが必要です"
  },
  "Workflow requires at least one start node": {
-  "zh": "工作流至少需要一个开始节点",
   "ja": "ワークフローには少なくとも 1 つの開始ノードが必要です"
  },
  "Workflow run id and workflow_id are required": {
-  "zh": "工作流运行 id 和 workflow_id 不能为空",
   "ja": "ワークフロー実行の id と workflow_id は必須です"
  },
  "Workflow run id is required": {
-  "zh": "工作流运行 id 不能为空",
   "ja": "ワークフロー実行の id は必須です"
  },
  "Workflow run is empty": {
-  "zh": "工作流运行为空",
   "ja": "ワークフローの実行が空です"
  },
  "Workflow run is not awaiting approval: %s": {
-  "zh": "工作流运行不在等待审批状态: %s",
   "ja": "ワークフローの実行は承認待ち状態ではありません: %s"
  },
  "Workflow run is not awaiting approval: %v": {
-  "zh": "工作流运行不在等待审批状态: %v",
   "ja": "ワークフローの実行は承認待ち状態ではありません: %v"
  },
  "Workflow run not found": {
-  "zh": "工作流运行不存在",
   "ja": "ワークフロー実行が見つかりません"
  },
  "Workflow runtime is not initialized": {
-  "zh": "工作流运行时未初始化",
   "ja": "ワークフローランタイムが初期化されていません"
  },
  "Workflow saved": {
-  "zh": "工作流已保存",
   "ja": "ワークフローを保存しました"
  },
  "Workflow storage is unavailable; cannot verify binding": {
-  "zh": "工作流存储不可用，无法验证绑定",
   "ja": "ワークフローストレージが利用できないため、バインドを検証できません"
  },
  "Working directory must be under the current process directory": {
-  "zh": "工作目录必须在当前进程目录下",
   "ja": "作業ディレクトリは現在のプロセスのディレクトリ配下である必要があります"
  },
  "Writing the version number would change other configuration. Write aborted; the original file is unchanged": {
-  "zh": "版本号写入会改变其它配置，已放弃写入，原文件未改动",
   "ja": "バージョン番号の書き込みは他の設定を変更してしまうため、書き込みを中止しました。元のファイルは変更されていません"
  },
  "You do not have access to this resource": {
-  "zh": "无权访问该资源",
   "ja": "このリソースにアクセスする権限がありません"
  },
  "You do not have permission to create batch tasks in this project": {
-  "zh": "无权在该项目下创建批量任务",
   "ja": "このプロジェクトでバッチタスクを作成する権限がありません"
  },
  "ZoomEye base_url is invalid: %v": {
-  "zh": "ZoomEye base_url 无效: %v",
   "ja": "ZoomEye base_url が無効です: %v"
  },
  "absent previous binary has a live hash": {
-  "zh": "不存在的旧二进制却带有有效哈希",
   "ja": "存在しない以前のバイナリにライブハッシュがあります"
  },
  "admin password hash is required for initial bootstrap": {
-  "zh": "初始引导需要管理员密码哈希",
   "ja": "初期ブートストラップには管理者パスワードのハッシュが必要です"
  },
  "agent configuration is nil": {
-  "zh": "代理配置为空",
   "ja": "エージェント設定が nil です"
  },
  "agent interrupt: continue with user-supplied context": {
-  "zh": "代理中断: 使用用户提供的上下文继续",
   "ja": "エージェント中断: ユーザーが提供したコンテキストで続行します"
  },
  "agent mode unavailable": {
-  "ja": "エージェントモードは利用できません",
-  "zh": "代理模式不可用"
+  "ja": "エージェントモードは利用できません"
  },
  "agent task already running for conversation": {
-  "zh": "该对话的代理任务已在运行",
   "ja": "この会話のエージェントタスクはすでに実行中です"
  },
  "agent task cancelled by user": {
-  "zh": "代理任务已被用户取消",
   "ja": "エージェントタスクはユーザーによってキャンセルされました"
  },
  "agent.task_timeout_minutes must be between 0 and %d minutes": {
-  "zh": "agent.task_timeout_minutes 必须在 0 到 %d 分钟之间",
   "ja": "agent.task_timeout_minutes は 0 から %d 分の間で指定してください"
  },
  "agent:local-execute permission required": {
-  "zh": "需要 agent:local-execute 权限",
   "ja": "agent:local-execute 権限が必要です"
  },
  "agents directory is not configured": {
-  "zh": "未配置 agents 目录",
   "ja": "agents ディレクトリが設定されていません"
  },
  "agents: %s has no YAML front matter": {
-  "zh": "agents: %s 无 YAML front matter",
   "ja": "agents: %s に YAML front matter がありません"
  },
  "agents: %s is missing the name field": {
-  "zh": "agents: %s 缺少 name 字段",
   "ja": "agents: %s に name フィールドがありません"
  },
  "agents: closing --- delimiter is missing": {
-  "zh": "agents: 缺少结束的 --- 分隔符",
   "ja": "agents: 終了の --- 区切りがありません"
  },
  "agents: failed to parse front matter: %w": {
-  "zh": "agents: 解析 front matter: %w",
   "ja": "agents: front matter の解析に失敗しました: %w"
  },
  "agents: not a directory: %s": {
-  "zh": "agents: 不是目录: %s",
   "ja": "agents: ディレクトリではありません: %s"
  },
  "agents: only one %s can be defined, already have %s": {
-  "zh": "agents: 仅能定义一个 %s，已有 %s",
   "ja": "agents: %s は 1 つしか定義できません。すでに %s があります"
  },
  "agents: only one main agent (Deep coordinator) can be defined, already have %s, which conflicts with %s": {
-  "zh": "agents: 仅能定义一个主代理（Deep 协调者），已有 %s，又与 %s 冲突",
   "ja": "agents: メインエージェント（Deep コーディネーター）は 1 つしか定義できません。すでに %s があり、%s と競合しています"
  },
  "ai_channel cannot be updated together with ai or openai": {
-  "zh": "ai_channel 不能与 ai 或 openai 同时更新",
   "ja": "ai_channel は ai または openai と同時に更新できません"
  },
  "already exists": {
-  "ja": "すでに存在します",
-  "zh": "已存在"
+  "ja": "すでに存在します"
  },
  "api_key or model is not configured for the AI channel": {
-  "zh": "AI 通道未配置 api_key 或 model",
   "ja": "AI チャネルに api_key または model が設定されていません"
  },
  "asset_ids count must be between 1 and 10000": {
-  "zh": "asset_ids 数量必须在 1-10000 之间",
   "ja": "asset_ids の数は 1～10000 の範囲で指定してください"
  },
  "assets count must be between 1 and 100000": {
-  "zh": "assets 数量必须在 1-100000 之间",
   "ja": "assets の数は 1～100000 の範囲で指定してください"
  },
  "assignment id is required": {
-  "zh": "需要分配 ID",
   "ja": "割り当て ID が必要です"
  },
  "audit id is required": {
-  "zh": "需要审计 ID",
   "ja": "監査 ID が必要です"
  },
  "audit log is nil": {
-  "zh": "审计日志为空",
   "ja": "監査ログが nil です"
  },
  "auth password must be configured": {
-  "zh": "必须配置认证密码",
   "ja": "認証パスワードを設定する必要があります"
  },
  "authenticated robot principal is required": {
-  "zh": "需要已认证的机器人主体",
   "ja": "認証済みのロボットのプリンシパルが必要です"
  },
  "authentication store is not configured": {
-  "zh": "未配置认证存储",
   "ja": "認証ストアが設定されていません"
  },
  "background commands require a managed task": {
-  "zh": "后台命令需要受管任务",
   "ja": "バックグラウンドコマンドには管理対象のタスクが必要です"
  },
  "background generation budget is exhausted": {
-  "zh": "后台生成预算已耗尽",
   "ja": "バックグラウンド生成の予算を使い切りました"
  },
  "batch queue executor is still active": {
-  "zh": "批量任务队列执行器仍在运行",
   "ja": "バッチタスクのキューの実行プロセスがまだ動作中です"
  },
  "batch queue is still running": {
-  "zh": "批量任务队列仍在运行",
   "ja": "バッチタスクのキューはまだ実行中です"
  },
  "batch queue not found": {
-  "zh": "未找到批量任务队列",
   "ja": "バッチタスクのキューが見つかりません"
  },
  "begin tx: %w": {
-  "zh": "开启事务失败: %w",
   "ja": "トランザクションの開始に失敗しました: %w"
  },
  "binary exists despite recorded absence": {
-  "zh": "尽管记录为不存在，二进制仍然存在",
   "ja": "不在と記録されているにもかかわらずバイナリが存在します"
  },
  "binary file not editable in UI": {
-  "ja": "バイナリファイルは UI では編集できません",
-  "zh": "二进制文件无法在 UI 中编辑"
+  "ja": "バイナリファイルは UI では編集できません"
  },
  "binding code has already been used": {
-  "zh": "绑定码已被使用",
   "ja": "バインドコードは既に使用されています"
  },
  "binding code is invalid or expired": {
-  "zh": "绑定码无效或已过期",
   "ja": "バインドコードが無効か、有効期限が切れています"
  },
  "binding code is required": {
-  "zh": "需要绑定码",
   "ja": "バインドコードが必要です"
  },
  "blank Pi protocol line %d": {
-  "zh": "Pi 协议第 %d 行为空",
   "ja": "Pi プロトコルの %d 行目が空です"
  },
  "build openai models request: %w": {
-  "zh": "构建 openai 模型列表请求失败: %w",
   "ja": "openai モデル一覧リクエストの作成に失敗しました: %w"
  },
  "build openai request: %w": {
-  "zh": "构建 openai 请求失败: %w",
   "ja": "openai リクエストの作成に失敗しました: %w"
  },
  "build record belongs to a different update": {
-  "zh": "构建记录属于另一次更新",
   "ja": "ビルド記録は別の更新のものです"
  },
  "build record contradicts rollback state": {
-  "zh": "构建记录与回滚状态矛盾",
   "ja": "ビルド記録がロールバック状態と矛盾しています"
  },
  "build record must prove previous binary hash or absence": {
-  "zh": "构建记录必须证明旧二进制哈希或其不存在",
   "ja": "ビルド記録は以前のバイナリのハッシュまたは不在を証明する必要があります"
  },
  "build typesafe request: %w": {
-  "zh": "构建 typesafe 请求失败：%w",
   "ja": "typesafe リクエストの作成に失敗しました: %w"
  },
  "call openai api: %w": {
-  "zh": "调用 openai api 失败: %w",
   "ja": "openai api の呼び出しに失敗しました: %w"
  },
  "call openai models api: %w": {
-  "zh": "调用 openai 模型列表 api 失败: %w",
   "ja": "openai モデル一覧 api の呼び出しに失敗しました: %w"
  },
  "call typesafe api: %w": {
-  "zh": "调用 typesafe API 失败：%w",
   "ja": "typesafe API の呼び出しに失敗しました: %w"
  },
  "cannot delete this user": {
-  "zh": "无法删除该用户",
   "ja": "このユーザーは削除できません"
  },
  "cannot modify bind address while listener is running": {
-  "ja": "リスナーの実行中はバインドアドレスを変更できません",
-  "zh": "监听器运行时无法修改绑定地址"
+  "ja": "リスナーの実行中はバインドアドレスを変更できません"
  },
  "cannot persist run receipt": {
-  "ja": "実行レシートを保存できません",
-  "zh": "无法保存运行回执"
+  "ja": "実行レシートを保存できません"
  },
  "cannot read run": {
-  "ja": "実行を読み取れません",
-  "zh": "无法读取运行记录"
+  "ja": "実行を読み取れません"
  },
  "cannot read run receipt": {
-  "ja": "実行レシートを読み取れません",
-  "zh": "无法读取运行回执"
+  "ja": "実行レシートを読み取れません"
  },
  "canonicalize graph_json: %w": {
-  "zh": "规范化 graph_json 失败：%w",
   "ja": "graph_json の正規化に失敗しました: %w"
  },
  "cgroup is closed": {
-  "zh": "cgroup 已关闭",
   "ja": "cgroup は閉じられています"
  },
  "cgroup root is already owned: %w": {
-  "zh": "cgroup 根目录已被占用: %w",
   "ja": "cgroup ルートはすでに使用されています: %w"
  },
  "cgroup root must be absolute": {
-  "zh": "cgroup 根目录必须为绝对路径",
   "ja": "cgroup ルートは絶対パスである必要があります"
  },
  "cgroup.kill requires Linux 5.14+: %w": {
-  "zh": "cgroup.kill 需要 Linux 5.14+: %w",
   "ja": "cgroup.kill には Linux 5.14 以上が必要です: %w"
  },
  "cgroup_root cannot be combined with process_group mode": {
-  "zh": "cgroup_root 不能与 process_group 模式同时使用",
   "ja": "cgroup_root は process_group モードと併用できません"
  },
  "cgroups are Linux-only": {
-  "zh": "cgroup 仅支持 Linux",
   "ja": "cgroup は Linux のみ対応です"
  },
  "checkpoint id is empty": {
-  "zh": "检查点 ID 为空",
   "ja": "チェックポイント ID が空です"
  },
  "checkpoint project does not match current conversation binding": {
-  "zh": "检查点所属项目与当前对话绑定不一致",
   "ja": "チェックポイントのプロジェクトが現在の会話の紐付けと一致しません"
  },
  "chunk size must be positive": {
-  "zh": "分块大小必须为正数",
   "ja": "チャンクサイズは正の値である必要があります"
  },
  "claude provider does not support models list API": {
-  "zh": "claude 提供商不支持模型列表 API",
   "ja": "claude プロバイダーはモデル一覧 API をサポートしていません"
  },
  "clear react data: %w": {
-  "zh": "清除 react 数据失败: %w",
   "ja": "react データのクリアに失敗しました: %w"
  },
  "close package: %w": {
-  "zh": "关闭包失败：%w",
   "ja": "パッケージのクローズに失敗しました: %w"
  },
  "command failed: %w": {
-  "zh": "命令失败：%w",
   "ja": "コマンドが失敗しました: %w"
  },
  "command is required": {
-  "zh": "command 不能为空",
   "ja": "command は必須です"
  },
  "command is required in stdio mode": {
-  "zh": "stdio模式需要 command",
   "ja": "stdio モードでは command が必須です"
  },
  "commit: %w": {
-  "zh": "提交失败: %w",
   "ja": "コミットに失敗しました: %w"
  },
  "compatibility exceeds 500 characters (Agent Skills spec)": {
-  "zh": "compatibility 超过 500 个字符（Agent Skills 规范）",
   "ja": "compatibility が 500 文字を超えています（Agent Skills 仕様）"
  },
  "completed build lacks matching recovery hash": {
-  "zh": "已完成的构建缺少匹配的恢复哈希",
   "ja": "完了したビルドに一致するリカバリハッシュがありません"
  },
  "completed swap has no matching rollback binary": {
-  "zh": "已完成的替换没有匹配的回滚二进制",
   "ja": "完了したスワップに一致するロールバック用バイナリがありません"
  },
  "confidence must be confirmed or tentative": {
-  "zh": "confidence 须为 confirmed 或 tentative",
   "ja": "confidence は confirmed または tentative にしてください"
  },
  "connection not found": {
-  "ja": "接続が見つかりません",
-  "zh": "未找到连接"
+  "ja": "接続が見つかりません"
  },
  "connectionID is empty": {
-  "zh": "connectionID 为空",
   "ja": "connectionID が空です"
  },
  "content must be valid UTF-8": {
-  "ja": "content は有効な UTF-8 である必要があります",
-  "zh": "content 必须是有效的 UTF-8"
+  "ja": "content は有効な UTF-8 である必要があります"
  },
  "content too large": {
-  "ja": "content が大きすぎます",
-  "zh": "content 过大"
+  "ja": "content が大きすぎます"
  },
  "context length exceeded": {
-  "zh": "超出上下文长度",
   "ja": "コンテキスト長を超えました"
  },
  "conversation already running": {
-  "ja": "会話はすでに実行中です",
-  "zh": "对话已在运行中"
+  "ja": "会話はすでに実行中です"
  },
  "conversation id is required": {
-  "zh": "需要对话 ID",
   "ja": "会話 ID が必要です"
  },
  "conversation id required": {
-  "ja": "conversation id は必須です",
-  "zh": "conversation id 为必填项"
+  "ja": "conversation id は必須です"
  },
  "conversationId is required": {
-  "ja": "conversationId は必須です",
-  "zh": "conversationId 为必填项"
+  "ja": "conversationId は必須です"
  },
  "could not compress image under max_payload_bytes %d": {
-  "zh": "无法将图片压缩到 max_payload_bytes %d 以内",
   "ja": "画像を max_payload_bytes %d 以下に圧縮できませんでした"
  },
  "create diagnostic log directory: %w": {
-  "zh": "创建诊断日志目录失败: %w",
   "ja": "診断ログディレクトリの作成に失敗しました: %w"
  },
  "create workflow checkpoint dir: %w": {
-  "zh": "创建工作流检查点目录失败：%w",
   "ja": "ワークフローのチェックポイントディレクトリの作成に失敗しました: %w"
  },
  "cross-origin redirect blocked for model custom headers": {
-  "zh": "模型自定义请求头不允许跨域重定向",
   "ja": "モデルのカスタムヘッダーでは、クロスオリジンのリダイレクトはブロックされます"
  },
  "cross-origin request denied": {
-  "ja": "クロスオリジンリクエストは拒否されました",
-  "zh": "跨域请求被拒绝"
+  "ja": "クロスオリジンリクエストは拒否されました"
  },
  "dashscope rerank decode: %w": {
-  "zh": "dashscope 重排响应解码: %w",
   "ja": "dashscope リランクのデコード: %w"
  },
  "dashscope rerank http %d: %s": {
-  "zh": "dashscope 重排 HTTP %d: %s",
   "ja": "dashscope リランク HTTP %d: %s"
  },
  "dashscope rerank: %w": {
-  "zh": "dashscope 重排: %w",
   "ja": "dashscope リランク: %w"
  },
  "database is nil": {
-  "zh": "数据库为空",
   "ja": "データベースが nil です"
  },
  "database is not initialized": {
-  "zh": "database 未初始化",
   "ja": "database が初期化されていません"
  },
  "database is required for authentication": {
-  "zh": "认证需要数据库",
   "ja": "認証にはデータベースが必要です"
  },
  "database not available": {
-  "ja": "データベースを利用できません",
-  "zh": "数据库不可用"
+  "ja": "データベースを利用できません"
  },
  "database unavailable": {
-  "ja": "データベースを利用できません",
-  "zh": "数据库不可用"
+  "ja": "データベースを利用できません"
  },
  "days only supports 7, 30 or 90": {
-  "zh": "days 仅支持 7、30 或 90",
   "ja": "days は 7、30、90 のいずれかのみ指定できます"
  },
  "db is nil": {
-  "zh": "db 为空",
   "ja": "db が nil です"
  },
  "decision must be approve/reject": {
-  "zh": "decision 必须是 approve/reject",
   "ja": "decision は approve/reject である必要があります"
  },
  "decode image config: %w": {
-  "zh": "解码图片配置失败：%w",
   "ja": "画像設定のデコードに失敗しました: %w"
  },
  "decode inspection payload: %w": {
-  "zh": "解码检查结果失败: %w",
   "ja": "インスペクションのペイロードのデコードに失敗しました: %w"
  },
  "decode openai models response: %w": {
-  "zh": "解析 openai 模型列表响应失败: %w",
   "ja": "openai モデル一覧レスポンスのデコードに失敗しました: %w"
  },
  "decode typesafe response: %w": {
-  "zh": "解析 typesafe 响应失败：%w",
   "ja": "typesafe レスポンスのデコードに失敗しました: %w"
  },
  "delegate cpu, memory and pids controllers: %w": {
-  "zh": "委派 cpu、memory 和 pids 控制器失败: %w",
   "ja": "cpu、memory、pids コントローラーの委任に失敗しました: %w"
  },
  "delegated root contains another process %s": {
-  "zh": "委派的根目录包含其他进程 %s",
   "ja": "委任されたルートに別のプロセス %s が含まれています"
  },
  "delete messages: %w": {
-  "zh": "删除消息失败: %w",
   "ja": "メッセージの削除に失敗しました: %w"
  },
  "deleted count mismatch": {
-  "zh": "删除数量不一致",
   "ja": "削除件数が一致しません"
  },
  "depth supports only summary or full": {
-  "zh": "depth 仅支持 summary 或 full",
   "ja": "depth は summary または full のみ指定できます"
  },
  "description exceeds 1024 characters (Agent Skills limit)": {
-  "zh": "description 超过 1024 个字符（Agent Skills 限制）",
   "ja": "description が 1024 文字を超えています（Agent Skills の制限）"
  },
  "discord is not configured": {
-  "zh": "未配置 Discord",
   "ja": "Discord が設定されていません"
  },
  "document %d: %w": {
-  "zh": "文档 %d: %w",
   "ja": "ドキュメント %d: %w"
  },
  "duplicate Pi sub-agent: %s": {
-  "zh": "重复的 Pi 子代理: %s",
   "ja": "Pi サブエージェントが重複しています: %s"
  },
  "duplicate worker %s": {
-  "zh": "重复的工作线程 %s",
   "ja": "ワーカー %s が重複しています"
  },
  "edge type is required": {
-  "zh": "edge type 不能为空",
   "ja": "edge type は必須です"
  },
  "embedder is nil": {
-  "zh": "嵌入器为空",
   "ja": "エンベッダーが nil です"
  },
  "embedder not initialized": {
-  "zh": "嵌入器未初始化",
   "ja": "エンベッダーが初期化されていません"
  },
  "embedding API key is not configured": {
-  "zh": "embedding API key 未配置",
   "ja": "embedding API キーが設定されていません"
  },
  "embedding HTTP %d: %s": {
-  "zh": "嵌入请求 HTTP %d: %s",
   "ja": "埋め込み HTTP %d: %s"
  },
  "embedding count mismatch: %d vs %d": {
-  "zh": "嵌入数量不匹配: %d 与 %d",
   "ja": "埋め込み数が一致しません: %d と %d"
  },
  "empty content": {
-  "zh": "内容为空",
   "ja": "内容が空です"
  },
  "empty image payload": {
-  "zh": "图片内容为空",
   "ja": "画像ペイロードが空です"
  },
  "empty path": {
-  "zh": "路径为空",
   "ja": "パスが空です"
  },
  "empty qr content": {
-  "zh": "二维码内容为空",
   "ja": "QR コンテンツが空です"
  },
  "empty resource path": {
-  "zh": "资源路径为空",
   "ja": "リソースパスが空です"
  },
  "empty time value": {
-  "zh": "时间值为空",
   "ja": "時刻の値が空です"
  },
  "empty turn range": {
-  "zh": "轮次范围为空",
   "ja": "ターン範囲が空です"
  },
  "enabled and rules must be provided explicitly; to clear rules, provide an empty array": {
-  "zh": "必须明确提供 enabled 和 rules；清空规则请提供空数组",
   "ja": "enabled と rules を明示的に指定する必要があります。ルールをクリアするには空の配列を指定してください"
  },
  "encode jpeg: %w": {
-  "zh": "编码 jpeg 失败：%w",
   "ja": "jpeg のエンコードに失敗しました: %w"
  },
  "encoding_aes_key must be 32 bytes after decoding": {
-  "zh": "encoding_aes_key 解码后应为 32 字节",
   "ja": "encoding_aes_key はデコード後 32 バイトである必要があります"
  },
  "event id is required": {
-  "zh": "需要事件 ID",
   "ja": "イベント ID が必要です"
  },
  "event is nil": {
-  "zh": "事件为空",
   "ja": "イベントが nil です"
  },
  "execution already exists: %s": {
-  "zh": "执行已存在: %s",
   "ja": "実行はすでに存在します: %s"
  },
  "execution ended without a result": {
-  "ja": "実行が結果を返さずに終了しました",
-  "zh": "执行结束但未返回结果"
+  "ja": "実行が結果を返さずに終了しました"
  },
  "execution entry is nil": {
-  "zh": "执行条目为空",
   "ja": "実行エントリが nil です"
  },
  "execution not found: %s": {
-  "zh": "未找到执行: %s",
   "ja": "実行が見つかりません: %s"
  },
  "execution run func is nil": {
-  "zh": "执行运行函数为空",
   "ja": "実行の run 関数が nil です"
  },
  "execution run func not wired": {
-  "zh": "执行运行函数未接入",
   "ja": "実行の run 関数が接続されていません"
  },
  "execution service is nil": {
-  "zh": "执行服务为空",
   "ja": "実行サービスが nil です"
  },
  "execution_id is required": {
-  "zh": "execution_id 必填",
   "ja": "execution_id は必須です"
  },
  "exit status %d": {
-  "zh": "退出状态 %d",
   "ja": "終了ステータス %d"
  },
  "expected recovery array": {
-  "zh": "应为恢复数组",
   "ja": "リカバリ配列が必要です"
  },
  "expected recovery boolean": {
-  "zh": "应为恢复布尔值",
   "ja": "リカバリ真偽値が必要です"
  },
  "expected recovery object": {
-  "zh": "应为恢复对象",
   "ja": "リカバリオブジェクトが必要です"
  },
  "expected recovery string": {
-  "zh": "应为恢复字符串",
   "ja": "リカバリ文字列が必要です"
  },
  "external MCP client has no cancellation acknowledgement": {
-  "zh": "外部 MCP 客户端没有取消确认",
   "ja": "外部 MCP クライアントにキャンセル確認がありません"
  },
  "external MCP invocation requires global scope": {
-  "zh": "调用外部 MCP 需要全局范围",
   "ja": "外部 MCP の呼び出しにはグローバルスコープが必要です"
  },
  "external tool authorization denied: %w": {
-  "zh": "外部工具授权被拒绝: %w",
   "ja": "外部ツールの認可が拒否されました: %w"
  },
  "external tool authorization policy is not configured": {
-  "zh": "外部工具授权策略未配置",
   "ja": "外部ツールの認可ポリシーが設定されていません"
  },
  "extra JSON values": {
-  "zh": "存在多余的 JSON 值",
   "ja": "余分な JSON 値があります"
  },
  "fact_key is required": {
-  "zh": "fact_key 不能为空",
   "ja": "fact_key は必須です"
  },
  "fact_key is too long (max 128 characters)": {
-  "zh": "fact_key 过长（最多 128 字符）",
   "ja": "fact_key が長すぎます（最大 128 文字）"
  },
  "fact_key must not have leading or trailing whitespace": {
-  "zh": "fact_key 不允许首尾空白",
   "ja": "fact_key の先頭と末尾に空白は使用できません"
  },
  "fact_key: %s\ncategory: %s\nconfidence: %s\nsummary: %s\nupdated_at: %s": {
-  "zh": "fact_key: %s\ncategory: %s\nconfidence: %s\nsummary: %s\nupdated_at: %s",
   "ja": "fact_key: %s\ncategory: %s\nconfidence: %s\nsummary: %s\nupdated_at: %s"
  },
  "failed to begin transaction": {
-  "ja": "トランザクションの開始に失敗しました",
-  "zh": "开启事务失败"
+  "ja": "トランザクションの開始に失敗しました"
  },
  "failed to commit read marks": {
-  "ja": "既読マークのコミットに失敗しました",
-  "zh": "提交已读标记失败"
+  "ja": "既読マークのコミットに失敗しました"
  },
  "failed to create stderr pipe: %w": {
-  "zh": "创建 stderr 管道失败：%w",
   "ja": "stderr パイプの作成に失敗しました: %w"
  },
  "failed to create stdout pipe: %w": {
-  "zh": "创建 stdout 管道失败：%w",
   "ja": "stdout パイプの作成に失敗しました: %w"
  },
  "failed to delete connection": {
-  "ja": "接続の削除に失敗しました",
-  "zh": "删除连接失败"
+  "ja": "接続の削除に失敗しました"
  },
  "failed to delete profile": {
-  "ja": "Profile の削除に失敗しました",
-  "zh": "删除 Profile 失败"
+  "ja": "Profile の削除に失敗しました"
  },
  "failed to load notification read states": {
-  "ja": "通知の既読状態の読み込みに失敗しました",
-  "zh": "加载通知已读状态失败"
+  "ja": "通知の既読状態の読み込みに失敗しました"
  },
  "failed to mark read": {
-  "ja": "既読への更新に失敗しました",
-  "zh": "标记已读失败"
+  "ja": "既読への更新に失敗しました"
  },
  "failed to prepare notification read table": {
-  "ja": "通知の既読テーブルの準備に失敗しました",
-  "zh": "准备通知已读表失败"
+  "ja": "通知の既読テーブルの準備に失敗しました"
  },
  "failed to prepare statement": {
-  "ja": "ステートメントの準備に失敗しました",
-  "zh": "准备语句失败"
+  "ja": "ステートメントの準備に失敗しました"
  },
  "failed to start command: %w": {
-  "zh": "启动命令失败：%w",
   "ja": "コマンドの起動に失敗しました: %w"
  },
  "failed to summarize c2 session events": {
-  "ja": "C2 セッションのイベントを集計できませんでした",
-  "zh": "汇总 C2 会话事件失败"
+  "ja": "C2 セッションのイベントを集計できませんでした"
  },
  "failed to summarize hitl notifications": {
-  "ja": "HITL 通知の集計に失敗しました",
-  "zh": "汇总 HITL 通知失败"
+  "ja": "HITL 通知の集計に失敗しました"
  },
  "failed to summarize vulnerabilities": {
-  "ja": "脆弱性の集計に失敗しました",
-  "zh": "汇总漏洞失败"
+  "ja": "脆弱性の集計に失敗しました"
  },
  "file exceeds 2 MiB; use execute to select a smaller region": {
-  "zh": "文件超过 2 MiB；请使用 execute 选择更小的区域",
   "ja": "ファイルが 2 MiB を超えています。execute でより小さい範囲を選択してください"
  },
  "file field required: %v": {
-  "ja": "file フィールドは必須です: %v",
-  "zh": "file 字段为必填项: %v"
+  "ja": "file フィールドは必須です: %v"
  },
  "file id is required": {
-  "zh": "需要文件 ID",
   "ja": "ファイル ID が必要です"
  },
  "file not found": {
-  "ja": "ファイルが見つかりません",
-  "zh": "未找到文件"
+  "ja": "ファイルが見つかりません"
  },
  "file size %d exceeds max_image_bytes %d": {
-  "zh": "文件大小 %d 超过 max_image_bytes %d",
   "ja": "ファイルサイズ %d が max_image_bytes %d を超えています"
  },
  "file too large for editor": {
-  "ja": "ファイルが大きすぎるため、エディターで開けません",
-  "zh": "文件过大，无法在编辑器中打开"
+  "ja": "ファイルが大きすぎるため、エディターで開けません"
  },
  "file too large on disk": {
-  "zh": "磁盘上的文件过大",
   "ja": "ディスク上のファイルが大きすぎます"
  },
  "final_result is required": {
-  "zh": "final_result 必填",
   "ja": "final_result は必須です"
  },
  "format must be md or docx": {
-  "ja": "format は md または docx である必要があります",
-  "zh": "format 必须是 md 或 docx"
+  "ja": "format は md または docx である必要があります"
  },
  "getMe failed: %s": {
-  "zh": "getMe 失败：%s",
   "ja": "getMe に失敗しました: %s"
  },
  "getUpdates failed: %s": {
-  "zh": "getUpdates 失败：%s",
   "ja": "getUpdates に失敗しました: %s"
  },
  "getUpdates: %s": {
-  "zh": "getUpdates：%s",
   "ja": "getUpdates: %s"
  },
  "getwd: %w": {
-  "zh": "getwd：%w",
   "ja": "getwd: %w"
  },
  "git %s: %s": {
-  "zh": "git %s：%s",
   "ja": "git %s: %s"
  },
  "git %s: %w": {
-  "zh": "git %s：%w",
   "ja": "git %s: %w"
  },
- "git init failed: %v": {
-  "zh": "git init 失败：%v"
- },
- "git is not installed on this machine; cannot adopt the directory into the update source": {
-  "zh": "本机没有 git，无法把目录接入更新源"
- },
  "go build reported success but produced no binary at %s": {
-  "zh": "go build 报告成功，但在 %s 未生成二进制文件",
   "ja": "go build は成功を報告しましたが、%s にバイナリが生成されませんでした"
  },
  "graph is required": {
-  "zh": "graph 不能为空",
   "ja": "graph は必須です"
  },
  "graph must be valid JSON": {
-  "zh": "graph 必须是合法 JSON",
   "ja": "graph は有効な JSON である必要があります"
  },
  "group_by supports only conversation or task": {
-  "zh": "group_by 仅支持 conversation 或 task",
   "ja": "group_by は conversation または task のみ指定できます"
  },
  "hitl manager unavailable": {
-  "ja": "HITL マネージャーは利用できません",
-  "zh": "HITL 管理器不可用"
+  "ja": "HITL マネージャーは利用できません"
  },
  "http mode requires url to be configured": {
-  "zh": "http 模式需要配置 url",
   "ja": "http モードでは url の設定が必要です"
  },
  "id is required": {
-  "ja": "id は必須です",
-  "zh": "id 为必填项"
+  "ja": "id は必須です"
  },
  "idempotency key reused with different request": {
-  "ja": "同じ冪等性キーが異なるリクエストで再利用されています",
-  "zh": "幂等键被不同的请求重复使用"
+  "ja": "同じ冪等性キーが異なるリクエストで再利用されています"
  },
  "ids is required": {
-  "ja": "ids は必須です",
-  "zh": "ids 为必填项"
+  "ja": "ids は必須です"
  },
  "ilink %s %s: %d %s": {
-  "zh": "ilink %s %s: %d %s",
   "ja": "ilink %s %s: %d %s"
  },
  "indexer is not initialized": {
-  "zh": "indexer 未初始化",
   "ja": "indexer が初期化されていません"
  },
  "installation locking is unavailable on this platform": {
-  "zh": "此平台不支持安装锁",
   "ja": "このプラットフォームではインストールのロックを利用できません"
  },
  "internal execution failure": {
-  "ja": "内部の実行エラーです",
-  "zh": "内部执行错误"
+  "ja": "内部の実行エラーです"
  },
  "interrupt already resolved or decision channel busy": {
-  "zh": "中断已被处理或决策通道繁忙",
   "ja": "割り込みは既に処理済みか、決定チャネルがビジー状態です"
  },
  "interrupt not found or already resolved": {
-  "ja": "割り込みが見つからないか、すでに解決済みです",
-  "zh": "未找到中断请求或已处理"
+  "ja": "割り込みが見つからないか、すでに解決済みです"
  },
  "invalid PID": {
-  "zh": "无效的 PID",
   "ja": "無効な PID です"
  },
  "invalid Pi protocol JSON on line %d: %w": {
-  "zh": "Pi 协议第 %d 行 JSON 无效: %w",
   "ja": "Pi プロトコルの %d 行目の JSON が無効です: %w"
  },
  "invalid approved tool arguments: %w": {
-  "zh": "已批准的工具参数无效: %w",
   "ja": "承認済みのツール引数が無効です: %w"
  },
  "invalid body": {
-  "ja": "リクエストボディが無効です",
-  "zh": "请求体无效"
+  "ja": "リクエストボディが無効です"
  },
  "invalid build commits": {
-  "zh": "构建提交无效",
   "ja": "ビルドのコミットが無効です"
  },
  "invalid built binary hash": {
-  "zh": "已构建二进制哈希无效",
   "ja": "ビルドされたバイナリのハッシュが無効です"
  },
  "invalid cgroup guardian": {
-  "zh": "无效的 cgroup 守护进程",
   "ja": "無効な cgroup ガーディアンです"
  },
  "invalid checkpoint id": {
-  "zh": "检查点 ID 无效",
   "ja": "チェックポイント ID が無効です"
  },
  "invalid context checkpoint": {
-  "zh": "上下文检查点无效",
   "ja": "コンテキストチェックポイントが無効です"
  },
  "invalid embedding response index or vector": {
-  "zh": "嵌入响应的索引或向量无效",
   "ja": "埋め込みレスポンスのインデックスまたはベクトルが無効です"
  },
  "invalid id type": {
-  "zh": "无效的 id 类型",
   "ja": "無効な id の型です"
  },
  "invalid internal launch": {
-  "zh": "无效的内部启动",
   "ja": "無効な内部起動です"
  },
  "invalid json: %v": {
-  "ja": "JSON が無効です: %v",
-  "zh": "JSON 无效: %v"
+  "ja": "JSON が無効です: %v"
  },
  "invalid lark recipient": {
-  "zh": "飞书接收人无效",
   "ja": "Lark の受信者が無効です"
  },
  "invalid launch gate": {
-  "zh": "无效的启动门",
   "ja": "無効な起動ゲートです"
  },
  "invalid launch token": {
-  "zh": "无效的启动令牌",
   "ja": "無効な起動トークンです"
  },
  "invalid limit": {
-  "ja": "limit が無効です",
-  "zh": "limit 无效"
+  "ja": "limit が無効です"
  },
  "invalid live hash": {
-  "zh": "当前哈希无效",
   "ja": "ライブハッシュが無効です"
  },
  "invalid minimum severity %q": {
-  "zh": "最低严重程度 %q 无效",
   "ja": "最小の重大度 %q が無効です"
  },
  "invalid name": {
-  "ja": "name が無効です",
-  "zh": "name 无效"
+  "ja": "name が無効です"
  },
  "invalid newName": {
-  "ja": "newName が無効です",
-  "zh": "newName 无效"
+  "ja": "newName が無効です"
  },
  "invalid password": {
-  "zh": "密码无效",
   "ja": "パスワードが無効です"
  },
  "invalid path": {
-  "ja": "パスが無効です",
-  "zh": "路径无效"
+  "ja": "パスが無効です"
  },
  "invalid path %q": {
-  "zh": "路径无效 %q",
   "ja": "パスが無効です %q"
  },
  "invalid payload id": {
-  "ja": "payload id が無効です",
-  "zh": "payload id 无效"
+  "ja": "payload id が無効です"
  },
  "invalid previous binary hash": {
-  "zh": "旧二进制哈希无效",
   "ja": "以前のバイナリのハッシュが無効です"
  },
  "invalid process isolation mode %q": {
-  "zh": "无效的进程隔离模式 %q",
   "ja": "無効なプロセス分離モードです: %q"
  },
  "invalid process isolation resource limits": {
-  "zh": "无效的进程隔离资源限制",
   "ja": "無効なプロセス分離のリソース制限です"
  },
  "invalid recovery key": {
-  "zh": "恢复键无效",
   "ja": "リカバリキーが無効です"
  },
  "invalid request body": {
-  "ja": "リクエストボディが無効です",
-  "zh": "请求体无效"
+  "ja": "リクエストボディが無効です"
  },
  "invalid robot binding code": {
-  "zh": "机器人绑定码无效",
   "ja": "ロボットのバインドコードが無効です"
  },
  "invalid robot recipient": {
-  "zh": "机器人接收人无效",
   "ja": "ロボットの受信者が無効です"
  },
  "invalid rollback commits": {
-  "zh": "回滚提交无效",
   "ja": "ロールバックのコミットが無効です"
  },
  "invalid state binary hash": {
-  "zh": "状态二进制哈希无效",
   "ja": "状態のバイナリハッシュが無効です"
  },
  "invalid state commits": {
-  "zh": "状态提交无效",
   "ja": "状態のコミットが無効です"
  },
  "invalid target path": {
-  "ja": "対象パスが無効です",
-  "zh": "目标路径无效"
+  "ja": "対象パスが無効です"
  },
  "invalid task ID": {
-  "zh": "无效的任务 ID",
   "ja": "無効なタスク ID です"
  },
  "invalid task run ID": {
-  "zh": "无效的任务运行 ID",
   "ja": "無効なタスク実行 ID です"
  },
  "invalid task status": {
-  "zh": "无效的任务状态",
   "ja": "無効なタスクステータスです"
  },
  "invalid telegram user id: %w": {
-  "zh": "Telegram 用户 ID 无效：%w",
   "ja": "Telegram ユーザー ID が無効です: %w"
  },
  "invalid todo": {
-  "zh": "无效的 todo",
   "ja": "無効な todo です"
  },
  "invalid todo subject/status": {
-  "zh": "无效的 todo subject/status",
   "ja": "無効な todo の subject/status です"
  },
  "invalid url": {
-  "ja": "URL が無効です",
-  "zh": "url 无效"
+  "ja": "URL が無効です"
  },
  "invalid url: only http(s) allowed": {
-  "ja": "URL が無効です: http(s) のみ使用できます",
-  "zh": "url 无效: 仅允许 http(s)"
+  "ja": "URL が無効です: http(s) のみ使用できます"
  },
  "jitter_percent must be 0-100": {
-  "ja": "jitter_percent は 0〜100 の範囲で指定してください",
-  "zh": "jitter_percent 必须在 0-100 之间"
+  "ja": "jitter_percent は 0〜100 の範囲で指定してください"
  },
  "job guardian exited during setup": {
-  "zh": "作业守护进程在设置期间退出",
   "ja": "ジョブガーディアンがセットアップ中に終了しました"
  },
  "job is closed": {
-  "zh": "作业已关闭",
   "ja": "ジョブは閉じられています"
  },
  "json object not found": {
-  "zh": "未找到 JSON 对象",
   "ja": "JSON オブジェクトが見つかりません"
  },
  "kernel task containment is unavailable on this OS; use a Linux cgroup deployment": {
-  "zh": "此操作系统不支持内核级任务隔离；请使用 Linux cgroup 部署",
   "ja": "この OS ではカーネルレベルのタスク封じ込めを利用できません。Linux cgroup 構成を使用してください"
  },
  "knowledge config is nil": {
-  "zh": "知识库配置为空",
   "ja": "ナレッジベースの設定が nil です"
  },
  "knowledge index chain: %w": {
-  "zh": "知识库索引链: %w",
   "ja": "ナレッジベースのインデックスチェーン: %w"
  },
  "knowledge index requires splitter and database": {
-  "zh": "知识库索引需要分块器和数据库",
   "ja": "ナレッジベースのインデックスにはスプリッターとデータベースが必要です"
  },
  "knowledge pipeline retriever: nil": {
-  "zh": "知识库管线检索器为空",
   "ja": "ナレッジパイプラインのリトリーバーが nil です"
  },
  "knowledge retrieval configuration is incomplete": {
-  "zh": "知识库检索配置不完整",
   "ja": "ナレッジベースの検索設定が不完全です"
  },
  "knowledge_embeddings schema migration: %w": {
-  "zh": "knowledge_embeddings 结构迁移: %w",
   "ja": "knowledge_embeddings のスキーママイグレーション: %w"
  },
  "lark is not configured": {
-  "zh": "未配置飞书",
   "ja": "Lark が設定されていません"
  },
  "lark send failed": {
-  "zh": "飞书发送失败",
   "ja": "Lark への送信に失敗しました"
  },
  "legacy model-output recovery markers cannot be executed": {
-  "zh": "无法执行旧版模型输出恢复标记",
   "ja": "従来のモデル出力リカバリーマーカーは実行できません"
  },
  "legacy workflow checkpoint cannot be resumed by this Pi-only version; export prior results and start a new run": {
-  "zh": "此仅限 Pi 的版本无法恢复旧版工作流检查点；请导出之前的结果并开始新的运行",
   "ja": "この Pi 専用バージョンでは従来のワークフローチェックポイントを再開できません。以前の結果をエクスポートして、新しい実行を開始してください"
  },
  "links must be an array": {
-  "zh": "links 须为数组",
   "ja": "links は配列である必要があります"
  },
  "links[%d] has an invalid format": {
-  "zh": "links[%d] 格式无效",
   "ja": "links[%d] の形式が無効です"
  },
  "links[%d] must contain from": {
-  "zh": "links[%d] 须含 from",
   "ja": "links[%d] には from が必要です"
  },
  "links[%d] must contain type": {
-  "zh": "links[%d] 须含 type",
   "ja": "links[%d] には type が必要です"
  },
  "listener id is required": {
-  "zh": "需要监听器 ID",
   "ja": "リスナー ID が必要です"
  },
  "listener name is required": {
-  "ja": "リスナー名は必須です",
-  "zh": "监听器名称为必填项"
+  "ja": "リスナー名は必須です"
  },
  "listener not found": {
-  "ja": "リスナーが見つかりません",
-  "zh": "未找到监听器"
+  "ja": "リスナーが見つかりません"
  },
  "live binary does not match build recovery evidence": {
-  "zh": "当前二进制与构建恢复证据不匹配",
   "ja": "現在のバイナリがビルドのリカバリ証跡と一致しません"
  },
  "load Pi agent roles: %w": {
-  "zh": "加载 Pi 代理角色失败: %w",
   "ja": "Pi エージェントロールの読み込みに失敗しました: %w"
  },
  "local cleanup unconfirmed: processes in uninterruptible sleep (D) with SIGKILL pending": {
-  "zh": "本地清理未确认：进程处于不可中断睡眠（D）且 SIGKILL 待处理",
   "ja": "ローカルのクリーンアップが未確認です: プロセスが割り込み不可スリープ（D）状態で SIGKILL が保留中です"
  },
  "local cleanup: %v, worker cleanup: %w": {
-  "zh": "本地清理: %v，Worker 清理: %w",
   "ja": "ローカルのクリーンアップ: %v、ワーカーのクリーンアップ: %w"
  },
  "local cleanup: %w, remote state: %v": {
-  "zh": "本地清理: %w，远端状态: %v",
   "ja": "ローカルのクリーンアップ: %w、リモートの状態: %v"
  },
  "marshal manifest: %w": {
-  "zh": "序列化 manifest 失败：%w",
   "ja": "manifest のシリアライズに失敗しました: %w"
  },
  "marshal openai payload: %w": {
-  "zh": "序列化 openai 请求体失败: %w",
   "ja": "openai ペイロードのシリアライズに失敗しました: %w"
  },
  "marshal typesafe payload: %w": {
-  "zh": "序列化 typesafe 请求体失败：%w",
   "ja": "typesafe ペイロードのシリアライズに失敗しました: %w"
  },
  "marshal workflow payload: %w": {
-  "zh": "序列化工作流载荷失败：%w",
   "ja": "ワークフローペイロードのシリアライズに失敗しました: %w"
  },
  "max_vulnerabilities must not be less than 0": {
-  "zh": "max_vulnerabilities 不能小于 0",
   "ja": "max_vulnerabilities は 0 以上で指定してください"
  },
  "message id required": {
-  "ja": "message id は必須です",
-  "zh": "message id 为必填项"
+  "ja": "message id は必須です"
  },
  "message not found": {
-  "zh": "未找到消息",
   "ja": "メッセージが見つかりません"
  },
  "messageID and detailID are required": {
-  "zh": "需要 messageID 和 detailID",
   "ja": "messageID と detailID が必要です"
  },
  "messageId required": {
-  "ja": "messageId は必須です",
-  "zh": "messageId 为必填项"
+  "ja": "messageId は必須です"
  },
  "metadata %q: unsupported type %T": {
-  "zh": "元数据 %q: 不支持的类型 %T",
   "ja": "メタデータ %q: サポートされていない型 %T です"
  },
  "min_vulnerabilities must not be less than 0": {
-  "zh": "min_vulnerabilities 不能小于 0",
   "ja": "min_vulnerabilities は 0 以上で指定してください"
  },
  "missing SKILL.md in %q (Agent Skills standard)": {
-  "zh": "%q 中缺少 SKILL.md（Agent Skills 标准）",
   "ja": "%q に SKILL.md がありません（Agent Skills 標準）"
  },
  "missing agent:local-execute": {
-  "zh": "缺少 agent:local-execute",
   "ja": "agent:local-execute がありません"
  },
  "missing authenticated principal": {
-  "zh": "缺少已认证的主体",
   "ja": "認証済みのプリンシパルがありません"
  },
  "missing authenticated user": {
-  "ja": "認証済みユーザーが見つかりません",
-  "zh": "缺少已认证用户"
+  "ja": "認証済みユーザーが見つかりません"
  },
  "missing decision": {
-  "zh": "缺少 decision",
   "ja": "decision がありません"
  },
  "missing external tool name": {
-  "zh": "缺少外部工具名称",
   "ja": "外部ツール名がありません"
  },
  "missing file": {
-  "ja": "ファイルがありません",
-  "zh": "缺少文件"
+  "ja": "ファイルがありません"
  },
  "missing metadata key %q": {
-  "zh": "缺少元数据键 %q",
   "ja": "メタデータキー %q がありません"
  },
  "missing or empty metadata %q": {
-  "zh": "缺少元数据 %q 或其为空",
   "ja": "メタデータ %q がないか空です"
  },
  "missing permission %s": {
-  "zh": "缺少权限 %s",
   "ja": "権限 %s がありません"
  },
  "missing permission mcp:external:execute": {
-  "zh": "缺少权限 mcp:external:execute",
   "ja": "権限 mcp:external:execute がありません"
  },
  "missing resource identifier %s": {
-  "zh": "缺少资源标识 %s",
   "ja": "リソース識別子 %s がありません"
  },
  "missing resource identifiers %ss": {
-  "zh": "缺少资源标识 %ss",
   "ja": "リソース識別子 %ss がありません"
  },
  "mkdir tool output trunc dir: %w": {
-  "zh": "创建工具输出截断目录失败：%w",
   "ja": "ツール出力の切り詰めディレクトリの作成に失敗しました: %w"
  },
  "mode supports only summary or split": {
-  "zh": "mode 仅支持 summary 或 split",
   "ja": "mode は summary または split のみ指定できます"
  },
  "models list is empty": {
-  "zh": "模型列表为空",
   "ja": "モデル一覧が空です"
  },
  "multiple JSON values": {
-  "zh": "存在多个 JSON 值",
   "ja": "複数の JSON 値があります"
  },
  "name exceeds 64 characters (Agent Skills limit)": {
-  "zh": "name 超过 64 个字符（Agent Skills 限制）",
   "ja": "name が 64 文字を超えています（Agent Skills の制限）"
  },
  "name is required": {
-  "zh": "name 必填",
   "ja": "name は必須です"
  },
  "name must be lowercase (Agent Skills)": {
-  "zh": "name 必须为小写（Agent Skills）",
   "ja": "name は小文字である必要があります（Agent Skills）"
  },
  "name must contain only lowercase letters, numbers, hyphens (Agent Skills)": {
-  "zh": "name 只能包含小写字母、数字和连字符（Agent Skills）",
   "ja": "name には小文字、数字、ハイフンのみ使用できます（Agent Skills）"
  },
  "name must not contain consecutive hyphens (Agent Skills spec)": {
-  "zh": "name 不能包含连续的连字符（Agent Skills 规范）",
   "ja": "name に連続したハイフンは使用できません（Agent Skills 仕様）"
  },
  "name must not contain reserved words anthropic or claude": {
-  "zh": "name 不能包含保留字 anthropic 或 claude",
   "ja": "name に予約語 anthropic または claude は使用できません"
  },
  "name must not start or end with a hyphen (Agent Skills spec)": {
-  "zh": "name 不能以连字符开头或结尾（Agent Skills 规范）",
   "ja": "name の先頭と末尾にハイフンは使用できません（Agent Skills 仕様）"
  },
  "name too long": {
-  "ja": "name が長すぎます",
-  "zh": "name 过长"
+  "ja": "name が長すぎます"
  },
  "native Claude tool-call streaming requires Agent AgenticModel": {
-  "zh": "原生 Claude 工具调用流式传输需要 Agent AgenticModel",
   "ja": "ネイティブ Claude のツール呼び出しストリーミングには Agent AgenticModel が必要です"
  },
  "native document splitter: %w": {
-  "zh": "原生文档分块器: %w",
   "ja": "ネイティブドキュメントスプリッター: %w"
  },
  "nil manifest": {
-  "zh": "manifest 为 nil",
   "ja": "manifest が nil です"
  },
  "no access to %s %s": {
-  "zh": "无权访问 %s %s",
   "ja": "%s %s にアクセスする権限がありません"
  },
  "no access to conversation %s": {
-  "zh": "无权访问对话 %s",
   "ja": "会話 %s にアクセスする権限がありません"
  },
  "no access to project %s": {
-  "zh": "无权访问项目 %s",
   "ja": "プロジェクト %s にアクセスする権限がありません"
  },
  "no access to project: %w": {
-  "zh": "无权访问项目: %w",
   "ja": "プロジェクトにアクセスする権限がありません: %w"
  },
  "no access to retest vulnerability %s": {
-  "zh": "无权复测漏洞 %s",
   "ja": "脆弱性 %s を再テストする権限がありません"
  },
  "no access to tool execution %s": {
-  "zh": "无权访问工具执行记录 %s",
   "ja": "ツール実行 %s にアクセスする権限がありません"
  },
  "no access to vulnerability %s": {
-  "zh": "无权访问漏洞 %s",
   "ja": "脆弱性 %s にアクセスする権限がありません"
  },
  "no active task for this conversation": {
-  "ja": "この会話にはアクティブなタスクがありません",
-  "zh": "此对话没有活动中的任务"
+  "ja": "この会話にはアクティブなタスクがありません"
  },
  "no authorization policy registered for builtin tool %s": {
-  "zh": "内置工具 %s 未注册授权策略",
   "ja": "組み込みツール %s に認可ポリシーが登録されていません"
  },
  "no files to export": {
-  "ja": "エクスポートするファイルがありません",
-  "zh": "没有可导出的文件"
+  "ja": "エクスポートするファイルがありません"
  },
  "no result file for this task": {
-  "ja": "このタスクには結果ファイルがありません",
-  "zh": "此任务没有结果文件"
+  "ja": "このタスクには結果ファイルがありません"
  },
  "no valid decision json in response": {
-  "zh": "响应中没有有效的决策 JSON",
   "ja": "レスポンスに有効な decision JSON がありません"
  },
  "no valid event ids": {
-  "zh": "没有有效的事件 ID",
   "ja": "有効なイベント ID がありません"
  },
  "no valid session ids": {
-  "zh": "没有有效的会话 ID",
   "ja": "有効なセッション ID がありません"
  },
  "no valid task ids": {
-  "zh": "没有有效的任务 ID",
   "ja": "有効なタスク ID がありません"
  },
  "node %s was interrupted during execution; reconcile its execution receipt before resuming": {
-  "zh": "节点 %s 在执行期间被中断；请先核对其执行回执再恢复",
   "ja": "ノード %s は実行中に中断されました。再開する前に実行レシートを照合してください"
  },
  "not a directory": {
-  "ja": "ディレクトリではありません",
-  "zh": "不是目录"
+  "ja": "ディレクトリではありません"
  },
  "not a file": {
-  "ja": "ファイルではありません",
-  "zh": "不是文件"
+  "ja": "ファイルではありません"
  },
  "not a regular file": {
-  "zh": "不是普通文件",
   "ja": "通常のファイルではありません"
  },
  "not found": {
-  "ja": "見つかりません",
-  "zh": "未找到"
+  "ja": "見つかりません"
  },
  "not positive integer": {
-  "zh": "不是正整数",
   "ja": "正の整数ではありません"
  },
  "note too long (max 2000 characters)": {
-  "ja": "メモが長すぎます（最大 2000 文字）",
-  "zh": "备注过长（最多 2000 个字符）"
+  "ja": "メモが長すぎます（最大 2000 文字）"
  },
  "null recovery %s": {
-  "zh": "恢复数据为 null：%s",
   "ja": "リカバリの %s が null です"
  },
  "old_text must match exactly once": {
-  "zh": "old_text 必须恰好匹配一次",
   "ja": "old_text は正確に1回だけ一致する必要があります"
  },
  "open diagnostic log: %w": {
-  "zh": "打开诊断日志失败: %w",
   "ja": "診断ログのオープンに失敗しました: %w"
  },
  "open image: %w": {
-  "zh": "打开图片失败：%w",
   "ja": "画像を開けませんでした: %w"
  },
  "openai api key is empty": {
-  "zh": "openai api key 为空",
   "ja": "openai api key が空です"
  },
  "openai client is not initialized": {
-  "zh": "openai 客户端未初始化",
   "ja": "openai クライアントが初期化されていません"
  },
  "openai config is nil": {
-  "zh": "openai 配置为空",
   "ja": "openai 設定が nil です"
  },
  "openai stream error: %s": {
-  "zh": "openai 流错误: %s",
   "ja": "openai ストリームエラー: %s"
  },
  "openai.max_completion_tokens must be a positive number": {
-  "zh": "openai.max_completion_tokens 必须为正数",
   "ja": "openai.max_completion_tokens は正の数で指定してください"
  },
  "owner exited before launch: %w": {
-  "zh": "所有者在启动前已退出: %w",
   "ja": "起動前にオーナーが終了しました: %w"
  },
  "page must be between 1 and 1000000": {
-  "zh": "page 必须在 1-1000000 之间",
   "ja": "page は 1〜1000000 の範囲で指定してください"
  },
  "page_size must be between 1 and %d": {
-  "zh": "page_size 必须在 1-%d 之间",
   "ja": "page_size は 1〜%d の範囲で指定してください"
  },
  "parent not found": {
-  "ja": "親ディレクトリが見つかりません",
-  "zh": "未找到父目录"
+  "ja": "親ディレクトリが見つかりません"
  },
  "parse tool execution arguments: %w": {
-  "zh": "解析工具执行参数失败: %w",
   "ja": "ツール実行の引数の解析に失敗しました: %w"
  },
  "password is empty": {
-  "zh": "密码为空",
   "ja": "パスワードが空です"
  },
  "path escapes chat_uploads root": {
-  "zh": "路径超出 chat_uploads 根目录",
   "ja": "パスが chat_uploads のルートを超えています"
  },
  "path escapes conversation artifacts root": {
-  "zh": "路径超出对话产物根目录",
   "ja": "パスが会話アーティファクトのルートを超えています"
  },
  "path escapes reduction root": {
-  "zh": "路径超出 reduction 根目录",
   "ja": "パスが reduction のルートを超えています"
  },
  "path escapes skill directory: %q": {
-  "zh": "路径超出技能目录：%q",
   "ja": "パスがスキルディレクトリの外に出ています: %q"
  },
  "path escapes workspace root": {
-  "zh": "路径超出工作区根目录",
   "ja": "パスがワークスペースのルートを超えています"
  },
  "path is a directory": {
-  "zh": "路径是目录",
   "ja": "パスはディレクトリです"
  },
  "path is empty": {
-  "zh": "路径为空",
   "ja": "パスが空です"
  },
  "path not found": {
-  "ja": "パスが見つかりません",
-  "zh": "未找到路径"
+  "ja": "パスが見つかりません"
  },
  "path outside chat_uploads": {
-  "zh": "路径不在 chat_uploads 内",
   "ja": "パスが chat_uploads の外にあります"
  },
  "platform %s does not support proactive alerts yet": {
-  "zh": "平台 %s 暂不支持主动告警",
   "ja": "プラットフォーム %s はプロアクティブアラートにまだ対応していません"
  },
  "port must be between 0 and 65535": {
-  "zh": "port 必须在 0-65535 之间",
   "ja": "port は 0〜65535 の範囲で指定してください"
  },
  "pre-build state contradicts previous binary hash": {
-  "zh": "构建前状态与旧二进制哈希矛盾",
   "ja": "ビルド前の状態が以前のバイナリのハッシュと矛盾しています"
  },
  "prepare Pi runtime: %w": {
-  "zh": "准备 Pi 运行时失败: %w",
   "ja": "Pi ランタイムの準備に失敗しました: %w"
  },
  "previous update does not prove the current binary": {
-  "zh": "上一次更新无法证明当前二进制",
   "ja": "以前の更新では現在のバイナリを証明できません"
  },
  "process detail id required": {
-  "ja": "process detail id は必須です",
-  "zh": "process detail id 为必填项"
+  "ja": "process detail id は必須です"
  },
  "process group is closed": {
-  "zh": "进程组已关闭",
   "ja": "プロセスグループは閉じられています"
  },
  "process guardian acknowledgement timed out": {
-  "zh": "进程守护确认超时",
   "ja": "プロセスガーディアンの確認応答がタイムアウトしました"
  },
  "process guardian did not exit": {
-  "zh": "进程守护未退出",
   "ja": "プロセスガーディアンが終了しませんでした"
  },
  "process guardian: %s": {
-  "zh": "进程守护: %s",
   "ja": "プロセスガーディアン: %s"
  },
  "profile id is required": {
-  "zh": "需要配置 ID",
   "ja": "プロファイル ID が必要です"
  },
  "profile not found": {
-  "ja": "Profile が見つかりません",
-  "zh": "未找到 Profile"
+  "ja": "Profile が見つかりません"
  },
  "project access denied": {
-  "ja": "プロジェクトへのアクセス権限がありません",
-  "zh": "无权访问该项目"
+  "ja": "プロジェクトへのアクセス権限がありません"
  },
  "project_id and conversation_id are required": {
-  "zh": "project_id 与 conversation_id 必填",
   "ja": "project_id と conversation_id は必須です"
  },
  "project_id is required": {
-  "zh": "project_id 不能为空",
   "ja": "project_id は必須です"
  },
  "query assistant cognition: %w": {
-  "zh": "查询助手认知数据失败: %w",
   "ja": "アシスタントの認知データの取得に失敗しました: %w"
  },
  "query is required": {
-  "zh": "query 不能为空",
   "ja": "query は必須です"
  },
  "query path is required": {
-  "ja": "query path は必須です",
-  "zh": "query path 为必填项"
+  "ja": "query path は必須です"
  },
  "query turn user message: %w": {
-  "zh": "查询该轮用户消息失败: %w",
   "ja": "ターンのユーザーメッセージの取得に失敗しました: %w"
  },
  "rate limit exceeded, please try again later": {
-  "ja": "リクエストが多すぎます。しばらくしてからもう一度お試しください",
-  "zh": "请求过于频繁，请稍后重试"
+  "ja": "リクエストが多すぎます。しばらくしてからもう一度お試しください"
  },
  "read Pi session revision: %w": {
-  "zh": "读取 Pi 会话版本失败: %w",
   "ja": "Pi セッションのリビジョンの読み取りに失敗しました: %w"
  },
  "read Pi worker handshake: %w": {
-  "zh": "读取 Pi worker 握手失败: %w",
   "ja": "Pi worker のハンドシェイクの読み取りに失敗しました: %w"
  },
  "read Pi worker output: %w": {
-  "zh": "读取 Pi worker 输出失败: %w",
   "ja": "Pi worker の出力の読み取りに失敗しました: %w"
  },
  "read conversation plan tasks: %w": {
-  "zh": "读取对话计划任务失败: %w",
   "ja": "会話のプランタスクの読み取りに失敗しました: %w"
  },
  "read openai models response: %w": {
-  "zh": "读取 openai 模型列表响应失败: %w",
   "ja": "openai モデル一覧レスポンスの読み取りに失敗しました: %w"
  },
  "read openai response timeout (25m)": {
-  "zh": "读取 openai 响应超时 (25m)",
   "ja": "openai レスポンスの読み取りがタイムアウトしました (25m)"
  },
  "read openai response timeout: %w": {
-  "zh": "读取 openai 响应超时: %w",
   "ja": "openai レスポンスの読み取りがタイムアウトしました: %w"
  },
  "read openai response: %w": {
-  "zh": "读取 openai 响应失败: %w",
   "ja": "openai レスポンスの読み取りに失敗しました: %w"
  },
  "read openai stream: %w": {
-  "zh": "读取 openai 流失败: %w",
   "ja": "openai ストリームの読み取りに失敗しました: %w"
  },
  "read skills directory: %w": {
-  "zh": "读取技能目录失败：%w",
   "ja": "スキルディレクトリの読み取りに失敗しました: %w"
  },
  "read typesafe response: %w": {
-  "zh": "读取 typesafe 响应失败：%w",
   "ja": "typesafe レスポンスの読み取りに失敗しました: %w"
  },
  "recover %s: %w": {
-  "zh": "恢复 %s 失败: %w",
   "ja": "%s のリカバリーに失敗しました: %w"
  },
  "register Pi session root: %w": {
-  "zh": "注册 Pi 会话根目录失败: %w",
   "ja": "Pi セッションのルートの登録に失敗しました: %w"
  },
  "relativeDir is not a directory": {
-  "ja": "relativeDir はディレクトリではありません",
-  "zh": "relativeDir 不是目录"
+  "ja": "relativeDir はディレクトリではありません"
  },
  "remote cancellation is unconfirmed": {
-  "zh": "远程取消未确认",
   "ja": "リモートでのキャンセルが確認できていません"
  },
  "remove Pi sessions: %w": {
-  "zh": "移除 Pi 会话失败: %w",
   "ja": "Pi セッションの削除に失敗しました: %w"
  },
  "remove expired diagnostic log %s: %w": {
-  "zh": "删除过期诊断日志 %s 失败: %w",
   "ja": "期限切れの診断ログ %s の削除に失敗しました: %w"
  },
  "required isolation has no delegated cgroup root": {
-  "zh": "必需的隔离没有委派的 cgroup 根目录",
   "ja": "必須の分離に委任された cgroup ルートがありません"
  },
  "required isolation needs security.process_isolation.cgroup_root": {
-  "zh": "必需的隔离需要 security.process_isolation.cgroup_root",
   "ja": "必須の分離には security.process_isolation.cgroup_root が必要です"
  },
  "rerank api_key is required": {
-  "zh": "必须提供 rerank api_key",
   "ja": "rerank の api_key が必要です"
  },
  "rerank config is nil": {
-  "zh": "重排配置为空",
   "ja": "リランク設定が nil です"
  },
  "rerank decode: %w": {
-  "zh": "重排响应解码: %w",
   "ja": "リランクのデコード: %w"
  },
  "rerank http %d: %s": {
-  "zh": "重排 HTTP %d: %s",
   "ja": "リランク HTTP %d: %s"
  },
  "rerank request: %w": {
-  "zh": "重排请求: %w",
   "ja": "リランクリクエスト: %w"
  },
  "resource %s %s belongs to project %s, current conversation is unbound": {
-  "zh": "资源 %s %s 属于项目 %s，当前对话未绑定项目",
   "ja": "リソース %s %s はプロジェクト %s に属していますが、現在の会話はプロジェクトに紐付けられていません"
  },
  "resource %s %s belongs to project %s, current conversation project is %s": {
-  "zh": "资源 %s %s 属于项目 %s，当前对话所属项目为 %s",
   "ja": "リソース %s %s はプロジェクト %s に属していますが、現在の会話のプロジェクトは %s です"
  },
  "resource %s %s is unbound, current conversation project is %s": {
-  "zh": "资源 %s %s 未绑定项目，当前对话所属项目为 %s",
   "ja": "リソース %s %s はプロジェクトに紐付けられていませんが、現在の会話のプロジェクトは %s です"
  },
  "retest conversation conflicts with current project scope": {
-  "zh": "复测对话与当前项目范围冲突",
   "ja": "再テストの会話が現在のプロジェクトスコープと競合しています"
  },
  "retest conversation project no longer matches vulnerability %s": {
-  "zh": "复测对话所属项目与漏洞 %s 不再匹配",
   "ja": "再テストの会話のプロジェクトが脆弱性 %s と一致しなくなりました"
  },
  "retriever is nil": {
-  "zh": "检索器为空",
   "ja": "リトリーバーが nil です"
  },
  "robot identity is not bound": {
-  "zh": "机器人身份未绑定",
   "ja": "ロボットの ID が紐付けられていません"
  },
  "robot platform and external user identity are required": {
-  "zh": "需要机器人平台和外部用户身份",
   "ja": "ロボットのプラットフォームと外部ユーザー ID が必要です"
  },
  "robots.%s.auth.service_user_id must point to an enabled RBAC user": {
-  "zh": "robots.%s.auth.service_user_id 必须指向已启用的 RBAC 用户",
   "ja": "robots.%s.auth.service_user_id は有効な RBAC ユーザーを指す必要があります"
  },
  "robots.wecom.token must be configured when robots.wecom.enabled is true": {
-  "zh": "robots.wecom.enabled 为 true 时必须配置 robots.wecom.token",
   "ja": "robots.wecom.enabled が true の場合は robots.wecom.token を設定する必要があります"
  },
  "role id is required": {
-  "zh": "需要角色 ID",
   "ja": "ロール ID が必要です"
  },
  "role name is required": {
-  "zh": "需要角色名称",
   "ja": "ロール名が必要です"
  },
  "rollback absence contradicts live hash": {
-  "zh": "回滚的不存在记录与当前哈希矛盾",
   "ja": "ロールバックの不在記録がライブハッシュと矛盾しています"
  },
  "rollback binary decision contradicts state": {
-  "zh": "回滚的二进制决策与状态矛盾",
   "ja": "ロールバックのバイナリ判断が状態と矛盾しています"
  },
  "rollback cannot skip binary restoration": {
-  "zh": "回滚不能跳过二进制恢复",
   "ja": "ロールバックでバイナリの復元を省略できません"
  },
  "rollback journal contradicts persisted state": {
-  "zh": "回滚日志与已持久化状态矛盾",
   "ja": "ロールバックのジャーナルが保存済みの状態と矛盾しています"
  },
  "rollback lacks binary evidence": {
-  "zh": "回滚缺少二进制证据",
   "ja": "ロールバックにバイナリの証跡がありません"
  },
  "rollback lacks unchanged binary evidence": {
-  "zh": "回滚缺少二进制未变更的证据",
   "ja": "ロールバックにバイナリ未変更の証跡がありません"
  },
  "rollback live hash contradicts state": {
-  "zh": "回滚的当前哈希与状态矛盾",
   "ja": "ロールバックのライブハッシュが状態と矛盾しています"
  },
  "rollback previous hash contradicts state": {
-  "zh": "回滚的旧哈希与状态矛盾",
   "ja": "ロールバックの以前のハッシュが状態と矛盾しています"
  },
  "run not found": {
-  "ja": "実行が見つかりません",
-  "zh": "未找到运行记录"
+  "ja": "実行が見つかりません"
  },
  "runtime source must not be a symlink: %s": {
-  "zh": "运行时源码不能是符号链接: %s",
   "ja": "ランタイムのソースはシンボリックリンクにできません: %s"
  },
  "scan_overdue_days must be greater than 0": {
-  "zh": "scan_overdue_days 必须大于 0",
   "ja": "scan_overdue_days は 0 より大きい値で指定してください"
  },
  "scan_state must be never or scanned": {
-  "zh": "scan_state 仅支持 never 或 scanned",
   "ja": "scan_state は never または scanned のみ指定できます"
  },
  "scans count must be between 1 and 10000": {
-  "zh": "scans 数量必须在 1-10000 之间",
   "ja": "scans の数は 1～10000 の範囲で指定してください"
  },
  "scope must be project or conversation, current value: %s": {
-  "zh": "scope 仅支持 project 或 conversation，当前值: %s",
   "ja": "scope は project または conversation のみ指定できます。現在の値: %s"
  },
  "sendMessage status %d": {
-  "zh": "sendMessage 状态码 %d",
   "ja": "sendMessage のステータス %d"
  },
  "server: TLS is enabled (tls_enabled / tls_auto_self_sign / certificate paths). Set tls_cert_path and tls_key_path, or set tls_auto_self_sign to true (test environments only)": {
-  "zh": "server: 已启用 TLS（tls_enabled / tls_auto_self_sign / 证书路径），请设置 tls_cert_path 与 tls_key_path，或将 tls_auto_self_sign 设为 true（仅测试环境）",
   "ja": "server: TLS が有効です（tls_enabled / tls_auto_self_sign / 証明書パス）。tls_cert_path と tls_key_path を設定するか、tls_auto_self_sign を true に設定してください（テスト環境のみ）"
  },
  "session id and implant_uuid are required": {
-  "zh": "需要会话 ID 和 implant_uuid",
   "ja": "セッション ID と implant_uuid が必要です"
  },
  "session not found": {
-  "ja": "セッションが見つかりません",
-  "zh": "未找到会话"
+  "ja": "セッションが見つかりません"
  },
  "session_id and remote_path required": {
-  "ja": "session_id と remote_path は必須です",
-  "zh": "session_id 和 remote_path 为必填项"
+  "ja": "session_id と remote_path は必須です"
  },
  "session_id required": {
-  "ja": "session_id は必須です",
-  "zh": "session_id 为必填项"
+  "ja": "session_id は必須です"
  },
  "session_key and verify_code are required": {
-  "zh": "需要 session_key 与 verify_code",
   "ja": "session_key と verify_code が必要です"
  },
  "session_key is missing": {
-  "zh": "缺少 session_key",
   "ja": "session_key がありません"
  },
  "set %s: %w": {
-  "zh": "设置 %s 失败: %w",
   "ja": "%s の設定に失敗しました: %w"
  },
  "shell inactivity timeout (%ds)": {
-  "zh": "Shell 无活动超时（%d 秒）",
   "ja": "シェルの無操作タイムアウト（%d 秒）"
  },
  "skill %q: %w": {
-  "zh": "技能 %q：%w",
   "ja": "スキル %q: %w"
  },
  "skill does not exist: %v": {
-  "zh": "skill不存在: %v",
   "ja": "スキルが見つかりません: %v"
  },
  "skill manifest is nil": {
-  "zh": "技能 manifest 为 nil",
   "ja": "スキル manifest が nil です"
  },
  "skill package exceeds %d files": {
-  "zh": "技能包文件数超过 %d",
   "ja": "スキルパッケージのファイル数が %d を超えています"
  },
  "skills directory required for task board": {
-  "zh": "任务看板需要技能目录",
   "ja": "タスクボードにはスキルディレクトリが必要です"
  },
  "slack is not configured": {
-  "zh": "未配置 Slack",
   "ja": "Slack が設定されていません"
  },
  "sleep_seconds must be >= 1": {
-  "ja": "sleep_seconds は 1 以上である必要があります",
-  "zh": "sleep_seconds 必须 >= 1"
+  "ja": "sleep_seconds は 1 以上である必要があります"
  },
  "sort must be severity, latest or oldest": {
-  "ja": "sort は severity、latest、oldest のいずれかである必要があります",
-  "zh": "sort 必须是 severity、latest 或 oldest"
+  "ja": "sort は severity、latest、oldest のいずれかである必要があります"
  },
  "sort_by is not supported": {
-  "zh": "sort_by 不受支持",
   "ja": "sort_by はサポートされていません"
  },
  "sort_order must be asc or desc": {
-  "zh": "sort_order 仅支持 asc 或 desc",
   "ja": "sort_order は asc または desc のみ指定できます"
  },
  "source and target are required": {
-  "zh": "source 与 target 必填",
   "ja": "source と target は必須です"
  },
  "source_fact_key is required": {
-  "zh": "source_fact_key 不能为空",
   "ja": "source_fact_key は必須です"
  },
  "sqlite indexer: begin tx: %w": {
-  "zh": "sqlite 索引器: 开始事务失败: %w",
   "ja": "sqlite インデクサー: トランザクションの開始に失敗しました: %w"
  },
  "sqlite indexer: commit: %w": {
-  "zh": "sqlite 索引器: 提交失败: %w",
   "ja": "sqlite インデクサー: コミットに失敗しました: %w"
  },
  "sqlite indexer: doc %d: %w": {
-  "zh": "sqlite 索引器: 文档 %d: %w",
   "ja": "sqlite インデクサー: ドキュメント %d: %w"
  },
  "sqlite indexer: embed batch %d-%d: %w": {
-  "zh": "sqlite 索引器: 嵌入批次 %d-%d: %w",
   "ja": "sqlite インデクサー: 埋め込みバッチ %d-%d: %w"
  },
  "sqlite indexer: embed count mismatch: got %d want %d": {
-  "zh": "sqlite 索引器: 嵌入数量不匹配: 实际 %d，期望 %d",
   "ja": "sqlite インデクサー: 埋め込み数が一致しません: 実際 %d、期待 %d"
  },
  "sqlite indexer: embedding is required": {
-  "zh": "sqlite 索引器: 必须提供嵌入器",
   "ja": "sqlite インデクサー: エンベッダーが必要です"
  },
  "sqlite indexer: inconsistent embedding dim at doc %d: got %d want %d": {
-  "zh": "sqlite 索引器: 文档 %d 的嵌入维度不一致: 实际 %d，期望 %d",
   "ja": "sqlite インデクサー: ドキュメント %d の埋め込み次元が一致しません: 実際 %d、期待 %d"
  },
  "sqlite indexer: insert chunk %d: %w": {
-  "zh": "sqlite 索引器: 写入分块 %d 失败: %w",
   "ja": "sqlite インデクサー: チャンク %d の挿入に失敗しました: %w"
  },
  "sqlite indexer: marshal embedding: %w": {
-  "zh": "sqlite 索引器: 序列化嵌入失败: %w",
   "ja": "sqlite インデクサー: 埋め込みのシリアライズに失敗しました: %w"
  },
  "sqlite indexer: nil document at %d": {
-  "zh": "sqlite 索引器: 位置 %d 的文档为空",
   "ja": "sqlite インデクサー: 位置 %d のドキュメントが nil です"
  },
  "sse mode requires url to be configured": {
-  "zh": "sse 模式需要配置 url",
   "ja": "sse モードでは url の設定が必要です"
  },
  "start Pi runtime (requires Node.js >=22.19): %w": {
-  "zh": "启动 Pi 运行时失败（需要 Node.js >=22.19）: %w",
   "ja": "Pi ランタイムの起動に失敗しました（Node.js >=22.19 が必要です）: %w"
  },
  "start Pi worker: %w": {
-  "zh": "启动 Pi worker 失败: %w",
   "ja": "Pi worker の起動に失敗しました: %w"
  },
  "stat: %w": {
-  "zh": "stat：%w",
   "ja": "stat: %w"
  },
  "state binary commit is unrelated": {
-  "zh": "状态中的二进制提交无关",
   "ja": "状態のバイナリコミットが無関係です"
  },
  "state contradicts binary absence": {
-  "zh": "状态与二进制不存在的记录矛盾",
   "ja": "状態がバイナリの不在と矛盾しています"
  },
  "state must be valid json": {
-  "ja": "state は有効な JSON である必要があります",
-  "zh": "state 必须是有效的 JSON"
+  "ja": "state は有効な JSON である必要があります"
  },
  "state payload too large (max 2MB)": {
-  "ja": "state のデータが大きすぎます（最大 2MB）",
-  "zh": "state 数据过大（最大 2MB）"
+  "ja": "state のデータが大きすぎます（最大 2MB）"
  },
  "status must be active or inactive": {
-  "zh": "status 仅支持 active 或 inactive",
   "ja": "status は active または inactive のみ指定できます"
  },
  "stdio mode requires command to be configured": {
-  "zh": "stdio 模式需要配置 command",
   "ja": "stdio モードでは command の設定が必要です"
  },
  "stdio mode requires the command and args parameters": {
-  "zh": "stdio模式需要提供command和args参数",
   "ja": "stdio モードでは command と args パラメーターが必要です"
  },
  "stopped after 10 redirects": {
-  "zh": "重定向 10 次后已停止",
   "ja": "10 回のリダイレクト後に停止しました"
  },
  "sub-agent role unavailable: %s": {
-  "zh": "子代理角色不可用: %s",
   "ja": "サブエージェントのロールが利用できません: %s"
  },
  "subject is required": {
-  "zh": "subject 必填",
   "ja": "subject は必須です"
  },
  "system role cannot be deleted": {
-  "zh": "系统角色不能删除",
   "ja": "システムロールは削除できません"
  },
  "tags: %w": {
-  "zh": "tags: %w",
   "ja": "tags: %w"
  },
  "target_fact_key is required": {
-  "zh": "target_fact_key 不能为空",
   "ja": "target_fact_key は必須です"
  },
  "task %s: %w (process groups %v)": {
-  "zh": "任务 %s：%w（进程组 %v）",
   "ja": "タスク %s: %w（プロセスグループ %v）"
  },
  "task %s: process cleanup timed out (process groups %v)": {
-  "zh": "任务 %s：进程清理超时（进程组 %v）",
   "ja": "タスク %s: プロセスのクリーンアップがタイムアウトしました（プロセスグループ %v）"
  },
  "task does not exist": {
-  "zh": "任务不存在",
   "ja": "タスクが存在しません"
  },
  "task event bus unavailable": {
-  "ja": "タスクイベントバスを利用できません",
-  "zh": "任务事件总线不可用"
+  "ja": "タスクイベントバスを利用できません"
  },
  "task id is required": {
-  "zh": "需要任务 ID",
   "ja": "タスク ID が必要です"
  },
  "task is ending; new processes are not allowed": {
-  "zh": "任务正在结束，不允许启动新进程",
   "ja": "タスクを終了中のため、新しいプロセスは許可されません"
  },
  "task is ending; new tool executions are not allowed": {
-  "zh": "任务正在结束，不允许新的工具执行",
   "ja": "タスクを終了中のため、新しいツール実行は許可されません"
  },
  "task manager is shutting down": {
-  "zh": "任务管理器正在关闭",
   "ja": "タスクマネージャーはシャットダウン中です"
  },
  "task not found": {
-  "ja": "タスクが見つかりません",
-  "zh": "未找到任务"
+  "ja": "タスクが見つかりません"
  },
  "task worker limit reached (%d)": {
-  "zh": "已达到任务工作线程上限（%d）",
   "ja": "タスクのワーカー数が上限（%d）に達しました"
  },
  "telegram is not configured": {
-  "zh": "未配置 Telegram",
   "ja": "Telegram が設定されていません"
  },
  "text is required": {
-  "zh": "text 不能为空",
   "ja": "text は必須です"
  },
  "timeout waiting for task completion": {
-  "ja": "タスクの完了待ちがタイムアウトしました",
-  "zh": "等待任务完成超时"
+  "ja": "タスクの完了待ちがタイムアウトしました"
  },
  "todos must be an array": {
-  "zh": "todos 必须为数组",
   "ja": "todos は配列である必要があります"
  },
  "token count: %w": {
-  "zh": "统计 token 数: %w",
   "ja": "トークン数のカウント: %w"
  },
  "tool authorization denied: %w": {
-  "zh": "工具授权被拒绝: %w",
   "ja": "ツールの認可が拒否されました: %w"
  },
  "tool authorization policy is not configured": {
-  "zh": "工具授权策略未配置",
   "ja": "ツールの認可ポリシーが設定されていません"
  },
  "tool execution panic: %v": {
-  "zh": "工具执行发生 panic: %v",
   "ja": "ツール実行で panic が発生しました: %v"
  },
  "tool execution wait timeout": {
-  "zh": "工具执行等待超时",
   "ja": "ツール実行の待機がタイムアウトしました"
  },
  "tool guard: at most %d rules are allowed": {
-  "zh": "工具防护：最多允许 %d 条规则",
   "ja": "ツールガード: ルールは最大 %d 件までです"
  },
  "tool not allowed: %s": {
-  "zh": "不允许使用工具: %s",
   "ja": "ツールは許可されていません: %s"
  },
  "tool workers still running %v: %w": {
-  "zh": "工具工作线程仍在运行 %v：%w",
   "ja": "ツールワーカーがまだ実行中です %v: %w"
  },
  "tool_guard must explicitly provide enabled and rules; to clear the rules, provide an empty array": {
-  "zh": "tool_guard 必须明确提供 enabled 和 rules；清空规则请提供空数组",
   "ja": "tool_guard には enabled と rules を明示的に指定する必要があります。ルールを空にするには空の配列を指定してください"
  },
  "trailing recovery data: %v": {
-  "zh": "恢复数据末尾有多余内容：%v",
   "ja": "リカバリデータの末尾に余分なデータがあります: %v"
  },
  "typesafe api key is empty": {
-  "zh": "typesafe API 密钥为空",
   "ja": "typesafe の API キーが空です"
  },
  "typesafe client is not initialized": {
-  "zh": "typesafe 客户端未初始化",
   "ja": "typesafe クライアントが初期化されていません"
  },
  "typesafe questions are empty": {
-  "zh": "typesafe 问题为空",
   "ja": "typesafe の質問が空です"
  },
  "unexpected JSON value": {
-  "zh": "意外的 JSON 值",
   "ja": "予期しない JSON 値です"
  },
  "unexpected Pi record: %s": {
-  "zh": "意外的 Pi 记录: %s",
   "ja": "予期しない Pi レコード: %s"
  },
  "unexpected embedding count: %d": {
-  "zh": "意外的嵌入数量: %d",
   "ja": "想定外の埋め込み数です: %d"
  },
  "unfiltered C2 event list requires global scope": {
-  "zh": "未过滤的 C2 事件列表需要全局范围",
   "ja": "フィルタなしの C2 イベント一覧にはグローバルスコープが必要です"
  },
  "unknown action: %s": {
-  "zh": "未知操作: %s",
   "ja": "不明な操作です: %s"
  },
  "unknown command": {
-  "zh": "未知命令",
   "ja": "不明なコマンドです"
  },
  "unknown fallback AI channel: %s": {
-  "zh": "未知的备用 AI 渠道: %s",
   "ja": "不明なフォールバック AI チャネルです: %s"
  },
  "unknown guardian command": {
-  "zh": "未知的守护进程命令",
   "ja": "不明なガーディアンコマンドです"
  },
  "unknown local tool": {
-  "zh": "未知的本地工具",
   "ja": "不明なローカルツールです"
  },
  "unknown or duplicate recovery field %q": {
-  "zh": "未知或重复的恢复字段 %q",
   "ja": "不明または重複したリカバリフィールド %q"
  },
  "unknown permission: %s": {
-  "zh": "未知权限: %s",
   "ja": "不明な権限です: %s"
  },
  "unknown skill: %s": {
-  "zh": "未知技能: %s",
   "ja": "不明なスキル: %s"
  },
  "unknown specialist or empty task": {
-  "zh": "未知的专家或任务为空",
   "ja": "不明なスペシャリスト、またはタスクが空です"
  },
  "unmarshal openai response: %w": {
-  "zh": "解析 openai 响应失败: %w",
   "ja": "openai レスポンスの解析に失敗しました: %w"
  },
  "unsupported agent runtime %q: this version only supports pi": {
-  "zh": "不支持的 Agent 运行时 %q：当前版本仅支持 pi",
   "ja": "サポートされていないエージェントランタイム %q です。このバージョンでは pi のみサポートされています"
  },
  "unsupported guardian": {
-  "zh": "不支持的守护进程",
   "ja": "サポートされていないガーディアンです"
  },
  "unsupported image extension %q": {
-  "zh": "不支持的图片扩展名 %q",
   "ja": "サポートされていない画像拡張子 %q"
  },
  "unsupported recovery type %s": {
-  "zh": "不支持的恢复类型 %s",
   "ja": "サポートされていないリカバリ型 %s"
  },
  "unsupported task_type: %s": {
-  "zh": "不支持的 task_type: %s",
   "ja": "サポートされていない task_type です: %s"
  },
  "update: install root is required": {
-  "zh": "更新：需要安装根目录",
   "ja": "更新: インストールルートが必要です"
  },
  "url and action are required": {
-  "ja": "url と action は必須です",
-  "zh": "url 和 action 为必填项"
+  "ja": "url と action は必須です"
  },
  "url and command are required": {
-  "ja": "url と command は必須です",
-  "zh": "url 和 command 为必填项"
+  "ja": "url と command は必須です"
  },
  "url is required": {
-  "ja": "url は必須です",
-  "zh": "url 为必填项"
+  "ja": "url は必須です"
  },
  "url is required in HTTP mode": {
-  "zh": "HTTP模式需要 url",
   "ja": "HTTP モードでは url が必須です"
  },
  "url is required in SSE mode": {
-  "zh": "SSE模式需要 url",
   "ja": "SSE モードでは url が必須です"
  },
  "use a dedicated delegated cgroup, not the hierarchy root or a symlink": {
-  "zh": "请使用专用的委派 cgroup，而不是层级根目录或符号链接",
   "ja": "階層ルートやシンボリックリンクではなく、専用の委任 cgroup を使用してください"
  },
  "user id is required": {
-  "zh": "需要用户 ID",
   "ja": "ユーザー ID が必要です"
  },
  "user_id and password_hash are required": {
-  "zh": "需要 user_id 和 password_hash",
   "ja": "user_id と password_hash が必要です"
  },
  "user_id and resource_ids are required": {
-  "zh": "需要 user_id 和 resource_ids",
   "ja": "user_id と resource_ids が必要です"
  },
  "user_id is required": {
-  "zh": "需要 user_id",
   "ja": "user_id が必要です"
  },
  "user_id, resource_type and resource_ids are required": {
-  "zh": "需要 user_id、resource_type 和 resource_ids",
   "ja": "user_id、resource_type、resource_ids が必要です"
  },
  "username and password are required": {
-  "zh": "需要用户名和密码",
   "ja": "ユーザー名とパスワードが必要です"
  },
  "valid conversation ID required for a task board": {
-  "zh": "任务看板需要有效的对话 ID",
   "ja": "タスクボードには有効な会話 ID が必要です"
  },
  "vision API key is empty (set vision.api_key or openai.api_key)": {
-  "zh": "视觉 API 密钥为空（请设置 vision.api_key 或 openai.api_key）",
   "ja": "ビジョン API キーが空です（vision.api_key または openai.api_key を設定してください）"
  },
  "vision model is empty": {
-  "zh": "视觉模型为空",
   "ja": "ビジョンモデルが空です"
  },
  "vision model returned empty content": {
-  "zh": "视觉模型返回内容为空",
   "ja": "ビジョンモデルが空のコンテンツを返しました"
  },
  "webshell not found": {
-  "zh": "未找到 WebShell",
   "ja": "WebShell が見つかりません"
  },
  "wecom proactive API is not configured": {
-  "zh": "未配置企业微信主动推送 API",
   "ja": "企業微信のプロアクティブ API が設定されていません"
  },
  "wecom send: %s": {
-  "zh": "企业微信发送：%s",
   "ja": "企業微信送信: %s"
  },
  "wecom token: %s": {
-  "zh": "企业微信 token：%s",
   "ja": "企業微信トークン: %s"
  },
  "where clause is required": {
-  "zh": "需要 where 条件",
   "ja": "where 句が必要です"
  },
  "workflow changed since the checkpoint; refusing to replay a different graph": {
-  "zh": "工作流自检查点以来已更改；拒绝重放不同的图",
   "ja": "チェックポイント以降にワークフローが変更されたため、異なるグラフの再実行は拒否されました"
  },
  "workflow checkpoint is missing": {
-  "zh": "缺少工作流检查点",
   "ja": "ワークフローのチェックポイントがありません"
  },
  "workflow contains a cycle": {
-  "zh": "工作流包含环",
   "ja": "ワークフローに循環があります"
  },
  "workflow db is nil": {
-  "zh": "工作流数据库为 nil",
   "ja": "ワークフロー DB が nil です"
  },
  "workflow graph_json is required": {
-  "zh": "工作流 graph_json 为必填项",
   "ja": "ワークフローの graph_json は必須です"
  },
  "workflow id, name and version are required": {
-  "zh": "工作流 id、name 和 version 为必填项",
   "ja": "ワークフローの id、name、version は必須です"
  },
  "workflow package inspection is incomplete": {
-  "zh": "工作流包检查不完整",
   "ja": "ワークフローパッケージの検査が完了していません"
  },
  "workflow runtime missing in context": {
-  "zh": "上下文中缺少工作流运行时",
   "ja": "コンテキストにワークフローランタイムがありません"
  },
  "workspace abs: %w": {
-  "zh": "工作区取绝对路径失败: %w",
   "ja": "ワークスペースの絶対パス取得に失敗しました: %w"
  },
  "workspace mkdir: %w": {
-  "zh": "创建工作区目录失败: %w",
   "ja": "ワークスペースディレクトリの作成に失敗しました: %w"
  },
  "write %s: %w": {
-  "zh": "写入 %s 失败：%w",
   "ja": "%s の書き込みに失敗しました: %w"
  },
  "write tool output trunc file: %w": {
-  "zh": "写入工具输出截断文件失败：%w",
   "ja": "ツール出力の切り詰めファイルの書き込みに失敗しました: %w"
  },
  "⚠️ A task is already running in this conversation. Wait for it to finish or click \"Stop task\" and try again.": {
-  "zh": "⚠️ 当前会话已有任务正在执行中，请等待当前任务完成或点击「停止任务」后再尝试。",
   "ja": "⚠️ この会話ではすでにタスクが実行中です。完了を待つか、「タスクを停止」をクリックしてから再度お試しください。"
  },
  "❌ Failed to start task: %v": {
-  "zh": "❌ 无法启动任务: %v",
   "ja": "❌ タスクを開始できません: %v"
+ },
+ "The model request will be retried in %s (%d/%d). %s.": {
+  "ja": "モデルリクエストは %s 後に再試行されます（%d/%d）。%s。"
+ },
+ "Timed out waiting for model service response headers": {
+  "ja": "モデルサービスの応答ヘッダー待機がタイムアウトしました"
+ },
+ "No new data received on the model response stream for a long time": {
+  "ja": "モデルの応答ストリームに長時間新しいデータがありません"
+ },
+ "Model response stream closed early without receiving an end marker": {
+  "ja": "終了マーカーを受信しないままモデルの応答ストリームが閉じられました"
  }
 }

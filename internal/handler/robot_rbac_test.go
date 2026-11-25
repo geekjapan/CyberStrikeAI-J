@@ -47,7 +47,7 @@ func TestRobotUsersAreResourceIsolated(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := h.HandleMessage("wecom", "alice", "身份"); !strings.Contains(got, "Robot Alice") || !strings.Contains(got, alice.ID) || !strings.Contains(got, "user_binding") {
+	if got := h.HandleMessage("wecom", "alice", "whoami"); !strings.Contains(got, "Robot Alice") || !strings.Contains(got, alice.ID) || !strings.Contains(got, "user_binding") {
 		t.Fatalf("bound identity output is incomplete: %s", got)
 	}
 
@@ -110,13 +110,13 @@ func TestRobotServiceAccountRequiresExactSenderAllowlist(t *testing.T) {
 		AllowedExternalUsers: []string{"t:tenant|u:allowed"},
 	}
 	h := NewRobotHandler(cfg, db, nil, zap.NewNop())
-	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "列表"); strings.Contains(got, "allowlist") || strings.Contains(got, "not yet bound") {
+	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "list"); strings.Contains(got, "allowlist") || strings.Contains(got, "not yet bound") {
 		t.Fatalf("allowed service account sender was denied: %s", got)
 	}
-	if got := h.HandleMessage("lark", "t:tenant|u:denied", "列表"); !strings.Contains(got, "allowlist") {
+	if got := h.HandleMessage("lark", "t:tenant|u:denied", "list"); !strings.Contains(got, "allowlist") {
 		t.Fatalf("non-allowlisted sender was not denied: %s", got)
 	}
-	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "绑定 ABCD-1234"); !strings.Contains(got, "service account mode") {
+	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "bind ABCD-1234"); !strings.Contains(got, "service account mode") {
 		t.Fatalf("service-account robot accepted user binding: %s", got)
 	}
 	if got := h.HandleMessage("lark", "t:tenant|u:allowed", "whoami"); !strings.Contains(got, "Robot Service") || !strings.Contains(got, serviceUser.ID) || !strings.Contains(got, "service_account") {
@@ -132,7 +132,7 @@ func TestRobotServiceAccountRequiresExactSenderAllowlist(t *testing.T) {
 		AllowedExternalUsers: []string{"t:tenant|u:owner"},
 	}
 	adminHandler := NewRobotHandler(adminCfg, db, nil, zap.NewNop())
-	if got := adminHandler.HandleMessage("lark", "t:tenant|u:owner", "身份"); !strings.Contains(got, "admin") || !strings.Contains(got, "Auth status: authorized") {
+	if got := adminHandler.HandleMessage("lark", "t:tenant|u:owner", "whoami"); !strings.Contains(got, "admin") || !strings.Contains(got, "Auth status: authorized") {
 		t.Fatalf("allowlisted admin service account was denied: %s", got)
 	}
 }

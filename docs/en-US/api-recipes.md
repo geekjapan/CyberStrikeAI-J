@@ -1,6 +1,6 @@
 # API Recipes
 
-[中文](../zh-CN/api-recipes.md) | [日本語](../ja-JP/api-recipes.md)
+[日本語](../ja-JP/api-recipes.md)
 
 Common API workflows for scripts and plugins. Use `/api-docs` and `/api/openapi/spec` for complete schemas.
 
@@ -9,7 +9,7 @@ Common API workflows for scripts and plugins. Use `/api-docs` and `/api/openapi/
 ```bash
 curl -k https://127.0.0.1:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"password":"<password>"}'
+  -d '{"username":"<username>","password":"<password>"}'
 ```
 
 Use:
@@ -199,4 +199,4 @@ Notes:
 - Each asset requires at least one of `host`, `ip`, or `domain`.
 - One request supports up to 100,000 assets. For large payloads, use a file with `--data-binary` instead of embedding JSON in the command line.
 - An existing “target + port + protocol” is merged and counted in `updated`.
-- To work from XLSX/CSV, use **Asset Inventory → Bulk Import** in the Web UI. The API itself accepts JSON rather than multipart files.
+- To work from a CSV or JSON file, use **Asset Inventory → Bulk Import** in the Web UI. The API itself accepts JSON rather than multipart files.

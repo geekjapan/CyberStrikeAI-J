@@ -1,6 +1,6 @@
 # Developer Guide
 
-[中文](../zh-CN/developer-guide.md) | [日本語](../ja-JP/developer-guide.md)
+[日本語](../ja-JP/developer-guide.md)
 
 This guide is for contributors extending CyberStrikeAI. The project is a Go single-service application with a static frontend, SQLite persistence, Agent/MCP orchestration, and optional high-risk security subsystems.
 
@@ -221,7 +221,7 @@ Built-in tools should define clear input schemas, handle timeouts and errors, an
 
 ## Frontend Changes
 
-Reuse the HTTP client in `src/lib/http.js`, the shared UI components and the translation hook. Update both `web/static/i18n/zh-CN.json` and `web/static/i18n/en-US.json` for new visible text.
+Reuse the HTTP client in `src/lib/http.js`, the shared UI components and the translation hook. Update both `web/static/i18n/en-US.json` and `web/static/i18n/ja-JP.json` for new visible text.
 
 Avoid putting secrets or provider keys in frontend code.
 

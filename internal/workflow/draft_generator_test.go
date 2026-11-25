@@ -13,7 +13,7 @@ import (
 
 func TestGenerateDraftFromNaturalLanguageHighRiskAddsHITLAndValidGraph(t *testing.T) {
 	result, err := GenerateDraftFromNaturalLanguage(context.Background(), DraftRequest{
-		Prompt: "对目标资产做端口扫描，如果发现高危端口就执行加固脚本，最后输出报告",
+		Prompt: "Scan the target assets for open ports, run a hardening script if a high-risk port is found, and finally output a report",
 		Options: DraftOptions{
 			IncludeObjective: true,
 			AllowSchedule:    false,
@@ -50,7 +50,7 @@ func TestGenerateDraftFromNaturalLanguageHighRiskAddsHITLAndValidGraph(t *testin
 
 func TestGenerateDraftAllowHighRiskStillLabelsConditionBranch(t *testing.T) {
 	result, err := GenerateDraftFromNaturalLanguage(context.Background(), DraftRequest{
-		Prompt: "如果漏洞扫描发现高危漏洞，允许生成执行修复脚本的草稿并输出报告",
+		Prompt: "If the vulnerability scan finds a high-risk vulnerability, allow generating a draft that runs a fix script and outputs a report",
 		Options: DraftOptions{
 			AllowHighRisk: true,
 		},
@@ -109,7 +109,7 @@ func TestGenerateDraftFromLLMUsesOpenAICompatibleEndpoint(t *testing.T) {
 	defer srv.Close()
 
 	result, err := GenerateDraftFromLLM(context.Background(), DraftRequest{
-		Prompt:         "对目标做端口扫描并输出报告",
+		Prompt:         "Run a port scan on the target and output a report",
 		AvailableTools: []DraftTool{{Key: "nmap", Name: "nmap", Enabled: true}},
 	}, config.OpenAIConfig{APIKey: "test-key", BaseURL: srv.URL, Model: "test-model"}, nil)
 	if err != nil {
@@ -136,7 +136,7 @@ func TestGenerateDraftFromLLMReturnsErrorOnMalformedJSON(t *testing.T) {
 	defer srv.Close()
 
 	_, err := GenerateDraftFromLLM(context.Background(), DraftRequest{
-		Prompt: "随便生成一个工作流，要求所有节点都用到输出变量",
+		Prompt: "Generate any workflow and make every node use an output variable",
 		Options: DraftOptions{
 			IncludeObjective: true,
 		},
@@ -150,7 +150,7 @@ func TestGenerateDraftFromLLMReturnsErrorOnMalformedJSON(t *testing.T) {
 }
 
 func TestNormalizeLLMDraftRepairsMissingRequiredConfig(t *testing.T) {
-	result := normalizeLLMDraft("随便生成一个工作流", DraftRequest{}, llmDraftEnvelope{
+	result := normalizeLLMDraft("Generate any workflow", DraftRequest{}, llmDraftEnvelope{
 		Graph: graphDef{
 			Nodes: []graphNode{
 				{ID: "start-1", Type: "start", Label: "Start", Config: map[string]any{}},
@@ -182,7 +182,7 @@ func TestNormalizeLLMDraftRepairsMissingRequiredConfig(t *testing.T) {
 }
 
 func TestNormalizeLLMDraftRepairsConditionBranches(t *testing.T) {
-	result := normalizeLLMDraft("如果发现异常则输出详情，否则输出正常", DraftRequest{}, llmDraftEnvelope{
+	result := normalizeLLMDraft("If an anomaly is found, output the details; otherwise output normal", DraftRequest{}, llmDraftEnvelope{
 		Graph: graphDef{
 			Nodes: []graphNode{
 				{ID: "start-1", Type: "start", Label: "Start", Config: map[string]any{}},

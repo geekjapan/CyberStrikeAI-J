@@ -1,6 +1,6 @@
 # トラブルシューティングガイド
 
-[English](../en-US/troubleshooting.md) | [中文](../zh-CN/troubleshooting.md)
+[English](../en-US/troubleshooting.md)
 
 本書では、よくある問題を症状別に挙げています。まずサービスログ、ブラウザーコンソール、および `/api-docs` での API レスポンスを確認してください。
 

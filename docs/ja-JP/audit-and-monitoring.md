@@ -1,6 +1,6 @@
 # 監査と監視
 
-[English](../en-US/audit-and-monitoring.md) | [中文](../zh-CN/audit-and-monitoring.md)
+[English](../en-US/audit-and-monitoring.md)
 
 CyberStrikeAI には、よく使われる 2 種類の可観測性データがあります。プラットフォーム操作の監査と、ツール実行の監視です。両者は用途が異なるため、同時に有効にすることを推奨します。
 

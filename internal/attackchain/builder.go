@@ -135,7 +135,7 @@ func (b *Builder) BuildChainFromConversation(ctx context.Context, conversationID
 	for i := len(messages) - 1; i >= 0; i-- {
 		if strings.EqualFold(messages[i].Role, "assistant") {
 			content := strings.ToLower(messages[i].Content)
-			if strings.Contains(content, "取消") || strings.Contains(content, "cancelled") {
+			if strings.Contains(content, "canceled") || strings.Contains(content, "cancelled") || strings.Contains(content, "取消") { // 取消: messages stored by earlier versions
 				taskCancelled = true
 			}
 			break

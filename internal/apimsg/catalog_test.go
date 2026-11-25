@@ -229,14 +229,14 @@ func TestCatalogCoversResponseMessages(t *testing.T) {
 			// language test, not here.
 			continue
 		}
-		if covered(s.Text, "zh") && covered(s.Text, "ja") {
+		if covered(s.Text, "ja") {
 			continue
 		}
 		missing = append(missing, s)
 		if s.Response && translatable(s.Text) {
 			required++
 			if required <= 15 {
-				t.Errorf("no zh/ja translation in catalog.json for %q (%s)", s.Text, s.Where)
+				t.Errorf("no ja translation in catalog.json for %q (%s)", s.Text, s.Where)
 			}
 		}
 	}
@@ -289,7 +289,7 @@ func TestCatalogTranslationsKeepArguments(t *testing.T) {
 			t.Errorf("%q: catalog keys are the English source messages", src)
 		}
 		for lang, text := range e {
-			if lang != "zh" && lang != "ja" {
+			if lang != "ja" {
 				t.Errorf("%q: unknown language %q", src, lang)
 			}
 			if verbs(text) != verbs(src) {
@@ -301,24 +301,22 @@ func TestCatalogTranslationsKeepArguments(t *testing.T) {
 
 func fixtures() {
 	loadOnce.Do(load)
-	exact["Incorrect password"] = entry{"zh": "密码错误", "ja": "パスワードが正しくありません"}
+	exact["Incorrect password"] = entry{"ja": "パスワードが正しくありません"}
 	exact["file not found"] = entry{"ja": "ファイルが見つかりません"}
 	re, lit := compile("Failed to save %s: %v")
-	patterns = append(patterns, pattern{re: re, entry: entry{"zh": "保存 %s 失败: %v", "ja": "%[2]v のため %[1]s を保存できません"}, literal: lit})
+	patterns = append(patterns, pattern{re: re, entry: entry{"ja": "%[2]v のため %[1]s を保存できません"}, literal: lit})
 	re, lit = compile("Read failed: %w")
-	patterns = append(patterns, pattern{re: re, entry: entry{"zh": "读取失败: %w"}, literal: lit})
+	patterns = append(patterns, pattern{re: re, entry: entry{}, literal: lit}) // a frame with no translation
 }
 
 func TestTranslate(t *testing.T) {
 	fixtures()
 	for _, tc := range []struct{ lang, in, want string }{
 		{"en", "Incorrect password", "Incorrect password"},
-		{"zh", "Incorrect password", "密码错误"},
 		{"ja", "Incorrect password", "パスワードが正しくありません"},
-		{"zh", "file not found", "file not found"},
+		{"zh", "Incorrect password", "Incorrect password"},
 		{"ja", "file not found", "ファイルが見つかりません"},
 		{"ja", "not in the catalog", "not in the catalog"},
-		{"zh", "Failed to save config.yaml: Incorrect password", "保存 config.yaml 失败: 密码错误"},
 		{"ja", "Failed to save a: file not found", "ファイルが見つかりません のため a を保存できません"},
 		{"ja", "Read failed: file not found", "Read failed: ファイルが見つかりません"},
 		{"ja", "", ""},
@@ -369,7 +367,7 @@ func TestMiddlewareOnlyRewritesJSONErrors(t *testing.T) {
 	}{
 		{"/err", "", 401, `{"code":7,"error":"Incorrect password"}`},
 		{"/err", "ja-JP", 401, `{"code":7,"error":"パスワードが正しくありません"}`},
-		{"/err", "zh-CN", 401, `{"code":7,"error":"密码错误"}`},
+		{"/err", "zh-CN", 401, `{"code":7,"error":"Incorrect password"}`},
 		{"/ok", "ja", 200, `{"error":"Incorrect password"}`},
 		{"/text", "ja", 400, "Incorrect password"},
 		{"/stream", "ja", 200, "data: Incorrect password\n\n"},
@@ -390,7 +388,7 @@ func TestTranslateSSE(t *testing.T) {
 	fixtures()
 	for _, tc := range []struct{ lang, in, want string }{
 		{"ja", `data: {"type":"error","message":"Incorrect password","data":{"id":1}}` + "\n\n", `data: {"data":{"id":1},"message":"パスワードが正しくありません","type":"error"}` + "\n\n"},
-		{"zh", `data: {"type":"progress","message":"Incorrect password"}` + "\n\n", `data: {"message":"密码错误","type":"progress"}` + "\n\n"},
+		{"ja", `data: {"type":"progress","message":"Incorrect password"}` + "\n\n", `data: {"message":"パスワードが正しくありません","type":"progress"}` + "\n\n"},
 		{"en", `data: {"type":"error","message":"Incorrect password"}` + "\n\n", `data: {"type":"error","message":"Incorrect password"}` + "\n\n"},
 		// model output is never rewritten, even when it equals a catalog message
 		{"ja", `data: {"type":"response","message":"Incorrect password"}` + "\n\n", `data: {"type":"response","message":"Incorrect password"}` + "\n\n"},

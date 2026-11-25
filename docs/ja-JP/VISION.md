@@ -1,6 +1,6 @@
 # ビジョン分析（analyze_image）
 
-[English](../en-US/VISION.md) | [中文](../zh-CN/VISION.md)
+[English](../en-US/VISION.md)
 
 ## 概要
 

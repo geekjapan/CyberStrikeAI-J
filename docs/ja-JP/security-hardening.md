@@ -1,6 +1,6 @@
 # セキュリティ強化ガイド
 
-[English](../en-US/security-hardening.md) | [中文](../zh-CN/security-hardening.md)
+[English](../en-US/security-hardening.md)
 
 本書では、CyberStrikeAI の本番稼働前および継続運用中のセキュリティ強化チェックリストを示します。
 

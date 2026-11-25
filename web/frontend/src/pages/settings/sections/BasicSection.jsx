@@ -79,7 +79,7 @@ export default function BasicSection() {
             { label: t('settings.defaultChannel', null, 'Default AI channel'), value: defaultId ? modelChannelName(defaultId, channels[defaultId]) : '—' },
             {
                 label: t('settingsBasic.aiChannelSavedList', null, 'Saved channels'),
-                value: `${formatNumber(channelNames.length)}${channelNames.length ? `（${channelNames.slice(0, 4).join('、')}）` : ''}`
+                value: `${formatNumber(channelNames.length)}${channelNames.length ? ` (${channelNames.slice(0, 4).join(', ')})` : ''}`
             },
             {
                 label: t('settings.toolsEnabled', null, 'Enabled tools'),
@@ -152,7 +152,7 @@ export default function BasicSection() {
         }
         if (!Object.keys(payload).length) {
             setNotice(t('ui.settingsBasic.nothingToSave', null, 'There are no configuration changes to save.'));
-            if (ignored.length) toastWarning(t('ui.settingsBasic.ignoredFields', { list: ignored.join('、') }, 'Ignored unsupported fields: {{list}}'));
+            if (ignored.length) toastWarning(t('ui.settingsBasic.ignoredFields', { list: ignored.join(', ') }, 'Ignored unsupported fields: {{list}}'));
             return;
         }
 
@@ -183,7 +183,7 @@ export default function BasicSection() {
             toastSuccess(t('settings.apply.applySuccess', null, 'Configuration applied successfully!'));
         }
         if (ignored.length) {
-            toastWarning(t('settings.apply.ignoredSections', { list: ignored.join('、') }, 'Ignored fields the backend does not accept: {{list}}'));
+            toastWarning(t('settings.apply.ignoredSections', { list: ignored.join(', ') }, 'Ignored fields the backend does not accept: {{list}}'));
         }
         await config.reload();
     };

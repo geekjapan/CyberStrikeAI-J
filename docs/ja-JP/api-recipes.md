@@ -1,6 +1,6 @@
 # API Recipes
 
-[English](../en-US/api-recipes.md) | [中文](../zh-CN/api-recipes.md)
+[English](../en-US/api-recipes.md)
 
 本書では、外部スクリプトやプラグインでよく使われる API 呼び出しのレシピを紹介します。完全なフィールドについては、`/api-docs` と `/api/openapi/spec` を正としてください。
 
@@ -9,7 +9,7 @@
 ```bash
 curl -k https://127.0.0.1:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"password":"<password>"}'
+  -d '{"username":"<username>","password":"<password>"}'
 ```
 
 以降のリクエストでは、次のヘッダーの使用を推奨します。
@@ -199,4 +199,4 @@ curl -k https://127.0.0.1:8080/api/assets/import \
 - 各資産には、少なくとも `host`、`ip`、`domain` のいずれかを指定してください。
 - 1 回あたり最大 100000 件です。大量のリクエストでは、JSON をコマンドラインに直接書かず、ファイルと `--data-binary` を組み合わせて使用してください。
 - 既に存在する「ターゲット + ポート + プロトコル」は、マージして更新され、`updated` に計上されます。
-- XLSX/CSV から操作する場合は、Web 側の **資産ライブラリ → 一括インポート** を使用してください。API 自体は JSON を受け付け、multipart ファイルは受け付けません。
+- CSV または JSON ファイルから操作する場合は、Web 側の **資産ライブラリ → 一括インポート** を使用してください。API 自体は JSON を受け付け、multipart ファイルは受け付けません。

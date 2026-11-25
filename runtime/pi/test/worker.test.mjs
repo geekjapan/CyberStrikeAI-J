@@ -11,6 +11,7 @@ import { SessionManager } from "@earendil-works/pi-coding-agent";
 import { RecordReader } from "../dist/protocol.js";
 
 test("JSONL preserves Unicode separators and fragmented UTF-8", () => {
+  // Chinese stays: multi-byte characters split across byte chunks must decode intact.
   const body = Buffer.from(JSON.stringify({ text: "中文\u2028\u2029" }) + "\n");
   const reader = new RecordReader();
   const values = [];

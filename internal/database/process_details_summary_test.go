@@ -169,6 +169,7 @@ func TestProcessDetailsSummaryReportsUnmatchedToolCallAsRunningForActiveTurn(t *
 	db, conversationID, messageID := setupProcessDetailsSummaryTest(t)
 	if _, err := db.Exec(
 		"UPDATE messages SET content = ?, updated_at = ? WHERE id = ?",
+		// Chinese stays: this is the placeholder text stored by earlier versions.
 		"处理中...", "2026-08-10T08:00:00Z", messageID,
 	); err != nil {
 		t.Fatalf("update running message: %v", err)
@@ -222,6 +223,7 @@ func TestProcessDetailsSummaryTreatsCancelledPlaceholderAsTerminal(t *testing.T)
 	startedAt := "2026-08-10T08:00:00Z"
 	if _, err := db.Exec(
 		"UPDATE messages SET content = ?, created_at = ?, updated_at = ? WHERE id = ?",
+		// Chinese stays: this is the placeholder text stored by earlier versions.
 		"处理中...", startedAt, startedAt, messageID,
 	); err != nil {
 		t.Fatalf("update running placeholder: %v", err)

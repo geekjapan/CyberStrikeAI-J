@@ -90,6 +90,7 @@ func TestResumeSupplementBudgetAndIndependentResultQuotas(t *testing.T) {
 	}
 	var facts []*database.ProjectFact
 	for i := 0; i < 25; i++ {
+		// Chinese stays: CJK text must count toward the resume token budget.
 		facts = append(facts, &database.ProjectFact{FactKey: fmt.Sprintf("artifact/%d", i), Summary: strings.Repeat("大", 2000), Body: strings.Repeat("文", 10000), Confidence: "confirmed"})
 		if _, err := db.CreateVulnerability(&database.Vulnerability{ProjectID: p.ID, Title: strings.Repeat("Vulnerability", 500), Severity: "high"}); err != nil {
 			t.Fatal(err)

@@ -1,6 +1,6 @@
 # ツール実行ガバナンス
 
-[English](../en-US/tool-execution-governance.md) | [中文](../zh-CN/tool-execution-governance.md)
+[English](../en-US/tool-execution-governance.md)
 
 [日本語ドキュメントに戻る](README.md)
 
@@ -139,7 +139,7 @@ Preview (last …):
 </persisted-output>
 ```
 
-現在の方針は「全文をディスクへ保存 + コンテキストにはプレビュー」です。`reduction_max_length_for_trunc` を超えると、完全な出力がローカルファイル（デフォルトは `tmp/reduction/conversations/<会話ID>/trunc/<execution_id>`）に書き込まれ、Agent/DB/監視が受け取るのは絶対パス付きの `<persisted-output>` プレビューになります。`read_file` で offset/limit を指定して全文を読み戻せます。
+現在の方針は「全文をディスクへ保存 + コンテキストにはプレビュー」です。`reduction_max_length_for_trunc` を超えると、完全な出力がローカルファイル（デフォルトは `tmp/reduction/conversations/<conversationId>/trunc/<execution_id>`）に書き込まれ、Agent/DB/監視が受け取るのは絶対パス付きの `<persisted-output>` プレビューになります。`read_file` で offset/limit を指定して全文を読み戻せます。
 
 ## DB と復元コンテキスト
 

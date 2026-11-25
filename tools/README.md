@@ -1,6 +1,6 @@
 # Tool Configuration Guide
 
-[English](README.md) | [中文](README_CN.md) | [日本語](README_JA.md)
+[English](README.md) | [日本語](README_JA.md)
 
 ## Overview
 

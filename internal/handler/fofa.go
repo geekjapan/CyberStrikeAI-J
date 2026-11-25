@@ -335,17 +335,17 @@ Quake query syntax reference:
   - service.http.server:"nginx"
   - service.http.response.header:"JSESSIONID"
   - service.http.favicon.hash:"-247388890"
-  - country_cn:"中国"
-  - province_cn:"浙江"
-  - city_cn:"杭州"
+  - country:"Japan"
+  - province:"Tokyo"
+  - city:"Tokyo"
 - Combination examples:
-  - service.name:"http" AND country_cn:"中国"
+  - service.name:"http" AND country:"Japan"
   - (service.name:"http" OR service.name:"https") AND port:443
   - domain:"example.com" AND NOT service.http.title:"404"
   - service.http.title:"login" AND port:443
-  - service.name:"ssh" AND country_cn:"中国"
+  - service.name:"ssh" AND country:"Japan"
 - Generation notes:
-  - When the user gives geographic locations such as China/Zhejiang/Hangzhou, Quake should prefer country_cn/province_cn/city_cn and keep the Chinese values (as in the examples above).
+  - When the user gives geographic locations such as Japan/Tokyo, Quake should prefer country/province/city with English values (as in the examples above).
   - Map "title" to service.http.title; "Server/server software" to service.http.server; "favicon/hash/icon" to service.http.favicon.hash.
   - Quake does not use && / || as the preferred output; prefer AND / OR / NOT.
 `,

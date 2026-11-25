@@ -41,13 +41,13 @@ func TestParseRobotAgentModeRejectsUnknownMode(t *testing.T) {
 }
 
 func TestRobotStatusCommandPermission(t *testing.T) {
-	for _, command := range []string{"状态", "status"} {
+	for _, command := range []string{"status"} {
 		permission, recognized := robotCommandPermission(command)
 		if !recognized || permission != "chat:read" {
 			t.Fatalf("command %q returned permission=%q recognized=%v", command, permission, recognized)
 		}
 	}
-	for _, removed := range []string{"当前", "current"} {
+	for _, removed := range []string{"current"} {
 		if _, recognized := robotCommandPermission(removed); recognized {
 			t.Fatalf("removed command %q is still recognized", removed)
 		}
@@ -56,12 +56,9 @@ func TestRobotStatusCommandPermission(t *testing.T) {
 
 func TestRobotBestPracticeCommandPermissions(t *testing.T) {
 	cases := map[string]string{
-		"任务":            "chat:read",
-		"task":          "chat:read",
-		"重命名 New title": "chat:write",
-		"rename x":      "chat:write",
-		"诊断":            "config:read",
-		"doctor":        "config:read",
+		"task":     "chat:read",
+		"rename x": "chat:write",
+		"doctor":   "config:read",
 	}
 	for command, want := range cases {
 		permission, recognized := robotCommandPermission(command)
@@ -97,5 +94,31 @@ func TestRobotDoctorSeparatesInternalToolsFromHTTPMCP(t *testing.T) {
 	}
 	if !strings.Contains(got, "HTTP MCP service: Disabled") {
 		t.Fatalf("HTTP MCP status missing: %s", got)
+	}
+}
+
+// Every command word of earlier versions still resolves to a recognized
+// English command, alone or with an argument.
+func TestLegacyRobotCommandsStillWork(t *testing.T) {
+	for _, c := range legacyRobotCommands {
+		if c.alone != "" {
+			if got := canonicalRobotCommand(c.word); got != c.alone {
+				t.Errorf("%q -> %q, want %q", c.word, got, c.alone)
+			}
+			if _, ok := robotCommandPermission(c.word); !ok && c.alone != "unbind" {
+				t.Errorf("%q is not a recognized command", c.word)
+			}
+		}
+		if c.withArg != "" {
+			if got := canonicalRobotCommand(c.word + " x y"); got != c.withArg+" x y" {
+				t.Errorf("%q with an argument -> %q, want %q", c.word, got, c.withArg+" x y")
+			}
+			if _, ok := robotCommandPermission(c.word + " x"); !ok && c.withArg != "bind" {
+				t.Errorf("%q with an argument is not a recognized command", c.word)
+			}
+		}
+	}
+	if got := canonicalRobotCommand("scan example.com"); got != "scan example.com" {
+		t.Errorf("free text was rewritten to %q", got)
 	}
 }

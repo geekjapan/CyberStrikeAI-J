@@ -1,6 +1,6 @@
 # Pi ネイティブランタイム
 
-[English](../en-US/pi-runtime.md) | [中文](../zh-CN/pi-runtime.md)
+[English](../en-US/pi-runtime.md)
 
 CyberStrikeAI は Pi 1.5.2（`@earendil-works/pi-coding-agent`、`pi-ai`）のみを使用します。業務、権限、ツール実行、証拠管理は引き続き Go が担います。
 

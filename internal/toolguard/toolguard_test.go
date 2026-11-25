@@ -23,7 +23,7 @@ func TestDefaultGovernmentProtection(t *testing.T) {
 		{"*.gov.*", "*.gov.*"},
 		{".gov", ".gov"},
 		{".gov.*", ".gov.*"},
-		{"https://政务.gov.cn/", "政务.gov.cn"},
+		{"https://bürger.gov.cn/", "bürger.gov.cn"},
 		{"https://gov.cn/", "gov.cn"},
 		{"https://agency.gov./", "agency.gov."},
 		{"https://agency%2egov/a", "agency.gov"},

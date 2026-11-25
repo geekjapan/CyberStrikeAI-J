@@ -1,6 +1,6 @@
 # 開発者ガイド
 
-[English](../en-US/developer-guide.md) | [中文](../zh-CN/developer-guide.md)
+[English](../en-US/developer-guide.md)
 
 本書は二次開発者向けに、プロジェクト構成、起動方法、主な拡張ポイント、開発上の作法を説明します。
 
@@ -190,7 +190,7 @@ description: 脆弱性の手がかりを検証し、深刻度を判定して、�
 tools:
   - nmap
   - nuclei
-bind_role: 综合漏洞扫描
+bind_role: Comprehensive Vulnerability Scanning
 max_iterations: 200
 ---
 ```
@@ -206,7 +206,7 @@ Skill は `skills/<name>/SKILL.md` に置きます。専門分野の機能、手
 フロントエンドのコードは、機能ごとに `web/frontend/src/pages/` に分割されています。ページやモジュールを新規に追加する場合は、次の点に従ってください。
 
 - `src/lib/http.js`、共有 UI コンポーネント、翻訳関数を再利用する。
-- `web/static/i18n/zh-CN.json` と `en-US.json` を同期して更新する。
+- `web/static/i18n/en-US.json` と `ja-JP.json` を同期して更新する。
 - 機密性の高いキーをフロントエンドに置かない。
 - 高リスクのボタンには、確認と明確な状態フィードバックを付ける。
 

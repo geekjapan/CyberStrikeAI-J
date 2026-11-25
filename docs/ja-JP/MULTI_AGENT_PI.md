@@ -1,6 +1,6 @@
 # Pi シングルエージェントとマルチエージェント
 
-[English](../en-US/MULTI_AGENT_PI.md) | [中文](../zh-CN/MULTI_AGENT_PI.md)
+[English](../en-US/MULTI_AGENT_PI.md)
 
 CyberStrikeAI は Pi ランタイムのみを使用します。Go が業務、権限、ツール実行、結果の検収を担当し、Pi SDK がモデルループ、セッション、ストリーミングイベント、圧縮を担当します。デプロイと設定については [Pi ランタイム](pi-runtime.md) を参照してください。
 

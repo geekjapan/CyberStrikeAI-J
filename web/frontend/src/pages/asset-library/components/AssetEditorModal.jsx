@@ -180,7 +180,7 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                 if (created) parts.push(t('ui.assetEditor.partCreated', { count: created }, '{{count}} added'));
                 if (updated) parts.push(t('ui.assetEditor.partMerged', { count: updated }, '{{count}} merged'));
                 if (skipped) parts.push(t('ui.assetEditor.partSkipped', { count: skipped }, '{{count}} skipped'));
-                toastSuccess(parts.length ? t('ui.assetEditor.written', { parts: parts.join(t('ui.assetEditor.listSeparator', null, '，')) }, 'Saved to the asset library: {{parts}}') : t('assets.createdSuccessfully', null, ', '));
+                toastSuccess(parts.length ? t('ui.assetEditor.written', { parts: parts.join(t('ui.assetEditor.listSeparator', null, ', ')) }, 'Saved to the asset library: {{parts}}') : t('assets.createdSuccessfully', null, ', '));
             }
             onSaved?.();
             onClose?.();
@@ -231,7 +231,7 @@ export default function AssetEditorModal({ visible, asset, defaultProjectId = ''
                                         try {
                                             parseAssetTarget(target);
                                         } catch (parseError) {
-                                            callback(new Error(`${target}：${parseError.message}`));
+                                            callback(new Error(`${target}: ${parseError.message}`));
                                             return;
                                         }
                                     }

@@ -1829,7 +1829,7 @@ func (db *DB) DeleteC2EventsByIDsForAccess(ids []string, access RBACListAccess) 
 }
 
 // ----------------------------------------------------------------------------
-// CRUD：C2 Malleable Profile
+// CRUD: C2 Malleable Profile
 // ----------------------------------------------------------------------------
 
 // CreateC2Profile creates or overwrites a profile (unique by name)

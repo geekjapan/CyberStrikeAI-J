@@ -1,6 +1,6 @@
 # Tool Execution Governance
 
-[中文](../zh-CN/tool-execution-governance.md) | [日本語](../ja-JP/tool-execution-governance.md)
+[日本語](../ja-JP/tool-execution-governance.md)
 
 [Back to English documentation](README.md)
 

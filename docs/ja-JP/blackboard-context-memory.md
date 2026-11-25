@@ -1,6 +1,6 @@
 # Pi の長いコンテキストとプロジェクト継続の記録
 
-[English](../en-US/blackboard-context-memory.md) | [中文](../zh-CN/blackboard-context-memory.md)
+[English](../en-US/blackboard-context-memory.md)
 
 Pi の SessionManager は、完全な JSONL セッションと圧縮エントリを保存し、作業コンテキストは現在のブランチと圧縮結果から再構築されます。モデルのコンテキストウィンドウと、完全なセッション記録は、別のデータ層です。
 

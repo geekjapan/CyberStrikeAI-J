@@ -5,7 +5,7 @@
 # CyberStrikeAI
 
 
-[中文](README_CN.md) | [English](README.md) | [日本語](README_JA.md)
+[English](README.md) | [日本語](README_JA.md)
 
 **AI ネイティブなサイバーセキュリティのための実行基盤 ―― 意図は統制された実行に、証拠は運用の記憶になり、あらゆるオペレーションが次のオペレーションを改善します。**
 
@@ -135,7 +135,7 @@ CyberStrikeAI は、計画、実行、人による監督、証拠、振り返り
 
 - 📁 **会話管理**：ピン留め、名前の変更、一括整理ができます。
 - 📂 **プロジェクトと攻撃チェーン**：セッションをまたぐファクト、リスクスコアリング、グラフ表示、ステップごとのリプレイを結び付けます。
-- 🗂️ **資産管理**：ドメイン、IP アドレス、ポート、サービスを正規化して重複を排除します。XLSX/CSV のインポートとエクスポート、高度なフィルターと保存済みビュー、所有者と業務メタデータ、ページをまたぐ一括メンテナンス、重複のマージに対応し、スキャンのカバレッジ、関連する脆弱性、リスク状態を追跡します。[資産管理ガイド](docs/ja-JP/asset-management.md)を参照してください。
+- 🗂️ **資産管理**：ドメイン、IP アドレス、ポート、サービスを正規化して重複を排除します。CSV のインポートとエクスポート、高度なフィルターと保存済みビュー、所有者と業務メタデータ、ページをまたぐ一括メンテナンス、重複のマージに対応し、スキャンのカバレッジ、関連する脆弱性、リスク状態を追跡します。[資産管理ガイド](docs/ja-JP/asset-management.md)を参照してください。
 - 🛡️ **脆弱性管理**：深刻度の分類、ライフサイクルの追跡、フィルタリング、統計を提供します。
 - 📋 **バッチタスク**：キューによる実行、編集、状態の追跡、結果の保持ができます。
 - 📱 **チャットボット**：個人 WeChat、WeCom、DingTalk、Lark、Telegram、Slack、Discord、QQ Bot と接続します。
@@ -158,7 +158,7 @@ CyberStrikeAI は、`plugins/` 配下に任意で利用できる連携機能を�
   DevTools でネットワークトラフィックをキャプチャし、CyberStrikeAI に送信して AI 支援のセキュリティテストを行います。Burp プラグインと同じ使い勝手です。  
   インストール：`chrome://extensions/` → パッケージ化されていない拡張機能を読み込む → F12 → **CyberStrikeAI** タブ  
   パッケージ成果物：`plugins/browser-extension/cyberstrikeai-browser-extension/dist/cyberstrikeai-browser-extension.zip`  
-  ドキュメント：`plugins/browser-extension/cyberstrikeai-browser-extension/README.md` / `README.zh-CN.md`
+  ドキュメント：`plugins/browser-extension/cyberstrikeai-browser-extension/README.md`
 
 ## ツールの概要
 

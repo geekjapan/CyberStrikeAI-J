@@ -13,6 +13,7 @@ func TestNormalizeStreamingDelta_RepeatedCharBoundary(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_CumulativePrefix(t *testing.T) {
 	cur, d := normalizeStreamingDelta("今天", "今天天气")
 	if cur != "今天天气" || d != "天气" {
@@ -20,6 +21,7 @@ func TestNormalizeStreamingDelta_CumulativePrefix(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_FullRetransmit(t *testing.T) {
 	cur, d := normalizeStreamingDelta("今天", "今天")
 	if d != "" || cur != "今天" {
@@ -27,6 +29,7 @@ func TestNormalizeStreamingDelta_FullRetransmit(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_SingleRuneRepeated(t *testing.T) {
 	cur, d := normalizeStreamingDelta("呀", "呀")
 	if want := "呀呀"; cur != want {

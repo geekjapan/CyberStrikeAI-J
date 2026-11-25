@@ -528,7 +528,7 @@ func (r *piRun) run(ctx context.Context, message string) (*RunResult, error) {
 				code, detail := piModelTransportFailure(retry.ErrorMessage)
 				message := fmt.Sprintf("The model request will be retried in %s (%d/%d).", time.Duration(retry.DelayMS)*time.Millisecond, retry.Attempt, retry.MaxAttempts)
 				if detail != "" {
-					message += detail + "。"
+					message = fmt.Sprintf("The model request will be retried in %s (%d/%d). %s.", time.Duration(retry.DelayMS)*time.Millisecond, retry.Attempt, retry.MaxAttempts, detail)
 				}
 				progress("pi_model_retry", message, map[string]any{
 					"attempt": retry.Attempt, "maxAttempts": retry.MaxAttempts, "delayMs": retry.DelayMS, "reasonCode": code,

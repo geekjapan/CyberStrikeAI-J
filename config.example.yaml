@@ -489,7 +489,7 @@ knowledge:
 # Robot configuration (WeCom, DingTalk, Lark)
 # ============================================
 # Chat with CyberStrikeAI from a phone via WeCom/DingTalk/Lark, usable even without deploying on a server
-# Configurable in System settings -> Robot settings
+# Edit this section and restart; the web UI has no bot settings screen (see docs/en-US/robot.md)
 robots:
   wechat: # WeChat iLink (personal WeChat ClawBot, bind by scanning a QR code)
     enabled: false

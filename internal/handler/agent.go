@@ -971,12 +971,6 @@ func isInternalAgentDiagnosticProgress(eventType, message string, data interface
 	case "model_output_rejected":
 		return true
 	case "progress":
-		msg := strings.TrimSpace(message)
-		if msg == "Agent TurnLoop 常驻多轮 runtime 已接管本轮会话。" ||
-			msg == "Agent TurnLoop 已在安全点切换到用户补充后的下一轮。" ||
-			msg == "已将用户补充推入 Agent TurnLoop，正在等待安全点切换…" {
-			return true
-		}
 		m, ok := data.(map[string]interface{})
 		if !ok {
 			return false

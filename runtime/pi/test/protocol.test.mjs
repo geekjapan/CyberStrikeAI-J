@@ -25,6 +25,7 @@ test("send waits for the write callback even below the stream high water mark", 
     const pending = [];
     process.stdout.write = (line, callback) => { pending.push({line, callback}); return true; };
     let settled = false;
+    // Chinese stays: multi-byte text makes the frame large and must be written as UTF-8.
     const first = send({type:'event',text:'中文'.repeat(10000)}).then(() => { settled = true; });
     const second = send({type:'result',text:'last'});
     await new Promise(resolve => setImmediate(resolve));

@@ -19,12 +19,12 @@ func TestAssetURLNormalizationAndValidation(t *testing.T) {
 	}
 	defer db.Close()
 
-	asset := &Asset{Host: "https://例子.测试/path", Tags: []string{" prod ", "prod"}}
+	asset := &Asset{Host: "https://bücher.example/path", Tags: []string{" prod ", "prod"}}
 	result, err := db.UpsertAssets([]*Asset{asset}, "")
 	if err != nil || result.Created != 1 {
 		t.Fatalf("URL asset was not created: result=%#v err=%v", result, err)
 	}
-	if asset.Domain != "xn--fsqu00a.xn--0zwm56d" || asset.Protocol != "https" || asset.Port != 443 {
+	if asset.Domain != "xn--bcher-kva.example" || asset.Protocol != "https" || asset.Port != 443 {
 		t.Fatalf("URL fields were not normalized: %#v", asset)
 	}
 	if len(asset.Tags) != 1 || asset.Tags[0] != "prod" {

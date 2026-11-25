@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Removed
+
+- Removed the Simplified Chinese (zh-CN) UI language, the Chinese server message translations and all Chinese documents (`docs/zh-CN/`, `README_CN.md`, `SECURITY_CN.md`, the `README_CN.md` / `README.zh-CN.md` files of tools, MCP servers and plugins). The UI languages are English and Japanese. A browser that saved `zh-CN`, or a request with `Accept-Language: zh`, now gets English. Chinese bot command words and stored Chinese status texts of earlier versions are still recognized.
+
 ### Added
 
 - The source is now English: Go messages, comments and prompts, tool, role and configuration definitions, and frontend fallbacks. Chinese and Japanese are served from `web/static/i18n` and `internal/apimsg/catalog.json` (now keyed by the English message). `TestRepositoryIsEnglish` guards this with `internal/handler/testdata/cjk_allowlist.txt`.
@@ -17,7 +21,7 @@
 - About 850 hard-coded Chinese strings in the frontend now go through the string catalog (`ui.*`), and non-component `translate` / `lazyLabels` / `lazyOptions` were added; fixed dotted keys such as `settingsStorage.cat.*` not resolving in the English and Chinese UI; added a test ensuring strings referenced in the source exist in en-US.json.
 
 - The default agent runtime migrated to Pi 1.5.2: the Go tool gateway still handles roles, approvals, monitoring and evidence; model proposals for chat and sub-agents go through Pi. Added a Node Worker published by source fingerprint, a streaming protocol, session recovery and native tool search. Deployment requires Node.js >=22.19; the Eino kernel, model adapters, bridges and all related dependencies were removed, and the runtime supports Pi only.
-- Workflow now uses a native DAG and versioned checkpoints, and the knowledge base uses its own document, chunking, embedding and retrieval components. Old Eino Workflow checkpoints cannot be resumed directly by the new version; complete or export old tasks before upgrading. See the [Pi migration guide](docs/zh-CN/pi-runtime.md).
+- Workflow now uses a native DAG and versioned checkpoints, and the knowledge base uses its own document, chunking, embedding and retrieval components. Old Eino Workflow checkpoints cannot be resumed directly by the new version; complete or export old tasks before upgrading. See the [Pi migration guide](docs/ja-JP/pi-runtime.md).
 
 - AI channels support custom HTTP request headers, environment variables and session ID placeholders; saved auth headers can be used safely for connection tests, the standalone audit identity isolates the main channel request headers, and custom headers do not follow cross-origin redirects.
 

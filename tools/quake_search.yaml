@@ -111,7 +111,7 @@ args:
                     'ip:"1.1.1.1"',
                     'port:443',
                     'service.name:"http"',
-                    'port:22 AND country_cn:"中国"'
+                    'port:22 AND country:"China"'
                 ]
             }
             print(json.dumps(error_result, ensure_ascii=False, indent=2))
@@ -241,7 +241,7 @@ description: |
   - `domain:"example.com"`
   - `ip:"1.1.1.1"`
   - `port:443`
-  - `service.name:"http" AND country_cn:"中国"`
+  - `service.name:"http" AND country:"China"`
 
   **Notes:**
   - API calls consume credits; control `size` as needed
@@ -257,7 +257,7 @@ parameters:
       - `domain:"example.com"`
       - `ip:"1.1.1.1"`
       - `port:443`
-      - `service.name:"http" AND country_cn:"中国"`
+      - `service.name:"http" AND country:"China"`
     required: true
     position: 1
     format: "positional"

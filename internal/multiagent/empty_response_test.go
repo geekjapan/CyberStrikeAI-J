@@ -5,6 +5,7 @@ import "testing"
 func TestIsEmptyResponseResult(t *testing.T) {
 	empty := &RunResult{
 		Response: "(Pi single-agent session completed but no assistant text was captured. Check process details or logs.) " +
+			// Chinese stays: placeholder stored by earlier versions.
 			"（Pi 单代理会话已完成，但未捕获到助手文本输出。请查看过程详情或日志。）",
 	}
 	if !IsEmptyResponseResult(empty) {

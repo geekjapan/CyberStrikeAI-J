@@ -14,7 +14,7 @@ test.use({ appPermissions: [...UI_PERMISSIONS, 'update:apply'] });
 
 async function openUpdate(page) {
     const main = await visit(page, 'settings?section=update');
-    await expect(main.getByRole('button', { name: '检查更新', exact: true })).toHaveCount(0);
+    await expect(main.getByRole('button', { name: 'Check for updates', exact: true })).toHaveCount(0);
     return main;
 }
 
@@ -23,8 +23,8 @@ test('Update checks the configured source and reports when the versions match', 
     mockApi.respond('POST', checkPath, { json: { status: { ...local, remoteCommit: currentCommit } } });
     const main = await openUpdate(page);
     expect(mockApi.writes()).toEqual([]);
-    await main.getByRole('button', { name: '更新', exact: true }).click();
-    await expect(main.getByText('已是最新版', { exact: true })).toBeVisible();
+    await main.getByRole('button', { name: 'Update', exact: true }).click();
+    await expect(main.getByText('Already up to date', { exact: true })).toBeVisible();
     expect(mockApi.writes().map(entry => entry.path)).toEqual([checkPath]);
 });
 
@@ -43,17 +43,17 @@ test('Update starts a single job and refreshes local status after it builds', as
     mockApi.respond('POST', applyPath, { status: 202, json: { job_id: running.id, state: running.state } });
     mockApi.respond('GET', jobPath, () => ({ json: { job: completed ? succeeded : running } }));
     const main = await openUpdate(page);
-    const update = main.getByRole('button', { name: '更新', exact: true });
+    const update = main.getByRole('button', { name: 'Update', exact: true });
     await update.click();
-    await expect(main.getByText('进行中', { exact: true })).toBeVisible();
+    await expect(main.getByText('Running', { exact: true })).toBeVisible();
     await expect(update).toBeDisabled();
     expect(mockApi.writes().map(({ path, body }) => [path, body])).toEqual([
         [checkPath, {}],
         [applyPath, { restart: false }]
     ]);
     completed = true;
-    await expect(main.getByText('已完成', { exact: true })).toBeVisible();
-    await expect(main.getByText('二进制已换新，重启后才会生效', { exact: true })).toBeVisible();
+    await expect(main.getByText('Succeeded', { exact: true })).toBeVisible();
+    await expect(main.getByText('The binary was replaced; it takes effect after a restart', { exact: true })).toBeVisible();
     await expect(update).toBeEnabled();
 });
 
@@ -71,11 +71,11 @@ test('Update reloads the page after the new service boot answers', async ({ page
     } });
     mockApi.respond('GET', jobPath, () => ({ json: { job: restarted ? null : running } }));
     const main = await openUpdate(page);
-    await main.getByRole('button', { name: '更新', exact: true }).click();
-    await expect(main.getByText('进行中', { exact: true })).toBeVisible();
+    await main.getByRole('button', { name: 'Update', exact: true }).click();
+    await expect(main.getByText('Running', { exact: true })).toBeVisible();
     expect(mockApi.calls('POST', applyPath)[0].body).toEqual({ restart: true });
     restarted = true;
-    await expect(main.getByText('还没有更新记录', { exact: true })).toBeVisible();
+    await expect(main.getByText('No update has run yet', { exact: true })).toBeVisible();
     await expect(main.getByText(nextCommit + 'dead', { exact: true })).toBeVisible();
     expect(mockApi.calls('POST', applyPath)).toHaveLength(1);
 });
@@ -83,21 +83,21 @@ test('Update reloads the page after the new service boot answers', async ({ page
 test('Update reports fetch failures and blocked installs without submitting a job', async ({ page, mockApi }) => {
     mockApi.respond('GET', statusPath, { json: { status: local } });
     const main = await openUpdate(page);
-    const update = main.getByRole('button', { name: '更新', exact: true });
+    const update = main.getByRole('button', { name: 'Update', exact: true });
 
-    mockApi.respond('POST', checkPath, { json: { status: { ...local, checkError: '示例更新源暂不可达' } } });
+    mockApi.respond('POST', checkPath, { json: { status: { ...local, checkError: 'Sample update source is temporarily unreachable' } } });
     await update.click();
-    await expect(main.getByText('检查失败：示例更新源暂不可达', { exact: true })).toBeVisible();
+    await expect(main.getByText('Check failed: Sample update source is temporarily unreachable', { exact: true })).toBeVisible();
 
     mockApi.respond('POST', checkPath, { json: { status: { ...available, ahead: 1, diverged: true } } });
     await update.click();
-    await expect(main.getByText(/这是合并而不是下载/)).toBeVisible();
+    await expect(main.getByText(/that is a merge, not a download/)).toBeVisible();
 
     mockApi.respond('POST', checkPath, { json: { status: {
         ...available, blockingChanges: [{ path: 'fixture.go', status: 'M' }]
     } } });
     await update.click();
-    await expect(main.getByText(/有 1 个产品源码文件被本地改过/)).toBeVisible();
+    await expect(main.getByText(/1 product source files are edited locally/)).toBeVisible();
     expect(mockApi.writes().map(entry => entry.path)).toEqual([checkPath, checkPath, checkPath]);
 });
 
@@ -105,12 +105,12 @@ test('Update handles a pending build at the same version and follows a concurren
     const pending = { ...local, buildPending: true, remoteCommit: currentCommit };
     mockApi.respond('GET', statusPath, { json: { status: pending } });
     mockApi.respond('POST', checkPath, { json: { status: pending } });
-    mockApi.respond('POST', applyPath, { status: 409, json: { error: '更新正在进行', job: running } });
+    mockApi.respond('POST', applyPath, { status: 409, json: { error: 'An update is already in progress', job: running } });
     mockApi.respond('GET', jobPath, { json: { job: running } });
     const main = await openUpdate(page);
-    const update = main.getByRole('button', { name: '更新', exact: true });
+    const update = main.getByRole('button', { name: 'Update', exact: true });
     await update.click();
-    await expect(main.getByText('进行中', { exact: true })).toBeVisible();
+    await expect(main.getByText('Running', { exact: true })).toBeVisible();
     await expect(update).toBeDisabled();
     expect(mockApi.writes().map(entry => entry.path)).toEqual([checkPath, applyPath]);
 });

@@ -1,6 +1,6 @@
 # Pi context and project checkpoints
 
-[中文](../zh-CN/blackboard-context-memory.md) | [日本語](../ja-JP/blackboard-context-memory.md)
+[日本語](../ja-JP/blackboard-context-memory.md)
 
 Pi SessionManager retains the full JSONL session and compaction entries. The current model context is a projection of that history, not the only copy of it.
 

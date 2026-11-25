@@ -1,6 +1,6 @@
 # CyberStrikeAI ボット利用ガイド
 
-[English](../en-US/robot.md) | [中文](../zh-CN/robot.md)
+[English](../en-US/robot.md)
 
 本ドキュメントでは、**個人 WeChat、WeCom、DingTalk、Lark、Telegram、Slack、Discord、QQ ボット**から CyberStrikeAI を利用する方法を説明します。プラットフォームとの接続、RBAC ID の紐付け、サービスアカウントのホワイトリスト、コマンド、動作確認、トラブルシューティングを扱います。
 
@@ -8,25 +8,64 @@
 
 ## 1. CyberStrikeAI での設定場所
 
-1. CyberStrikeAI の Web 画面にログインします。  
-2. 左側のナビゲーションから **システム設定** を開きます。  
-3. 左側の設定カテゴリーで **ボット設定**（「基本設定」と「セキュリティ設定」の間）をクリックします。  
-4. プラットフォームごとに設定します。
-   - **個人 WeChat**: 「WeChat / iLink」→「QR コードを生成して連携」をクリックし、WeChat で QR コードをスキャンして確認します（[3.4 個人 WeChat](#34-個人-wechat-ilink) を参照）
-   - **DingTalk**: Client ID / Client Secret にチェックを入れて入力します
-   - **Lark**: App ID / App Secret にチェックを入れて入力します
-5. **設定を適用** をクリックして保存します。対応するボットの接続は自動的に再起動されます。WeChat は QR コードによる連携に成功すると自動的に保存・有効化されるため、通常は追加の操作は不要です。
+現在の Web 画面には、ボット設定画面はありません。ボットの設定は、`config.yaml` の `robots` セクションを編集して CyberStrikeAI を再起動するか、`PUT /api/config` を呼び出して行います。
 
-設定は `config.yaml` の `robots` セクションに書き込まれ、設定ファイルを直接編集することもできます。Web 画面で「設定を適用」をクリックすると、対応する接続が自動的に再起動します。`config.yaml` を手動で直接編集した場合は、CyberStrikeAI のプロセスを再起動する必要があります。個人 WeChat の連携に成功すると、`robots.wechat` が自動的に書き込まれ、iLink のロングポーリングが再起動されます。
+**`config.yaml` を編集する場合**
+
+- ファイルは起動時に一度だけ読み込まれ、変更は監視されません。編集したら必ず CyberStrikeAI のプロセスを再起動してください。
+- プラットフォームが接続されるのは、`enabled: true` で、かつ認証情報が空でない場合だけです。有効にしても認証情報が空だと、エラーも出ずに接続がスキップされます。
+- `robots.<platform>.auth` は起動時に検証されます。未知の `mode`、`service_user_id` または `allowed_external_users` のない `service_account`、重複する項目や `*` を含む項目があると、サーバーは起動しません。
+- `config.example.yaml` に、コメントアウトされた `robots:` のひな形があります。
+
+**`PUT /api/config` を呼び出す場合**
+
+- `GET /api/config` は、現在の `robots` ブロックを**シークレットを含めて**返します（`config:read` が必要）。`PUT /api/config` と `POST /api/config/apply` には `config:write` が必要です。
+- `robots` を含む `PUT /api/config` は、内容を検証したうえで（有効時の WeCom Token、`auth` のルール、サービスユーザーが存在し有効であること）、メモリ上の **`robots` オブジェクト全体を置き換え**、`config.yaml` に書き込みます。変更したプラットフォームだけでなく、ブロック全体を送ってください。
+- `PUT` だけではボットの接続は再起動**されません**。再起動するのは `POST /api/config/apply` です（長時間接続しているすべてのボット接続を再起動し、ツールなどほかの設定も再読み込みします）。
+- `PUT` は `auth`（`mode`、`service_user_id`、`allowed_external_users`）を `config.yaml` に書き込み**ません**。API で変更した `auth` は実行中のプロセスにだけ反映され、再起動すると失われます。`auth` は YAML ファイルで編集してください。
+- 保存（`PUT`、または WeChat の QR 連携の成功）のたびに、`config.yaml` の `robots` のキーが実行中のプロセスの値で書き直されます。YAML を手で編集した場合は、これらの API を呼ぶ前に再起動してください。そうしないと、編集内容が上書きされます。
+
+```bash
+# ログインしてトークンを取得します（api-recipes.md の Recipe 1 を参照）
+curl -k https://127.0.0.1:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"<username>","password":"<password>"}'
+
+# 例: Telegram を有効にします。robots を取得し、2 つのキーを変更し、ブロック全体を送り返してから適用します。
+curl -sk https://127.0.0.1:8080/api/config -H "Authorization: Bearer <token>" \
+  | jq '{robots: (.robots | .telegram.enabled=true | .telegram.bot_token="<bot-token>")}' > robots.json
+curl -k -X PUT https://127.0.0.1:8080/api/config \
+  -H "Authorization: Bearer <token>" -H "Content-Type: application/json" -d @robots.json
+curl -k -X POST https://127.0.0.1:8080/api/config/apply -H "Authorization: Bearer <token>"
+rm robots.json   # シークレットが含まれています
+```
+
+ログインのレスポンスには `token` が含まれます。以降のコマンドも同じベース URL `https://127.0.0.1:8080` と `Authorization: Bearer <token>` ヘッダーを使います。環境に合わせて読み替えてください。以降のプラットフォーム別の節にある「再起動」は、プロセスの再起動を指します。`PUT /api/config` で設定を変更した場合は `POST /api/config/apply` を呼び出します。
 
 ### 最短の利用手順
 
 プラットフォームへの接続が成功したら、すぐに通常の会話を始めず、先に業務上の ID 設定を完了してください。
 
-- **複数人で利用する場合**: ボット設定で「ユーザー単位の紐付け」を選択 → 各ユーザーが Web 画面右上のアバターから紐付けコードを生成 → ボットで紐付けコマンドを送信 → `身份` を送信して確認します。
-- **自分だけで利用する場合**: まずボットで `身份` を送信して送信者 ID をコピー → ボット設定で「専用サービスアカウント」を選択 → User ID に `admin` または他の RBAC ユーザーを入力 → 送信者のホワイトリストを貼り付け → 設定を適用 → もう一度 `身份` を送信して確認します。
+**自分だけで利用する場合（デフォルトの手順）**
 
-`鉴权状态：已授权` が表示され、「実際の ID」が正しいことを確認できたら、そのまま通常のテキストを送信して AI と会話できます。
+1. ボットに `whoami` を送信し、`Sender ID` の行をそのままコピーします。ID の形式はプラットフォームによって異なります（個人 WeChat は `xxxx@im.wechat`、DingTalk / Lark / Slack は `t:<tenant>|u:<user>`、Telegram / Discord / QQ の個別チャットは `u:<id>`）。
+2. `config.yaml` で、そのプラットフォームの `auth` ブロックを設定します。
+
+   ```yaml
+   robots:
+     wechat:   # dingtalk、lark、wecom、telegram、slack、discord、qq も同様です
+       auth:
+         mode: service_account
+         service_user_id: admin          # 表示名ではなく RBAC ユーザー ID
+         allowed_external_users:
+           - "<whoami からコピーした Sender ID>"
+   ```
+
+3. CyberStrikeAI を再起動し、もう一度 `whoami` を送信します。
+
+**複数人で利用する場合**: `auth` は記述しません（デフォルトは `user_binding` です）。各利用者が紐付けコードを取得し、ボットに `bind` コマンドを送信して、`whoami` で確認します。画面がないため、紐付けコードは `POST /api/auth/robot-binding-code` で取得します。詳しくは [4.2 ユーザー単位の紐付けモード](#42-ユーザー単位の紐付けモードデフォルト) を参照してください。
+
+`Auth status: authorized` が表示され、`Effective identity` の行が期待どおりであることを確認できたら、そのまま通常のテキストを送信して AI と会話できます。
 
 ---
 
@@ -34,7 +73,7 @@
 
 | プラットフォーム | 説明 |
 |----------|------|
-| 個人 WeChat | WeChat iLink プロトコルを使用します。Web 画面で QR コードをスキャンして連携した後、ロングポーリングでメッセージを受信するため、**公開コールバックは不要**です |
+| 個人 WeChat | WeChat iLink プロトコルを使用します。API で QR コードを取得してスキャンし連携した後、ロングポーリングでメッセージを受信するため、**公開コールバックは不要**です |
 | DingTalk | Stream ロングコネクションを使用します。プログラムが DingTalk に接続してメッセージを受信します |
 | Lark | ロングコネクションを使用します。プログラムが Lark に接続してメッセージを受信します |
 | WeCom | HTTP コールバックでメッセージを受信します。パッシブ返信と、WeCom のメッセージ送信 API の呼び出しによる能動送信を併用します |
@@ -43,7 +82,7 @@
 | Discord | Gateway WebSocket。**公開コールバックは不要**です |
 | QQ ボット | QQ オープンプラットフォームの WebSocket（C2C / グループ @）。**公開コールバックは不要**です |
 
-次の第 3 節では、プラットフォームごとに、オープンプラットフォームで行う作業、コピーするフィールド、CyberStrikeAI のどの欄に入力するかを説明します。
+次の第 3 節では、プラットフォームごとに、オープンプラットフォームで行う作業と、`config.yaml` のどのキーに何を入力するかを説明します。
 
 ---
 
@@ -87,34 +126,48 @@
    - 左側の **バージョン管理とリリース** で、未リリースの設定がある場合は **新バージョンをリリース** / **公開** をクリックしてください。そうしないと変更は反映されません。
 
 6. **CyberStrikeAI に入力する**  
-   - CyberStrikeAI に戻り、システム設定 → ボット設定 → DingTalk を開きます。  
-   - 「DingTalk ボットを有効にする」にチェックを入れます。  
-   - **Client ID (AppKey)** に、手順 3 でコピーした Client ID を貼り付けます。  
-   - **Client Secret** に、手順 3 でコピーした Client Secret を貼り付けます。  
-   - **設定を適用**をクリックし、その後 **CyberStrikeAI を再起動**します。
+   - `config.yaml` の `robots.dingtalk` を設定します（下記）。有効にして、手順 3 でコピーした Client ID と Client Secret を貼り付けます。  
+   - CyberStrikeAI を再起動します（第 1 節）。
+
+```yaml
+robots:
+  dingtalk:
+    enabled: true
+    client_id: "<Client ID>"
+    client_secret: "<Client Secret>"
+```
 
 ---
 
-**CyberStrikeAI の DingTalk 入力欄の対応表**
+**`config.yaml` のキーと DingTalk の取得元の対応表**
 
-| CyberStrikeAI での入力項目 | DingTalk オープンプラットフォームでの取得元 |
+| `config.yaml` のキー | DingTalk オープンプラットフォームでの取得元 |
 |------------------------|------------------------|
-| DingTalk ボットを有効にする | チェックを入れると有効になります |
-| Client ID (AppKey) | 認証情報と基本情報 → **Client ID（旧 AppKey）** |
-| Client Secret | 認証情報と基本情報 → **Client Secret（旧 AppSecret）** |
+| `robots.dingtalk.enabled` | `true` で有効になります |
+| `robots.dingtalk.client_id` | 認証情報と基本情報 → **Client ID（旧 AppKey）** |
+| `robots.dingtalk.client_secret` | 認証情報と基本情報 → **Client Secret（旧 AppSecret）** |
 
 ---
 
 ### 3.2 Lark (Feishu)
 
-| 設定項目 | 説明 |
+| `config.yaml` のキー | 説明 |
 |--------|------|
-| Lark ボットを有効にする | チェックを入れると Lark のロングコネクションが起動します |
-| App ID | Lark オープンプラットフォームのアプリ認証情報にある App ID |
-| App Secret | Lark オープンプラットフォームのアプリ認証情報にある App Secret |
-| Verify Token | イベントサブスクリプション用（任意） |
+| `robots.lark.enabled` | `true` にすると Lark のロングコネクションが起動します |
+| `robots.lark.app_id` | Lark オープンプラットフォームのアプリ認証情報にある App ID |
+| `robots.lark.app_secret` | Lark オープンプラットフォームのアプリ認証情報にある App Secret |
+| `robots.lark.verify_token` | イベントサブスクリプション用（任意） |
 
-**Lark の設定手順（概要）**: [Lark オープンプラットフォーム](https://open.feishu.cn)にログイン → 企業向けカスタムアプリを作成 → 「認証情報と基本情報」で **App ID** と **App Secret** を取得 → 「アプリ機能」で**ボット**を有効化し、必要な権限を有効にする → **「イベントサブスクリプション」でイベントを追加**（下記参照）→ アプリをリリース → App ID と App Secret を CyberStrikeAI のボット設定に入力 → 保存します。
+```yaml
+robots:
+  lark:
+    enabled: true
+    app_id: "<App ID>"
+    app_secret: "<App Secret>"
+    verify_token: ""   # 任意
+```
+
+**Lark の設定手順（概要）**: [Lark オープンプラットフォーム](https://open.feishu.cn)にログイン → 企業向けカスタムアプリを作成 → 「認証情報と基本情報」で **App ID** と **App Secret** を取得 → 「アプリ機能」で**ボット**を有効化し、必要な権限を有効にする → **「イベントサブスクリプション」でイベントを追加**（下記参照）→ アプリをリリース → App ID と App Secret を `config.yaml` の `robots.lark` に入力 → CyberStrikeAI を再起動します。
 
 **重要: イベントサブスクリプション**  
 Lark のロングコネクションは、オープンプラットフォームで「メッセージの受信」イベントをサブスクライブしている場合にのみ、ユーザーのメッセージを受信します。該当アプリの **イベントサブスクリプション** ページで「イベントを追加」をクリックし、「メッセージとグループ」の下にある **メッセージを受信（im.message.receive_v1）** または同種のイベントにチェックを入れてください。追加していない場合、接続自体は確立されますがメッセージは一切届かず、メッセージを送信してもローカルにログが出力されず、ボットが返信しない状態になります。
@@ -131,7 +184,7 @@ Lark のロングコネクションは、オープンプラットフォームで
 
 **イベントサブスクリプション**（権限とは別に設定します）: **イベントサブスクリプション** で **メッセージを受信（im.message.receive_v1）** を追加してください。追加しないと、ロングコネクションでメッセージのプッシュを受信できません。
 
-- **個別チャット**: Lark でボットとのプライベートチャットを開き、`帮助`または任意のテキストを直接送信するだけで利用できます。@ は不要です。  
+- **個別チャット**: Lark でボットとのプライベートチャットを開き、`help` または任意のテキストを直接送信するだけで利用できます。@ は不要です。  
 - **グループチャット**: グループでは、**ボットに @ して**送信した内容のみがボットに受信され、返信されます。
 
 ---
@@ -146,12 +199,24 @@ Lark のロングコネクションは、オープンプラットフォームで
 
 - WeCom の管理コンソールで**カスタムアプリ**を作成するか、既存のものを選択します。
 - そのアプリの「メッセージ受信」で、コールバック URL、Token、EncodingAESKey を設定します。
-- CyberStrikeAI の `config.yaml` に次の値を入力します。
+- CyberStrikeAI の `config.yaml` で `robots.wecom.enabled: true` を設定し（有効にする場合は `token` が必須です）、次の値を入力します。
   - `robots.wecom.corp_id`: 企業 ID（CorpID）
   - `robots.wecom.agent_id`: アプリの AgentId
   - `robots.wecom.token`: メッセージコールバックで使用する Token
   - `robots.wecom.encoding_aes_key`: メッセージコールバックで使用する EncodingAESKey
   - `robots.wecom.secret`: そのアプリの Secret（WeCom の能動メッセージ送信インターフェースの呼び出しに使用します）
+- CyberStrikeAI を再起動します（第 1 節）。
+
+```yaml
+robots:
+  wecom:
+    enabled: true
+    corp_id: "<CorpID>"
+    agent_id: 1000002
+    token: "<Token>"
+    encoding_aes_key: "<EncodingAESKey>"
+    secret: "<アプリの Secret>"
+```
 
 > **重要: IP ホワイトリスト（errcode 60020）**  
 > CyberStrikeAI は `https://qyapi.weixin.qq.com/cgi-bin/message/send` を使用して AI の返信を能動的に送信します。  
@@ -169,8 +234,8 @@ Lark のロングコネクションは、オープンプラットフォームで
 
 ### 3.4 個人 WeChat (iLink)
 
-> 個人 WeChat は、「Web での QR コード連携 + iLink ロングポーリング」の方式で動作します。  
-> - CyberStrikeAI の Web 画面で QR コードを生成 → **スマートフォンの WeChat** でスキャンして連携を確認します。  
+> 個人 WeChat は、「QR コードによる連携 + iLink ロングポーリング」の方式で動作します。  
+> - CyberStrikeAI の API で QR コードを取得 → **スマートフォンの WeChat** でスキャンして連携を確認します。  
 > - 連携に成功すると `config.yaml` の `robots.wechat` に自動的に書き込まれ、iLink ロングポーリングが開始されます（プログラムが `ilinkai.weixin.qq.com` に接続してメッセージを受信します）。  
 > - サーバーで公開コールバック URL を設定する必要は**なく**、WeChat オープンプラットフォームでアプリを登録する必要も**ありません**。
 
@@ -179,43 +244,86 @@ Lark のロングコネクションは、オープンプラットフォームで
 | 項目 | 個人 WeChat (iLink) | WeCom |
 |------|------------------|------------------|
 | 利用シーン | 個人 WeChat のプライベートチャット | WeCom のカスタムアプリ |
-| 設定方法 | Web 画面で QR コードをスキャンして連携 | 管理コンソールでコールバック URL + Token を設定 |
+| 設定方法 | QR コードをスキャンして連携（QR コードは API で取得） | 管理コンソールでコールバック URL + Token を設定 |
 | 公開ネットワークの要否 | 不要（アウトバウンドのロングポーリングのみ） | 必要（WeCom からアクセス可能な HTTPS コールバック） |
 | 設定セクション | `robots.wechat` | `robots.wecom` |
 
 **連携手順（順番に実施してください）**
 
-1. **CyberStrikeAI の Web 画面にログインする**  
-   左側の **システム設定** → **ボット設定** → **WeChat / iLink** カードをクリックします。
+Web 画面を使う手順はありません。画面が必要なのは、スマートフォンでスキャンできるように QR 画像を表示するときだけです。以下の API 呼び出しには、グローバルスコープの `robot:write` 権限が必要です（状態の確認は `robot:read`）。QR のセッションはサーバーのメモリ上にだけ約 5 分間保持されるため、その間は CyberStrikeAI を再起動しないでください。
 
-2. **（任意）「WeChat ボットを有効にする」にチェックを入れる**  
-   初回の連携ではスキップできます。連携に成功すると自動的にチェックされ、有効になります。
+1. **QR コードを取得する**
 
-3. **QR コードを生成する**  
-   **「QR コードを生成して連携」** をクリックします。ページに QR コードが表示されます（有効期間は約 **5 分**です。期限が切れた場合は再生成してください）。
+   ```bash
+   curl -sk -X POST https://127.0.0.1:8080/api/robot/wechat/qrcode \
+     -H "Authorization: Bearer <token>" > qr.json
+   ```
 
-4. **WeChat でスキャンして確認する**  
-   - スマートフォンの WeChat でページの QR コードをスキャンします。  
-   - スマートフォンの指示に従って確認を完了します。  
-   - スマートフォンの WeChat に**ペアリング用の数字**が表示された場合は、Web ページの対応する入力欄に入力して **送信** をクリックします（一部のアカウントのみ必要です）。
+   リクエストボディに `{"bot_type":"3"}` を付けると Bot Type を上書きできます。省略した場合は `robots.wechat.bot_type`、それもなければ `3` が使われます。レスポンスには次のフィールドが含まれます。
 
-5. **連携の完了を待つ**  
-   ページに「連携に成功しました。WeChat ボットが有効になりました。」と表示されれば完了です。`bot_token`、`ilink_bot_id` などは `config.yaml` に自動的に書き込まれ、プログラムが iLink ロングポーリングを自動的に再起動するため、**通常はサービスを手動で再起動する必要はありません**。
+   | フィールド | 意味 |
+   |-------|---------|
+   | `session_key` | 以降の呼び出しで、この連携の試行を識別するキー |
+   | `qrcode` | iLink の QR トークン |
+   | `qrcode_open_url` | QR コードにエンコードする内容（リンクであり、画像の URL では**ありません**） |
+   | `qrcode_image_data_url` | 同じ内容を PNG の data URL にしたもの（サーバーで生成できなかった場合は含まれません） |
+   | `message` | 案内メッセージ |
+
+   サーバーが `https://ilinkai.weixin.qq.com` に接続できない場合、`502` が返ります。
+
+2. **スキャンできる QR コードにしてスキャンする**
+
+   ```bash
+   jq -r .qrcode_image_data_url qr.json | sed 's#^data:image/png;base64,##' | base64 -d > wechat-qr.png
+   ```
+
+   `wechat-qr.png` を任意の画像ビューアーで開き、スマートフォンの WeChat でスキャンします（古い macOS では `base64 -D` を使います。画面のないサーバーの場合は、ファイルを手元の PC にコピーしてください）。別の方法として、`qrcode_open_url` を任意の QR ツールでエンコードしても構いません（`qrencode` がインストールされていれば `qrencode -t ANSIUTF8 "<qrcode_open_url>"`）。終わったら `qr.json` と `wechat-qr.png` を削除してください。
+
+3. **ステータスが `confirmed` になるまでポーリングする**
+
+   ```bash
+   curl -sk "https://127.0.0.1:8080/api/robot/wechat/qrcode/status?session_key=<session_key>" \
+     -H "Authorization: Bearer <token>"
+   ```
+
+   1 回の呼び出しで、変化があるまで最大約 35 秒待ってから `{"status":"..."}` が返ります。状態が変わるまで繰り返し呼び出します。
+
+   | `status` | 意味 / 対処 |
+   |----------|----------------------|
+   | `wait` | まだスキャンされていません（待機がタイムアウトした場合も返ります）。もう一度ポーリングします |
+   | `scaned` | スキャン済みです。スマートフォンで確認を完了し、ポーリングを続けます |
+   | `scaned_but_redirect` | iLink が別のホストを指示しました。サーバーが自動で切り替えるので、ポーリングを続けます |
+   | `need_verifycode` | WeChat に**ペアリング用の数字**が表示されています（一部のアカウントのみ）。手順 4 に進みます |
+   | `binded_redirect` | このアカウントはすでに連携済みです（`already_connected: true`）。何も書き込まれず、セッションは終了します |
+   | `confirmed` | 完了です。手順 5 を参照してください |
+
+   エラー: `400` は `session_key` がない場合、`404` はセッションが存在しないか期限切れの場合、`410` は QR コードの発行から 5 分以上経過した場合（手順 1 からやり直します）、`502` は iLink のエラーです。
+
+4. **ペアリング用の数字を送信する（求められた場合のみ）**
+
+   ```bash
+   curl -sk -X POST https://127.0.0.1:8080/api/robot/wechat/qrcode/verify \
+     -H "Authorization: Bearer <token>" -H "Content-Type: application/json" \
+     -d '{"session_key":"<session_key>","verify_code":"<WeChat に表示された数字>"}'
+   ```
+
+   その後、手順 3 のポーリングを続けます。サーバーは送信済みの数字を再利用します（ステータスの呼び出しに `&verify_code=<数字>` を付けて渡すこともできます）。
+
+5. **連携の完了**  
+   `confirmed` のレスポンスには `message`、`ilink_bot_id`、`ilink_user_id` が含まれます。サーバーは続けて `robots.wechat` に `enabled: true`、`bot_token`、`ilink_bot_id`、`ilink_user_id`、`base_url` を設定し（空の場合は `bot_type` と `bot_agent` も設定します）、`config.yaml` に書き込み、ボット接続を再起動します。**手動での再起動は不要です**。`auth` は変更されません。`GET /api/robot/wechat/status`（`enabled`、`bound`、`ilink_bot_id`、`ilink_user_id`、`base_url`）で確認できます。
 
 6. **スマートフォンの WeChat でテストする**  
-   CyberStrikeAI ボットとの**プライベートチャット**を開き（連携後、WeChat 内に対応する会話が表示されます）、`帮助`または任意のテキストを送信してテストします。
+   CyberStrikeAI ボットとの**プライベートチャット**を開き（連携後、WeChat 内に対応する会話が表示されます）、`whoami` または `help` を送信してテストします。
 
-**CyberStrikeAI の WeChat 入力欄の説明**
+**`robots.wechat` のキー**
 
-| 入力欄 | 説明 |
-|------|------|
-| WeChat ボットを有効にする | チェックを入れると iLink ロングポーリングが起動します。連携に成功すると自動的にチェックされます |
-| QR コードを生成して連携 | QR コードによる連携フローを開始します |
-| **詳細設定**（通常はデフォルトのままで問題ありません） | |
-| API Base URL | デフォルトは `https://ilinkai.weixin.qq.com` |
-| Bot Type | デフォルトは `3` |
-| Bot Agent | デフォルトは `CyberStrikeAI/1.0` |
-| iLink Bot ID | 連携に成功すると自動的に入力されます。読み取り専用です |
+| キー | 説明 |
+|-----|------|
+| `enabled` | iLink ロングポーリングを起動します。連携に成功すると自動的に `true` になります（`bot_token` が空でないことが必要です） |
+| `bot_token`、`ilink_bot_id`、`ilink_user_id` | 連携によって書き込まれます。手で編集しないでください |
+| `base_url` | デフォルトは `https://ilinkai.weixin.qq.com` |
+| `bot_type` | デフォルトは `3` |
+| `bot_agent` | デフォルトは `CyberStrikeAI/1.0` |
 
 **使い方**
 
@@ -225,18 +333,18 @@ Lark のロングコネクションは、オープンプラットフォームで
 
 **再連携**
 
-- 連携する WeChat アカウントを変更したい場合は、ボット設定ページで **「再連携」** をクリックし、もう一度 QR コードをスキャンします。  
-- 「この WeChat アカウントはすでに連携済みです」と表示された場合は、そのアカウントが以前に連携を完了していることを意味します。
+- 連携する WeChat アカウントを変更したい場合は、手順 1〜5 をもう一度実行します。QR コードの取得時に現在の `bot_token` が一緒に送信され、連携に成功すると、保存されているトークンと ID が上書きされます。  
+- ステータスが `binded_redirect`（「この WeChat アカウントはすでに連携済みです」）の場合は、そのアカウントが以前に連携を完了していることを意味し、設定は何も変更されません。
 
 **よくある問題**
 
 | 症状 | 対処 |
 |------|------|
-| QR コードの期限切れ | 「QR コードを生成して連携」をもう一度クリックします（有効期間は約 5 分） |
-| スキャン後に数字の入力を求められる | スマートフォンの WeChat に表示されているペアリング用の数字を、Web ページに入力して送信します |
-| 連携は成功したが、メッセージを送信しても返信がない | プログラムのログに `微信 iLink 长轮询已启动` と `微信收到消息` が出力されているか確認します。「WeChat ボットを有効にする」にチェックが入っていることも確認してください |
+| QR コードの期限切れ（`410` または `404`） | 新しい QR コードを取得します（有効期間は約 5 分） |
+| ステータスが `need_verifycode` になる | WeChat に表示されているペアリング用の数字を送信します（手順 4） |
+| 連携は成功したが、メッセージを送信しても返信がない | プログラムのログに `WeChat iLink long polling started` と `WeChat message received` が出力されているか確認します。`robots.wechat.enabled` が `true` であることも確認してください |
 | ネットワーク切断やスリープ後に返信がない | プログラムが自動的に再接続します（約 5〜60 秒）。それでも返信がない場合は CyberStrikeAI を再起動してください |
-| QR コードを生成できない | サーバーが `https://ilinkai.weixin.qq.com` にアクセスできること（アウトバウンド HTTPS）を確認します |
+| QR コードを取得できない（`502`） | サーバーが `https://ilinkai.weixin.qq.com` にアクセスできること（アウトバウンド HTTPS）を確認します |
 
 ---
 
@@ -247,13 +355,21 @@ Lark のロングコネクションは、オープンプラットフォームで
 **設定手順:**
 
 1. Telegram で **@BotFather** を探し、`/newbot` を送信してボットを作成し、**Bot Token** を取得します。  
-2. CyberStrikeAI → **システム設定** → **ボット設定** → **Telegram** を開きます。  
-3. 「Telegram ボットを有効にする」にチェックを入れ、**Bot Token** を貼り付けます。  
-4. （任意）Bot Username（`@` を除く）を入力します。空欄の場合は、プログラムが自動的に `getMe` で取得します。  
-5. （任意）「グループチャットを許可」にチェックを入れます。グループチャットでは、**ボットに @ した**メッセージにのみ応答します。  
-6. **設定を適用** をクリックします（ロングポーリング接続が自動的に再起動されます）。
+2. `config.yaml` の `robots.telegram` で `enabled: true` にし、**Bot Token** を貼り付けます。  
+3. （任意）`bot_username`（`@` を除く）を入力します。空欄の場合は、プログラムが起動時に自動的に `getMe` で取得します。  
+4. （任意）`allow_group_messages: true` にするとグループチャットを許可します。グループチャットでは、**ボットに @ した**メッセージにのみ応答します。  
+5. CyberStrikeAI を再起動します。
 
-**使い方:** ボットとのプライベートチャットではそのままメッセージを送信します。グループチャットではボットに @ する必要があります（かつ、グループチャットを許可にチェックが入っていること）。
+```yaml
+robots:
+  telegram:
+    enabled: true
+    bot_token: "<Bot Token>"
+    bot_username: ""
+    allow_group_messages: false
+```
+
+**使い方:** ボットとのプライベートチャットではそのままメッセージを送信します。グループチャットではボットに @ する必要があります（かつ、`allow_group_messages: true` になっていること）。
 
 ---
 
@@ -267,7 +383,15 @@ Lark のロングコネクションは、オープンプラットフォームで
 2. **Basic Information** → **App-Level Tokens** → トークンを作成します（scope: `connections:write`）。これが **xapp-** で始まるトークンです。  
 3. **OAuth & Permissions** → Bot Token Scopes（`app_mentions:read`、`chat:write`、`im:history`、`im:read` など）を追加 → ワークスペースにインストールして、**xoxb-** で始まる Bot Token を取得します。  
 4. **Event Subscriptions** → `message.im`、`app_mention` などをサブスクライブします（Socket Mode ではアプリ内で設定します）。  
-5. CyberStrikeAI に Bot Token と App-Level Token を入力 → **設定を適用**します。
+5. 2 つのトークンを `config.yaml` の `robots.slack` に入力し、CyberStrikeAI を再起動します。
+
+```yaml
+robots:
+  slack:
+    enabled: true
+    bot_token: "<xoxb- の Bot Token>"
+    app_token: "<xapp- の App-Level Token>"
+```
 
 **使い方:** Bot とのプライベートチャットではそのまま送信します。チャンネルではボットに @ する必要があります。
 
@@ -282,10 +406,18 @@ Lark のロングコネクションは、オープンプラットフォームで
 1. [Discord Developer Portal](https://discord.com/developers/applications) でアプリケーションを作成 → **Bot** → **Token** をコピーします。  
 2. **Privileged Gateway Intents** の **Message Content Intent** を有効にします（有効にしないとメッセージ本文を読み取れません）。  
 3. OAuth2 → URL Generator → scopes: `bot` → 権限で **Send Messages**、**Read Message History** などにチェックを入れ → Bot をサーバーに招待します。  
-4. CyberStrikeAI → **ボット設定** → **Discord** → Token を入力 → **設定を適用**します。  
-5. （任意）「サーバーのチャンネルを許可」にチェックを入れます。チャンネルでは、**ボットに @ した**メッセージにのみ応答します。
+4. Token を `config.yaml` の `robots.discord` に入力し、CyberStrikeAI を再起動します。  
+5. （任意）`allow_guild_messages: true` にするとサーバーのチャンネルを許可します。チャンネルでは、**ボットに @ した**メッセージにのみ応答します。
 
-**使い方:** Bot とのプライベートチャットではそのまま送信します。サーバーのチャンネルではボットに @ する必要があります（かつ、サーバーのチャンネルを許可にチェックが入っていること）。
+```yaml
+robots:
+  discord:
+    enabled: true
+    bot_token: "<Bot Token>"
+    allow_guild_messages: false
+```
+
+**使い方:** Bot とのプライベートチャットではそのまま送信します。サーバーのチャンネルではボットに @ する必要があります（かつ、`allow_guild_messages: true` になっていること）。
 
 ---
 
@@ -298,13 +430,22 @@ Lark のロングコネクションは、オープンプラットフォームで
 1. [QQ ボットオープンプラットフォーム](https://q.qq.com)でボットを作成し、**App ID** と **Client Secret** を取得します。  
 2. サンドボックスにテストメンバーを追加します（本番公開前は、サンドボックスでのみ会話できます）。  
 3. **C2C メッセージ**、**グループ @ メッセージ** などのイベントをサブスクライブします（WebSocket モード）。  
-4. CyberStrikeAI → **ボット設定** → **QQ ボット** → App ID と Client Secret を入力します。  
-5. テスト段階では **サンドボックス環境** にチェックを入れます。本番公開後はサンドボックスを解除してリリースします。  
-6. **設定を適用** をクリックします。
+4. `config.yaml` の `robots.qq` に App ID と Client Secret を入力します。  
+5. テスト段階では `sandbox: true` にします。本番公開後は `false` にしてリリースします。  
+6. CyberStrikeAI を再起動します。
+
+```yaml
+robots:
+  qq:
+    enabled: true
+    app_id: "<App ID>"
+    client_secret: "<Client Secret>"
+    sandbox: true
+```
 
 **使い方:** ボットとの C2C プライベートチャットではそのまま送信します。QQ グループではボットに @ する必要があります。
 
-> 注意: QQ 公式は Webhook コールバックを段階的に推進していますが、現在の実装は WebSocket を使用しています（DingTalk / Lark と同様のロングコネクション方式）。設定変更後に接続が更新されない場合は、CyberStrikeAI のプロセスを再起動してください。
+> 注意: QQ 公式は Webhook コールバックを段階的に推進していますが、現在の実装は WebSocket を使用しています（DingTalk / Lark と同様のロングコネクション方式）。
 
 ---
 
@@ -333,29 +474,34 @@ chat:write
 
 ### 4.2 ユーザー単位の紐付けモード（デフォルト）
 
-管理者の操作:
-
-1. システム設定 → ボット設定 → プラットフォームを選択します。
-2. 「業務認可ポリシー」で「ユーザー単位の紐付け（`user_binding`）」を選択します。
-3. 「設定を適用」をクリックします。
+管理者の操作: 設定は不要です。`auth` を省略するか `mode: user_binding` と書くと、このモードになります。
 
 各利用者の操作:
 
-1. CyberStrikeAI の Web 画面にログインし、右上のアバターをクリック → **ボットアカウントの紐付け** を開きます。
-2. **紐付けコードを生成** をクリックすると、ページで 5 分のカウントダウンが始まります。
-3. 対象のボットで、ページに表示された完全なコマンドを送信します。例: `绑定 7C6E-BD4C`
-4. `身份` または `whoami` を送信し、`鉴权状态：已授权` が表示され、「実際の ID」が自分の Web ユーザーであることを確認します。
+1. 自分のアカウントでログインし（第 1 節）、紐付けコードを取得します。この呼び出しに必要な権限は `auth:self` だけで、コードはログインしているユーザーに紐付きます。
 
-紐付けコードはハッシュのみが保存され、一度しか使用できません。カウントダウンが終了すると、フロントエンドは無効としてマークし、コピーを無効化して紐付け一覧を更新します。サーバー側でも期限切れのコードは拒否されます。再生成すると、それ以前に未使用だった古いコードは直ちに無効になります。ユーザーは `解绑` を送信するか、Web の紐付けウィンドウで紐付けを取り消すことができます。
+   ```bash
+   curl -k -X POST https://127.0.0.1:8080/api/auth/robot-binding-code \
+     -H "Authorization: Bearer <token>"
+   ```
+
+   ```json
+   {"code":"7C6E-BD4C","expires_at":"<RFC 3339 の UTC 時刻>","expires_in_seconds":300}
+   ```
+
+2. 5 分以内に、対象のボットで完全なコマンドを送信します。例: `bind 7C6E-BD4C`。
+3. `whoami` を送信し、`Auth status: authorized` が表示され、`Effective identity` の行が自分のユーザーであることを確認します。
+
+紐付けコードはハッシュのみが保存され、一度しか使用できません。サーバーは期限切れや使用済みのコードを拒否します。再生成すると、それ以前に未使用だった古いコードは直ちに無効になります。紐付けの解除は、`unbind` を送信して（続けて `confirm`）行うか、API で一覧の取得と取り消しを行います。`GET /api/auth/robot-bindings` は `{"bindings":[{"id","platform","external_user_hint","enabled","created_at","updated_at"}]}` を返し、`DELETE /api/auth/robot-bindings/<id>` で 1 件を削除できます。どちらも `auth:self` が必要です。
 
 ### 4.3 専用サービスアカウントモード
 
 1. まず、ボットをプラットフォームに正常に接続します。
-2. 対象の利用者がボットに `身份` / `whoami` を送信し、返された完全な「送信者 ID」をコピーします。個人 WeChat の ID は通常 `xxxx@im.wechat` の形式です。必ずコマンドの返り値を使用してください。`ilink_bot_id` や設定内の `ilink_user_id` で代用してはいけません。
-3. システム設定 → ボット設定 → プラットフォームを選択 → 業務認可ポリシーで「専用サービスアカウント（`service_account`）」を選択します。
-4. サービスアカウントの **RBAC User ID** を入力します（表示名ではありません）。`admin` を入力することもできます。この場合、ホワイトリストの送信者はプラットフォームの全権限を持つことになり、画面に赤いリスク警告が表示されます。
-5. 「許可するプラットフォーム送信者 ID」に、1 行につき 1 つ、完全な ID を入力します。完全一致で、大文字と小文字が区別され、`*` ワイルドカードは使用できません。
-6. 「設定を適用」をクリックし、もう一度 `身份` を送信して、「実際の ID」とロールが正しいことを確認します。
+2. 対象の利用者がボットに `whoami` を送信し、返された `Sender ID` をコピーします。個人 WeChat の ID は通常 `xxxx@im.wechat` の形式です。必ずコマンドの返り値を使用してください。`ilink_bot_id` や設定内の `ilink_user_id` で代用してはいけません。
+3. `config.yaml` の該当プラットフォームで `auth.mode: service_account` を設定します。
+4. `service_user_id` に、RBAC の**ユーザー ID** を入力します（表示名ではありません）。`admin` を入力することもできます。この場合、ホワイトリストの送信者はプラットフォームの全権限を持つことになります。
+5. `allowed_external_users` に、1 項目につき 1 つ、完全な ID を入力します。完全一致で、大文字と小文字が区別されます。`*` ワイルドカード、空の項目、重複は受け付けられません。
+6. CyberStrikeAI を再起動し、もう一度 `whoami` を送信して、実際のユーザー、ロール、リソース範囲が正しいことを確認します。サービスユーザーが存在しない、または無効化されている場合、起動時にはエラーになりませんが、すべての送信者が拒否されます（`PUT /api/config` ではこのような設定は拒否されます）。
 
 例:
 
@@ -369,14 +515,14 @@ robots:
         - "o9cq806s32Sm2_kyOmkyaV7Rn1lU@im.wechat"
 ```
 
-サービスアカウントモードでは、`绑定` / `解绑` コマンドは受け付けられません。複数のホワイトリスト送信者は、サービスアカウントが作成した会話、プロジェクト、その他の `own` スコープのリソースを共有します。共有を避けたい場合は、ユーザー単位の紐付けを使用してください。
+サービスアカウントモードでは、`bind` / `unbind` コマンドは受け付けられません。複数のホワイトリスト送信者は、サービスアカウントが作成した会話、プロジェクト、その他の `own` スコープのリソースを共有します。共有を避けたい場合は、ユーザー単位の紐付けを使用してください。
 
 ### 4.4 現在の ID を確認する方法
 
 次を送信します。
 
 ```text
-身份
+whoami
 ```
 
 返される内容には、プラットフォーム、実際の送信者 ID、認可モード、認可状態、実際の RBAC ユーザー、RBAC User ID、プラットフォームロール、リソース範囲、有効な権限の数が含まれます。サービスアカウントのホワイトリストに含まれていない送信者には、拒否された状態のみが表示され、サービスアカウントの詳細は表示されません。
@@ -387,20 +533,36 @@ robots:
 
 | コマンド | 説明 |
 |------|------|
-| **`绑定 <紐付けコード>`** | 現在のプラットフォーム送信者を、紐付けコードを生成した RBAC ユーザーに紐付けます |
-| **`解绑`** | 現在のプラットフォームアカウントの紐付けを解除します。Web 画面の紐付け一覧から取り消すこともできます |
-| **`身份`** または **`whoami`** | プラットフォーム送信者 ID、認可モード、紐付け状態、および現在の実際の RBAC ユーザー、ロール、リソース範囲を表示します |
-| **`帮助`** | コマンドのヘルプと説明を表示します |
-| **`列表`** または **`对话列表`** | すべての会話のタイトルと会話 ID を一覧表示します |
-| **`切换 <会話ID>`** または **`继续 <会話ID>`** | 会話 ID を指定し、以降のメッセージをその会話で続けます |
-| **`新对话`** | 新しい会話を開始し、以降のメッセージを新しい会話で送ります |
-| **`清空`** | 現在の会話のコンテキストをクリアします（「新しい会話」と同じ効果です） |
-| **`当前`** | 現在の会話 ID とタイトルを表示します |
-| **`停止`** | 現在実行中のタスクを中断します |
-| **`角色`** または **`角色列表`** | 利用可能なすべてのロールを一覧表示します（ペネトレーションテスト、CTF、Web アプリケーションスキャンなど） |
-| **`角色 <ロール名>`** または **`切换角色 <ロール名>`** | 現在使用するロールを切り替えます |
-| **`删除 <会話ID>`** | 指定した会話を削除します |
-| **`版本`** | 現在の CyberStrikeAI のバージョン番号を表示します |
+| **`help`**（または `?`） | コマンドのヘルプを表示します。表示内容は送信者の権限に応じて変わります |
+| **`version`** | 現在の CyberStrikeAI のバージョン番号を表示します |
+| **`whoami`** | プラットフォーム送信者 ID、認可モード、紐付け状態、および現在の実際の RBAC ユーザー、ロール、リソース範囲を表示します |
+| **`bind <紐付けコード>`** | 現在のプラットフォーム送信者を、紐付けコードを生成した RBAC ユーザーに紐付けます（`user_binding` モードのみ） |
+| **`unbind`** | 現在のプラットフォームアカウントの紐付け解除を要求します。2 分以内に `confirm` を送信すると解除されます（`user_binding` モードのみ）。API からも取り消せます（4.2 を参照） |
+| **`list`** | 会話のタイトルと会話 ID を一覧表示します（先頭の 20 件） |
+| **`switch <会話ID>`** または **`continue <会話ID>`** | 会話 ID を指定し、以降のメッセージをその会話で続けます |
+| **`new`** | 新しい会話を開始し、以降のメッセージを新しい会話で送ります |
+| **`clear`** | 現在の会話のコンテキストをクリアします（`new` と同じ効果です） |
+| **`status`** | 現在の会話、モード、ロール、プロジェクトを表示します |
+| **`task`** | 現在のタスクの状態と経過時間を表示します |
+| **`rename <名前>`** | 現在の会話のタイトルを変更します |
+| **`delete <会話ID>`** | 指定した会話を削除します。2 分以内に `confirm` を送信すると削除されます |
+| **`stop`** | 現在実行中のタスクを中断します |
+| **`roles`** | 有効なロールを一覧表示します（`Default`、`Penetration Testing`、`Information Gathering` など） |
+| **`role <ロール名>`** | 現在使用するロールを切り替えます。例: `role Penetration Testing` |
+| **`modes`** | 会話モードと現在の選択を一覧表示します |
+| **`mode <モード名>`** | 会話モード（`single`、`deep`、`plan_execute`、`supervisor`）を切り替えます。`single` 以外はマルチエージェントを有効にしている必要があります |
+| **`permissions`** | 現在有効な業務権限を表示します |
+| **`doctor`** | ボット関連の主要な設定の状態を確認します（`config:read` が必要です） |
+| **`confirm`** / **`cancel`** | 保留中のリスクの高い操作（`unbind`、`delete`）を確定またはキャンセルします |
+| **`projects`** | プロジェクトを一覧表示します（プロジェクト機能が有効な場合のみ） |
+| **`new project <名前>`** | プロジェクトを作成し、現在の会話に紐付けます |
+| **`bind project <ID\|名前>`** | 現在の会話を既存のプロジェクトに紐付けます |
+| **`unbind project`** | 現在の会話のプロジェクト紐付けを解除します |
+| **`vuln alerts`** | 脆弱性アラートの購読状態を表示します。`vuln alerts on`、`vuln alerts off`、`vuln alerts critical\|high\|medium` で変更します |
+
+`help`、`version`、`whoami`、`permissions`、`confirm`、`cancel`、`bind`、`unbind` 以外のコマンドには RBAC 権限が必要です。たとえば `list`、`switch`、`status`、`task` には `chat:read`、`new`、`clear`、`rename` には `chat:write`、`delete` には `chat:delete`、`stop`、`modes`、`mode` には `agent:execute`、`roles`、`role` には `roles:read`、プロジェクト関連のコマンドには `project:read` / `project:write`、`vuln alerts` には `vulnerability:read` が必要です。権限が不足している場合は、その旨が返信されます。
+
+以前のバージョンで使われていた中国語のコマンドも、これらのコマンドの別名として引き続き使えます。
 
 上記のコマンド以外の**任意のテキストを入力する**と、ユーザーメッセージとして AI に送信されます。Web 画面での会話と同じロジックです（ペネトレーションテスト / セキュリティ分析など）。
 
@@ -411,7 +573,7 @@ robots:
 ## 5. 使い方（ボットに @ する必要はありますか?）
 
 - **個人 WeChat**: CyberStrikeAI ボットとの**プライベートチャット**でそのまま送信すれば利用でき、**@ は不要**です（グループチャットには非対応）。  
-- **DingTalk / Lark の個別チャット（推奨）**: **ボットを検索して開き**、**プライベートチャット**で`帮助`または任意のテキストを直接入力するだけで利用でき、**@ は不要**です。  
+- **DingTalk / Lark の個別チャット（推奨）**: **ボットを検索して開き**、**プライベートチャット**で`help` または任意のテキストを直接入力するだけで利用でき、**@ は不要**です。  
 - **DingTalk / Lark のグループチャット**: ボットがグループに追加されている場合、グループ内では**ボットに @ して**送信したメッセージのみがボットに受信され、返信されます。@ しないグループメッセージではボットは反応しません。
 
 まとめ: **個人 WeChat と個別チャットでは直接送信**します。**DingTalk / Lark でグループ内で使う場合は、ボットに @ して**から内容を送信する必要があります。
@@ -422,19 +584,18 @@ robots:
 
 **個人 WeChat（最も簡単で、オープンプラットフォームは不要）**
 
-1. CyberStrikeAI の Web 画面 → システム設定 → ボット設定 → **WeChat / iLink** → **QR コードを生成して連携**。  
-2. スマートフォンの WeChat で QR コードをスキャンして確認します（ペアリング用の数字が必要な場合は Web ページに入力します）。  
-3. スマートフォンの WeChat のプライベートチャットで `身份` を送信し、送信者 ID をコピーします。  
-4. ボット設定に戻り、`user_binding` を選択するか、`service_account` を選択してサービスアカウントと送信者のホワイトリストを入力します。  
-5. 設定を適用し、WeChat でもう一度 `身份` を送信して、実際の RBAC ID を確認してから、通常のメッセージを送信します。
+1. `POST /api/robot/wechat/qrcode` で QR コードを取得して PNG を保存し、WeChat でスキャンします。ペアリング用の数字を求められたら送信します（3.4 を参照）。  
+2. スマートフォンの WeChat のプライベートチャットで `whoami` を送信し、送信者 ID をコピーします。  
+3. `user_binding` にする場合は `auth` を記述しません。`service_account` にする場合は、`config.yaml` にサービスアカウントと送信者のホワイトリストを設定します。  
+4. CyberStrikeAI を再起動し、WeChat でもう一度 `whoami` を送信して、実際の RBAC ID を確認してから、通常のメッセージを送信します。
 
 **DingTalk / Lark**
 
 1. **オープンプラットフォームで**: 第 3 節に従い、アプリの作成、認証情報のコピー、ボットの有効化（DingTalk では必ず **Stream モード**を選択）、権限設定とリリースを完了します。  
-2. **CyberStrikeAI で**: システム設定 → ボット設定 → 対応するプラットフォームにチェックを入れ、Client ID / App ID と Client Secret / App Secret を貼り付け → **設定を適用**をクリックします。  
-3. **認可モードを選択する**: 複数人で利用する場合は `user_binding` を推奨します。専用ボットの場合は、サービスアカウントと送信者のホワイトリストを設定します。  
-4. **設定を適用**: Web 画面が対応する接続を自動的に再起動します。  
-5. **スマートフォンの DingTalk / Lark で**: ボットを見つけ（個別チャットでは直接送信、グループチャットでは @ が必要）、まず `身份` を送信して認可を確認してから、通常の内容を送信してテストします。
+2. **CyberStrikeAI で**: `config.yaml` の `robots.dingtalk` または `robots.lark` で、`enabled: true` にし、Client ID / App ID と Client Secret / App Secret を入力します。  
+3. **認可モードを選択する**: 複数人で利用する場合は `auth` を記述しない（`user_binding`）のがおすすめです。専用ボットの場合は、サービスアカウントと送信者のホワイトリストを設定します。  
+4. **CyberStrikeAI を再起動**します。  
+5. **スマートフォンの DingTalk / Lark で**: ボットを見つけ（個別チャットでは直接送信、グループチャットでは @ が必要）、まず `whoami` を送信して認可を確認してから、通常の内容を送信してテストします。
 
 メッセージを送信しても反応がない場合は、まず **第 9 節のトラブルシューティング** と **第 10 節のよくある遠回り** を確認してください。
 
@@ -446,13 +607,13 @@ robots:
 
 ```yaml
 robots:
-  wechat: # 個人 WeChat iLink（QR コードによる連携後に自動で書き込まれるため、通常は手入力不要）
+  wechat: # 個人 WeChat iLink（トークンと ID は QR コードによる連携で書き込まれます。手で編集しないでください）
     enabled: true
     auth:
       mode: service_account
       service_user_id: admin
       allowed_external_users:
-        - "身份 コマンドからコピーした完全な送信者 ID"
+        - "whoami からコピーした完全な送信者 ID"
     bot_token: "your_bot_token@im.bot:..."
     ilink_bot_id: "your_bot_id@im.bot"
     ilink_user_id: "your_user_id@im.wechat"
@@ -498,7 +659,7 @@ robots:
     sandbox: true
 ```
 
-各プラットフォームの `auth` は個別に設定します。省略した場合のデフォルトは `user_binding` です。設定を変更した後、Web 画面で **設定を適用** をクリックすると、対応する接続が自動的に再起動します。YAML を手動で編集した場合はプロセスの再起動が必要です。個人 WeChat は QR コードによる連携に成功すると、自動的に書き込まれ、iLink 接続が再起動されます。
+各プラットフォームの `auth` は個別に設定します。省略した場合のデフォルトは `user_binding` です。YAML を編集した後はプロセスを再起動してください（第 1 節）。個人 WeChat は QR コードによる連携に成功すると、自動的に書き込まれ、ボット接続も再起動されます。
 
 ---
 
@@ -506,24 +667,19 @@ robots:
 
 DingTalk や Lark をインストールしていない場合は、**テスト用インターフェース**でボットのロジックが正常かどうかを確認できます。
 
-1. グローバルな `robot:write` 権限を持つアカウントでログインし、Bearer Token を取得します。  
+1. グローバルスコープの `robot:write` 権限を持つアカウントでログインし（第 1 節）、トークンを取得します。  
 2. curl でテスト用インターフェースを呼び出します。
 
 ```bash
-# 先にログインします。実際のアドレス、ユーザー名、パスワードに合わせて変更してください
-TOKEN=$(curl -s -X POST "http://localhost:8080/api/auth/login" \
+curl -k -X POST https://127.0.0.1:8080/api/robot/test \
+  -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"YOUR_PASSWORD"}' | jq -r '.token')
-
-curl -X POST "http://localhost:8080/api/robot/test" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"platform":"dingtalk","user_id":"test_user","text":"帮助"}'
+  -d '{"platform":"dingtalk","user_id":"test_user","text":"help"}'
 ```
 
-返された JSON に `"reply":"【CyberStrikeAI 机器人命令】..."` が含まれていれば、コマンド処理は正常です。`帮助`、`版本`、`身份` は未紐付けの状態でも実行できます。`列表`、`当前`、および通常の AI メッセージは実際の RBAC を経由するため、テスト用の `platform + user_id` はすでに紐付けられているか、サービスアカウントモードの送信者ホワイトリストと完全に一致している必要があります。
+返された JSON に `"reply":"[CyberStrikeAI bot commands]..."` が含まれていれば、コマンド処理は正常です。`help`、`version`、`whoami` は未紐付けの状態でも実行できます。`list`、`status`、および通常の AI メッセージは実際の RBAC を経由するため、テスト用の `platform + user_id` はすでに紐付けられているか、サービスアカウントモードの送信者ホワイトリストと完全に一致している必要があります。
 
-インターフェースの説明: `POST /api/robot/test`（グローバルな `robot:write` が必要）、リクエストボディ `{"platform":"任意","user_id":"任意","text":"必須"}`、レスポンス `{"reply":"返信内容"}`。このインターフェースはボットの業務ロジックを模擬するだけで、サードパーティプラットフォームの署名やロングコネクションは検証しません。
+インターフェースの説明: `POST /api/robot/test`（グローバルスコープの `robot:write` が必要）、リクエストボディ `{"platform":"任意","user_id":"任意","text":"必須"}`。`platform` のデフォルトは `test`、`user_id` のデフォルトは `test_user` で、JSON でないボディには `400` が返ります。レスポンスは `{"reply":"返信内容"}` です。実際のボットメッセージと同じ処理が実行されるため、そのプラットフォームの `auth` 設定も適用され（ホワイトリストを試す場合は `wechat` など実際のプラットフォーム名を指定してください。デフォルトの `test` は常に `user_binding` として扱われます）、通常のテキストでは AI が実際に実行されます。サードパーティプラットフォームの署名やロングコネクションは検証しません。
 
 ---
 
@@ -534,18 +690,18 @@ curl -X POST "http://localhost:8080/api/robot/test" \
 次の順に確認します。
 
 1. **QR コードによる連携が完了しているか**  
-   ボット設定ページに「接続済み」または連携済みの Bot ID が表示されているはずです。`config.yaml` の `robots.wechat.bot_token` が空であってはいけません。
+   `GET /api/robot/wechat/status` が `"bound": true` と `ilink_bot_id` を返すはずです。`config.yaml` の `robots.wechat.bot_token` が空であってはいけません。
 
 2. **有効になっているか**  
-   「WeChat ボットを有効にする」にチェックが入っていることを確認します。変更したばかりの場合は、CyberStrikeAI のプロセスを再起動してみてください。
+   `config.yaml` で `robots.wechat.enabled: true` になっていることを確認します（手動で編集した場合は再起動してください）。
 
 3. **プログラムのログを確認する**  
-   - 起動後に `微信 iLink 长轮询已启动` が出力されているはずです。  
-   - メッセージ送信後に `微信收到消息` が出力されるはずです。出力されない場合は、多くは連携が成功していないか `bot_token` が無効になっているため、**再連携**を試してください。  
-   - `微信 iLink 长轮询异常，将自动重连` が出力された場合は、自動再接続を待つか、プロセスを再起動してください。
+   - 起動後に `WeChat iLink long polling started` が出力されているはずです。  
+   - メッセージ送信後に `WeChat message received` が出力されるはずです。出力されない場合は、多くは連携が成功していないか `bot_token` が無効になっているため、もう一度連携してください（3.4 を参照）。  
+   - `WeChat iLink long polling error, will reconnect automatically` が出力された場合は、自動再接続を待つか、プロセスを再起動してください。
 
 4. **ネットワーク**  
-   サーバーが `https://ilinkai.weixin.qq.com`（アウトバウンド HTTPS）にアクセスできる必要があります。連携の段階で QR コードを生成できない場合は、まずこの項目を確認してください。
+   サーバーが `https://ilinkai.weixin.qq.com`（アウトバウンド HTTPS）にアクセスできる必要があります。QR コードの取得が `502` で失敗する場合は、まずこの項目を確認してください。
 
 5. **ネットワーク切断やスリープの後**  
    DingTalk / Lark と同様に、プログラムは**自動的に再接続**します（約 5〜60 秒）。それでも返信がない場合は CyberStrikeAI を再起動してください。
@@ -560,35 +716,35 @@ curl -X POST "http://localhost:8080/api/robot/test" \
 1. **Client ID / Client Secret がオープンプラットフォームと完全に一致しているか**  
    「認証情報と基本情報」から**コピー＆ペースト**し、手入力しないでください。数字の **0** とアルファベットの **o**、数字の **1** とアルファベットの **l** に注意してください（例: `ding9gf9tiozuc504aer` の途中は **504** であり、5o4 ではありません）。
 
-2. **設定が適用されているか**  
-   Web 画面で変更した後は、必ず「設定を適用」をクリックしてください。プログラムが対応する接続を自動的に再起動します。`config.yaml` を直接手動で編集した場合は、CyberStrikeAI のプロセスを再起動する必要があります。
+2. **変更後に再起動したか**  
+   `config.yaml` を編集した場合は、プロセスを再起動してください。`PUT /api/config` で変更した場合は `POST /api/config/apply` を呼び出してください。`PUT` だけでは接続は再起動されません。
 
 3. **プログラムのログを確認する**  
-   - 起動後に `钉钉 Stream 正在连接…` と `钉钉 Stream 已启动（无需公网），等待收消息` が出力されているはずです。  
-   - `钉钉 Stream 长连接退出` がエラー情報付きで出力された場合は、多くは **Client ID / Client Secret の誤り**か、**オープンプラットフォームでストリーム接続が有効になっていない**ことが原因です。  
-   - DingTalk でメッセージを 1 件送信した後、受信できていれば `钉钉收到消息` というログが出力されるはずです。出力されない場合は、DingTalk が本プログラムにメッセージをプッシュしていないということです（オープンプラットフォームで「ボット」が有効になっているか、**Stream モード**を選択しているかを見直してください）。
+   - 起動後に `DingTalk Stream connecting...` が出力されているはずです。  
+   - `DingTalk Stream long connection dropped (e.g. sleep/network loss), will reconnect automatically` がエラー情報付きで、起動直後から繰り返し出力される場合は、多くは **Client ID / Client Secret の誤り**か、**オープンプラットフォームでストリーム接続が有効になっていない**ことが原因です。スリープやネットワーク切断の後に同じ行が出力されるのは想定どおりで、プログラムが自動的に再接続します。  
+   - DingTalk でメッセージを 1 件送信した後、受信できていれば `DingTalk message received` というログが出力されるはずです。出力されない場合は、DingTalk が本プログラムにメッセージをプッシュしていないということです（オープンプラットフォームで「ボット」が有効になっているか、**Stream モード**を選択しているかを見直してください）。
 
 4. **オープンプラットフォーム側**  
    アプリが**リリース済み**である必要があります。「ボット」機能で、メッセージ受信用に**ストリーム接続（Stream）**を有効にする必要があります（HTTP コールバックだけでは不十分です）。権限管理で、ボットのメッセージ受信・送信などの権限が付与されている必要があります。
 
 ### 9.3 返信は届くが、未紐付け、ホワイトリストによる拒否、権限不足と表示される場合
 
-1. まず `身份` を送信し、「認可モード」と「認可状態」を確認します。
-2. `user_binding` で未紐付けと表示される場合: Web 画面右上のアバターで紐付けコードを生成し、同じプラットフォームアカウントで完全な紐付けコマンドを送信します。紐付けコードが期限切れ、または使用済みの場合は再生成してください。
-3. `service_account` でホワイトリストによる拒否と表示される場合: `身份` が返した完全な送信者 ID を、そのまま現在のプラットフォームのホワイトリストに追加します。大文字と小文字、テナントのプレフィックス、`@im.wechat` などのサフィックスに注意してください。
-4. 実際の ID は表示されるが権限不足と表示される場合: 「プラットフォーム権限」で、その RBAC ユーザーのロールを確認します。通常の AI 会話には、最低でも `agent:execute`、`chat:read`、`chat:write` が必要です。
-5. サービスアカウントが存在しない、または無効化されている場合: 設定の適用は保存を拒否します。ユーザーを復旧するか、有効化されている別の RBAC ユーザーを選択してください。
+1. まず `whoami` を送信し、「認可モード」と「認可状態」を確認します。
+2. `user_binding` で未紐付けと表示される場合: `POST /api/auth/robot-binding-code` で紐付けコードを取得し（4.2 を参照）、同じプラットフォームアカウントで完全な紐付けコマンドを送信します。紐付けコードが期限切れ、または使用済みの場合は再生成してください。
+3. `service_account` でホワイトリストによる拒否と表示される場合: `whoami` が返した完全な送信者 ID を、そのまま現在のプラットフォームのホワイトリストに追加します。大文字と小文字、テナントのプレフィックス、`@im.wechat` などのサフィックスに注意してください。
+4. 実際の ID は表示されるが権限不足と表示される場合: その RBAC ユーザーのロールと権限を確認します。通常の AI 会話には、最低でも `agent:execute`、`chat:read`、`chat:write` が必要です。
+5. サービスアカウント（`service_user_id`）が存在しない、または無効化されている場合: `PUT /api/config` はその設定を拒否しますが、手動で編集した `config.yaml` は問題なく起動し、すべての送信者が拒否されます。ユーザーを復旧するか、有効化されている別の RBAC ユーザーを選択してください。
 6. `admin` を使用しているのに拒否される場合: 多くは admin の権限不足ではなく、送信者が完全一致のホワイトリストに含まれていないことが原因です。
 
 ---
 
 ## 10. よくある遠回り（落とし穴を避ける）
 
-- **個人 WeChat と WeCom の混同**: 個人 WeChat は `robots.wechat` + Web での QR コード連携、WeCom は `robots.wecom` + 管理コンソールでのコールバック URL です。両者はまったく別物です。  
+- **個人 WeChat と WeCom の混同**: 個人 WeChat は `robots.wechat` + QR コードによる連携、WeCom は `robots.wecom` + 管理コンソールでのコールバック URL です。両者はまったく別物です。  
 - **個人 WeChat の QR コードの期限切れ**: QR コードの有効期間は約 5 分です。期限が切れたら再生成し、古いコードをスキャンし続けないでください。  
 - **ボットの種類の取り違え**: DingTalk の**グループ内**で追加した「カスタム」ボット（Webhook + 署名）は、会話には**使用できません**。本プログラムは **オープンプラットフォームの「企業内部アプリ」** のボットのみに対応しています。  
-- **変更後に「設定を適用」をクリックしていない**: Web 画面でボット設定を変更した後は「設定を適用」をクリックしてください。プログラムが対応する接続を自動的に再起動します。YAML を手動で編集した場合にのみ、プロセスの再起動が必要です。  
-- **Bot ID を送信者 ID と取り違える**: サービスアカウントのホワイトリストには、`身份` コマンドが返す「送信者 ID」を入力する必要があります。`ilink_bot_id`、`ilink_user_id`、グループ ID、表示ニックネームは入力しないでください。  
+- **変更後に再起動していない**: `config.yaml` を編集したらプロセスを再起動してください。`PUT /api/config` で変更した場合は、続けて `POST /api/config/apply` も呼び出してください（`PUT` だけでは接続は再起動されず、`auth` も保存されません）。  
+- **Bot ID を送信者 ID と取り違える**: サービスアカウントのホワイトリストには、`whoami` コマンドが返す「送信者 ID」を入力する必要があります。`ilink_bot_id`、`ilink_user_id`、グループ ID、表示ニックネームは入力しないでください。  
 - **紐付けコードの期限切れ後に使い続ける**: 紐付けコードの有効期間は 5 分で、一度しか使用できません。新しく生成したコードにより、古いコードは直ちに無効になります。  
 - **サービスアカウントでデータが分離されると誤解する**: 同じサービスアカウントのホワイトリストに含まれる送信者は、そのアカウントの会話と `own` スコープのリソースを共有します。分離が必要な場合は `user_binding` を使用してください。  
 - **admin を設定すると誰でも使えるようになる**: そうはなりません。サービスアカウントが `admin` であっても、送信者はホワイトリストと完全に一致している必要があります。ただし、ホワイトリストに含まれる人は全権限を持つことになります。  

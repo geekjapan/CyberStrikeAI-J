@@ -1,6 +1,6 @@
 # Asset Management
 
-[中文](../zh-CN/asset-management.md) | [日本語](../ja-JP/asset-management.md)
+[日本語](../ja-JP/asset-management.md)
 
 Asset management consolidates domains, IP addresses, ports, and services discovered through manual entry, network-space search engines, HTTP APIs, and Agent tasks into a maintainable baseline. It answers three questions: what assets exist, which assets have been assessed, and where risk is concentrated.
 
@@ -54,9 +54,9 @@ The system attempts to identify the URL, domain, IP address, port, and protocol.
 
 Go to **Asset Management → Asset Inventory** and select **Bulk Import**:
 
-1. Download the XLSX (recommended) or CSV template.
-2. Enter assets in the `Assets` sheet without changing the header row.
-3. Choose the completed file or drop it onto the upload area.
+1. Download the CSV template.
+2. Enter one asset per row without changing the header row.
+3. Choose the completed `.csv`, `.json`, or `.txt` file, or drop it onto the upload area; you can also paste CSV or JSON text into the box.
 4. Review row-level validation. Duplicates, invalid values, and inaccessible projects are marked as errors.
 5. Select **Import valid rows**. Invalid rows are not submitted. When the file contains more than 100 rows, the preview shows the first 100 while submission processes every valid row.
 6. Review the created, updated, and skipped counts.
@@ -83,11 +83,11 @@ Template columns:
 | `criticality` | No | `critical`, `high`, `medium`, or `low` |
 | `status` | No | `active` or `inactive`; defaults to `active` |
 
-The parser recognizes the template's English headers and common Chinese aliases. Environment and criticality columns also accept their corresponding Chinese values. Automated exports should keep the English headers and enum values to avoid ambiguous mappings.
+Headers and enum values (status, environment, criticality) are matched against the labels of the loaded UI languages, so both English and Japanese labels work, as do the field names above. Chinese headers and values are no longer recognized. Automated exports should keep the template's English field names and enum values to avoid ambiguous mappings.
 
 Limits and behavior:
 
-- One XLSX/CSV file may contain up to 100,000 rows and be up to 100 MB.
+- One CSV or JSON file may contain up to 100,000 rows and be up to 100 MB.
 - One `/api/assets/import` request may contain up to 100,000 assets.
 - Later rows with the same “target + port + protocol” in one file are marked as duplicates and are not submitted.
 - The Web UI parses and previews the file; the server remains responsible for authorization, validation, normalization, deduplication, and transactional writes.
@@ -150,7 +150,7 @@ Available actions:
 - **Bind project**: replace the project binding for all selected assets;
 - **Bulk edit**: change status, responsible person, department, business system, environment, and criticality, and add or remove tags;
 - **Create scan task / Send to chat**: apply one prompt template to the selected assets;
-- **Export CSV / XLSX**: export the currently selected rows in the browser, including ownership, risk, vulnerability count, and timestamp fields;
+- **Export CSV** / **Export all filtered results**: export the selected rows, or every asset matching the current filters, as a CSV file in the browser, including ownership, risk, vulnerability count, and timestamp fields; the CSV headers and enum values use the current UI language;
 - **Merge duplicates**: keep the first selected asset as primary, fill its empty fields from the other records, and union their tags;
 - **Batch delete**: permanently delete the selected assets.
 

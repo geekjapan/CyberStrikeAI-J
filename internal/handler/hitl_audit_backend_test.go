@@ -45,6 +45,7 @@ func TestHitlAuditBackendFromRecordPrefersPayload(t *testing.T) {
 
 func TestHitlAuditBackendFromRecordInfersJevComment(t *testing.T) {
 	backend, _ := hitlAuditBackendFromRecord("audit_agent",
+		// Chinese stays: comments stored by earlier versions were Chinese and must still be recognized.
 		"audit agent: 未命中破坏性规则，默认放行；最高破坏分=破坏业务可用性 0.12；choice=approve(0.90)",
 		`{}`)
 	if backend != config.HitlAuditBackendTypeSafe {

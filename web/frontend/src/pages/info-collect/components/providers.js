@@ -21,7 +21,7 @@ export const INFO_PROVIDERS = {
         ],
         queryPresets: [
             presetLabel('ui.infoProviders.queryApacheChina', 'Apache + China', 'app="Apache" && country="CN"'),
-            presetLabel('ui.infoProviders.queryLoginChina', 'Login pages + China', 'title="登录" && country="CN"'),
+            presetLabel('ui.infoProviders.queryLoginChina', 'Login pages + China', 'title="login" && country="CN"'),
             presetLabel('ui.infoProviders.queryDomain', 'Specific domain', 'domain="example.com"'),
             presetLabel('ui.infoProviders.queryIp', 'Specific IP', 'ip="1.1.1.1"')
         ],
@@ -49,14 +49,14 @@ export const INFO_PROVIDERS = {
         label: 'Quake',
         maxSize: 10000,
         defaultFields: 'ip,port,domain,service.name,service.http.title,location.country_cn,location.province_cn,location.city_cn',
-        placeholder: 'service.name:"http" AND country_cn:"中国"',
+        placeholder: 'service.name:"http" AND country:"China"',
         fieldPresets: [
             presetLabel('ui.infoProviders.fieldMinimal', 'Minimal fields', 'ip,port,domain'),
             presetLabel('ui.infoProviders.fieldWebCommon', 'Common web fields', 'ip,port,domain,service.name,service.http.title,location.country_cn,location.city_cn'),
             presetLabel('ui.infoProviders.fieldIntel', 'Enriched intelligence', 'ip,port,domain,service.name,service.http.title,service.http.server,location.country_cn,location.province_cn,location.city_cn,asn')
         ],
         queryPresets: [
-            presetLabel('ui.infoProviders.queryHttpChina', 'HTTP + China', 'service.name:"http" AND country_cn:"中国"'),
+            presetLabel('ui.infoProviders.queryHttpChina', 'HTTP + China', 'service.name:"http" AND country:"China"'),
             presetLabel('ui.infoProviders.queryPort443', 'Port 443', 'port:443'),
             presetLabel('ui.infoProviders.queryDomain', 'Specific domain', 'domain:"example.com"'),
             presetLabel('ui.infoProviders.queryIp', 'Specific IP', 'ip:"1.1.1.1"')

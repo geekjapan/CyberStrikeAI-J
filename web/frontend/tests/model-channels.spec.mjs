@@ -30,18 +30,18 @@ test.describe('model channel editing', () => {
         mockApi.respond('POST', '/api/config/apply', { json: {} });
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const model = panel.locator('.settings-probe-form').getByLabel('模型', { exact: true });
-        const picker = panel.getByRole('combobox', { name: '请选择模型' });
-        await panel.getByRole('button', { name: '获取模型列表' }).click();
+        const model = panel.locator('.settings-probe-form').getByLabel('Model', { exact: true });
+        const picker = panel.getByRole('combobox', { name: 'Select a model' });
+        await panel.getByRole('button', { name: 'Fetch model list' }).click();
         await expect(model).toHaveValue('deepseek-flash');
         await picker.click();
         await picker.getByRole('textbox').fill('124');
         await page.getByRole('option').filter({ hasText: 'fixture-model-124' }).click();
         await expect(model).toHaveValue('fixture-model-124');
-        await expect(panel.getByLabel('模型上下文窗口（Token）', { exact: true })).toHaveValue('1048576');
+        await expect(panel.getByLabel('Model Context Window (tokens)', { exact: true })).toHaveValue('1048576');
         expect(mockApi.calls('PUT', '/api/config')).toEqual([]);
-        await panel.getByRole('button', { name: '保存通道' }).click();
-        await expect(panel.getByRole('button', { name: '保存通道' })).toBeDisabled();
+        await panel.getByRole('button', { name: 'Save Channel' }).click();
+        await expect(panel.getByRole('button', { name: 'Save Channel' })).toBeDisabled();
         await expect.poll(() => mockApi.calls('POST', '/api/config/apply').length).toBe(1);
         await page.reload();
         await expect(model).toHaveValue('fixture-model-124');
@@ -64,10 +64,10 @@ test.describe('model channel editing', () => {
         } });
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const window = panel.getByLabel('模型上下文窗口（Token）', { exact: true });
-        const image = panel.getByText('支持图片', { exact: true });
-        const picker = panel.getByRole('combobox', { name: '请选择模型' });
-        await panel.getByRole('button', { name: '获取模型列表' }).click();
+        const window = panel.getByLabel('Model Context Window (tokens)', { exact: true });
+        const image = panel.getByText('Image input', { exact: true });
+        const picker = panel.getByRole('combobox', { name: 'Select a model' });
+        await panel.getByRole('button', { name: 'Fetch model list' }).click();
         await expect(image).toBeVisible();
         await picker.click();
         await page.getByRole('option').filter({ hasText: 'deepseek-v4-pro' }).click();
@@ -96,14 +96,14 @@ test.describe('model channel editing', () => {
         mockApi.respond('POST', '/api/config/apply', { json: {} });
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const window = panel.getByLabel('模型上下文窗口（Token）', { exact: true });
-        const save = panel.getByRole('button', { name: '保存通道', exact: true });
+        const window = panel.getByLabel('Model Context Window (tokens)', { exact: true });
+        const save = panel.getByRole('button', { name: 'Save Channel', exact: true });
         await expect(window).toHaveValue('1048576');
-        await expect(panel.locator('.settings-probe-form').getByText('默认值', { exact: true })).toHaveCount(0);
+        await expect(panel.locator('.settings-probe-form').getByText('Default', { exact: true })).toHaveCount(0);
         await expect(save).toBeDisabled();
-        await panel.getByRole('button', { name: '测试连接', exact: true }).click();
-        await expect(panel.getByRole('cell', { name: /上下文窗口.*1048576/ })).toBeVisible();
-        await expect(panel.getByText('未检测到上下文窗口，请手动填写', { exact: true })).toHaveCount(0);
+        await panel.getByRole('button', { name: 'Test connection', exact: true }).click();
+        await expect(panel.getByRole('cell', { name: /Context window.*1048576/ })).toBeVisible();
+        await expect(panel.getByText('No context window detected; enter it manually', { exact: true })).toHaveCount(0);
         await expect(save).toBeDisabled();
 
         await window.fill('65536');
@@ -134,16 +134,16 @@ test.describe('model channel editing', () => {
         mockApi.respond('POST', '/api/config/apply', { json: {} });
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const window = panel.getByLabel('模型上下文窗口（Token）', { exact: true });
-        const detect = panel.getByRole('button', { name: '自动检测', exact: true });
-        const connection = panel.getByRole('button', { name: '测试连接', exact: true });
-        const save = panel.getByRole('button', { name: '保存通道', exact: true });
+        const window = panel.getByLabel('Model Context Window (tokens)', { exact: true });
+        const detect = panel.getByRole('button', { name: 'Auto-detect', exact: true });
+        const connection = panel.getByRole('button', { name: 'Test connection', exact: true });
+        const save = panel.getByRole('button', { name: 'Save Channel', exact: true });
         await expect(window).toHaveValue('1048576');
         await expect(save).toBeDisabled();
 
         await connection.click();
         await expect(window).toHaveValue('131072');
-        await expect(panel.getByText('模型接口返回的上下文窗口', { exact: true })).toBeVisible();
+        await expect(panel.getByText('Context window from the model API', { exact: true })).toBeVisible();
         await window.fill('65536');
         await connection.click();
         await expect(connection).toBeEnabled();
@@ -178,9 +178,9 @@ test.describe('model channel editing', () => {
         mockApi.respond('POST', '/api/config/test-openai', { json: { success: true, model: 'manual-model' } });
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const model = panel.locator('.settings-probe-form').getByLabel('模型', { exact: true });
-        const channel = panel.getByRole('combobox', { name: '通道', exact: true });
-        const save = panel.getByRole('button', { name: '保存通道', exact: true });
+        const model = panel.locator('.settings-probe-form').getByLabel('Model', { exact: true });
+        const channel = panel.getByRole('combobox', { name: 'Channel', exact: true });
+        const save = panel.getByRole('button', { name: 'Save Channel', exact: true });
         await expect(model).toHaveValue('primary-model');
         await expect(channel).toHaveText('primary');
         await expect(save).toBeDisabled();
@@ -188,12 +188,12 @@ test.describe('model channel editing', () => {
         await page.getByRole('option', { name: /\bqwen-max$/ }).click();
         await expect(channel).toHaveText('qwen-max');
         await expect(model).toHaveValue('deepseek-flash');
-        await panel.getByLabel('通道名称', { exact: true }).fill('deepseek');
+        await panel.getByLabel('Channel name', { exact: true }).fill('deepseek');
         await model.fill('manual-model');
-        await panel.getByLabel('模型上下文窗口（Token）', { exact: true }).fill('65536');
+        await panel.getByLabel('Model Context Window (tokens)', { exact: true }).fill('65536');
 
-        await panel.getByRole('button', { name: '测试连接', exact: true }).click();
-        await expect(panel.getByText('连接成功', { exact: true })).toBeVisible();
+        await panel.getByRole('button', { name: 'Test connection', exact: true }).click();
+        await expect(panel.getByText('Connection successful', { exact: true })).toBeVisible();
         expect(mockApi.calls('PUT', '/api/config')).toEqual([]);
         expect(mockApi.calls('POST', '/api/config/test-openai')[0].body).toMatchObject({
             channel_id: 'qwen-max', model: 'manual-model', api_key: '********'
@@ -209,31 +209,31 @@ test.describe('model channel editing', () => {
         expect(config.ai.default_channel).toBe('primary');
         expect(config.ai.channels.primary.model).toBe('primary-model');
 
-        const setDefault = panel.getByRole('button', { name: '设为默认', exact: true });
+        const setDefault = panel.getByRole('button', { name: 'Set default', exact: true });
         await setDefault.click();
         await expect(setDefault).toHaveCount(0);
-        await expect(panel.locator('.settings-probe-form').getByText('默认', { exact: true })).toHaveCount(0);
+        await expect(panel.locator('.settings-probe-form').getByText('Default', { exact: true })).toHaveCount(0);
         await expect(channel).toHaveText('deepseek');
         expect(mockApi.calls('POST', '/api/config/apply')).toHaveLength(2);
         await page.reload();
         await expect(model).toHaveValue('manual-model');
         await expect(channel).toHaveText('deepseek');
-        await expect(panel.getByLabel('模型上下文窗口（Token）', { exact: true })).toHaveValue('65536');
-        await page.getByRole('tab', { name: '基本设置' }).click();
-        await expect(page.getByRole('cell', { name: /默认 AI 通道.*deepseek/ })).toBeVisible();
+        await expect(panel.getByLabel('Model Context Window (tokens)', { exact: true })).toHaveValue('65536');
+        await page.getByRole('tab', { name: 'Basic' }).click();
+        await expect(page.getByRole('cell', { name: /Default AI channel.*deepseek/ })).toBeVisible();
     });
 
     test('save errors retain the draft and apply errors allow retrying the saved change', async ({ page, mockApi }) => {
         const config = modelConfig();
         mockApi.respond('GET', '/api/config', () => ({ json: config }));
-        mockApi.fail('PUT', '/api/config', '示例通道保存失败');
+        mockApi.fail('PUT', '/api/config', 'Sample channel save failed');
         await page.goto('/static/app/#/settings?section=models');
         const panel = (await ready(page)).locator('.settings-channel-panel');
-        const model = panel.locator('.settings-probe-form').getByLabel('模型', { exact: true });
-        const save = panel.getByRole('button', { name: '保存通道' });
+        const model = panel.locator('.settings-probe-form').getByLabel('Model', { exact: true });
+        const save = panel.getByRole('button', { name: 'Save Channel' });
         await model.fill('manual-model');
         await save.click();
-        await expect(panel.getByText('示例通道保存失败', { exact: true })).toBeVisible();
+        await expect(panel.getByText('Sample channel save failed', { exact: true })).toBeVisible();
         await expect(model).toHaveValue('manual-model');
         expect(mockApi.calls('POST', '/api/config/apply')).toEqual([]);
 
@@ -241,9 +241,9 @@ test.describe('model channel editing', () => {
             config.ai.channels.primary.model = 'manual-model';
             return { json: {} };
         });
-        mockApi.fail('POST', '/api/config/apply', '示例配置应用失败');
+        mockApi.fail('POST', '/api/config/apply', 'Sample configuration apply failed');
         await save.click();
-        const retry = panel.getByRole('button', { name: '重试应用' });
+        const retry = panel.getByRole('button', { name: 'Retry Apply' });
         await expect(retry).toBeEnabled();
         await expect(model).toHaveValue('manual-model');
         mockApi.respond('POST', '/api/config/apply', { json: {} });
@@ -259,10 +259,10 @@ test('model configuration remains readable with view permission', async ({ page,
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/static/app/#/settings?section=models');
     const panel = (await ready(page)).locator('.settings-channel-panel');
-    const model = panel.locator('.settings-probe-form').getByLabel('模型', { exact: true });
+    const model = panel.locator('.settings-probe-form').getByLabel('Model', { exact: true });
     await expect(model).toHaveValue('primary-model');
     await expect(model).not.toBeEditable();
-    await expect(panel.getByRole('button', { name: '保存通道' })).toHaveCount(0);
+    await expect(panel.getByRole('button', { name: 'Save Channel' })).toHaveCount(0);
     expect(mockApi.writes()).toEqual([]);
 });
 
@@ -273,10 +273,10 @@ test('model channels with the same name can be selected by their IDs in the menu
     mockApi.respond('GET', '/api/config', { json: config });
     await page.goto('/static/app/#/settings?section=models');
     const panel = (await ready(page)).locator('.settings-channel-panel');
-    const channel = panel.getByRole('combobox', { name: '通道', exact: true });
+    const channel = panel.getByRole('combobox', { name: 'Channel', exact: true });
     await channel.click();
     await expect(page.getByRole('option', { selected: true })).toHaveText('deepseek · ID primary');
     await page.getByRole('option', { name: /deepseek · ID qwen-max$/ }).click();
     await expect(channel).toHaveText('deepseek');
-    await expect(panel.locator('.settings-probe-form').getByLabel('模型', { exact: true })).toHaveValue('deepseek-flash');
+    await expect(panel.locator('.settings-probe-form').getByLabel('Model', { exact: true })).toHaveValue('deepseek-flash');
 });

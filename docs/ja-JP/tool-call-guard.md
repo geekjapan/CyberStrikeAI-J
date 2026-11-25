@@ -1,6 +1,6 @@
 # 呼び出しブロック
 
-[English](../en-US/tool-call-guard.md) | [中文](../zh-CN/tool-call-guard.md)
+[English](../en-US/tool-call-guard.md)
 
 サイドバーの「セキュリティ」には、「HITL(人間の承認)」と「呼び出しブロック」が含まれます。HITL は従来の承認、ホワイトリスト、監査ポリシー、ログの機能をそのまま保持します。呼び出しブロックは、内部 MCP、外部 MCP、HTTP MCP のツール呼び出しに対して、独立した実行前チェックを追加します。
 

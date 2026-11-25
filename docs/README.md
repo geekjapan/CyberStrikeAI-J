@@ -1,6 +1,6 @@
 # CyberStrikeAI Documentation
 
-[中文](zh-CN/README.md) | [English](en-US/README.md) | [日本語](ja-JP/README.md)
+[English](en-US/README.md) | [日本語](ja-JP/README.md)
 
 CyberStrikeAI documentation is organized by user journey and locale. Pick your language above; each locale index covers all guides in that language.
 
@@ -13,4 +13,4 @@ CyberStrikeAI documentation is organized by user journey and locale. Pick your l
 ### Public documentation scope
 
 - Public docs serve users and contributors: usage guides, stable API and architecture references, compatibility notes, and release records. Keep internal task journals, conversation approvals, one-off review sheets, and local verification logs outside the repository.
-- Chinese, English, and Japanese guides use matching filenames and language-switch links; each locale index covers all guides in that language.
+- English and Japanese guides use matching filenames and language-switch links; each locale index covers all guides in that language. The Japanese guides are the complete set; several English guides are shorter summaries.

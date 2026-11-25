@@ -22,7 +22,7 @@ func TestValidRemoteURL(t *testing.T) {
 		"ssh://git@example.com/x.git",
 		"git://example.com/x.git",
 		"file:///srv/repos/x.git",
-		"/Volumes/code/CyberStrikeAI/开发版-CyberStrikeAI",
+		"/Volumes/code/CyberStrikeAI/développement-CyberStrikeAI",
 	}
 	no := []string{
 		"",

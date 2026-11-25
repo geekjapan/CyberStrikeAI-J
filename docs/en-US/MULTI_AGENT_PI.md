@@ -1,6 +1,6 @@
 # Pi single and multi-agent execution
 
-[中文](../zh-CN/MULTI_AGENT_PI.md) | [日本語](../ja-JP/MULTI_AGENT_PI.md)
+[日本語](../ja-JP/MULTI_AGENT_PI.md)
 
 Pi is the only runtime. Go owns business state, tool permissions, HITL, execution receipts and finalization. The SDK owns model loops, sessions, compaction and streaming. See [Pi runtime](pi-runtime.md).
 

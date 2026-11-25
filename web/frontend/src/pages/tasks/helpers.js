@@ -21,7 +21,7 @@ export const TASK_STATUS = {
 
 export const AGENT_MODES = [
     { value: 'single', get label() { return translate('ui.tasksHelpers.agentModeSingle', null, 'Single agent (Pi SDK)'); } },
-    { value: 'deep', label: 'Deep（DeepAgent）' },
+    { value: 'deep', label: 'Deep (DeepAgent)' },
     { value: 'plan_execute', label: 'Plan-Execute' },
     { value: 'supervisor', get label() { return translate('ui.tasksHelpers.agentModeSupervisor', null, 'Supervisor (expert routing)'); } }
 ];
@@ -123,7 +123,7 @@ export function errText(error, fallback = translate('ui.tasksHelpers.opFailed', 
         if (body && typeof body === 'object') {
             const message = typeof body.message === 'string' ? body.message : '';
             const code = typeof body.code === 'string' ? body.code : '';
-            if (message) return code ? `${message}（${code}）` : message;
+            if (message) return code ? `${message} (${code})` : message;
         }
         if (typeof payload.message === 'string' && payload.message) return payload.message;
     }

@@ -1,6 +1,6 @@
 # CyberStrikeAI RBAC 利用・管理ガイド
 
-[English](../en-US/rbac.md) | [中文](../zh-CN/rbac.md)
+[English](../en-US/rbac.md)
 
 CyberStrikeAI は、Agent、MCP、WebShell、C2、バッチタスクを実行できるセキュリティ自動化プラットフォームです。RBAC はページの表示可否を制御するだけでなく、HTTP API、リソース照会、Agent コンテキスト、組み込み／外部 MCP ツール、バックグラウンドタスク、ボットの実行経路まで一貫して適用されます。
 
@@ -283,7 +283,7 @@ Agent が外部 MCP ツールを呼び出すには `mcp:external:execute` が必
 - `user_binding`：プラットフォーム上の送信者が、自身の RBAC ユーザーに紐付けられます。
 - `service_account`：厳密なホワイトリストの送信者が、1 つの RBAC ユーザーを共通で使用します。
 - プラットフォームの署名検証は送信元の認証のみを行い、業務上の認可の代わりにはなりません。
-- `身份` / `whoami` を送信すると、実際の Principal を確認できます。
+- `whoami` を送信すると、実際の Principal を確認できます。
 
 ---
 

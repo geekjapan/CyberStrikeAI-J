@@ -1,6 +1,6 @@
 # ナレッジベース
 
-[English](../en-US/knowledge-base.md) | [中文](../zh-CN/knowledge-base.md)
+[English](../en-US/knowledge-base.md)
 
 ナレッジベースは、ローカルのセキュリティ知識、脆弱性ハンドブック、テスト手法、組織の経験を検索可能なコンテキストに変換し、エージェントがタスク中に必要に応じて参照できるようにします。
 

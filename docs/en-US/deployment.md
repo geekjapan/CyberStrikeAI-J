@@ -1,6 +1,6 @@
 # Deployment Guide
 
-[中文](../zh-CN/deployment.md) | [日本語](../ja-JP/deployment.md)
+[日本語](../ja-JP/deployment.md)
 
 CyberStrikeAI can run as a local testing tool, an internal team service, or a production red-team platform. Treat it as a high-privilege security system: it can execute commands, call MCP tools, manage WebShell connections, and optionally run C2 listeners.
 

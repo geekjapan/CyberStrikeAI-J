@@ -1,6 +1,6 @@
 # 非同期会話 API
 
-[English](../en-US/async-conversation-api.md) | [中文](../zh-CN/async-conversation-api.md)
+[English](../en-US/async-conversation-api.md)
 
 長時間タスクには、`POST /api/agent/runs`（シングルエージェント）または `POST /api/multi-agent/runs`（マルチエージェント。設定での有効化が必要）を使用します。リクエストボディは対応する同期インターフェースと同じです。既存の conversationId を指定でき、省略すると会話が作成されます。従来の同期インターフェースは引き続き最終結果を待ち、接続が切断されると同期実行はキャンセルされます。
 

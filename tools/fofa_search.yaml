@@ -249,7 +249,7 @@ description: |
   - `domain="example.com"` - Search a specific domain
   - `ip="1.1.1.1"` or `ip="220.181.111.1/24"` - Search an IP or C-class range
   - `port="80"` - Search assets with port 80 open
-  - `country="CN"` or `country="中国"` - Search assets located in China
+  - `country="CN"` - Search assets located in China
   - `city="Beijing"` - Search assets in Beijing
   - `app="Apache" && country="CN"` - Combined query
   - `(app="Apache" || app="Nginx") && country="CN"` - Complex query using parentheses

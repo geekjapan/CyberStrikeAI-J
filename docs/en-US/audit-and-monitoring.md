@@ -1,6 +1,6 @@
 # Audit and Monitoring
 
-[中文](../zh-CN/audit-and-monitoring.md) | [日本語](../ja-JP/audit-and-monitoring.md)
+[日本語](../ja-JP/audit-and-monitoring.md)
 
 CyberStrikeAI has separate observability streams:
 

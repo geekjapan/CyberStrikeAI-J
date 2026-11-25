@@ -1,6 +1,6 @@
 // Package apimsg translates the human-readable messages the server sends to
 // clients.  The source code writes messages in English; catalog.json maps each
-// English message to Chinese ("zh") and Japanese ("ja").  The middleware
+// English message to Japanese ("ja").  The middleware
 // rewrites the "error" / "message" fields of JSON error responses, and
 // TranslateSSE does the same for stream events.  Text that is not in the
 // catalog passes through unchanged.
@@ -104,7 +104,7 @@ func meaningful(s string) int {
 	return n
 }
 
-// Lang maps a request to "zh", "ja" or "en" (the default): the lang query
+// Lang maps a request to "ja" or "en" (the default): the lang query
 // parameter wins over Accept-Language.
 func Lang(c *gin.Context) string {
 	if c == nil {
@@ -114,10 +114,7 @@ func Lang(c *gin.Context) string {
 	if lang == "" {
 		lang = strings.ToLower(strings.TrimSpace(c.GetHeader("Accept-Language")))
 	}
-	switch {
-	case strings.HasPrefix(lang, "zh"):
-		return "zh"
-	case strings.HasPrefix(lang, "ja"):
+	if strings.HasPrefix(lang, "ja") {
 		return "ja"
 	}
 	return "en"

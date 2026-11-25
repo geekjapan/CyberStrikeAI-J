@@ -23,7 +23,7 @@ import (
 
 func TestRequestLang(t *testing.T) {
 	for _, tc := range []struct{ query, header, want string }{
-		{"ja-JP", "", "ja"}, {"en-US", "ja", "en"}, {"zh-CN", "en", "zh"},
+		{"ja-JP", "", "ja"}, {"en-US", "ja", "en"}, {"zh-CN", "ja", "en"},
 		{"", "ja,en;q=0.8", "ja"}, {"", "", "en"}, {"ru-RU", "", "en"},
 	} {
 		c, _ := gin.CreateTestContext(httptest.NewRecorder())
@@ -35,8 +35,9 @@ func TestRequestLang(t *testing.T) {
 	}
 }
 
-// ja-JP 必须覆盖 en-US 与 zh-CN 的全部词条，且占位符一致，否则界面会回退成中文。
-func TestJapaneseLocaleCoversSourceLocales(t *testing.T) {
+// ja-JP must have every en-US key with the same placeholders; a missing key
+// shows English in the Japanese UI.
+func TestJapaneseLocaleCoversEnglish(t *testing.T) {
 	load := func(lang string) map[string]string {
 		raw, err := os.ReadFile("../../web/static/i18n/" + lang + ".json")
 		if err != nil {
@@ -51,7 +52,7 @@ func TestJapaneseLocaleCoversSourceLocales(t *testing.T) {
 		walk = func(prefix string, node map[string]any) {
 			for k, v := range node {
 				if strings.Contains(k, ".") {
-					// 前端按 . 拆分查找，带点的键名永远取不到。
+					// The frontend splits keys on "."; a key with a dot can never be found.
 					t.Errorf("%s: key %q under %q contains a dot; nest it instead", lang, k, prefix)
 				}
 				switch v := v.(type) {
@@ -76,25 +77,20 @@ func TestJapaneseLocaleCoversSourceLocales(t *testing.T) {
 		sort.Strings(names)
 		return strings.Join(names, ",")
 	}
-	ja, en, zh := load("ja-JP"), load("en-US"), load("zh-CN")
-	for _, source := range []map[string]string{zh, en} { // en 后查，同名键以 en 为准
-		for key, text := range source {
-			got, ok := ja[key]
-			if !ok || strings.TrimSpace(got) == "" {
-				t.Errorf("ja-JP missing %s", key)
-				continue
-			}
-			if _, inEn := en[key]; inEn {
-				text = en[key]
-			}
-			if vars(got) != vars(text) {
-				t.Errorf("ja-JP %s placeholders {%s}, want {%s}", key, vars(got), vars(text))
-			}
+	ja, en := load("ja-JP"), load("en-US")
+	for key, text := range en {
+		got, ok := ja[key]
+		if !ok || strings.TrimSpace(got) == "" {
+			t.Errorf("ja-JP missing %s", key)
+			continue
+		}
+		if vars(got) != vars(text) {
+			t.Errorf("ja-JP %s placeholders {%s}, want {%s}", key, vars(got), vars(text))
 		}
 	}
 }
 
-// 前端源码里用字面量引用的词条必须存在于 en-US.json，否则英文/日文界面会退回源码里的中文兜底。
+// Every key the frontend source references literally must exist in en-US.json.
 func TestFrontendKeysExistInEnglishLocale(t *testing.T) {
 	raw, err := os.ReadFile("../../web/static/i18n/en-US.json")
 	if err != nil {
@@ -116,7 +112,7 @@ func TestFrontendKeysExistInEnglishLocale(t *testing.T) {
 		_, ok := node.(string)
 		return ok
 	}
-	// t('a.b', ...) / translate('a.b')；后面接 + 的是运行时拼接的前缀，不检查。
+	// t('a.b', ...) / translate('a.b'); a literal followed by + is a runtime prefix and is not checked.
 	call := regexp.MustCompile(`\b(?:t|translate)\(\s*['"]([A-Za-z0-9_\-]+(?:\.[A-Za-z0-9_\-]+)+)['"]\s*[,)]`)
 	missing := map[string]string{}
 	err = filepath.WalkDir("../../web/frontend/src", func(path string, d fs.DirEntry, err error) error {

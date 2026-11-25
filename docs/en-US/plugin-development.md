@@ -1,6 +1,6 @@
 # Plugin Development
 
-[中文](../zh-CN/plugin-development.md) | [日本語](../ja-JP/plugin-development.md)
+[日本語](../ja-JP/plugin-development.md)
 
 Plugins live under `plugins/`. The repo ships two reference implementations: **Burp Suite extension** and **Chromium DevTools extension**. Integrations typically use HTTP APIs, MCP servers, or resource packs (tools, roles, Skills, agents).
 
@@ -31,7 +31,7 @@ Build: JDK + Gradle/Maven → `bash build-mvn.sh` → `dist/cyberstrikeai-burp-e
 
 ## Browser Extension (Chromium DevTools)
 
-MV3 DevTools extension under `plugins/browser-extension/cyberstrikeai-browser-extension/`. Aligned with the Burp plugin: capture Network traffic → HTTP/1.1 prompt → SSE output. Full docs: `README.md` / `README.zh-CN.md` in that directory.
+MV3 DevTools extension under `plugins/browser-extension/cyberstrikeai-browser-extension/`. Aligned with the Burp plugin: capture Network traffic → HTTP/1.1 prompt → SSE output. Full docs: `README.md` in that directory.
 
 Load unpacked at `chrome://extensions/`, or `bash package.sh` → `dist/cyberstrikeai-browser-extension.zip`.
 

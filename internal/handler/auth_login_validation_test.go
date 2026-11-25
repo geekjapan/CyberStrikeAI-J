@@ -21,6 +21,7 @@ func TestLoginRejectsMissingAndLongUsernameBeforeAuthentication(t *testing.T) {
 	h := &AuthHandler{}
 	r := gin.New()
 	r.POST("/login", h.Login)
+	// The Chinese character checks that multi-byte usernames are measured the same way.
 	for _, username := range []string{"", "  ", strings.Repeat("x", 65), strings.Repeat("中", 65)} {
 		body, _ := json.Marshal(map[string]string{"username": username, "password": "test-only-password"})
 		w := httptest.NewRecorder()

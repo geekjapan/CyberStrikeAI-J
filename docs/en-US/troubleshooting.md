@@ -1,6 +1,6 @@
 # Troubleshooting
 
-[中文](../zh-CN/troubleshooting.md) | [日本語](../ja-JP/troubleshooting.md)
+[日本語](../ja-JP/troubleshooting.md)
 
 Debug by layer. Do not change random config before locating the failing layer.
 

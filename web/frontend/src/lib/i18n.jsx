@@ -5,13 +5,12 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 
 export const LANGUAGES = [
     { id: 'en-US', label: 'English' },
-    { id: 'ja-JP', label: '日本語' },
-    { id: 'zh-CN', label: '简体中文' }
+    { id: 'ja-JP', label: '日本語' }
 ];
 
 const STORAGE_KEY = 'csai_lang';
 const DEFAULT_LANG = 'en-US';
-const FALLBACK_LANGS = ['en-US', 'ja-JP', 'zh-CN'];
+const FALLBACK_LANGS = ['en-US', 'ja-JP'];
 const RESOURCE_PREFIX = '/static/i18n';
 const cache = new Map();
 
@@ -21,7 +20,6 @@ export function detectLanguage() {
         if (stored && LANGUAGES.some(item => item.id === stored)) return stored;
     } catch (error) { /* storage unavailable */ }
     const nav = String(navigator.language || '').toLowerCase();
-    if (nav.startsWith('zh')) return 'zh-CN';
     if (nav.startsWith('ja')) return 'ja-JP';
     if (nav.startsWith('en')) return 'en-US';
     return DEFAULT_LANG;

@@ -1636,7 +1636,7 @@ func registerWebshellTools(mcpServer *mcp.Server, db *database.DB, webshellHandl
 		cid, _ := args["connection_id"].(string)
 		path, _ := args["path"].(string)
 		if cid == "" || path == "" {
-			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "connection_id 和 path 必填"}}, IsError: true}, nil
+			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "connection_id and path are required"}}, IsError: true}, nil
 		}
 		conn, err := db.GetWebshellConnection(cid)
 		if err != nil || conn == nil {
@@ -1653,14 +1653,14 @@ func registerWebshellTools(mcpServer *mcp.Server, db *database.DB, webshellHandl
 	// webshell_file_write
 	writeTool := mcp.Tool{
 		Name:             builtin.ToolWebshellFileWrite,
-		Description:      "在指定 WebShell 连接上写入文件内容（会覆盖已有文件）。",
-		ShortDescription: "在 WebShell 上写入文件",
+		Description:      "Write file content over the specified WebShell connection (overwrites an existing file).",
+		ShortDescription: "Write a file over a WebShell connection",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"connection_id": map[string]interface{}{"type": "string", "description": "WebShell connection ID"},
 				"path":          map[string]interface{}{"type": "string", "description": "File path"},
-				"content":       map[string]interface{}{"type": "string", "description": "要写入的内容"},
+				"content":       map[string]interface{}{"type": "string", "description": "Content to write"},
 			},
 			"required": []string{"connection_id", "path", "content"},
 		},
@@ -1670,7 +1670,7 @@ func registerWebshellTools(mcpServer *mcp.Server, db *database.DB, webshellHandl
 		path, _ := args["path"].(string)
 		content, _ := args["content"].(string)
 		if cid == "" || path == "" {
-			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "connection_id 和 path 必填"}}, IsError: true}, nil
+			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "connection_id and path are required"}}, IsError: true}, nil
 		}
 		conn, err := db.GetWebshellConnection(cid)
 		if err != nil || conn == nil {
@@ -1681,9 +1681,9 @@ func registerWebshellTools(mcpServer *mcp.Server, db *database.DB, webshellHandl
 			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: errMsg}}, IsError: true}, nil
 		}
 		if !ok {
-			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "写入可能失败，输出:\n" + output}}, IsError: false}, nil
+			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "The write may have failed. Output:\n" + output}}, IsError: false}, nil
 		}
-		return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "写入成功\n" + output}}, IsError: false}, nil
+		return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "Write succeeded\n" + output}}, IsError: false}, nil
 	}
 	mcpServer.RegisterTool(writeTool, writeHandler)
 
@@ -1718,7 +1718,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		}
 		if !db.UserCanAccessResource(principal.UserID, principal.ScopeFor(permission), "project", projectID) {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "无权访问项目: " + projectID}},
+				Content: []mcp.Content{{Type: "text", Text: "No access to project: " + projectID}},
 				IsError: true,
 			}
 		}
@@ -1728,14 +1728,14 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	// manage_webshell_list - list all webshell connections
 	listTool := mcp.Tool{
 		Name:             builtin.ToolManageWebshellList,
-		Description:      "列出已保存的 WebShell 连接，返回连接ID、URL、类型、所属项目、备注等信息。默认按当前对话项目边界过滤：项目对话看本项目，未绑定项目的对话看未绑定连接；显式传 project_id 时按指定项目过滤。",
-		ShortDescription: "列出所有 WebShell 连接",
+		Description:      "List saved WebShell connections with their connection ID, URL, type, project and remark. By default the list follows the project boundary of the current conversation: a project conversation sees its own project, a conversation without a project sees unbound connections; an explicit project_id filters by that project.",
+		ShortDescription: "List all WebShell connections",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"project_id": map[string]interface{}{
 					"type":        "string",
-					"description": "项目 ID；不填时在项目会话中默认使用当前项目。",
+					"description": "Project ID; defaults to the current project in a project conversation.",
 				},
 			},
 		},
@@ -1753,37 +1753,37 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 			}
 			connections, err = db.ListWebshellConnectionsForAccess(principal.UserID, principal.ScopeFor("webshell:read"), projectID)
 		} else {
-			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "缺少认证身份"}}, IsError: true}, nil
+			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "Missing authenticated identity"}}, IsError: true}, nil
 		}
 		if err != nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "获取连接列表失败: " + err.Error()}},
+				Content: []mcp.Content{{Type: "text", Text: "Failed to list connections: " + err.Error()}},
 				IsError: true,
 			}, nil
 		}
 		if len(connections) == 0 {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "暂无 WebShell 连接"}},
+				Content: []mcp.Content{{Type: "text", Text: "No WebShell connections yet"}},
 				IsError: false,
 			}, nil
 		}
 		var sb strings.Builder
-		sb.WriteString(fmt.Sprintf("找到 %d 个 WebShell 连接：\n\n", len(connections)))
+		sb.WriteString(fmt.Sprintf("Found %d WebShell connections:\n\n", len(connections)))
 		for _, conn := range connections {
 			sb.WriteString(fmt.Sprintf("ID: %s\n", conn.ID))
 			sb.WriteString(fmt.Sprintf("  URL: %s\n", conn.URL))
-			sb.WriteString(fmt.Sprintf("  类型: %s\n", conn.Type))
-			sb.WriteString(fmt.Sprintf("  请求方式: %s\n", conn.Method))
-			sb.WriteString(fmt.Sprintf("  命令参数: %s\n", conn.CmdParam))
+			sb.WriteString(fmt.Sprintf("  Type: %s\n", conn.Type))
+			sb.WriteString(fmt.Sprintf("  Method: %s\n", conn.Method))
+			sb.WriteString(fmt.Sprintf("  Command parameter: %s\n", conn.CmdParam))
 			if conn.ProjectID != "" {
-				sb.WriteString(fmt.Sprintf("  项目ID: %s\n", conn.ProjectID))
+				sb.WriteString(fmt.Sprintf("  Project ID: %s\n", conn.ProjectID))
 			} else {
-				sb.WriteString("  项目: 未绑定\n")
+				sb.WriteString("  Project: unbound\n")
 			}
 			if conn.Remark != "" {
-				sb.WriteString(fmt.Sprintf("  备注: %s\n", conn.Remark))
+				sb.WriteString(fmt.Sprintf("  Remark: %s\n", conn.Remark))
 			}
-			sb.WriteString(fmt.Sprintf("  创建时间: %s\n", conn.CreatedAt.Format("2006-01-02 15:04:05")))
+			sb.WriteString(fmt.Sprintf("  Created: %s\n", conn.CreatedAt.Format("2006-01-02 15:04:05")))
 			sb.WriteString("\n")
 		}
 		return &mcp.ToolResult{
@@ -1796,36 +1796,36 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	// manage_webshell_add - add a new webshell connection
 	addTool := mcp.Tool{
 		Name:             builtin.ToolManageWebshellAdd,
-		Description:      "添加新的 WebShell 连接到管理系统。支持 PHP、ASP、ASPX、JSP 等类型的一句话木马。",
-		ShortDescription: "添加 WebShell 连接",
+		Description:      "Add a new WebShell connection to the management system. Supports PHP, ASP, ASPX and JSP shells.",
+		ShortDescription: "Add a WebShell connection",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"url": map[string]interface{}{
 					"type":        "string",
-					"description": "Shell 地址，如 http://target.com/shell.php（必填）",
+					"description": "Shell URL, for example http://target.com/shell.php (required)",
 				},
 				"password": map[string]interface{}{
 					"type":        "string",
-					"description": "连接密码/密钥，如冰蝎/蚁剑的连接密码",
+					"description": "Connection password or key, such as the one configured in Behinder or AntSword",
 				},
 				"type": map[string]interface{}{
 					"type":        "string",
-					"description": "Shell 类型：php、asp、aspx、jsp，默认为 php",
+					"description": "Shell type: php, asp, aspx or jsp; defaults to php",
 					"enum":        []string{"php", "asp", "aspx", "jsp"},
 				},
 				"method": map[string]interface{}{
 					"type":        "string",
-					"description": "请求方式：GET 或 POST，默认为 POST",
+					"description": "Request method: GET or POST; defaults to POST",
 					"enum":        []string{"GET", "POST"},
 				},
 				"cmd_param": map[string]interface{}{
 					"type":        "string",
-					"description": "命令参数名，不填默认为 cmd",
+					"description": "Command parameter name; defaults to cmd",
 				},
 				"remark": map[string]interface{}{
 					"type":        "string",
-					"description": "备注，便于识别的备注名",
+					"description": "Remark that makes the connection easy to recognize",
 				},
 			},
 			"required": []string{"url"},
@@ -1835,7 +1835,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		urlStr, _ := args["url"].(string)
 		if urlStr == "" {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "错误: url 参数必填"}},
+				Content: []mcp.Content{{Type: "text", Text: "Error: the url parameter is required"}},
 				IsError: true,
 			}, nil
 		}
@@ -1856,7 +1856,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		remark, _ := args["remark"].(string)
 		principal, ok := authctx.PrincipalFromContext(ctx)
 		if !ok {
-			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "缺少认证身份"}}, IsError: true}, nil
+			return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "Missing authenticated identity"}}, IsError: true}, nil
 		}
 		projectID := projectIDFromToolArgs(ctx, args)
 		if result := authorizeWebshellToolProject(principal, "webshell:write", projectID); result != nil {
@@ -1879,21 +1879,21 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 
 		if err := db.CreateWebshellConnection(conn); err != nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "添加 WebShell 连接失败: " + err.Error()}},
+				Content: []mcp.Content{{Type: "text", Text: "Failed to add the WebShell connection: " + err.Error()}},
 				IsError: true,
 			}, nil
 		}
 		_ = db.SetResourceOwner("webshell", conn.ID, principal.UserID)
 		_ = db.AssignResourceToUser(principal.UserID, "webshell", conn.ID)
-		projectLine := "项目: 未绑定"
+		projectLine := "Project: unbound"
 		if conn.ProjectID != "" {
-			projectLine = "项目ID: " + conn.ProjectID
+			projectLine = "Project ID: " + conn.ProjectID
 		}
 
 		return &mcp.ToolResult{
 			Content: []mcp.Content{{
 				Type: "text",
-				Text: fmt.Sprintf("WebShell 连接添加成功！\n\n连接ID: %s\nURL: %s\n类型: %s\n请求方式: %s\n命令参数: %s\n%s", conn.ID, conn.URL, conn.Type, conn.Method, conn.CmdParam, projectLine),
+				Text: fmt.Sprintf("WebShell connection added.\n\nConnection ID: %s\nURL: %s\nType: %s\nMethod: %s\nCommand parameter: %s\n%s", conn.ID, conn.URL, conn.Type, conn.Method, conn.CmdParam, projectLine),
 			}},
 			IsError: false,
 		}, nil
@@ -1903,44 +1903,44 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	// manage_webshell_update - update a webshell connection
 	updateTool := mcp.Tool{
 		Name:             builtin.ToolManageWebshellUpdate,
-		Description:      "更新已存在的 WebShell 连接信息。",
-		ShortDescription: "更新 WebShell 连接",
+		Description:      "Update an existing WebShell connection.",
+		ShortDescription: "Update a WebShell connection",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"connection_id": map[string]interface{}{
 					"type":        "string",
-					"description": "要更新的 WebShell 连接 ID（必填）",
+					"description": "ID of the WebShell connection to update (required)",
 				},
 				"url": map[string]interface{}{
 					"type":        "string",
-					"description": "新的 Shell 地址",
+					"description": "New shell URL",
 				},
 				"password": map[string]interface{}{
 					"type":        "string",
-					"description": "新的连接密码/密钥",
+					"description": "New connection password or key",
 				},
 				"type": map[string]interface{}{
 					"type":        "string",
-					"description": "新的 Shell 类型：php、asp、aspx、jsp",
+					"description": "New shell type: php, asp, aspx or jsp",
 					"enum":        []string{"php", "asp", "aspx", "jsp"},
 				},
 				"method": map[string]interface{}{
 					"type":        "string",
-					"description": "新的请求方式：GET 或 POST",
+					"description": "New request method: GET or POST",
 					"enum":        []string{"GET", "POST"},
 				},
 				"cmd_param": map[string]interface{}{
 					"type":        "string",
-					"description": "新的命令参数名",
+					"description": "New command parameter name",
 				},
 				"remark": map[string]interface{}{
 					"type":        "string",
-					"description": "新的备注",
+					"description": "New remark",
 				},
 				"project_id": map[string]interface{}{
 					"type":        "string",
-					"description": "新的所属项目 ID；传空字符串可取消绑定。",
+					"description": "New project ID; pass an empty string to unbind.",
 				},
 			},
 			"required": []string{"connection_id"},
@@ -1950,7 +1950,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		connID, _ := args["connection_id"].(string)
 		if connID == "" {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "错误: connection_id 参数必填"}},
+				Content: []mcp.Content{{Type: "text", Text: "Error: the connection_id parameter is required"}},
 				IsError: true,
 			}, nil
 		}
@@ -1959,7 +1959,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		existing, err := db.GetWebshellConnection(connID)
 		if err != nil || existing == nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "未找到指定的 WebShell 连接: " + connID}},
+				Content: []mcp.Content{{Type: "text", Text: "WebShell connection not found: " + connID}},
 				IsError: true,
 			}, nil
 		}
@@ -1988,7 +1988,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 			if projectID != "" {
 				principal, ok := authctx.PrincipalFromContext(ctx)
 				if !ok {
-					return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "缺少认证身份"}}, IsError: true}, nil
+					return &mcp.ToolResult{Content: []mcp.Content{{Type: "text", Text: "Missing authenticated identity"}}, IsError: true}, nil
 				}
 				if result := authorizeWebshellToolProject(principal, "webshell:write", projectID); result != nil {
 					return result, nil
@@ -1999,7 +1999,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 
 		if err := db.UpdateWebshellConnection(existing); err != nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "更新 WebShell 连接失败: " + err.Error()}},
+				Content: []mcp.Content{{Type: "text", Text: "Failed to update the WebShell connection: " + err.Error()}},
 				IsError: true,
 			}, nil
 		}
@@ -2007,7 +2007,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		return &mcp.ToolResult{
 			Content: []mcp.Content{{
 				Type: "text",
-				Text: fmt.Sprintf("WebShell 连接更新成功！\n\n连接ID: %s\nURL: %s\n类型: %s\n请求方式: %s\n命令参数: %s\n项目ID: %s\n备注: %s", existing.ID, existing.URL, existing.Type, existing.Method, existing.CmdParam, existing.ProjectID, existing.Remark),
+				Text: fmt.Sprintf("WebShell connection updated.\n\nConnection ID: %s\nURL: %s\nType: %s\nMethod: %s\nCommand parameter: %s\nProject ID: %s\nRemark: %s", existing.ID, existing.URL, existing.Type, existing.Method, existing.CmdParam, existing.ProjectID, existing.Remark),
 			}},
 			IsError: false,
 		}, nil
@@ -2017,14 +2017,14 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	// manage_webshell_delete - delete a webshell connection
 	deleteTool := mcp.Tool{
 		Name:             builtin.ToolManageWebshellDelete,
-		Description:      "删除指定的 WebShell 连接。",
-		ShortDescription: "删除 WebShell 连接",
+		Description:      "Delete the specified WebShell connection.",
+		ShortDescription: "Delete a WebShell connection",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"connection_id": map[string]interface{}{
 					"type":        "string",
-					"description": "要删除的 WebShell 连接 ID（必填）",
+					"description": "ID of the WebShell connection to delete (required)",
 				},
 			},
 			"required": []string{"connection_id"},
@@ -2034,14 +2034,14 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		connID, _ := args["connection_id"].(string)
 		if connID == "" {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "错误: connection_id 参数必填"}},
+				Content: []mcp.Content{{Type: "text", Text: "Error: the connection_id parameter is required"}},
 				IsError: true,
 			}, nil
 		}
 
 		if err := db.DeleteWebshellConnection(connID); err != nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "删除 WebShell 连接失败: " + err.Error()}},
+				Content: []mcp.Content{{Type: "text", Text: "Failed to delete the WebShell connection: " + err.Error()}},
 				IsError: true,
 			}, nil
 		}
@@ -2049,7 +2049,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		return &mcp.ToolResult{
 			Content: []mcp.Content{{
 				Type: "text",
-				Text: fmt.Sprintf("WebShell 连接 %s 已成功删除", connID),
+				Text: fmt.Sprintf("WebShell connection %s deleted", connID),
 			}},
 			IsError: false,
 		}, nil
@@ -2059,18 +2059,18 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	// manage_webshell_test - test a webshell connection
 	testTool := mcp.Tool{
 		Name:             builtin.ToolManageWebshellTest,
-		Description:      "测试指定的 WebShell 连接是否可用，会尝试执行一个简单的命令（如 whoami 或 dir）。",
-		ShortDescription: "测试 WebShell 连接",
+		Description:      "Test whether the specified WebShell connection works by running a simple command (such as whoami or dir).",
+		ShortDescription: "Test a WebShell connection",
 		InputSchema: map[string]interface{}{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"connection_id": map[string]interface{}{
 					"type":        "string",
-					"description": "要测试的 WebShell 连接 ID（必填）",
+					"description": "ID of the WebShell connection to test (required)",
 				},
 				"command": map[string]interface{}{
 					"type":        "string",
-					"description": "测试命令，默认为 whoami（Linux）或 dir（Windows）",
+					"description": "Test command; defaults to whoami (Linux) or dir (Windows)",
 				},
 			},
 			"required": []string{"connection_id"},
@@ -2080,7 +2080,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		connID, _ := args["connection_id"].(string)
 		if connID == "" {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "错误: connection_id 参数必填"}},
+				Content: []mcp.Content{{Type: "text", Text: "Error: the connection_id parameter is required"}},
 				IsError: true,
 			}, nil
 		}
@@ -2089,7 +2089,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		conn, err := db.GetWebshellConnection(connID)
 		if err != nil || conn == nil {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: "未找到指定的 WebShell 连接: " + connID}},
+				Content: []mcp.Content{{Type: "text", Text: "WebShell connection not found: " + connID}},
 				IsError: true,
 			}, nil
 		}
@@ -2109,14 +2109,14 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		output, ok, errMsg := webshellHandler.ExecWithConnection(conn, testCmd)
 		if errMsg != "" {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: fmt.Sprintf("连接测试失败！\n\n连接ID: %s\nURL: %s\n错误: %s", connID, conn.URL, errMsg)}},
+				Content: []mcp.Content{{Type: "text", Text: fmt.Sprintf("Connection test failed.\n\nConnection ID: %s\nURL: %s\nError: %s", connID, conn.URL, errMsg)}},
 				IsError: true,
 			}, nil
 		}
 
 		if !ok {
 			return &mcp.ToolResult{
-				Content: []mcp.Content{{Type: "text", Text: fmt.Sprintf("连接测试失败！HTTP 非 200\n\n连接ID: %s\nURL: %s\n输出: %s", connID, conn.URL, output)}},
+				Content: []mcp.Content{{Type: "text", Text: fmt.Sprintf("Connection test failed: HTTP status is not 200\n\nConnection ID: %s\nURL: %s\nOutput: %s", connID, conn.URL, output)}},
 				IsError: true,
 			}, nil
 		}
@@ -2124,7 +2124,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 		return &mcp.ToolResult{
 			Content: []mcp.Content{{
 				Type: "text",
-				Text: fmt.Sprintf("连接测试成功！\n\n连接ID: %s\nURL: %s\n类型: %s\n\n测试命令: %s\n输出结果:\n%s", connID, conn.URL, conn.Type, testCmd, output),
+				Text: fmt.Sprintf("Connection test succeeded.\n\nConnection ID: %s\nURL: %s\nType: %s\n\nTest command: %s\nOutput:\n%s", connID, conn.URL, conn.Type, testCmd, output),
 			}},
 			IsError: false,
 		}, nil
@@ -2221,7 +2221,7 @@ func initializeKnowledge(
 		if knowledgeDBPath != "" {
 			app.knowledgeDB = knowledgeDBConn
 		}
-		logger.Info("App 中的知识库组件已更新")
+		logger.Info("Knowledge base components in App updated")
 	}
 
 	// Scan the knowledge base and build the index (async)

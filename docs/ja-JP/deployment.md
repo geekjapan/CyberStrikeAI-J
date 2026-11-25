@@ -1,6 +1,6 @@
 # デプロイガイド
 
-[English](../en-US/deployment.md) | [中文](../zh-CN/deployment.md)
+[English](../en-US/deployment.md)
 
 本書では、CyberStrikeAI の一般的なデプロイ方法を説明します。本番環境にデプロイする前に、[セキュリティモデル](security-model.md) を読み、認可された範囲、認証、HITL、監査、高リスク機能のスイッチを確認してください。
 

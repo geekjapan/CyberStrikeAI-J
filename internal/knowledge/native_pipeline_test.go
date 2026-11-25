@@ -15,6 +15,7 @@ func TestNativeSplitterPreservesUnicodeAndMakesProgressWithLargeOverlap(t *testi
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Chinese stays: the splitter must keep CJK and emoji characters intact.
 	text := strings.Repeat("中文🙂 evidence。\n", 50)
 	docs, err := splitter.Transform(context.Background(), []*Document{{ID: "source", Content: text, MetaData: map[string]any{"source": "fixture"}}})
 	if err != nil {

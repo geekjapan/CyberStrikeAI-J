@@ -1,6 +1,6 @@
 # 日本語ドキュメント
 
-[ドキュメントホーム](../README.md) | [English](../en-US/README.md) | [中文](../zh-CN/README.md)
+[ドキュメントホーム](../README.md) | [English](../en-US/README.md)
 
 ## 目的から選ぶ
 

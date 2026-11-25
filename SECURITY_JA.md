@@ -1,6 +1,6 @@
 # セキュリティポリシー
 
-[English](SECURITY.md) | [中文](SECURITY_CN.md) | [日本語](SECURITY_JA.md)
+[English](SECURITY.md) | [日本語](SECURITY_JA.md)
 
 ## セキュリティポリシー
 

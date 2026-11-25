@@ -1,6 +1,6 @@
 # セキュリティモデル
 
-[English](../en-US/security-model.md) | [中文](../zh-CN/security-model.md)
+[English](../en-US/security-model.md)
 
 CyberStrikeAI は、認可されたセキュリティテストのシナリオを対象としており、コマンド実行、MCP ツール、WebShell、C2、バッチタスク、マルチエージェントオーケストレーションなどの機能を内蔵しています。デプロイ担当者は、これを一般的なチャットアプリケーションではなく、高権限のセキュリティツールとして管理する必要があります。
 

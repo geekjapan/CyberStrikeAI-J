@@ -1,6 +1,6 @@
 # Runbooks
 
-[中文](../zh-CN/runbooks.md) | [日本語](../ja-JP/runbooks.md)
+[日本語](../ja-JP/runbooks.md)
 
 Runbooks are task-oriented procedures you can follow during real operations.
 

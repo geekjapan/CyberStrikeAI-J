@@ -1,6 +1,6 @@
 # プラグイン開発
 
-[English](../en-US/plugin-development.md) | [中文](../zh-CN/plugin-development.md)
+[English](../en-US/plugin-development.md)
 
 CyberStrikeAI の現在のリポジトリでは、プラグインは主に `plugins/` 配下にあり、**Burp Suite 拡張**と **Chromium ブラウザー拡張**の 2 つのリファレンス実装があります。プラグインは通常、HTTP API、MCP、またはローカルファイルを通じてメインアプリケーションと連携します。
 
@@ -13,7 +13,6 @@ plugins/
     cyberstrikeai-burp-extension/
       src/main/java/burp/
       README.md
-      README.zh-CN.md
       build.gradle
       pom.xml
   browser-extension/
@@ -25,7 +24,6 @@ plugins/
       popup/
       lib/
       README.md
-      README.zh-CN.md
       package.sh
 ```
 
@@ -55,7 +53,7 @@ Burp プラグインのディレクトリには、Java ソースコードとビ�
 
 ## ブラウザー拡張（Chromium DevTools）
 
-ブラウザー拡張のディレクトリは MV3 DevTools 拡張で、Burp プラグインと機能を揃えています。HTTP トラフィックのキャプチャ → プロンプトの整形 → SSE ストリーミングによる AI 結果の出力、という流れです。完全なインストール方法と UI の説明は `plugins/browser-extension/cyberstrikeai-browser-extension/README.zh-CN.md` を参照してください。
+ブラウザー拡張のディレクトリは MV3 DevTools 拡張で、Burp プラグインと機能を揃えています。HTTP トラフィックのキャプチャ → プロンプトの整形 → SSE ストリーミングによる AI 結果の出力、という流れです。完全なインストール方法と UI の説明は `plugins/browser-extension/cyberstrikeai-browser-extension/README.md` を参照してください。
 
 典型的な機能:
 

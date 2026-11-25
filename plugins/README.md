@@ -6,7 +6,7 @@ Optional integrations that connect CyberStrikeAI with other tools.
 
 - **Path**: `plugins/burp-suite/cyberstrikeai-burp-extension/`
 - **Build**: `bash build-mvn.sh` → `dist/cyberstrikeai-burp-extension.jar`
-- **Docs**: `README.md` / `README.zh-CN.md`
+- **Docs**: `README.md`
 
 ### Browser (Chrome / Edge)
 
@@ -14,7 +14,7 @@ Optional integrations that connect CyberStrikeAI with other tools.
 - **Version**: **0.3.11**
 - **Install**: `chrome://extensions/` → Load unpacked → F12 → **CyberStrikeAI** tab
 - **Package**: `bash package.sh` → `dist/cyberstrikeai-browser-extension.zip`
-- **Docs**: `README.zh-CN.md` (full) / `README.md` (summary)
+- **Docs**: `README.md`
 
 #### Highlights (v0.3.x)
 

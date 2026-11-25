@@ -1,6 +1,6 @@
 # Skills ガイド
 
-[English](../en-US/skills-guide.md) | [中文](../zh-CN/skills-guide.md)
+[English](../en-US/skills-guide.md)
 
 Skills は、エージェントにオンデマンドで読み込める専門的な機能、手順の説明、テンプレート、参考資料を提供するためのものです。一回限りのタスク入力ではなく、安定した方法論を担うのに適しています。
 

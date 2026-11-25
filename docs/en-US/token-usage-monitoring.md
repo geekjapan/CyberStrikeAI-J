@@ -1,6 +1,6 @@
 # Pi token usage monitoring
 
-[中文](../zh-CN/token-usage-monitoring.md) | [日本語](../ja-JP/token-usage-monitoring.md)
+[日本語](../ja-JP/token-usage-monitoring.md)
 
 Pi reports usage; Go accumulates completed model turns and emits `agent_usage_summary` into the existing database and timeline. Local statistics are not a provider billing statement and may not cover every auxiliary HTTP request.
 

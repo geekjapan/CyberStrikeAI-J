@@ -15,6 +15,7 @@ import (
 )
 
 func TestRoleNameValidation(t *testing.T) {
+	// Chinese stays: role names from earlier versions are Chinese, and multi-byte length must be measured in characters.
 	for _, name := range []string{"", " ", "../role", "a/b", `a\b`, "a..b", "a\n", strings.Repeat("中", 65)} {
 		if validateRoleName(name) == nil {
 			t.Fatalf("accepted %q", name)

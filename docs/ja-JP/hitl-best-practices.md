@@ -1,6 +1,6 @@
 # ヒューマンインザループ（HITL）のベストプラクティス
 
-[English](../en-US/hitl-best-practices.md) | [中文](../zh-CN/hitl-best-practices.md)
+[English](../en-US/hitl-best-practices.md)
 
 ヒューマンインザループは、Agent がツールを実行する前に承認によるブロックを行うための仕組みです。高リスクの操作を制御し、監査の痕跡を残すのに適しています。また、人による監査の負担が大きすぎる場合に、監査 Agent に通常の承認を引き継がせることができます。
 

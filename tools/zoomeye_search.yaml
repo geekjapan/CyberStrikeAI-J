@@ -90,7 +90,7 @@ args:
                 "required_params": ["query"],
                 "examples": [
                     'app:"Apache"',
-                    'title:"登录"',
+                    'title:"login"',
                     'domain:"example.com"',
                     'ip:"1.1.1.1"',
                     'port:80',
@@ -290,7 +290,7 @@ parameters:
       Search query that supports ZoomEye query syntax. Wrap strings in quotes and join conditions with logical operators.
       Examples:
       - app="Apache"
-      - title="登录"
+      - title="login"
       - domain="example.com"
       - ip="1.1.1.1"
       - port=80

@@ -1,6 +1,6 @@
 # MCP フェデレーション
 
-[English](../en-US/mcp-federation.md) | [中文](../zh-CN/mcp-federation.md)
+[English](../en-US/mcp-federation.md)
 
 CyberStrikeAI は、組み込みの MCP ツール、独立した HTTP MCP サービス、外部 MCP フェデレーションを同時にサポートします。MCP は、エージェントがツールを呼び出すための主要なプロトコル層です。
 

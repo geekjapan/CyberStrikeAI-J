@@ -1,6 +1,6 @@
 # ネイティブエージェント実行の終了処理とタスク検収
 
-[English](../en-US/agent-finalization-best-practices.md) | [中文](../zh-CN/agent-finalization-best-practices.md)
+[English](../en-US/agent-finalization-best-practices.md)
 
 Pi の `agent_settled` は、今回のモデル実行がこれ以上自動的に継続しないことを示します。業務タスクが完了したかどうかは、引き続き Go の実行状態、ツール記録、検収条件によって決まります。
 

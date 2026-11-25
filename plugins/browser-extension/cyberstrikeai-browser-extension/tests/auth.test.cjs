@@ -26,6 +26,7 @@ test('RBAC login sends username and exact password, validates token, and reports
     const ctx = vm.createContext({ fetch });
     vm.runInContext(fs.readFileSync(path.join(root, 'lib/api.js'), 'utf8'), ctx);
     const base = `http://127.0.0.1:${server.address().port}`;
+    // Chinese stays: non-ASCII credentials must be sent and escaped correctly.
     for (const username of ['admin', 'analyst', '研究员"\\']) {
       const password = '  p"\\\n密码  ';
       const result = await ctx.loginAndValidate(base, ` ${username} `, password);

@@ -1,6 +1,6 @@
 # API リファレンス
 
-[English](../en-US/api-reference.md) | [中文](../zh-CN/api-reference.md)
+[English](../en-US/api-reference.md)
 
 CyberStrikeAI には OpenAPI 仕様と API ドキュメントページが組み込まれています。サービスの起動後、次のパスにアクセスします。
 
@@ -153,7 +153,7 @@ Content-Type: application/json
 
 時刻パラメーターは RFC3339 または `YYYY-MM-DD` を受け付けます。`sort_by` は `last_seen_at`、`last_scan_at`、`first_seen_at`、`created_at`、`updated_at`、`host`、`port`、`risk_level`、`vulnerability_count` をサポートします。
 
-`POST /api/assets/import` は XLSX/CSV ファイルではなく JSON を受け取ります。Web 側はブラウザー内でテンプレートを解析し、プレビューしたうえで、このリクエスト形式に変換します。
+`POST /api/assets/import` は CSV ファイルではなく JSON を受け取ります。Web 側はブラウザー内でテンプレートを解析し、プレビューしたうえで、このリクエスト形式に変換します。
 
 ```http
 POST /api/assets/import
@@ -162,7 +162,7 @@ Content-Type: application/json
 
 {
   "source": "manual-import",
-  "source_query": "asset-import-2026-07.xlsx",
+  "source_query": "asset-import-2026-07.csv",
   "assets": [
     {
       "host": "https://app.example.com:443",

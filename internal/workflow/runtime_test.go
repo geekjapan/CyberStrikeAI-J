@@ -46,8 +46,8 @@ func conditionBranchGraph() string {
   ],
   "edges": [
     {"id": "e1", "source": "start-1", "target": "cond-1"},
-    {"id": "e2", "source": "cond-1", "target": "out-yes", "label": "是"},
-    {"id": "e3", "source": "cond-1", "target": "out-no", "label": "否"}
+    {"id": "e2", "source": "cond-1", "target": "out-yes", "label": "Yes"},
+    {"id": "e3", "source": "cond-1", "target": "out-no", "label": "No"}
   ],
   "config": {"schema_version": 1}
 }`

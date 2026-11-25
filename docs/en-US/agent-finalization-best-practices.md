@@ -1,6 +1,6 @@
 # Native Agent finalization and task acceptance
 
-[中文](../zh-CN/agent-finalization-best-practices.md) | [日本語](../ja-JP/agent-finalization-best-practices.md)
+[日本語](../ja-JP/agent-finalization-best-practices.md)
 
 Pi `agent_settled` ends automatic model work for the current run. Go still decides whether the business result can be finalized.
 

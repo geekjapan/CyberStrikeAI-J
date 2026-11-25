@@ -24,5 +24,5 @@ export default async ({ page, expect, shot, base }) => {
     await expect(page.getByText('Dashboard', { exact: true }).first()).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('lang', 'en-US');
     await shot('english-from-settings');
-    return { menu: items.filter(t => /^(English|日本語|简体中文)$/.test(t)), saved };
+    return { menu: items.filter(t => /^(English|日本語)$/.test(t)), saved };
 };

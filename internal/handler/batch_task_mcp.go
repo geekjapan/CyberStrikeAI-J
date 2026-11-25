@@ -82,7 +82,7 @@ func RegisterBatchTaskMCPTools(mcpServer *mcp.Server, h *AgentHandler, logger *z
 		if principal, ok := authctx.PrincipalFromContext(ctx); ok {
 			queues, total, err = h.batchTaskManager.ListQueuesForAccess(pageSize, offset, status, keyword, principal.UserID, principal.ScopeFor("tasks:read"))
 		} else {
-			return batchMCPTextResult("缺少认证身份", true), nil
+			return batchMCPTextResult("Missing authenticated identity", true), nil
 		}
 		if err != nil {
 			return batchMCPTextResult(fmt.Sprintf("Failed to list queues: %v", err), true), nil

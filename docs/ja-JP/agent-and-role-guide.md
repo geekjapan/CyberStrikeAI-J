@@ -1,6 +1,6 @@
 # Agent とロールのガイド
 
-[English](../en-US/agent-and-role-guide.md) | [中文](../zh-CN/agent-and-role-guide.md)
+[English](../en-US/agent-and-role-guide.md)
 
 CyberStrikeAI の Agent の動作は、ロール、サブエージェント、Skills の 3 種類のリソースによって決まります。ロールは現在のタスクにおける役割と使用可能なツールを決定し、サブエージェントはマルチエージェントでの分担を決定し、Skills は必要に応じてロードできるテーマ別の知識と手順を提供します。
 
@@ -77,7 +77,7 @@ tools:
   - subfinder
   - nmap
   - http-framework-test
-bind_role: 信息收集
+bind_role: Information Gathering
 max_iterations: 300
 ---
 ```

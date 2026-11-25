@@ -1,6 +1,6 @@
 # リリースプロセス
 
-[English](../en-US/release-process.md) | [中文](../zh-CN/release-process.md)
+[English](../en-US/release-process.md)
 
 本書は、メンテナーまたはデプロイ担当者が CyberStrikeAI をリリース、アップグレード、ロールバックするためのものです。
 
@@ -8,11 +8,11 @@
 
 リリース前のチェック：
 
-- `README.md` と `README_CN.md` の機能説明が更新されているか。
+- `README.md` と `README_JA.md` の機能説明が更新されているか。
 - `docs/` に新機能のドキュメントが追加されているか。
 - `config.example.yaml` のサンプルに、新しく追加された設定が含まれているか。
 - OpenAPI に、新しく追加されたインターフェースが含まれているか。
-- 中国語・英語の i18n が同期されているか。
+- 英語・日本語の i18n が同期されているか。
 - 高リスクな機能にセキュリティに関する説明があるか。
 
 ## テスト
@@ -56,7 +56,7 @@ go build -o cyberstrike-ai ./cmd/server
 - `skills/`
 - `agents/`
 - `docs/`
-- `README.md` / `README_CN.md`
+- `README.md` / `README_JA.md`
 - `LICENSE`
 
 ローカルの `data/`、実際の `config.yaml` のシークレット、アップロードされた添付ファイル、ログを、公開のリリースパッケージに含めないでください。

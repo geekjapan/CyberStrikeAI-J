@@ -45,6 +45,7 @@ func TestParseAuditAgentLLMContentProseWrapped(t *testing.T) {
 	}
 }
 
+// Chinese stays: a Chinese approval word from the model (or an older prompt) must still map to approve.
 func TestParseAuditAgentLLMContentChineseDecision(t *testing.T) {
 	d, err := parseAuditAgentLLMContent(`{"decision":"通过","comment":"low risk"}`)
 	if err != nil {

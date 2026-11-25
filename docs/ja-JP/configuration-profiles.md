@@ -1,6 +1,6 @@
 # 設定プロファイル
 
-[English](../en-US/configuration-profiles.md) | [中文](../zh-CN/configuration-profiles.md)
+[English](../en-US/configuration-profiles.md)
 
 本書では、よく使われる設定プロファイルをいくつか紹介します。これらは完全な `config.yaml` ではなく、デプロイ時にセキュリティと可用性に最も影響しやすい主要セクションです。
 

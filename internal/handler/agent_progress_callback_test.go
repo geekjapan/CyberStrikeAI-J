@@ -154,7 +154,7 @@ func TestCreateProgressCallback_HidesInternalAgentDiagnostics(t *testing.T) {
 	cb("model_output_rejected", "Model tool call was incomplete or its arguments were unsafe; execution was blocked and a rewrite was requested.", map[string]interface{}{
 		"reason": "invalid_tool_arguments_json",
 	})
-	cb("progress", "Agent TurnLoop 常驻多轮 runtime 已接管本轮会话。", map[string]interface{}{
+	cb("progress", "Agent TurnLoop took over this conversation turn.", map[string]interface{}{
 		"kind": "turn_loop_takeover",
 	})
 

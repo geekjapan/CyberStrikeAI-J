@@ -1,6 +1,6 @@
 # Configuration Profiles
 
-[中文](../zh-CN/configuration-profiles.md) | [日本語](../ja-JP/configuration-profiles.md)
+[日本語](../ja-JP/configuration-profiles.md)
 
 These profiles are not full `config.yaml` files. They show the key sections that most affect safety and operability.
 

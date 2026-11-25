@@ -12,6 +12,7 @@ import (
 
 func TestParseLinksFromBodyDependsOn(t *testing.T) {
 	t.Parallel()
+	// Chinese stays: body headings stored by earlier versions are Chinese.
 	body := "## 关联\n- 依赖事实: target/api\n- 相关 fact_key: auth/session"
 	links := ParseLinksFromBody(body)
 	if len(links) != 2 {
@@ -21,6 +22,7 @@ func TestParseLinksFromBodyDependsOn(t *testing.T) {
 
 func TestSyncBodyLinksSection(t *testing.T) {
 	t.Parallel()
+	// Chinese stays: body headings stored by earlier versions are Chinese.
 	body := "## 结论\nx\n\n## 关联\n- 依赖事实: old/key"
 	edges := []*database.ProjectFactEdge{{EdgeType: "discovered_on", SourceFactKey: "target/a"}}
 	out := SyncBodyLinksSection(body, edges)
@@ -64,5 +66,13 @@ func TestFactGraphIntegration(t *testing.T) {
 	}
 	if len(graph.Nodes) < 2 || len(graph.Edges) < 1 {
 		t.Fatalf("expected graph nodes/edges, got %d/%d", len(graph.Nodes), len(graph.Edges))
+	}
+}
+
+func TestParseLinksFromBodyDependsOnEnglish(t *testing.T) {
+	t.Parallel()
+	body := "## Links\n- Depends on fact: target/api\n- related fact_key: auth/session"
+	if links := ParseLinksFromBody(body); len(links) == 0 {
+		t.Fatalf("want links from English headings, got none")
 	}
 }

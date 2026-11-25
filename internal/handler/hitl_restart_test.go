@@ -25,6 +25,7 @@ func TestEnsureSchemaCancelsPendingInterruptsAfterRestart(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create conversation: %v", err)
 	}
+	// Chinese stays: this is the placeholder text stored by earlier versions.
 	message, err := db.AddMessage(conversation.ID, "assistant", "处理中...", nil)
 	if err != nil {
 		t.Fatalf("create assistant placeholder: %v", err)

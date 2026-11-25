@@ -1,6 +1,6 @@
 # WebShell 管理
 
-[English](../en-US/webshell.md) | [中文](../zh-CN/webshell.md)
+[English](../en-US/webshell.md)
 
 WebShell 管理は、許可されたターゲットの WebShell 接続を保存し、Web ページまたはエージェントのツールからコマンド実行、ファイル操作、コンテキスト分析を行うための機能です。
 

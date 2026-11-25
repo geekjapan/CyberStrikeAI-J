@@ -55,7 +55,7 @@ export default function Composer({
         },
         {
             value: 'deep',
-            title: t('chat.agentModeDeep', null, 'Deep（DeepAgent）'),
+            title: t('chat.agentModeDeep', null, 'Deep (DeepAgent)'),
             description: t('chat.agentModeDeepHint', null, 'Pi multi-agent for complex security testing, multi-stage task delegation, and synthesis')
         },
         {

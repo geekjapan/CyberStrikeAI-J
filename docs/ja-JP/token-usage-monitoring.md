@@ -1,6 +1,6 @@
 # Pi トークン使用量の監視
 
-[English](../en-US/token-usage-monitoring.md) | [中文](../zh-CN/token-usage-monitoring.md)
+[English](../en-US/token-usage-monitoring.md)
 
 モデルの使用量は Pi が返す usage に由来します。Go はモデルのターン終了後にこれを集計し、`agent_usage_summary` を通じて既存の統計とタイムラインに書き込みます。補助的な HTTP 呼び出しとプロバイダーの請求ではカバー範囲が異なる場合があるため、ローカルの統計はアカウントの請求額と一致するとは限りません。
 
