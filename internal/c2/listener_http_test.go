@@ -20,7 +20,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// 集成验证：路由、鉴权伪装 404、明文 check-in JSON 回包。
+// Integration check: routing, disguised 404 on auth failure, and plaintext check-in JSON response.
 func TestHTTPBeaconListener_CheckInMatrix(t *testing.T) {
 	tmp := t.TempDir()
 	dbPath := filepath.Join(tmp, "c2.sqlite")

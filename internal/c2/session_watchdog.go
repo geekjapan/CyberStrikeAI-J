@@ -9,24 +9,24 @@ import (
 	"go.uber.org/zap"
 )
 
-// SessionWatchdog 会话心跳看门狗：周期扫描所有 active/sleeping 会话，
-// 把超过 (sleep * (1 + jitter%) * graceFactor + minGrace) 仍未心跳的标为 dead。
+// SessionWatchdog monitors session heartbeats: it periodically scans active/sleeping sessions
+// and marks those exceeding (sleep * (1 + jitter%) * graceFactor) (clamped by minGrace) as dead.
 //
-// 设计要点：
-//   - 单 goroutine + ticker，避免对每个会话开 timer，session 数量大时也线性 OK；
-//   - 阈值随会话自身 sleep/jitter 自适应（sleep=300s 的会话不能用 sleep=5s 的判定）；
-//   - 全局最小宽限期 minGrace 避免 sleep 配置错误的会话被误判；
-//   - 不读 implant_uuid，纯按 last_check_in 字段，与 listener 类型解耦。
+// Design notes:
+//   - Uses a single goroutine + ticker rather than per-session timers, scaling linearly with session count;
+//   - Threshold adapts to each session's sleep/jitter (a sleep=300s session is not judged by a sleep=5s threshold);
+//   - Global minGrace prevents false positives from misconfigured sleep intervals;
+//   - Checks only last_check_in without depending on implant_uuid or listener transport details.
 type SessionWatchdog struct {
 	manager  *Manager
 	logger   *zap.Logger
-	interval time.Duration // 扫描周期，默认 15s
-	minGrace time.Duration // 最小宽限期，默认 30s
-	gracePct float64       // 心跳超时倍数，默认 3.0（即 3 倍 sleep 周期没心跳算掉线）
+	interval time.Duration // scan interval, default 15s
+	minGrace time.Duration // minimum grace period, default 30s
+	gracePct float64       // missed-heartbeat multiplier, default 3.0 (3x sleep interval without check-in)
 	stopCh   chan struct{}
 }
 
-// NewSessionWatchdog 创建看门狗
+// NewSessionWatchdog creates a new SessionWatchdog.
 func NewSessionWatchdog(m *Manager) *SessionWatchdog {
 	return &SessionWatchdog{
 		manager:  m,
@@ -38,7 +38,7 @@ func NewSessionWatchdog(m *Manager) *SessionWatchdog {
 	}
 }
 
-// Run 阻塞执行，直到 ctx.Done() 或 Stop()
+// Run blocks and runs the periodic scan until ctx is canceled or Stop is called.
 func (w *SessionWatchdog) Run(ctx context.Context) {
 	t := time.NewTicker(w.interval)
 	defer t.Stop()
@@ -54,7 +54,7 @@ func (w *SessionWatchdog) Run(ctx context.Context) {
 	}
 }
 
-// Stop 停止
+// Stop signals the watchdog loop to exit.
 func (w *SessionWatchdog) Stop() {
 	select {
 	case <-w.stopCh:
@@ -123,16 +123,16 @@ func (w *SessionWatchdog) expireOfflineCommands(session *database.C2Session, now
 	}
 }
 
-// isStale 判断会话是否超时
+// isStale reports whether a session has exceeded its heartbeat deadline.
 func (w *SessionWatchdog) isStale(s *database.C2Session, now time.Time) bool {
-	// 无心跳记录：以 first_seen_at 兜底
+	// Fall back to first_seen_at if no heartbeat timestamp is recorded.
 	last := s.LastCheckIn
 	if last.IsZero() {
 		last = s.FirstSeenAt
 	}
 	sleep := s.SleepSeconds
 	if sleep <= 0 {
-		// TCP reverse 模式 sleep=0 → 用最小宽限期判定
+		// Interactive TCP reverse sessions use sleep=0 -> evaluate against 2x minGrace.
 		return now.Sub(last) > w.minGrace*2
 	}
 	jitter := s.JitterPercent
@@ -142,7 +142,7 @@ func (w *SessionWatchdog) isStale(s *database.C2Session, now time.Time) bool {
 	if jitter > 100 {
 		jitter = 100
 	}
-	// 阈值 = sleep * (1 + jitter%) * gracePct，再加 minGrace 兜底
+	// Threshold = max(sleep * (1 + jitter%) * gracePct, minGrace).
 	expected := time.Duration(float64(sleep)*(1+float64(jitter)/100.0)*w.gracePct) * time.Second
 	if expected < w.minGrace {
 		expected = w.minGrace

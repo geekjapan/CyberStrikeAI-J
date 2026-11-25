@@ -184,7 +184,7 @@ CyberStrikeAI 将规划、执行、人工监督、证据与复盘连接在同一
 
 </details>
 
-工具定义、自定义方式与使用说明见 [tools/README.md](tools/README.md)。
+工具定义、自定义方式与使用说明见 [tools/README_CN.md](tools/README_CN.md)。
 
 ## 基础使用
 
@@ -327,7 +327,7 @@ ai:
 - **运维人员：** [配置画像](docs/zh-CN/configuration-profiles.md) → [安全加固](docs/zh-CN/security-hardening.md) → [运维 Runbooks](docs/zh-CN/runbooks.md)
 - **集成开发：** [API 参考](docs/zh-CN/api-reference.md) → [API Recipes](docs/zh-CN/api-recipes.md) → [MCP 联邦](docs/zh-CN/mcp-federation.md)
 - **项目贡献：** [开发者指南](docs/zh-CN/developer-guide.md) → [测试指南](docs/zh-CN/testing.md) → [贡献规范](docs/zh-CN/contributing-guide.md)
-- **全部专题：** [中文文档](docs/zh-CN/README.md) · [双语文档索引](docs/README.md)
+- **全部专题：** [中文文档](docs/zh-CN/README.md) · [文档索引](docs/README.md)
 
 ## 项目结构
 
@@ -413,7 +413,7 @@ CyberStrikeAI 是一个专业的安全测试平台，旨在帮助安全研究人
 
 **开发者不对任何滥用行为负责！** 请确保您的使用符合当地法律法规，并获得目标系统所有者的明确授权。
 
-安全问题报告与部署加固建议见 [SECURITY.md](SECURITY.md)。
+安全问题报告与部署加固建议见 [SECURITY_CN.md](SECURITY_CN.md)。
 
 ---
 

@@ -10,20 +10,21 @@ docs/zh-CN/ *
 docs/ja-JP/ *
 README_CN.md *
 README_JA.md *
-tools/README.md *
+SECURITY_CN.md *
+SECURITY_JA.md *
+tools/README_CN.md *
+tools/README_JA.md *
 # Build output of the frontend (contains the language names).
 web/static/app/ *
 # UI tests run in zh-CN against a mocked API and assert the Chinese texts.
 web/frontend/tests/ *
-# Not translated: the model safeguards stopped the translation of this package.
-internal/c2/ *
 
 .claude/skills/verify-cyberstrikeai/features/language.md 5
 .claude/skills/verify-cyberstrikeai/journeys/language.mjs 3
 README.md 1
-SECURITY.md 51
+SECURITY.md 1
 agents/lateral-movement.md 22
-docs/README.md 60
+docs/README.md 1
 docs/en-US/MULTI_AGENT_PI.md 1
 docs/en-US/README.md 1
 docs/en-US/VISION.md 1
@@ -51,7 +52,7 @@ docs/en-US/plugin-development.md 1
 docs/en-US/project-resume.md 1
 docs/en-US/rbac.md 1
 docs/en-US/release-process.md 1
-docs/en-US/robot.md 37
+docs/en-US/robot.md 23
 docs/en-US/runbooks.md 1
 docs/en-US/security-hardening.md 1
 docs/en-US/security-model.md 1
@@ -66,11 +67,9 @@ docs/en-US/word-reports.md 1
 docs/en-US/workflow-graph.md 2
 internal/agentfinalizer/decision.go 1
 internal/apimsg/catalog_test.go 15
-internal/app/app.go 70
-internal/app/c2_hitl_bridge.go 3
-internal/app/c2_lifecycle.go 2
-internal/app/c2_tools.go 124
+internal/app/app.go 67
 internal/attackchain/builder.go 1
+internal/c2/console_encoding_test.go 9
 internal/config/default_role.go 1
 internal/database/asset_test.go 1
 internal/database/blocked_execution_test.go 4
@@ -141,6 +140,7 @@ skills/redteam-opsec/SKILL.md 13
 skills/specialized-attack-playbooks/SKILL.md 129
 skills/web-attack-methods/SKILL.md 66
 skills/zero-day-discovery/SKILL.md 20
+tools/README.md 1
 tools/fofa_search.yaml 1
 tools/quake_search.yaml 3
 tools/zoomeye_search.yaml 2

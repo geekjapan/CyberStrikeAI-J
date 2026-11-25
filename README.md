@@ -185,7 +185,7 @@ CyberStrikeAI ships with 100+ curated tools covering the whole kill chain:
 
 </details>
 
-See [tools/README_EN.md](tools/README_EN.md) for tool definitions, customization, and usage notes.
+See [tools/README.md](tools/README.md) for tool definitions, customization, and usage notes.
 
 ## Basic Usage
 
@@ -334,7 +334,7 @@ ai:
 - **Operators:** [Configuration profiles](docs/en-US/configuration-profiles.md) → [Security hardening](docs/en-US/security-hardening.md) → [Runbooks](docs/en-US/runbooks.md)
 - **Integrators:** [API reference](docs/en-US/api-reference.md) → [API recipes](docs/en-US/api-recipes.md) → [MCP federation](docs/en-US/mcp-federation.md)
 - **Contributors:** [Developer guide](docs/en-US/developer-guide.md) → [Testing](docs/en-US/testing.md) → [Contributing](docs/en-US/contributing-guide.md)
-- **All topics:** [English documentation](docs/en-US/README.md) · [Bilingual documentation index](docs/README.md)
+- **All topics:** [English documentation](docs/en-US/README.md) · [Documentation index](docs/README.md)
 
 ## Project Layout
 

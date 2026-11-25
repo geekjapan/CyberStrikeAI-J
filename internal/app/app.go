@@ -1687,13 +1687,13 @@ func registerWebshellTools(mcpServer *mcp.Server, db *database.DB, webshellHandl
 	}
 	mcpServer.RegisterTool(writeTool, writeHandler)
 
-	logger.Debug("WebShell 工具注册成功")
+	logger.Debug("WebShell tools registered")
 }
 
 // registerWebshellManagementTools registers the WebShell connection management MCP tools
 func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, webshellHandler *handler.WebShellHandler, logger *zap.Logger) {
 	if db == nil {
-		logger.Warn("跳过 WebShell 管理工具注册：db 为空")
+		logger.Warn("Skipping WebShell management tool registration: db is nil")
 		return
 	}
 	projectIDFromToolArgs := func(ctx context.Context, args map[string]interface{}) string {
@@ -2131,7 +2131,7 @@ func registerWebshellManagementTools(mcpServer *mcp.Server, db *database.DB, web
 	}
 	mcpServer.RegisterTool(testTool, testHandler)
 
-	logger.Debug("WebShell 管理工具注册成功")
+	logger.Debug("WebShell management tools registered")
 }
 
 // initializeKnowledge initializes the knowledge base components (for dynamic initialization)

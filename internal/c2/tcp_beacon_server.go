@@ -20,13 +20,13 @@ import (
 	"go.uber.org/zap"
 )
 
-// tcpBeaconMagic 二进制 Beacon 在反向 TCP 连接建立后首先发送的 4 字节，用于与经典 shell 反弹区分。
+// tcpBeaconMagic is the 4-byte prefix sent immediately by compiled TCP Beacons to distinguish them from raw reverse shells.
 const tcpBeaconMagic = "CSB1"
 
-// tcpBeaconPeekTimeout 等待 CSB1 魔数的探测窗口；合法 Beacon 连接后立即发送魔数。
+// tcpBeaconPeekTimeout is the detection window for the CSB1 magic bytes sent right after connect.
 const tcpBeaconPeekTimeout = 2 * time.Second
 
-// tcpBeaconMaxFrame 单帧密文（base64 字符串）最大字节数，防止 OOM。
+// tcpBeaconMaxFrame caps a single base64-encoded ciphertext frame to prevent OOM.
 const tcpBeaconMaxFrame = 64 << 20
 
 func readTCPBeaconFrame(r *bufio.Reader) (cipherB64 string, err error) {
@@ -69,7 +69,7 @@ func tcpBeaconCheckToken(expected, got string) bool {
 	return subtle.ConstantTimeCompare([]byte(got), []byte(expected)) == 1
 }
 
-// handleTCPBeaconSession 处理已消费魔数 CSB1 之后的 TCP Beacon 会话（与 HTTP Beacon 相同的 AES-GCM + JSON 语义）。
+// handleTCPBeaconSession serves a TCP Beacon session after the CSB1 magic has been consumed (using the same AES-GCM + JSON semantics as HTTP Beacon).
 func (l *TCPReverseListener) handleTCPBeaconSession(conn net.Conn, br *bufio.Reader) {
 	var writeMu sync.Mutex
 	var boundSessionID string

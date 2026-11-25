@@ -79,7 +79,7 @@ If you only have a **custom bot** Webhook URL (`oapi.dingtalk.com/robot/send?acc
    - Left menu: **Application capabilities** → **Robot**.  
    - Turn on “Robot configuration”.  
    - Fill in robot name, description, etc. as required.  
-   - **Critical**: set message reception to **“Stream mode”** (流式接入). If you only enable “HTTP callback” or do not select Stream, CyberStrikeAI will not receive messages.  
+   - **Critical**: set message reception to **“Stream mode”**. If you only enable “HTTP callback” or do not select Stream, CyberStrikeAI will not receive messages.
    - Save.
 
 5. **Permissions and release**  
@@ -116,21 +116,21 @@ If you only have a **custom bot** Webhook URL (`oapi.dingtalk.com/robot/send?acc
 **Lark setup in short**: Log in to [Lark Open Platform](https://open.feishu.cn) → Create an enterprise app → In “Credentials and basic info” get **App ID** and **App Secret** → In “Application capabilities” enable **Robot** and the right permissions → Add **event subscription** and **permissions** below → Publish the app → Enter App ID and App Secret in CyberStrikeAI robot settings → **Apply configuration**.
 
 **Event subscription**  
-The long-lived connection only receives message events if you subscribe to them. In the app’s **Events and callbacks** (事件与回调) → **Event subscription** (事件订阅), add the event **Receive message** (**im.message.receive_v1**). Without it, the connection succeeds but no message events are delivered (no logs when users send messages).
+The long-lived connection only receives message events if you subscribe to them. In the app’s **Events and callbacks** → **Event subscription**, add the event **Receive message** (**im.message.receive_v1**). Without it, the connection succeeds but no message events are delivered (no logs when users send messages).
 
 **Lark permissions (required)**  
-In **Permission management** (权限管理), enable the following (names and identifiers match the Lark console). After changes, **publish a new version** in Version management and release so they take effect.
+In **Permission management**, enable the following (identifiers match the Lark console). After changes, **publish a new version** in Version management and release so they take effect.
 
 | Permission name (as shown in console) | Identifier | Notes |
 |--------------------------------------|------------|-------|
-| 获取与发送单聊、群组消息 (Get and send direct & group messages) | `im:message` | Base permission for sending and receiving; **required**. |
-| 接收群聊中@机器人消息事件 (Receive @bot messages in group chat) | `im:message.group_at_msg:readonly` | Required for group chat when users @ the bot. |
-| 读取用户发给机器人的单聊消息 (Read direct messages from users to bot) | `im:message.p2p_msg:readonly` | **Required** for 1:1 chat; otherwise no response in private chat. |
-| 获取单聊、群组消息 (Get direct & group messages) | `im:message:readonly` | **Required** to read message content. |
+| Get and send direct & group messages | `im:message` | Base permission for sending and receiving; **required**. |
+| Receive @bot messages in group chat | `im:message.group_at_msg:readonly` | Required for group chat when users @ the bot. |
+| Read direct messages from users to bot | `im:message.p2p_msg:readonly` | **Required** for 1:1 chat; otherwise no response in private chat. |
+| Get direct & group messages | `im:message:readonly` | **Required** to read message content. |
 
-**Event subscription** (configured separately): In **Event subscription** (事件订阅), add **Receive message** (**im.message.receive_v1**). Without it, the long-lived connection will not receive message events.
+**Event subscription** (configured separately): In **Event subscription**, add **Receive message** (**im.message.receive_v1**). Without it, the long-lived connection will not receive message events.
 
-- **1:1 chat**: Open the bot’s private chat in Lark and send e.g. “帮助” or “help”; no @ needed.  
+- **1:1 chat**: Open the bot’s private chat in Lark and send e.g. “help”; no @ needed.
 - **Group chat**: Only messages that **@ the bot** are received and replied to.
 
 ---
@@ -143,10 +143,10 @@ In **Permission management** (权限管理), enable the following (names and ide
 
 **Configuration overview:**
 
-- In the WeCom admin console, create or select a **custom app** (自建应用).
+- In the WeCom admin console, create or select a **custom app**.
 - In that app’s settings, configure the message **callback URL**, **Token**, and **EncodingAESKey**.
 - In CyberStrikeAI’s `config.yaml`, fill in:
-  - `robots.wecom.corp_id`: your CorpID (企业 ID)
+  - `robots.wecom.corp_id`: your CorpID
   - `robots.wecom.agent_id`: the app’s AgentId
   - `robots.wecom.token`: the Token used for message callbacks
   - `robots.wecom.encoding_aes_key`: the EncodingAESKey used for callbacks
@@ -200,7 +200,7 @@ In **Permission management** (权限管理), enable the following (names and ide
    When the page shows “Binding successful, WeChat robot enabled”, you’re done. `bot_token`, `ilink_bot_id`, etc. are saved to `config.yaml` and the iLink poll restarts automatically—**usually no manual service restart**.
 
 6. **Test in WeChat**  
-   Open the **private chat** with the CyberStrikeAI bot in WeChat and send “帮助” (help) or any text.
+   Open the **private chat** with the CyberStrikeAI bot in WeChat and send “help” or any text.
 
 **Field reference (WeChat)**
 
@@ -374,7 +374,7 @@ Group messages are authorized as the actual sender, never as a group ID. In serv
 ## 5. How to use (do I need to @ the bot?)
 
 - **Personal WeChat**: Send directly in the **private chat** with the bot; **no @ needed** (group chat not supported).  
-- **DingTalk / Lark direct chat (recommended)**: **Search for the bot and open a direct chat**. Type “帮助” or any message; **no @ needed**.  
+- **DingTalk / Lark direct chat (recommended)**: **Search for the bot and open a direct chat**. Type “help” or any message; **no @ needed**.
 - **DingTalk / Lark group chat**: If the bot is in a group, only messages that **@ the bot** are received and answered; other group messages are ignored.
 
 Summary: **Personal WeChat and direct chat**—just send; **DingTalk/Lark in a group**—@ the bot first, then send.
@@ -481,7 +481,7 @@ TOKEN=$(curl -s -X POST "http://localhost:8080/api/auth/login" \
 curl -X POST "http://localhost:8080/api/robot/test" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
-  -d '{"platform":"dingtalk","user_id":"test_user","text":"帮助"}'
+  -d '{"platform":"dingtalk","user_id":"test_user","text":"help"}'
 ```
 
 If the JSON response contains `"reply":"【CyberStrikeAI 机器人命令】..."`, command handling works. `help`, `version`, and `whoami` work before binding. `list`, `current`, and normal AI messages enforce RBAC: the test `platform + user_id` must already be bound or exactly match the service-account allowlist.

@@ -185,7 +185,7 @@ CyberStrikeAI は、キルチェーン全体をカバーする厳選した 100 �
 
 </details>
 
-ツールの定義、カスタマイズ、使用上の注意については [tools/README_EN.md](tools/README_EN.md)（英語）を参照してください。
+ツールの定義、カスタマイズ、使用上の注意については [tools/README_JA.md](tools/README_JA.md)を参照してください。
 
 ## 基本的な使い方
 
@@ -334,7 +334,7 @@ ai:
 - **運用担当者：** [設定プロファイル](docs/ja-JP/configuration-profiles.md) → [セキュリティ強化](docs/ja-JP/security-hardening.md) → [Runbooks](docs/ja-JP/runbooks.md)
 - **連携担当者：** [API リファレンス](docs/ja-JP/api-reference.md) → [API Recipes](docs/ja-JP/api-recipes.md) → [MCP フェデレーション](docs/ja-JP/mcp-federation.md)
 - **コントリビューター：** [開発者ガイド](docs/ja-JP/developer-guide.md) → [テスト](docs/ja-JP/testing.md) → [コントリビューション](docs/ja-JP/contributing-guide.md)
-- **すべてのトピック：** [日本語ドキュメント](docs/ja-JP/README.md) · [多言語ドキュメント索引](docs/README.md)
+- **すべてのトピック：** [日本語ドキュメント](docs/ja-JP/README.md) · [ドキュメント索引](docs/README.md)
 
 ## プロジェクト構成
 
@@ -422,7 +422,7 @@ CyberStrikeAI は、セキュリティ研究者、ペネトレーションテス
 
 **開発者は、いかなる誤用についても責任を負いません。** 使用にあたっては、現地の法令を遵守し、対象システムの所有者から明示的な許可を得ていることを確認してください。
 
-脆弱性の報告とデプロイ時のセキュリティ強化の指針については、[SECURITY.md](SECURITY.md)（英語）を参照してください。
+脆弱性の報告とデプロイ時のセキュリティ強化の指針については、[SECURITY_JA.md](SECURITY_JA.md)を参照してください。
 
 ---
 
