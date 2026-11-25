@@ -25,7 +25,7 @@ Preconditions:
 
 ## Gotchas
 
-- The login page follows `localStorage['csai_lang']` (English in a new browser). It has no language button, so to see it in another language set that key and reload.
-- The rejection text comes from the server in the UI language (`Incorrect username or password` in English). English, Japanese and Chinese exist; other languages get English.
-- Logins are limited to 10 per minute per IP. Every `drive.mjs` run and every `doctor.sh` run is one login; this journey is two. On `429`, wait a minute.
+- The login page follows `localStorage['csai_lang']`, then the browser language (Japanese for `ja*`, otherwise English). It has no language button, so to see it in another language set that key and reload.
+- The rejection text comes from the server in the UI language (`Incorrect username or password` in English). English and Japanese exist (`ユーザー名またはパスワードが正しくありません`); every other language gets English.
+- Logins are limited to 10 per minute per IP. Every `drive.mjs` run of a journey that signs in, and every `doctor.sh` run, is one login. This journey opts out of the automatic sign-in and makes two logins itself. On `429`, wait a minute.
 - The admin password exists only for this instance and is printed once in `.run/server.log`. A changed password is not saved anywhere by the skill; cleanup and launch to get a new instance.

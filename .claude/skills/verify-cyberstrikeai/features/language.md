@@ -1,10 +1,10 @@
 # Interface language
 
-The header has a language button. Choosing a language retranslates the whole UI at once and the choice survives a reload. Two languages are offered: English and 日本語. A new browser starts in English.
+The header has a language button. Choosing a language retranslates the whole UI at once and the choice survives a reload. Two languages are offered: English and 日本語. A new browser starts in Japanese when its language is Japanese, otherwise in English.
 
 ## Sub-features
 
-- `lang-default`: a browser with no saved choice shows English.
+- `lang-default`: a browser with no saved choice shows Japanese if `navigator.language` starts with `ja`, otherwise English. `drive.mjs` pins `en-US`, so the shipped journey sees English.
 - `lang-list`: the menu lists the two languages.
 - `lang-switch`: choosing 日本語 translates the navigation and sets `<html lang="ja-JP">`.
 - `lang-persist`: after a reload the UI is still Japanese (`localStorage['csai_lang']`).
@@ -33,5 +33,6 @@ Preconditions:
 - The journey proves Japanese and the switch back to English only. For another language, change the menu item and the expected navigation text (take it from `web/static/i18n/<lang>.json`, key `nav.dashboard`).
 - The language button's accessible name is the current language code, so it changes after a switch.
 - A missing key falls back to English, then Japanese. A screen can look translated while single strings are fallbacks; to prove a specific string, assert that string.
-- Text that is data stays as stored (the admin's display name is `管理员`). Seeing that after switching is not a regression.
+- Text that is data stays as stored (conversation titles, audit records written by an earlier version). Seeing it unchanged after switching is not a regression.
+- To see the Japanese default, override `navigator.language` with `page.addInitScript` in a `login = false` journey before signing in.
 - The login page has no language button: the language can only be changed after sign-in.

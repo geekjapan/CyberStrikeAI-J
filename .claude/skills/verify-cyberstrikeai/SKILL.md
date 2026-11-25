@@ -41,7 +41,7 @@ A journey is a small module that acts as a user. Run one:
 node .claude/skills/verify-cyberstrikeai/drive.mjs .claude/skills/verify-cyberstrikeai/journeys/projects.mjs
 ```
 
-`drive.mjs` opens Chrome (headless, locale `en-US`, 1440×900), signs in through the login form, calls the journey, and exits 0 on `PASS`, 1 on `FAIL`. Shipped journeys: `login`, `language`, `projects`, `vulnerabilities`, `chat`. `features/` says what each proves.
+`drive.mjs` opens Chrome (headless, locale `en-US`, 1440×900), signs in through the login form, calls the journey, and exits 0 on `PASS`, 1 on `FAIL`. Shipped journeys: `login`, `language`, `projects`, `projects-chat`, `vulnerabilities`, `chat`. `features/` says what each proves.
 
 To verify something new, copy the closest journey and change it. A journey gets:
 
@@ -63,7 +63,7 @@ Handles that hold in this app:
 - Give `getByRole('dialog')` a name whenever a dropdown may be open inside it: Semi popovers are `role="dialog"` too.
 - Dropdowns are Semi Design selects, not `<select>`: click the combobox, then `page.locator('.semi-select-option', { hasText: /^High$/ })`.
 - Server text is English in the source and translated per request: API errors, chat stream status and failure lines, and the same lines in reloaded history follow the UI language (`Accept-Language`). Assert on status codes or on the en-US text.
-- Some text is not translated and stays as stored: the admin's display name, audit records and conversations written by an earlier version, and the sub-agent prompts, skill bodies and C2 texts that are still Chinese in the repository.
+- Some text is not translated and stays as stored: the admin's display name, audit records and conversations written by an earlier version, and the legacy Chinese words the bot still accepts.
 - Never wait on translated status wording to detect that something finished; wait on a response, a URL, or an element's presence.
 - The token is in `localStorage['cyberstrike-auth']`, the language in `localStorage['csai_lang']`.
 

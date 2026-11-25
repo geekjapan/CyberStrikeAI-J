@@ -28,8 +28,8 @@ Each feature file has an H1, one paragraph on the user-visible behaviour, then f
 ## Features
 
 - [Sign in](./login.md): wrong password rejected, right password opens the dashboard. Journey `login`.
-- [Interface language](./language.md): switch among three languages, kept after reload. Journey `language`.
-- [Projects](./projects.md): create a project and see it listed. Journey `projects`.
+- [Interface language](./language.md): switch between English and Japanese, kept after reload. Journey `language`.
+- [Projects](./projects.md): create a project from the Projects page or the chat composer. Journeys `projects`, `projects-chat`.
 - [Vulnerabilities](./vulnerabilities.md): record a finding by hand. Journey `vulnerabilities`.
 - [Chat](./chat.md): send a message to the agent and get a reply. Journey `chat`, needs a model.
 

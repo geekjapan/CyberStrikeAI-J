@@ -29,7 +29,7 @@ Preconditions:
 ## Gotchas
 
 - `vuln-required` is not asserted by the journey. It was seen once by hand: saving without a severity keeps the panel open and shows a field error (`Select a severity` in English).
-- The severity control is a Semi Design select. Its options are `.semi-select-option` elements without an option role name; `getByRole('option', { name: 'High' })` does not find them.
+- The severity control is a Semi Design select, not a native `<select>`. Click its combobox first; the options then have `role="option"`, so `getByRole('option', { name: 'High' })` and `.semi-select-option` both find them.
 - The open severity dropdown also has `role="dialog"`. A bare `getByRole('dialog')` then matches two elements and fails intermittently; always name the panel: `getByRole('dialog', { name: 'Add vulnerability' })`.
 - The target the journey enters (`http://127.0.0.1:1/none`) is a label only. Nothing connects to it.
 - Editing, status changes, export and batch delete are not mapped.

@@ -9,7 +9,7 @@ ROOT="$(git -C "$HERE" rev-parse --show-toplevel)"
 
 # Commit at which TaskCleanup.tla was last confirmed to describe the covered code.
 # Move it forward only after re-reading the covered functions against the model.
-SYNC_COMMIT=30908361432ac5ab59b5129ad431b6812daa73dc
+SYNC_COMMIT=a5f0e5e0478c761a32e2bf257f4496b653893aa6
 COVERED=(internal/runlease/scope.go internal/handler/task_manager.go internal/handler/task_lifecycle.go internal/mcp/execution_service.go)
 
 if [ "${1:-}" = "--drift" ]; then git -C "$ROOT" diff "$SYNC_COMMIT" -- "${COVERED[@]}"; exit 0; fi

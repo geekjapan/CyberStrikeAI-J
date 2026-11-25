@@ -5,7 +5,7 @@ Chat is the main surface: the user types a request, the agent runs with the sele
 ## Sub-features
 
 - `chat-send`: the typed message appears as the user's bubble.
-- `chat-stored`: a conversation titled with the message is returned by `GET /api/conversations`.
+- `chat-stored`: a conversation titled with the first 50 characters of the message is returned by `GET /api/conversations`.
 - `chat-reply`: the assistant bubble finishes without an error.
 
 ## How to get to it (user POV)
@@ -19,7 +19,7 @@ Preconditions:
 
 - Baseline, and the instance was launched with a reachable OpenAI-compatible model:
   `VERIFY_AI_BASE_URL=<url ending in /v1> VERIFY_AI_API_KEY=<key> VERIFY_AI_MODEL=<model> .claude/skills/verify-cyberstrikeai/launch.sh`.
-  Pass the key through the environment; do not write it into a file in the repository.
+  Pass the key through the environment, never in a committed file. `launch.sh` writes it only into `.run/instance/config.yaml` (mode 600, git-ignored, deleted by `cleanup.sh`). Keys must match `^[A-Za-z0-9._-]+$` and URLs `^https?://[A-Za-z0-9._:/-]+$`, or `launch.sh` exits 2.
 
 - **Run.** `node .claude/skills/verify-cyberstrikeai/drive.mjs .claude/skills/verify-cyberstrikeai/journeys/chat.mjs`.
 - **Send.** It goes to `#/chat`, fills the textbox named `Message` with `Reply with the single word pong. (<timestamp>)` and clicks `Send`. The first `.chat-bubble` contains the text, and `writes` has `200 POST /api/agent/stream`. Screenshot `01-sent.png`.
@@ -28,7 +28,7 @@ Preconditions:
 
 ## Gotchas
 
-- **Without a model this journey fails at `chat-reply`, and that is the correct result.** The default launch points the model at `http://127.0.0.1:9/v1`; the assistant bubble then shows `❌` and an `Execution failed: …` line in the UI language. `chat-send` and `chat-stored` still held in that run (see the screenshots), but do not report chat as verified.
+- **Without a model this journey fails at `chat-reply`, and that is the correct result.** The default launch points the model at `http://127.0.0.1:9/v1`; Pi retries twice (`pi_model_retry` notes, about 6 seconds), then the run fails. While the stream is open the error shows in `.chat-live-error`; after the run the reloaded history shows an `❌ Execution error` note and the content `Execution failed: …`, in the UI language. `chat-send` and `chat-stored` still held in that run (see the screenshots), but do not report chat as verified.
 - **The reply step has never passed in this skill's own proof run**, because no model was available. The first run with a real model also verifies the `VERIFY_AI_*` settings; if it fails, check `ai.channels.qwen-max` in `.run/instance/config.yaml` first.
 - `config.example.yaml` points at a public model gateway with a placeholder key. `launch.sh` replaces that address so a chat test never sends prompts off this machine unless `VERIFY_AI_BASE_URL` says so.
 - With a model, the agent may call tools, which run as local processes with your permissions. Keep the prompt free of targets and commands.
