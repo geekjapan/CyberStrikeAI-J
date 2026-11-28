@@ -47,7 +47,7 @@ func (h *AgentHandler) runSingleJSON(taskCtx, baseCtx context.Context, cancelWit
 			prep.RoleTools,
 			progressCallback,
 			chatReasoningToClientIntent(req.Reasoning),
-			h.agentSessionContextBlock(prep.ConversationID),
+			h.chatPromptExtra(prep.ConversationID, req),
 		)
 		if runErr != nil {
 			if shouldPersistAgentAgentTraceAfterRunError(baseCtx) {

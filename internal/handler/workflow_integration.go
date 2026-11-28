@@ -132,7 +132,7 @@ func (h *AgentHandler) runRoleWorkflowStreamIfBound(
 		History:            prep.History,
 		RoleTools:          prep.RoleTools,
 		AgentsMarkdownDir:  h.agentsMarkdownDir,
-		SystemPromptExtra:  h.agentSessionContextBlock(conversationID),
+		SystemPromptExtra:  h.chatPromptExtra(conversationID, req),
 		AssistantMessageID: assistantMessageID,
 		Progress:           progress,
 	})

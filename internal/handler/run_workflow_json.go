@@ -27,7 +27,7 @@ func (h *AgentHandler) runWorkflowJSON(taskCtx, baseCtx context.Context, cancelW
 		History:            prep.History,
 		RoleTools:          prep.RoleTools,
 		AgentsMarkdownDir:  h.agentsMarkdownDir,
-		SystemPromptExtra:  h.agentSessionContextBlock(conversationID),
+		SystemPromptExtra:  h.chatPromptExtra(conversationID, req),
 		AssistantMessageID: assistantMessageID,
 		Progress:           progress,
 	})

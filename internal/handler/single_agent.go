@@ -38,6 +38,7 @@ func (h *AgentHandler) SingleAgentLoopStream(c *gin.Context) {
 		}
 		return
 	}
+	req.OutputLanguage = requestOutputLanguage(c)
 
 	c.Header("X-Accel-Buffering", "no")
 
@@ -263,7 +264,7 @@ func (h *AgentHandler) SingleAgentLoopStream(c *gin.Context) {
 			roleTools,
 			progressCallback,
 			chatReasoningToClientIntent(req.Reasoning),
-			h.agentSessionContextBlock(conversationID),
+			h.chatPromptExtra(conversationID, &req),
 		)
 		_ = resolvedAIChannelID
 
@@ -435,6 +436,7 @@ func (h *AgentHandler) SingleAgentLoop(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	req.OutputLanguage = requestOutputLanguage(c)
 
 	h.logger.Info("Received Pi single-agent non-streaming request", zap.String("conversationId", req.ConversationID))
 

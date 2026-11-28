@@ -42,6 +42,7 @@ func (h *AgentHandler) submitAgentRunWithExecutor(c *gin.Context, multi bool, ex
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
+	req.OutputLanguage = requestOutputLanguage(c)
 	raw, _ := json.Marshal(struct {
 		Request ChatRequest
 		Multi   bool

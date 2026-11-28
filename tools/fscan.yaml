@@ -230,11 +230,11 @@ parameters:
     default: 10
   - name: "lang"
     type: "string"
-    description: "Output language: zh (Chinese, default), en (English)"
+    description: "Output language: en (English, default here), zh (Chinese)"
     required: false
     flag: "-lang"
     format: "flag"
-    default: "zh"
+    default: "en"
   - name: "log_level"
     type: "string"
     description: "Log level (default base,info,success)"
