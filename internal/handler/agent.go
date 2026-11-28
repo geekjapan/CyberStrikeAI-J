@@ -415,6 +415,9 @@ type ChatRequest struct {
 	Finalization         ChatFinalizationRequest `json:"finalization,omitempty"`
 	// Orchestration applies only to /api/multi-agent and /api/multi-agent/stream: deep | plan_execute | supervisor; empty is equivalent to deep. For bot/batch requests without a body, the server defaults to deep. /api/agent* does not use this field.
 	Orchestration string `json:"orchestration,omitempty"`
+	// OutputLanguage is the UI language of the request ("ja" or "en"), set by
+	// the handler from ?lang= or Accept-Language; empty when the client sent neither.
+	OutputLanguage string `json:"-"`
 }
 
 func (h *AgentHandler) configForAIChannel(channelID string) (*config.Config, string, error) {

@@ -53,7 +53,7 @@ func (h *AgentHandler) runMultiJSON(taskCtx, baseCtx context.Context, cancelWith
 			h.agentsMarkdownDir,
 			strings.TrimSpace(req.Orchestration),
 			chatReasoningToClientIntent(req.Reasoning),
-			h.agentSessionContextBlock(prep.ConversationID),
+			h.chatPromptExtra(prep.ConversationID, req),
 		)
 		if runErr != nil {
 			if shouldPersistAgentAgentTraceAfterRunError(baseCtx) {
