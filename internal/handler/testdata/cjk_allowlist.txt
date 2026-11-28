@@ -12,8 +12,10 @@ tools/README_JA.md *
 # Build output of the frontend (contains the language names).
 web/static/app/ *
 
-.claude/skills/verify-cyberstrikeai/features/language.md 6
+.claude/skills/verify-cyberstrikeai/features/language.md 5
+.claude/skills/verify-cyberstrikeai/features/login.md 1
 .claude/skills/verify-cyberstrikeai/journeys/language.mjs 5
+.cursor/skills/verify-cyberstrikeai-preferences/features/language.md 1
 README.md 1
 SECURITY.md 1
 docs/README.md 1
