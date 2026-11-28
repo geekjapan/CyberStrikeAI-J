@@ -1,4 +1,4 @@
-/** 执行详情侧滑面板：入参 / 出参 / 耗时 / 错误 / 关联会话。 */
+/** Execution detail side drawer: input / output / duration / error / linked conversation. */
 import { Banner, Button, SideSheet, Space, Spin, Typography } from '@douyinfe/semi-ui';
 import { useResource } from '../../components/hooks';
 import { CopyButton, ErrorBanner, JsonViewer, KeyValueList } from '../../components/ui';
@@ -24,16 +24,16 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
         <SideSheet
             visible={Boolean(executionId)}
             onCancel={onClose}
-            title={t('mcpMonitor.viewDetail', null, '执行详情')}
+            title={t('mcpMonitor.viewDetail', null, 'View details')}
             width={720}
             footer={exec ? (
                 <Space>
                     {running && (
                         <Button theme="solid" disabled={!canWrite} onClick={() => onCancelRequest(exec)}>
-                            {t('mcpMonitor.terminateExecution', null, '终止')}
+                            {t('mcpMonitor.terminateExecution', null, 'Stop')}
                         </Button>
                     )}
-                    <Button onClick={onClose}>{t('common.close', null, '关闭')}</Button>
+                    <Button onClick={onClose}>{t('common.close', null, 'Close')}</Button>
                 </Space>
             ) : null}
         >
@@ -46,23 +46,23 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
                     <KeyValueList
                         columns={2}
                         items={[
-                            { label: '工具', value: <Text strong>{toolDisplayName(exec.toolName) || '—'}</Text> },
-                            { label: t('mcpMonitor.columnStatus', null, '状态'), value: <ExecutionStatusTag status={exec.status} /> },
-                            { label: '执行 ID', value: <span className="mcp-monitor-mono">{exec.id}</span> },
+                            { label: t('ui.mcpDetail.tool', null, 'Tool'), value: <Text strong>{toolDisplayName(exec.toolName) || '—'}</Text> },
+                            { label: t('mcpMonitor.columnStatus', null, 'Status'), value: <ExecutionStatusTag status={exec.status} /> },
+                            { label: t('ui.mcpDetail.executionId', null, 'Execution ID'), value: <span className="mcp-monitor-mono">{exec.id}</span> },
                             {
-                                label: t('mcpMonitor.columnStartTime', null, '开始时间'),
+                                label: t('mcpMonitor.columnStartTime', null, 'Start time'),
                                 value: formatDateTime(exec.startTime)
                             },
                             {
-                                label: '结束时间',
+                                label: t('ui.mcpDetail.endTime', null, 'End time'),
                                 value: exec.endTime ? formatDateTime(exec.endTime) : '—'
                             },
                             {
-                                label: t('mcpMonitor.columnDuration', null, '耗时'),
+                                label: t('mcpMonitor.columnDuration', null, 'Duration'),
                                 value: formatDurationMs(executionDurationMs(exec))
                             },
                             {
-                                label: '关联会话',
+                                label: t('ui.mcpDetail.linkedConversation', null, 'Linked conversation'),
                                 value: exec.conversationId
                                     ? (
                                         <Space spacing={4}>
@@ -73,10 +73,10 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
                                     : '—'
                             },
                             {
-                                label: '结果状态',
+                                label: t('ui.mcpDetail.resultStatus', null, 'Result status'),
                                 value: exec.result
-                                    ? (exec.result.isError ? '错误结果' : (exec.result.blocked ? '已拦截' : '正常返回'))
-                                    : '无返回'
+                                    ? (exec.result.isError ? t('ui.mcpDetail.resultError', null, 'Error result') : (exec.result.blocked ? t('ui.mcpDetail.resultBlocked', null, 'Blocked') : t('ui.mcpDetail.resultOk', null, 'Returned normally')))
+                                    : t('ui.mcpDetail.noReturn', null, 'No response')
                             }
                         ]}
                     />
@@ -90,17 +90,17 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
                     )}
 
                     <div className="mcp-monitor-detail-section">
-                        <JsonViewer title={t('mcpDetailModal.requestParams', null, '入参')} value={exec.arguments ?? {}} />
+                        <JsonViewer title={t('mcpDetailModal.requestParams', null, 'Request params')} value={exec.arguments ?? {}} />
                     </div>
 
                     <div className="mcp-monitor-detail-section">
                         {exec.result ? (
-                            <JsonViewer title={t('mcpDetailModal.responseResult', null, '出参')} value={exec.result} />
+                            <JsonViewer title={t('mcpDetailModal.responseResult', null, 'Response')} value={exec.result} />
                         ) : (
                             <div className="mcp-monitor-detail-empty">
                                 {running
-                                    ? t('mcpDetailModal.runningNoResponseYet', null, '尚无返回，工具可能仍在执行。')
-                                    : t('chat.noResponseData', null, '暂无响应数据')}
+                                    ? t('mcpDetailModal.runningNoResponseYet', null, 'No output yet; the tool may still be running. If it hangs, use "Stop tool" below to end this call only.')
+                                    : t('chat.noResponseData', null, 'No response data')}
                             </div>
                         )}
                     </div>
@@ -108,7 +108,7 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
                     {exec.partialOutput && (
                         <div className="mcp-monitor-detail-section">
                             <div className="mcp-monitor-detail-section-head">
-                                <Text strong>实时输出尾部</Text>
+                                <Text strong>{t('ui.mcpDetail.liveOutputTail', null, 'Live output tail')}</Text>
                                 <Space spacing={4}>
                                     {exec.partialOutputBytes ? <Text type="tertiary">{exec.partialOutputBytes} B</Text> : null}
                                     <CopyButton text={exec.partialOutput} size="small" />
@@ -119,7 +119,7 @@ export default function ExecutionDetail({ executionId, onClose, canWrite, onCanc
                     )}
 
                     <div className="mcp-monitor-detail-footnote">
-                        {statusLabel(t, exec.status)} · {t('mcpMonitor.statsFromAllTools', null, '全部工具累计')}
+                        {statusLabel(t, exec.status)} · {t('mcpMonitor.statsFromAllTools', null, 'From all tool calls')}
                     </div>
                 </div>
             )}

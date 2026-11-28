@@ -1,5 +1,5 @@
 /**
- * C2 会话管理：左侧筛选后的会话列表，右侧会话工作区（终端/文件/任务/信息）。
+ * C2 session management: filtered session list on the left, session workspace (terminal/files/tasks/info) on the right.
  */
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -59,16 +59,16 @@ export default function C2SessionsPage() {
 
     const removeFiltered = () => {
         if (!sessions.length) {
-            toastError(t('c2.sessions.toastSelectFirst', null, '没有可删除的会话'));
+            toastError(t('c2.sessions.toastSelectFirst', null, 'Select at least one session to delete'));
             return;
         }
         confirmAction({
-            title: t('c2.sessions.deleteFiltered', null, '删除筛选结果'),
-            content: t('c2.sessions.confirmDeleteFiltered', null, '确定删除当前筛选结果中的全部会话？').replace('{{n}}', String(sessions.length)),
+            title: t('c2.sessions.deleteFiltered', null, 'Delete filtered'),
+            content: t('c2.sessions.confirmDeleteFiltered', null, 'Delete all {{n}} session(s) in the current filter results?').replace('{{n}}', String(sessions.length)),
             onOk: async () => {
                 try {
                     const result = await c2.deleteSessions(sessions.map(item => item.id));
-                    toastSuccess(t('c2.sessions.toastBatchDeleted', null, '已删除 {{n}} 个会话').replace('{{n}}', String(result?.deleted ?? sessions.length)));
+                    toastSuccess(t('c2.sessions.toastBatchDeleted', null, 'Deleted {{n}} session(s)').replace('{{n}}', String(result?.deleted ?? sessions.length)));
                     select('');
                     reload();
                 } catch (err) {
@@ -81,14 +81,14 @@ export default function C2SessionsPage() {
     return (
         <div className="c2-page" id="page-c2-sessions">
             <PageHeader
-                title={t('c2.sessions.title', null, '会话管理')}
-                description={t('c2.sessions.pageDesc', null, '查看上线会话，下发命令、浏览文件并管理任务历史')}
+                title={t('c2.sessions.title', null, 'Session Management')}
+                description={t('c2.sessions.pageDesc', null, 'View checked-in sessions, send commands, browse files, and manage task history')}
                 extra={[
                     <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>,
                     <Button key="delete" type="danger" disabled={!canDelete || !sessions.length} onClick={removeFiltered}>
-                        {t('c2.sessions.deleteFiltered', null, '删除筛选结果')}
+                        {t('c2.sessions.deleteFiltered', null, 'Delete filtered')}
                     </Button>
                 ]}
             />
@@ -103,7 +103,7 @@ export default function C2SessionsPage() {
                             value={status}
                             onChange={value => setStatus(value || '')}
                             style={{ width: '100%' }}
-                            optionList={[{ value: '', label: t('c2.sessions.filterAllStatus', null, '全部状态') },
+                            optionList={[{ value: '', label: t('c2.sessions.filterAllStatus', null, 'All statuses') },
                                 ...SESSION_STATUS_OPTIONS]}
                         />
                         <Select
@@ -111,7 +111,7 @@ export default function C2SessionsPage() {
                             value={listenerId}
                             onChange={value => setListenerId(value || '')}
                             style={{ width: '100%' }}
-                            optionList={[{ value: '', label: t('c2.sessions.filterAllListeners', null, '全部监听器') },
+                            optionList={[{ value: '', label: t('c2.sessions.filterAllListeners', null, 'All listeners') },
                                 ...listeners.map(item => ({ value: item.id, label: item.name || item.id }))]}
                         />
                         <Input
@@ -119,18 +119,18 @@ export default function C2SessionsPage() {
                             value={keyword}
                             onChange={setKeyword}
                             prefix={<IconSearch />}
-                            placeholder={t('c2.sessions.filterSearchPlaceholder', null, '搜索主机名 / 用户 / IP')}
+                            placeholder={t('c2.sessions.filterSearchPlaceholder', null, 'Search hostname / user / IP')}
                         />
                         <div className="c2-session-filter-foot">
                             <Checkbox checked={suspicious} onChange={event => setSuspicious(Boolean(event.target.checked))}>
-                                <Text size="small">{t('c2.sessions.filterSuspicious', null, '疑似误报')}</Text>
+                                <Text size="small">{t('c2.sessions.filterSuspicious', null, 'Likely false positives')}</Text>
                             </Checkbox>
                             <Checkbox checked={autoRefresh} onChange={event => setAutoRefresh(Boolean(event.target.checked))}>
-                                <Text size="small">{t('c2.sessions.autoRefresh', null, '自动刷新')}</Text>
+                                <Text size="small">{t('c2.sessions.autoRefresh', null, 'Auto refresh')}</Text>
                             </Checkbox>
                         </div>
                         <Text type="tertiary" size="small">
-                            {t('c2.sessions.listCount', null, '共 {{n}} 条').replace('{{n}}', String(sessions.length))}
+                            {t('c2.sessions.listCount', null, '{{n}} total').replace('{{n}}', String(sessions.length))}
                         </Text>
                     </div>
 
@@ -138,7 +138,7 @@ export default function C2SessionsPage() {
                         {loading && !sessions.length && <div className="c2-session-loading"><Spin /></div>}
                         {!loading && sessions.length === 0 && (
                             <Empty
-                                title={keyword || status || listenerId ? t('c2.sessions.emptyFilter', null, '没有符合筛选条件的会话') : t('c2.sessions.listEmpty', null, '暂无会话')}
+                                title={keyword || status || listenerId ? t('c2.sessions.emptyFilter', null, 'No sessions match the current filters') : t('c2.sessions.listEmpty', null, 'No sessions')}
                                 description={null}
                                 style={{ padding: 24 }}
                             />
@@ -151,7 +151,7 @@ export default function C2SessionsPage() {
                                 onClick={() => select(session.id)}
                             >
                                 <div className="c2-session-item-head">
-                                    <span className="c2-session-host">{session.hostname || t('c2.sessions.unknownHost', null, '未知')}</span>
+                                    <span className="c2-session-host">{session.hostname || t('c2.sessions.unknownHost', null, 'unknown')}</span>
                                     <Tag size="small" color={SESSION_STATUS_COLOR[session.status] || 'grey'}>
                                         {t(`c2.sessions.${session.status || 'active'}`, null, session.status || '—')}
                                     </Tag>
@@ -182,8 +182,8 @@ export default function C2SessionsPage() {
                         />
                     ) : (
                         <Empty
-                            title={t('c2.sessions.selectPromptTitle', null, '选择会话')}
-                            description={t('c2.sessions.selectPromptHint', null, '在左侧列表中点击一个会话，查看终端、文件与任务详情。')}
+                            title={t('c2.sessions.selectPromptTitle', null, 'Select a session')}
+                            description={t('c2.sessions.selectPromptHint', null, 'Click a session in the list on the left to view terminal, files, and tasks.')}
                             style={{ padding: 64 }}
                         />
                     )}

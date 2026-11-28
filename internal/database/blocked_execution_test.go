@@ -63,6 +63,7 @@ func TestLegacyToolGuardBlockMigrationIsStrictAndIdempotent(t *testing.T) {
 		t.Fatal(err)
 	}
 	now := time.Now()
+	// Chinese stays: refusal text stored by earlier versions was Chinese and must still be recognized.
 	refusal := "工具调用已被安全规则拦截：识别到 example.gov，禁止操作。\n规则: 政府网站保护 (government-domains)\n匹配内容: \"example.gov\""
 	for i, reason := range []string{
 		refusal,

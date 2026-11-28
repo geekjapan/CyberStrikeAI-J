@@ -1,7 +1,7 @@
 /**
- * 漏洞页共用常量与工具：
- * 枚举取自 internal/database/vulnerability.go（severity / status 注释），
- * 查询参数取自 internal/handler/vulnerability.go 的 parseVulnerabilityListFilter。
+ * Shared constants and helpers of the vulnerability page:
+ * enums come from internal/database/vulnerability.go (severity / status comments),
+ * query parameters come from parseVulnerabilityListFilter in internal/handler/vulnerability.go.
  */
 import { SEVERITY_LABEL } from '../../lib/format';
 
@@ -28,26 +28,26 @@ const STATUS_KEYS = {
 };
 
 const STATUS_FALLBACK = {
-    open: '待处理',
-    confirmed: '已确认',
-    fixed: '已修复',
-    ignored: '已忽略',
-    false_positive: '误报'
+    open: 'Open',
+    confirmed: 'Confirmed',
+    fixed: 'Fixed',
+    ignored: 'Ignored',
+    false_positive: 'False positive'
 };
 
 const HISTORY_FALLBACK = {
-    retest: '复测结果',
-    retest_started: '复测分支已创建',
-    merge: '归并上报',
-    split: '拆分归并组',
-    detach: '解除关联'
+    retest: 'Retest result',
+    retest_started: 'Retest branch created',
+    merge: 'Reports merged',
+    split: 'Group split',
+    detach: 'Association removed'
 };
 
 const SORT_OPTIONS = [
-    { value: '', key: 'vulnerabilityPage.sortDefault', fallback: '默认顺序' },
-    { value: 'severity', key: 'vulnerabilityPage.sortSeverity', fallback: '高危优先' },
-    { value: 'latest', key: 'vulnerabilityPage.sortLatest', fallback: '创建时间：最新优先' },
-    { value: 'oldest', key: 'vulnerabilityPage.sortOldest', fallback: '创建时间：最早优先' }
+    { value: '', key: 'vulnerabilityPage.sortDefault', fallback: 'Default order' },
+    { value: 'severity', key: 'vulnerabilityPage.sortSeverity', fallback: 'Severity first' },
+    { value: 'latest', key: 'vulnerabilityPage.sortLatest', fallback: 'Created: newest first' },
+    { value: 'oldest', key: 'vulnerabilityPage.sortOldest', fallback: 'Created: oldest first' }
 ];
 
 export function severityText(t, code) {
@@ -79,7 +79,7 @@ export function sortOptions(t) {
     return SORT_OPTIONS.map(item => ({ value: item.value, label: t(item.key, null, item.fallback) }));
 }
 
-/** 列表/统计/导出共用的筛选查询；空值不发送，避免后端把空串当条件。 */
+/** Filter query shared by list/stats/export; empty values are not sent, so the backend does not treat empty strings as conditions. */
 export function filterQuery(filters) {
     const query = {};
     FILTER_KEYS.forEach(key => {
@@ -89,7 +89,7 @@ export function filterQuery(filters) {
     return query;
 }
 
-/** 看板统计保留项目/标签等筛选，但不带严重度（严重度由卡片本身切换）。 */
+/** Dashboard stats keep filters such as project/tags but omit severity (severity is toggled by the cards themselves). */
 export function statsQuery(filters) {
     const query = filterQuery(filters);
     delete query.severity;
@@ -106,7 +106,7 @@ export function percentOf(count, total) {
     return base > 0 ? Math.round((value / base) * 100) : 0;
 }
 
-/** 漏洞的主目标：target 原文 + 解析后的 host（后端 targets[]）。 */
+/** Primary target of a vulnerability: the raw target text + the parsed host (backend targets[]). */
 export function targetText(vuln) {
     return String(vuln?.target || '').trim();
 }
@@ -129,8 +129,8 @@ export function shortId(value, size = 8) {
 }
 
 /**
- * 落盘文本文件。导出接口返回的是 {files:[{filename,content}]} JSON，
- * 只有单条下载才是二进制，所以这里按内容生成 Blob（与 lib/http downloadFile 同套路）。
+ * Save a text file. The export API returns {files:[{filename,content}]} JSON;
+ * only a single-item download is binary, so a Blob is built from the content here (same approach as downloadFile in lib/http).
  */
 export function saveTextFile(filename, content) {
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });

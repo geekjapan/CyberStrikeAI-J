@@ -8,7 +8,7 @@ import (
 	"cyberstrike-ai/internal/database"
 )
 
-// AppendSystemPromptBlock 将附加块追加到 system prompt。
+// AppendSystemPromptBlock appends an additional block to the system prompt.
 func AppendSystemPromptBlock(base, block string) string {
 	base = strings.TrimSpace(base)
 	block = strings.TrimSpace(block)
@@ -22,12 +22,12 @@ func AppendSystemPromptBlock(base, block string) string {
 }
 
 const (
-	factIndexFooterGetDetail = "需要完整内容（攻击链、POC、请求响应等）时必须调用 get_project_fact(fact_key)，禁止凭摘要臆造细节。"
-	factIndexFooterWriteHint = "写入事实 links 时用 from（来源 fact_key → 当前 fact），如 finding 上 {from:target/*, type:discovered_on}；body 写可复现全流程（发现/利用类 fact_key 建议 finding|chain|exploit|poc/ 前缀）。"
-	factIndexFooterEmpty     = "需要写入请使用 upsert_project_fact；需要详情请调用 get_project_fact(fact_key)。"
+	factIndexFooterGetDetail = "When full content is needed (attack chain, POC, request/response, etc.) you must call get_project_fact(fact_key); do not fabricate details from the summary."
+	factIndexFooterWriteHint = "When writing fact links, use from (source fact_key → current fact), e.g. {from:target/*, type:discovered_on} on a finding; the body should describe the full reproducible process (for discovery/exploit facts, fact_key prefixes finding|chain|exploit|poc/ are recommended)."
+	factIndexFooterEmpty     = "To write, use upsert_project_fact; for details, call get_project_fact(fact_key)."
 )
 
-// BuildFactIndexBlock 为 Agent 系统提示生成项目黑板索引（key + summary + 关系边 + 攻击路径，不含 body）。
+// BuildFactIndexBlock generates the project blackboard index for the Agent system prompt (key + summary + relationship edges + attack paths, without body).
 func BuildFactIndexBlock(db *database.DB, projectID string, cfg config.ProjectConfig, conversationIDs ...string) (string, error) {
 	if db == nil || !cfg.Enabled {
 		return "", nil
@@ -56,9 +56,9 @@ func BuildFactIndexBlock(db *database.DB, projectID string, cfg config.ProjectCo
 	resume := buildResumeSection(db, projectID, facts)
 
 	maxRunes := cfg.FactIndexMaxRunesEffective()
-	header := fmt.Sprintf("## 项目黑板索引（project: %s, id: %s）\n", indexField(proj.Name), proj.ID)
+	header := fmt.Sprintf("## Project blackboard index (project: %s, id: %s)\n", indexField(proj.Name), proj.ID)
 	if len(facts) == 0 {
-		content := header + "（暂无事实）\n" + factIndexFooterEmpty
+		content := header + "(no facts yet)\n" + factIndexFooterEmpty
 		if len([]rune(wrapFactIndexBlock(content+"\n\n"+resume))) <= maxRunes {
 			return wrapFactIndexBlock(content + "\n\n" + resume), nil
 		}
@@ -108,7 +108,7 @@ func BuildFactIndexBlock(db *database.DB, projectID string, cfg config.ProjectCo
 			truncateIndexSummary(indexField(f.Summary), cfg.FactSummaryMaxRunesEffective()),
 			indexField(f.Confidence))
 		if database.IsContextCheckpointKey(f.FactKey) {
-			line += " [当前会话工作记录]"
+			line += " [Current session working notes]"
 		}
 		line += FormatFactIndexLinksHint(f.FactKey, incomingByTarget[f.FactKey])
 		line += "\n"
@@ -152,7 +152,7 @@ func FilterCheckpointEdges(edges []*database.ProjectFactEdge, visibleFacts []*da
 	return out
 }
 
-// indexField 压平自由文本事实字段：换行能伪造索引行，宿主定界符能提前闭合索引块。
+// indexField flattens free-text fact fields: a newline could forge index lines, and a host delimiter could close the index block early.
 func indexField(s string) string {
 	return factIndexSafeText(strings.Join(strings.Fields(s), " "))
 }
@@ -166,11 +166,11 @@ func truncateIndexSummary(s string, maxRunes int) string {
 }
 
 func factIndexOmissionNotice(count int) string {
-	return fmt.Sprintf("\n（另有 %d 条未列入索引，请使用 list_project_facts 或 search_project_facts 查询。）\n", count)
+	return fmt.Sprintf("\n(%d more not listed in the index; use list_project_facts or search_project_facts to query.)\n", count)
 }
 
 func minimalFactIndexBlock(maxRunes int) string {
-	block := wrapFactIndexBlock("## 项目黑板索引\n索引预算不足；使用 list_project_facts 或 search_project_facts 按需查询。")
+	block := wrapFactIndexBlock("## Project blackboard index\nIndex budget exceeded; use list_project_facts or search_project_facts to query as needed.")
 	if len([]rune(block)) > maxRunes {
 		return ""
 	}

@@ -2,48 +2,65 @@
 
 ## Unreleased
 
+### Removed
+
+- Removed the Simplified Chinese (zh-CN) UI language, the Chinese server message translations and all Chinese documents: `docs/zh-CN/` (40 articles), `README_CN.md`, the Chinese section of `SECURITY.md` (there was no separate `SECURITY_CN.md`), `mcp-servers/README_CN.md`, `mcp-servers/pent_claude_agent/README_CN.md`, `mcp-servers/reverse_shell/README_CN.md`, and the `README.zh-CN.md` files of the browser extension and the Burp Suite extension. `tools/README_EN.md` is gone too: `tools/README.md` is now the English guide that it held, and the Chinese `tools/README.md` was replaced. The UI languages are English and Japanese. A browser that saved `zh-CN`, or a request with `Accept-Language: zh`, now gets English. Chinese bot command words and stored Chinese status texts of earlier versions are still recognized.
+- Asset import no longer recognizes Chinese column headers or Chinese status, environment and criticality values (for example the Chinese labels for active/inactive, production and critical). Headers and values are accepted in English and Japanese, and the English codes (`active`, `production`, `critical`, ...) always work. A CSV exported from the Chinese UI of an earlier version must be re-exported in English or Japanese before you upgrade, or have its headers and values edited by hand; otherwise Chinese column headers are ignored (the import stops with "No template fields recognized" when none match) and rows with Chinese status, environment or criticality values are rejected.
+
 ### Added
 
-- 默认 Agent 运行时迁移为 Pi 1.5.2：Go 工具网关继续处理角色、审批、监控与证据；聊天与子代理的模型提案接入 Pi。新增按源码指纹发布的 Node Worker、流式协议、会话恢复和原生工具检索。部署需 Node.js >=22.19；已删除 Eino 内核、模型适配、桥接和全部依赖，运行时仅支持 Pi。
-- Workflow 改用原生 DAG 与版本化检查点，知识库改用自身文档、切分、Embedding 和检索组件。旧 Eino Workflow 检查点无法由新版直接恢复，升级前需完成或导出旧任务，详见 [Pi 迁移说明](docs/zh-CN/pi-runtime.md)。
+- The source is now English: Go messages, comments and prompts, tool, role and configuration definitions, and frontend fallbacks. Japanese is served from `web/static/i18n` and `internal/apimsg/catalog.json` (now keyed by the English message). `TestRepositoryIsEnglish` guards this with `internal/handler/testdata/cjk_allowlist.txt`.
+- Chat stream status and failure messages follow the UI language, live and when history is reloaded.
+- Role files and names are English (`roles/default.yaml`, `Default`, `Penetration Testing`, ...). The legacy default role name is still accepted; conversations that reference another old role name fall back to the default behaviour unless the old role file is kept.
+- Default `project.fact_index_max_runes` is 8000 (was 3500) and the resume supplement cap is 9400 characters (was 6500), sized for the English protocol text.
+- Added Japanese documentation `docs/ja-JP/` (40 articles), added Japanese entries to the docs home page and each language index, and added the Japanese readme `README_JA.md`.
 
-- AI 渠道支持自定义 HTTP 请求头、环境变量和会话 ID 占位符；保存后的鉴权头可安全用于连接测试，独立审计身份隔离主渠道请求头，自定义头不会跟随跨源重定向。
+- Added Japanese (ja-JP) as a UI language: full Japanese strings and the Semi Japanese component locale pack, with Japanese support for notification summaries; Japanese is used by default when the browser language is Japanese. The default language when the browser language cannot be identified changed from Chinese to English (en-US), and missing strings fall back in the order "current language -> en-US -> ja-JP"; date and number formats now follow the UI language (previously fixed to Chinese), and notification summaries return English when no language is specified.
+- Filled in 327 strings that the frontend references but the language packs lacked (en-US / ja-JP), fixing pages such as login, navigation groups, conversations, settings, vulnerabilities, C2 and WebShell that still showed Chinese in the English and Japanese UI; severity labels now follow the UI language; error messages from the login API are returned in the UI language (frontend requests carry `Accept-Language`).
+- Removed the Russian (ru-RU) and Arabic (ar-SA) UI languages and the RTL handling; the UI languages are English / Japanese.
+- API error messages are returned in the request language: added `internal/apimsg`, which translates `error` / `message` in JSON responses with status code >= 400 using `catalog.json` (about 990 entries, English source text -> ja); the frontend sends the UI language (`Accept-Language`), a request in any language other than Japanese, or without a language, gets English.
+- About 850 hard-coded Chinese strings in the frontend now go through the string catalog (`ui.*`), and non-component `translate` / `lazyLabels` / `lazyOptions` were added; fixed dotted keys such as `settingsStorage.cat.*` not resolving in the English and Japanese UI; added a test ensuring strings referenced in the source exist in en-US.json.
 
-- 支持通过 `agent.task_timeout_minutes` 配置单代理、多代理、工作流及异步任务执行超时：未配置默认 600 分钟，`0` 表示不限时，负数拒绝加载；续跑保留重新计时行为，单次工具超时仍独立生效。
+- The default agent runtime migrated to Pi 1.5.2: the Go tool gateway still handles roles, approvals, monitoring and evidence; model proposals for chat and sub-agents go through Pi. Added a Node Worker published by source fingerprint, a streaming protocol, session recovery and native tool search. Deployment requires Node.js >=22.19; the Eino kernel, model adapters, bridges and all related dependencies were removed, and the runtime supports Pi only.
+- Workflow now uses a native DAG and versioned checkpoints, and the knowledge base uses its own document, chunking, embedding and retrieval components. Old Eino Workflow checkpoints cannot be resumed directly by the new version; complete or export old tasks before upgrading. See the [Pi migration guide](docs/ja-JP/pi-runtime.md).
 
-- 漏洞列表的单条下载按钮新增格式选择弹窗，支持 Markdown 与 Word（.docx），Word 下载复用漏洞读取权限并仅包含所选漏洞（#365）。
+- AI channels support custom HTTP request headers, environment variables and session ID placeholders; saved auth headers can be used safely for connection tests, the standalone audit identity isolates the main channel request headers, and custom headers do not follow cross-origin redirects.
 
-- 新增单代理与多代理异步对话 API：接收后返回任务回执，客户端断线不停止执行；支持按用户隔离的幂等提交、持久状态与结果查询、显式取消以及服务重启后的中断状态。同步接口保持兼容。
+- Added `agent.task_timeout_minutes` to configure the execution timeout of single-agent, multi-agent, workflow and async tasks: the default is 600 minutes when unset, `0` means no limit, and negative values are rejected at load; resumed runs keep the restart-the-timer behavior, and the per-tool timeout still applies independently.
 
-- 启动时以统一最新 SQLite 定义自动检查全部项目管理表，缺表建表、缺字段补字段，无需维护逐字段迁移列表；保留已有数据和额外表/字段，结构补齐失败回滚并阻止启动。HITL 与通知表纳入统一初始化，历史漏洞外键迁移保留额外列、索引、触发器及依赖记录。
+- The single-item download button in the vulnerability list now opens a format selection dialog supporting Markdown and Word (.docx); Word download reuses the vulnerability read permission and contains only the selected vulnerabilities (#365).
+
+- Added async conversation APIs for single-agent and multi-agent: a task receipt is returned on acceptance and the run continues if the client disconnects; supports per-user idempotent submission, persistent status and result queries, explicit cancellation, and an interrupted status after a service restart. The synchronous APIs remain compatible.
+
+- At startup, all project management tables are checked against a single latest SQLite definition, creating missing tables and adding missing columns, so no per-column migration list needs to be maintained; existing data and extra tables/columns are preserved, and a failed schema completion rolls back and blocks startup. HITL and notification tables are part of the unified initialization, and the legacy vulnerability foreign-key migration preserves extra columns, indexes, triggers and dependent records.
 
 ### Removed
 
-- 退役经典 Web 界面，工作台统一使用 Semi Design。旧书签 `/classic` 跳转至工作台，`/api-docs` 打开 Semi 接口文档。角色和智能体页面提供查看，旧版编辑表单与 API 在线调试控制台随经典界面移除。
+- Retired the classic web UI; the workbench now uses Semi Design throughout. The old `/classic` bookmark redirects to the workbench, and `/api-docs` opens the Semi API docs. The role and agent pages are view-only, and the old edit forms and the online API debugging console were removed with the classic UI.
 
 ### Fixed
 
-- 修复 WebShell 批量探活因请求构建异常一直停留在“探活中”的问题；使用连接自身 ID 读取已保存凭据，并在探活失败后恢复按钮、继续处理其他连接。
+- Fixed WebShell batch liveness checks staying in "checking" because of a request construction error; saved credentials are now read by the connection's own ID, and after a failed check the button is restored and the other connections continue to be processed.
 
-- 修复审计 Agent 向不支持 thinking 字段的兼容网关发起请求失败的问题；支持独立兼容 profile，并按模型和地址识别默认行为。
+- Fixed audit agent requests failing against compatible gateways that do not support the thinking field; a standalone compatibility profile is supported, and default behavior is identified by model and address.
 
-- 修复已知支持 `none` 的官方 OpenAI 模型在关闭推理后仍使用服务端默认推理的问题（#366）：按提供商、端点和模型发送并保留显式关闭参数，覆盖 Planner 和强制工具选择；保留 DeepSeek 与第三方兼容网关行为，并明确提示需要 Responses 的工具调用限制。
+- Fixed official OpenAI models known to support `none` still using the server's default reasoning after reasoning was turned off (#366): the explicit off parameter is sent and preserved per provider, endpoint and model, covering the Planner and forced tool selection; DeepSeek and third-party compatible gateway behavior is preserved, and the tool-call limitation that requires Responses is now stated explicitly.
 
-- 防止内置管理员失权：拒绝停用内置 `admin` 或移除其系统管理员角色，失败时保留原资料、权限和会话；界面同步禁用对应操作。
+- Prevented the built-in administrator from losing privileges: deactivating the built-in `admin` or removing its system administrator role is rejected, the original profile, permissions and sessions are kept on failure, and the UI disables the corresponding actions.
 
-- 修复资产管理信息收集向 FOFA 默认请求不支持的 `province` 返回字段导致查询失败的问题，统一使用 `region`；兼容旧表单/API 字段别名，保留导入资产的省份，并修正情报字段预设为 `asn/org`。
+- Fixed asset management information gathering failing because FOFA was requested with the `province` return field it does not support by default; `region` is now used throughout, old form/API field aliases remain compatible, the province of imported assets is preserved, and the intelligence field preset was corrected to `asn/org`.
 
-- 修复单代理、多代理、角色工作流和批量任务将下层调用超时误判为整任务超时的问题：仅任务上下文自身期限到期才标记任务超时，下层失败保留原始诊断；总时限与现有重试策略保持不变。
+- Fixed single-agent, multi-agent, role workflows and batch tasks misreporting a lower-level call timeout as a whole-task timeout: the task is marked timed out only when the task context's own deadline expires, lower-level failures keep their original diagnostics, and the total time limit and existing retry policy are unchanged.
 
-- C2 Profile 和 WebShell 删除不存在对象统一返回 404，删除数据库故障返回通用 500 文案，不再暴露 SQL 错误；漏洞和批量任务列表无匹配记录时统一返回 `[]`，补充 HTTP 合同回归验证。
+- Deleting a nonexistent C2 Profile or WebShell now consistently returns 404, delete database failures return a generic 500 message and no longer expose SQL errors; vulnerability and batch task lists now consistently return `[]` when no records match, and HTTP contract regression checks were added.
 
-- 修复多人编辑调用拦截规则时旧草稿覆盖他人修改的问题：同一版本仅一次保存成功，冲突保留草稿并提示刷新；API 保存必须携带读取时的 ETag/If-Match。
+- Fixed stale drafts overwriting other people's changes when several people edit call interception rules: only one save succeeds for the same version, conflicts keep the draft and prompt a refresh; API saves must carry the ETag/If-Match from the read.
 
-- 修复平台角色更新/删除使全体用户掉线的问题：仅撤销受影响角色成员的会话；名称、描述及等价权限集合更新保持会话有效。
+- Fixed updating/deleting a platform role logging out all users: only sessions of members of the affected role are revoked; updates to name, description and equivalent permission sets keep sessions valid.
 
-- 修复俄语等长文案导致的仪表盘状态卡片、风险徽标与队列标签溢出；侧栏及风险名称完整换行，布局随卡片可用宽度适配。
+- Fixed overflow of dashboard status cards, risk badges and queue labels caused by long text such as Russian; the sidebar and risk names wrap fully, and the layout adapts to the available card width.
 
-- 自更新恢复在改写文件前严格验证恢复记录、State、提交和二进制配对；拒绝缺失、重复或矛盾证据，保留可恢复现场。
-- 编辑已停止的外部 MCP 不再意外启动连接；启动/停止、配置编辑和应用重启保持一致的启停状态。
+- Self-update recovery strictly verifies the recovery record, State, commit and binary pairing before rewriting files; missing, duplicate or contradictory evidence is rejected and the recoverable state is preserved.
+- Editing a stopped external MCP no longer starts the connection unexpectedly; start/stop, config edits and app restarts keep a consistent running state.
 
-- 登录密码显隐按钮改为输入框内的眼睛图标，统一输入框宽高，支持键盘焦点、44px 触控区域、中英俄文无障碍标签及浅色/深色主题。
+- The login password show/hide button is now an eye icon inside the input, with consistent input width and height, keyboard focus, a 44px touch target, accessible labels in English and Japanese, and light/dark theme support.

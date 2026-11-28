@@ -9,15 +9,15 @@ import (
 	"io"
 )
 
-// AES-256-GCM 信封：每个 Listener 独立 32 字节密钥 + 每条消息独立 12 字节 nonce。
-// 协议格式（base64 文本，便于 HTTP body / SSE 直接传）：
+// AES-256-GCM envelope: each Listener has its own 32-byte key and each message uses a fresh 12-byte nonce.
+// Wire format (base64 text, suitable for HTTP body / SSE transport):
 //   base64( nonce(12) || ciphertext+tag )
-// 设计要点：
-//   - GCM 自带 16 字节 AEAD tag，完整性 + 机密性一次性搞定，无需额外 HMAC；
-//   - nonce 由 crypto/rand 生成，96bit 在密钥不变期内重复概率极低（< 2^-32 / 4B 次）；
-//   - 密钥不出服务端：listener 创建时随机生成 32 字节，编译 beacon 时硬编码进去。
+// Design notes:
+//   - GCM includes a 16-byte AEAD tag, providing both integrity and confidentiality without a separate HMAC;
+//   - Nonces are generated with crypto/rand; collision risk for 96-bit nonces under a key is negligible (< 2^-32 after 4B messages);
+//   - Keys stay server-side: 32 random bytes are generated when a listener is created and embedded into the beacon at build time.
 
-// GenerateAESKey 生成随机 32 字节 AES-256 密钥并 base64 输出
+// GenerateAESKey generates a random 32-byte AES-256 key encoded as base64.
 func GenerateAESKey() (string, error) {
 	key := make([]byte, 32)
 	if _, err := io.ReadFull(rand.Reader, key); err != nil {
@@ -26,7 +26,7 @@ func GenerateAESKey() (string, error) {
 	return base64.StdEncoding.EncodeToString(key), nil
 }
 
-// GenerateImplantToken 生成 32 字节 token，base64 编码（implant 携带在 HTTP header 鉴权用）
+// GenerateImplantToken generates a random 32-byte base64url-encoded token sent by implants in HTTP headers for authentication.
 func GenerateImplantToken() (string, error) {
 	t := make([]byte, 32)
 	if _, err := io.ReadFull(rand.Reader, t); err != nil {
@@ -35,7 +35,7 @@ func GenerateImplantToken() (string, error) {
 	return base64.RawURLEncoding.EncodeToString(t), nil
 }
 
-// EncryptAESGCM 加密任意明文，返回 base64(nonce||ct)
+// EncryptAESGCM encrypts arbitrary plaintext and returns base64(nonce||ct).
 func EncryptAESGCM(keyB64 string, plaintext []byte) (string, error) {
 	key, err := decodeKey(keyB64)
 	if err != nil {
@@ -58,7 +58,7 @@ func EncryptAESGCM(keyB64 string, plaintext []byte) (string, error) {
 	return base64.StdEncoding.EncodeToString(out), nil
 }
 
-// DecryptAESGCM 解密 base64(nonce||ct)，返回明文
+// DecryptAESGCM decrypts base64(nonce||ct) and returns the plaintext.
 func DecryptAESGCM(keyB64, encB64 string) ([]byte, error) {
 	key, err := decodeKey(keyB64)
 	if err != nil {
@@ -77,7 +77,7 @@ func DecryptAESGCM(keyB64, encB64 string) ([]byte, error) {
 		return nil, err
 	}
 	nonceSize := gcm.NonceSize()
-	if len(raw) < nonceSize+16 { // 至少 nonce + tag
+	if len(raw) < nonceSize+16 { // at least nonce + tag
 		return nil, errors.New("ciphertext too short")
 	}
 	nonce, ct := raw[:nonceSize], raw[nonceSize:]

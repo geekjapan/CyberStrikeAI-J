@@ -101,7 +101,7 @@ func invokeGraph(ctx context.Context, args RunArgs, runID, workflowID string, ve
 					}
 				}
 				if args.Progress != nil {
-					args.Progress("workflow_hitl_waiting", "等待人工确认："+label, map[string]any{"workflowRunId": runID, "nodeId": id, "label": label, "prompt": prompt, "mode": "interactive", "resumeApi": fmt.Sprintf("/api/workflows/runs/%s/resume", runID)})
+					args.Progress("workflow_hitl_waiting", "Waiting for human confirmation: "+label, map[string]any{"workflowRunId": runID, "nodeId": id, "label": label, "prompt": prompt, "mode": "interactive", "resumeApi": fmt.Sprintf("/api/workflows/runs/%s/resume", runID)})
 				}
 				return true, &AwaitingHITLError{RunID: runID, NodeID: id, NodeLabel: label, Prompt: prompt}
 			}

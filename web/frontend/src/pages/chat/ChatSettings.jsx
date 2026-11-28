@@ -89,7 +89,7 @@ export function ModelSettings({ model, busy, canReadConfig }) {
     const pickerRef = useRef(null);
     const defaultId = model.config.data?.default_channel;
     const defaultName = defaultId ? modelChannelName(defaultId, model.config.data?.channels?.[defaultId]) : '';
-    const defaultLabel = t('chat.aiChannelDefault', null, '跟随默认通道');
+    const defaultLabel = t('chat.aiChannelDefault', null, 'Use default channel');
     const channelOptions = [
         { value: '', label: defaultName ? `${defaultLabel} · ${defaultName}` : defaultLabel },
         ...modelChannelOptions(model.channels)
@@ -126,8 +126,8 @@ export function ModelSettings({ model, busy, canReadConfig }) {
                         type="tertiary"
                         icon={<IconBolt />}
                         className="chat-reasoning-mode"
-                        aria-label={t('chat.reasoningModeLabel', null, '模型推理')}
-                        title={`${t('chat.reasoningModeLabel', null, '模型推理')} · ${reasoningLabels[model.overrideBlocked ? 'default' : model.mode]}`}
+                        aria-label={t('chat.reasoningModeLabel', null, 'Model reasoning')}
+                        title={`${t('chat.reasoningModeLabel', null, 'Model reasoning')} · ${reasoningLabels[model.overrideBlocked ? 'default' : model.mode]}`}
                         disabled={reasoningDisabled}
                     />
                 </Dropdown>
@@ -138,22 +138,22 @@ export function ModelSettings({ model, busy, canReadConfig }) {
                     theme="borderless"
                     type="tertiary"
                     icon={<IconUndo />}
-                    aria-label={t('chat.reasoningReset', null, '重置推理设置')}
-                    title={t('chat.reasoningReset', null, '重置推理设置')}
+                    aria-label={t('chat.reasoningReset', null, 'Reset reasoning settings')}
+                    title={t('chat.reasoningReset', null, 'Reset reasoning settings')}
                     disabled={reasoningDisabled}
                     onClick={resetReasoning}
                 />
             </div>
             {canReadConfig ? (
                 <>
-                    <span id={channelLabelId} hidden>{t('chat.aiChannelLabel', null, 'AI 通道')}</span>
+                    <span id={channelLabelId} hidden>{t('chat.aiChannelLabel', null, 'AI channel')}</span>
                     <Select
                         className="chat-reasoning-channel"
                         aria-labelledby={channelLabelId}
                         value={model.channel}
                         optionList={channelOptions}
                         renderSelectedItem={option => option.value === ''
-                            ? defaultName || t('chat.aiChannelDefaultShort', null, '默认通道')
+                            ? defaultName || t('chat.aiChannelDefaultShort', null, 'Default channel')
                             : selectedModelChannelName(option)}
                         arrowIcon={<IconChevronRight size="small" />}
                         borderless
@@ -168,7 +168,7 @@ export function ModelSettings({ model, busy, canReadConfig }) {
             ) : <Text type="tertiary" className="chat-reasoning-channel-label">{defaultLabel}</Text>}
             <Slider
                 className="chat-reasoning-slider"
-                aria-label={t('chat.reasoningEffortLabel', null, '推理强度')}
+                aria-label={t('chat.reasoningEffortLabel', null, 'Reasoning effort')}
                 min={0}
                 max={levels.length - 1}
                 step={1}
@@ -185,7 +185,7 @@ export function ModelSettings({ model, busy, canReadConfig }) {
             />
             {model.overrideBlocked && (
                 <Text type="tertiary" size="small" className="chat-reasoning-hint">
-                    {t('chat.reasoningOverrideBlocked', null, '此通道使用系统设置中的推理强度。')}
+                    {t('chat.reasoningOverrideBlocked', null, 'This channel uses the reasoning effort from system settings.')}
                 </Text>
             )}
         </div>
@@ -196,7 +196,7 @@ export default function ChatSettings({
     onClose, narrow, canEnableHitl, conversationId, draftHitl, onDraftHitlChange
 }) {
     const t = useT();
-    const title = t('chat.hitlTitle', null, '人机协同');
+    const title = t('chat.hitlTitle', null, 'Human-in-the-loop');
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
     const [form, setForm] = useState(null);
@@ -219,15 +219,15 @@ export default function ChatSettings({
     }, [approvals.data, conversationId]);
 
     const modeLabels = {
-        off: t('chat.hitlModeOff', null, '关闭'),
-        approval: t('chat.hitlModeApproval', null, '审批模式'),
-        review_edit: t('chat.hitlModeReviewEdit', null, '审查编辑')
+        off: t('chat.hitlModeOff', null, 'Off'),
+        approval: t('chat.hitlModeApproval', null, 'Approval'),
+        review_edit: t('chat.hitlModeReviewEdit', null, 'Review & Edit')
     };
     const timeoutLabels = {
-        60: t('chat.hitlTimeoutOneMinute', null, '1 分钟'),
-        300: t('chat.hitlTimeoutFiveMinutes', null, '5 分钟'),
-        600: t('chat.hitlTimeoutTenMinutes', null, '10 分钟'),
-        0: t('chat.hitlTimeoutUnlimited', null, '不限制')
+        60: t('chat.hitlTimeoutOneMinute', null, '1 minute'),
+        300: t('chat.hitlTimeoutFiveMinutes', null, '5 minutes'),
+        600: t('chat.hitlTimeoutTenMinutes', null, '10 minutes'),
+        0: t('chat.hitlTimeoutUnlimited', null, 'No limit')
     };
     const timeoutOptions = HITL_TIMEOUTS.map(value => ({ value, label: timeoutLabels[value] }));
     if (form && !HITL_TIMEOUTS.includes(form.timeoutSeconds)) {
@@ -247,7 +247,7 @@ export default function ChatSettings({
             setSaved(true);
         } catch (error) {
             if (sequence === saveSequence.current) {
-                toastError(error, t('chat.hitlApplyFail', null, '同步到服务器失败'));
+                toastError(error, t('chat.hitlApplyFail', null, 'Failed to sync to server'));
                 approvals.reload({ silent: true });
             }
         } finally {
@@ -295,13 +295,13 @@ export default function ChatSettings({
             <div className="chat-settings-fields">
                 <section className="chat-setting-field chat-setting-hitl">
                     <Text type="tertiary" size="small">
-                        {t('chat.sessionSettingsHint', null, '人机协同设置只影响后续消息。')}
+                        {t('chat.sessionSettingsHint', null, 'Human-in-the-loop settings only affect future messages.')}
                     </Text>
                     {(saving || saved) && (
                         <Text type="tertiary" size="small" role="status">
                             {saving
-                                ? t('chat.systemModelSaving', null, '正在保存…')
-                                : t('chat.hitlApplyOkSync', null, '人机协同配置已保存并同步到服务器。')}
+                                ? t('chat.systemModelSaving', null, 'Saving…')
+                                : t('chat.hitlApplyOkSync', null, 'HITL settings saved and synced to the server.')}
                         </Text>
                     )}
                     <ErrorBanner error={approvals.error} onRetry={() => approvals.reload()} />
@@ -309,32 +309,32 @@ export default function ChatSettings({
                     {form && approvals.data && !approvals.error && (
                         <>
                             <SettingSelect
-                                label={t('chat.hitlModeLabel', null, '模式')}
+                                label={t('chat.hitlModeLabel', null, 'Mode')}
                                 value={form.mode}
                                 optionList={HITL_MODES.map(value => ({ value, label: modeLabels[value] }))}
                                 onSelect={value => updateConfig({ mode: value })}
                                 disabled={hitlDisabled}
                             />
                             <div className="chat-setting-field">
-                                <Text id={reviewerId} strong>{t('chat.hitlReviewerLabel', null, '审批方')}</Text>
+                                <Text id={reviewerId} strong>{t('chat.hitlReviewerLabel', null, 'Reviewer')}</Text>
                                 <RadioGroup
                                     aria-labelledby={reviewerId}
                                     type="button"
                                     className="chat-setting-reviewer"
                                     value={form.reviewer}
                                     options={[
-                                        { value: 'human', label: t('chat.hitlReviewerHuman', null, '人工审批') },
-                                        { value: 'audit_agent', label: t('chat.hitlReviewerAgent', null, '审计 Agent') }
+                                        { value: 'human', label: t('chat.hitlReviewerHuman', null, 'Human approval') },
+                                        { value: 'audit_agent', label: t('chat.hitlReviewerAgent', null, 'Audit Agent') }
                                     ]}
                                     onChange={event => updateConfig({ reviewer: event.target.value })}
                                     disabled={hitlDisabled}
                                 />
                                 <Text type="tertiary" size="small">
-                                    {t('chat.hitlReviewerHint', null, '可在人工与审计 Agent 之间随时切换；规则与白名单不变。人机协同为「关闭」时也可预先选择。')}
+                                    {t('chat.hitlReviewerHint', null, 'Switch between human and Audit Agent anytime; rules and whitelist stay the same. You can pre-select even when HITL is off.')}
                                 </Text>
                             </div>
                             <SettingSelect
-                                label={t('chat.hitlTimeoutLabel', null, '审批等待时限')}
+                                label={t('chat.hitlTimeoutLabel', null, 'Approval wait limit')}
                                 value={form.timeoutSeconds}
                                 optionList={timeoutOptions}
                                 onSelect={value => updateConfig({ timeoutSeconds: Number(value) })}
@@ -342,19 +342,19 @@ export default function ChatSettings({
                             />
                             <div className="chat-setting-field">
                                 <Text id={toolsId} strong>
-                                    {t('chat.hitlWhitelistTools', null, '白名单工具（免审批，逗号分隔）')}
+                                    {t('chat.hitlWhitelistTools', null, 'Whitelisted tools (skip approval, comma-separated)')}
                                 </Text>
                                 <TextArea
                                     aria-labelledby={toolsId}
                                     value={form.sensitiveTools}
-                                    placeholder={t('chat.hitlWhitelistPlaceholder', null, '例：read_file, grep 或每行一个工具名（与 config 全局白名单合并）')}
+                                    placeholder={t('chat.hitlWhitelistPlaceholder', null, 'e.g. read_file, grep or one tool per line (merged with global allowlist in config)')}
                                     rows={5}
                                     disabled={hitlDisabled}
                                     onChange={updateTools}
                                     onBlur={saveTools}
                                 />
                                 <Text type="tertiary" size="small">
-                                    {t('chat.hitlWhitelistHint', null, '白名单内工具免审批；每行一个或逗号分隔，与 config 全局白名单合并。')}
+                                    {t('chat.hitlWhitelistHint', null, 'Separate with commas or new lines; shown merged with the global allowlist in config.')}
                                 </Text>
                             </div>
                         </>

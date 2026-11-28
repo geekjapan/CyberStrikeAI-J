@@ -1,4 +1,4 @@
-/* 资产概览页面私有布局样式。 */
+/* Private layout styles for the asset overview page. */
 .asset-overview-page { display: flex; flex-direction: column; }
 
 .asset-overview-columns {

@@ -1,0 +1,4559 @@
+{
+ "\n\n--- body ---\n%v": {
+  "ja": "\n\n--- 本文 ---\n%v"
+ },
+ "\nRelation edges (from -> this fact):\n": {
+  "ja": "\nリレーションエッジ（from → この fact）:\n"
+ },
+ "\nRelation edges: %v": {
+  "ja": "\nリレーションエッジ: %v"
+ },
+ "\nRule: %s (%s)\nMatched content: %q": {
+  "ja": "\nルール: %s (%s)\n一致した内容: %q"
+ },
+ "\nrelated_vulnerability_id: %s": {
+  "ja": "\nrelated_vulnerability_id: %s"
+ },
+ "\nsource_conversation_id: %s": {
+  "ja": "\nsource_conversation_id: %s"
+ },
+ "%d consecutive knowledge items failed to index; there may be a configuration problem (e.g. wrong embedding model configuration, invalid API key, insufficient balance). First failed item: %s, error: %v": {
+  "ja": "ナレッジ項目のインデックス作成が %d 件連続して失敗しました。設定に問題がある可能性があります（埋め込みモデルの設定誤り、API キーが無効、残高不足など）。最初に失敗した項目: %s、エラー: %v"
+ },
+ "%s (%s): invalid regular expression: %w": {
+  "ja": "%s（%s）: 正規表現が無効です: %w"
+ },
+ "%s cannot be negative": {
+  "ja": "%s は負の値にできません"
+ },
+ "%s exceeds the length limit (%d characters)": {
+  "ja": "%s が文字数の上限（%d 文字）を超えています"
+ },
+ "%s is not cgroup v2": {
+  "ja": "%s は cgroup v2 ではありません"
+ },
+ "%s must be a string": {
+  "ja": "%s は文字列である必要があります"
+ },
+ "%s must be an RFC3339 time or YYYY-MM-DD": {
+  "ja": "%s は RFC3339 形式の日時または YYYY-MM-DD で指定してください"
+ },
+ "%s node \"%s\" cannot have outgoing edges": {
+  "ja": "%s ノード「%s」に出力エッジを設定することはできません"
+ },
+ "%s node \"%s\" requires at least one incoming edge": {
+  "ja": "%s ノード「%s」には少なくとも 1 本の入力エッジが必要です"
+ },
+ "%s.auth.allowed_external_users contains duplicate users": {
+  "ja": "%s.auth.allowed_external_users に重複するユーザーが含まれています"
+ },
+ "%s.auth.allowed_external_users must contain at least one real sender": {
+  "ja": "%s.auth.allowed_external_users には実在の送信者を 1 人以上設定してください"
+ },
+ "%s.auth.allowed_external_users must not contain empty values or wildcards": {
+  "ja": "%s.auth.allowed_external_users には空の値やワイルドカードを含められません"
+ },
+ "%s.auth.mode must be user_binding or service_account": {
+  "ja": "%s.auth.mode は user_binding または service_account のみ指定できます"
+ },
+ "%s.auth.service_user_id is required": {
+  "ja": "%s.auth.service_user_id は必須です"
+ },
+ "%s.context_profile only supports auto, economy, custom, local, or local_auto": {
+  "ja": "%s.context_profile は auto、economy、custom、local、local_auto のみ指定できます"
+ },
+ "%s.context_window must not be negative": {
+  "ja": "%s.context_window は負の値にできません"
+ },
+ "%s: duplicate id %q": {
+  "ja": "%s: id %q が重複しています"
+ },
+ "%s: id must be nonempty and at most %d bytes": {
+  "ja": "%s: id は空にできず、最大 %d バイトです"
+ },
+ "%s: id must not have surrounding whitespace": {
+  "ja": "%s: id の前後に空白は使用できません"
+ },
+ "%s: message must be at most %d bytes": {
+  "ja": "%s: message は最大 %d バイトです"
+ },
+ "%s: name must be nonempty and at most %d bytes": {
+  "ja": "%s: name は空にできず、最大 %d バイトです"
+ },
+ "%s: pattern must be nonempty and at most %d bytes": {
+  "ja": "%s: pattern は空にできず、最大 %d バイトです"
+ },
+ "%v is not configured: set api_key in config.yaml, or set the environment variable %v": {
+  "ja": "%v が設定されていません: config.yaml に api_key を入力するか、環境変数 %v を設定してください"
+ },
+ "%v: %v": {
+  "ja": "%v: %v"
+ },
+ "(Untitled)": {
+  "ja": "（無題）"
+ },
+ "<persisted-output>\nOutput too large (%d). Full output saved to: %s\nUse %s with offset/limit to read parts of the file.\nPreview (first %d):\n%s\n\nPreview (last %d):\n%s\n\n</persisted-output>": {
+  "ja": "<persisted-output>\n出力が大きすぎます（%d）。完全な出力の保存先: %s\n%s を offset/limit 付きで使用して、ファイルの一部を読み取ってください。\nプレビュー（先頭 %d）:\n%s\n\nプレビュー（末尾 %d）:\n%s\n\n</persisted-output>"
+ },
+ "A human rejected this tool call; the model will continue iterating based on the feedback": {
+  "ja": "担当者がこのツール呼び出しを拒否しました。モデルはフィードバックに基づいて反復を続けます"
+ },
+ "A main agent definition already exists: %s. Delete it or unmark it as the main agent first": {
+  "ja": "メインエージェントの定義が既に存在します（%s）。先に削除するか、メインエージェントの指定を解除してください"
+ },
+ "A new session was created": {
+  "ja": "新しいセッションが確立されました"
+ },
+ "A running task cannot be deleted": {
+  "ja": "実行中のタスクは削除できません"
+ },
+ "A running task cannot be edited": {
+  "ja": "実行中のタスクは編集できません"
+ },
+ "A single queue can hold at most %d tasks": {
+  "ja": "1 つのキューには最大 %d 件のタスクを登録できます"
+ },
+ "A storage cleanup is already in progress": {
+  "ja": "ストレージのクリーンアップがすでに実行中です"
+ },
+ "A task is already running in this conversation, please try again later": {
+  "ja": "この会話ではすでにタスクが実行中です。しばらくしてからもう一度お試しください"
+ },
+ "AI channel not found: %s": {
+  "ja": "AI チャネルが見つかりません: %s"
+ },
+ "AI client is not initialized": {
+  "ja": "AI クライアントが初期化されていません"
+ },
+ "AI generation failed: %w": {
+  "ja": "AI の生成に失敗しました: %w"
+ },
+ "AI model is not configured: please set openai.api_key and openai.model in system settings (OpenAI-compatible APIs such as DeepSeek are supported)": {
+  "ja": "AI モデルが設定されていません。システム設定で openai.api_key と openai.model を入力してください（DeepSeek など OpenAI 互換 API に対応しています）"
+ },
+ "AI parsing failed (upstream returned non-200), please check the model configuration or try again later": {
+  "ja": "AI の解析に失敗しました（上流が 200 以外を返しました）。モデル設定を確認するか、しばらくしてからもう一度お試しください"
+ },
+ "AI parsing failed: %v": {
+  "ja": "AI の解析に失敗しました: %v"
+ },
+ "AI response could not be parsed as JSON. Try again later or rephrase your description": {
+  "ja": "AI の応答を JSON として解析できません。しばらくしてから再試行するか、説明を変えてお試しください"
+ },
+ "AI returned no valid result": {
+  "ja": "AI から有効な結果が返されませんでした"
+ },
+ "API Key is required": {
+  "ja": "API Key は必須です"
+ },
+ "API Key is required (set vision.api_key or openai.api_key)": {
+  "ja": "API Key は必須です（vision.api_key または openai.api_key を指定してください）"
+ },
+ "API URL must be a complete URL including https:// or http://": {
+  "ja": "API の URL は https:// または http:// を含む完全な URL である必要があります"
+ },
+ "API response format is not as expected, please check that the Base URL is correct": {
+  "ja": "API レスポンスの形式が想定と異なります。Base URL が正しいか確認してください"
+ },
+ "API response is missing the choices field, please check that the Base URL path is correct": {
+  "ja": "API レスポンスに choices フィールドがありません。Base URL のパスが正しいか確認してください"
+ },
+ "API response is missing the choices field, please check the Base URL and vision model name": {
+  "ja": "API レスポンスに choices フィールドがありません。Base URL とビジョンモデル名を確認してください"
+ },
+ "API returned an error (HTTP %d): %s": {
+  "ja": "API がエラーを返しました (HTTP %d): %s"
+ },
+ "API returned no valid response": {
+  "ja": "API から有効な応答が返されませんでした"
+ },
+ "Access permissions are not configured": {
+  "ja": "アクセス権限が設定されていません"
+ },
+ "Agent ID is already used by file %s": {
+  "ja": "Agent ID はファイル %s で既に使用されています"
+ },
+ "Agent ID must be 1–64 letters, digits, hyphens, or underscores, and start with a letter or digit": {
+  "ja": "Agent ID は 1〜64 文字の英字、数字、ハイフン、アンダースコアで、英字または数字で始める必要があります"
+ },
+ "Agent instructions are required": {
+  "ja": "エージェントの指示は必須です"
+ },
+ "Agent name is required": {
+  "ja": "エージェントの name は必須です"
+ },
+ "Agent node \"%s\" requires an output variable name": {
+  "ja": "エージェントノード「%s」には出力変数名が必要です"
+ },
+ "Agent node \"%s\" requires node instructions or input bindings": {
+  "ja": "エージェントノード「%s」にはノードの指示または入力バインディングが必要です"
+ },
+ "Agent trace is empty; the messages table will be used": {
+  "ja": "エージェントのトレースが空のため、メッセージテーブルを使用します"
+ },
+ "An edge cannot point to itself": {
+  "ja": "エッジは自分自身を指せません"
+ },
+ "An edge cannot point to itself: %s": {
+  "ja": "エッジは自分自身を指せません: %s"
+ },
+ "An indexing task is already in progress": {
+  "ja": "インデックス作成タスクがすでに実行中です"
+ },
+ "An indexing task is already running. Please wait for it to finish": {
+  "ja": "インデックス作成タスクがすでに実行中です。完了までお待ちください"
+ },
+ "An update is already in progress": {
+  "ja": "既に更新が実行中です"
+ },
+ "An update is in progress; cannot roll back at the same time": {
+  "ja": "更新の実行中は同時にロールバックできません"
+ },
+ "An update is in progress; cannot switch the update source": {
+  "ja": "更新の実行中は更新ソースを切り替えられません"
+ },
+ "An update is in progress; wait for it to finish before restarting": {
+  "ja": "更新の実行中です。完了してから再起動してください"
+ },
+ "Approval timed out and was rejected automatically for safety; the model will continue iterating based on the feedback": {
+  "ja": "承認がタイムアウトしたため、安全のため自動的に拒否されました。モデルはフィードバックに基づいて反復を続けます"
+ },
+ "Asset #%d is invalid: %w": {
+  "ja": "%d 番目の資産が無効です: %w"
+ },
+ "Asset list is required": {
+  "ja": "資産リストは必須です"
+ },
+ "Asset not found": {
+  "ja": "資産が見つかりません"
+ },
+ "Asset not found or not authorized to delete": {
+  "ja": "資産が見つからないか、削除する権限がありません"
+ },
+ "Asset not found or not authorized to scan": {
+  "ja": "資産が見つからないか、スキャンする権限がありません"
+ },
+ "Asset target is required": {
+  "ja": "資産ターゲットは必須です"
+ },
+ "At least one of conversation_id or task_id is required": {
+  "ja": "conversation_id または task_id のいずれか 1 つは必須です"
+ },
+ "At least one of host, ip, or domain is required": {
+  "ja": "host、ip、domain のいずれか 1 つ以上が必要です"
+ },
+ "At least one resource ID is required": {
+  "ja": "リソース ID が少なくとも 1 つ必要です"
+ },
+ "At least two distinct assets are required": {
+  "ja": "異なる資産が少なくとも 2 件必要です"
+ },
+ "At most %d attachments are allowed": {
+  "ja": "添付ファイルは最大 %d 個までです"
+ },
+ "At most %d resources can be granted at a time": {
+  "ja": "一度に認可できるリソースは最大 %d 件です"
+ },
+ "At most 50 tags are allowed": {
+  "ja": "タグは最大 50 個までです"
+ },
+ "Attachment %s has no content or serverPath": {
+  "ja": "添付ファイル %s にコンテンツがないか、serverPath が指定されていません"
+ },
+ "Attachment %s: %w": {
+  "ja": "添付ファイル %s: %w"
+ },
+ "Attachment has changed, please upload it again": {
+  "ja": "添付ファイルが変更されました。もう一度アップロードしてください"
+ },
+ "Attachment must be a regular file": {
+  "ja": "添付ファイルは通常のファイルである必要があります"
+ },
+ "Attack chain is being generated, please try again later": {
+  "ja": "攻撃チェーンを生成中です。しばらくしてからもう一度お試しください"
+ },
+ "Audit agent approved, continuing execution": {
+  "ja": "監査エージェントが承認しました。実行を続行します"
+ },
+ "Audit agent has made a decision": {
+  "ja": "監査エージェントが判断を下しました"
+ },
+ "Audit agent is reviewing this request": {
+  "ja": "監査エージェントがこのリクエストを確認しています"
+ },
+ "Audit agent rejected this tool call": {
+  "ja": "監査エージェントがこのツール呼び出しを拒否しました"
+ },
+ "Audit log ID list is required": {
+  "ja": "監査ログ ID のリストは必須です"
+ },
+ "Audit model is not configured": {
+  "ja": "監査モデルが設定されていません"
+ },
+ "Audit record not found": {
+  "ja": "監査記録が見つかりません"
+ },
+ "Batch deletion succeeded": {
+  "ja": "一括削除に成功しました"
+ },
+ "Batch task queue deleted": {
+  "ja": "バッチタスクのキューを削除しました"
+ },
+ "Batch tasks have been paused": {
+  "ja": "バッチタスクを一時停止しました"
+ },
+ "Batch tasks have restarted": {
+  "ja": "バッチタスクの実行を再開しました"
+ },
+ "Batch tasks have started": {
+  "ja": "バッチタスクの実行を開始しました"
+ },
+ "Binding confirmed but bot_token is missing": {
+  "ja": "連携は確認されましたが、bot_token がありません"
+ },
+ "Binding not found": {
+  "ja": "バインドが見つかりません"
+ },
+ "Binding succeeded; WeChat bot enabled": {
+  "ja": "連携に成功しました。WeChat ボットを有効にしました"
+ },
+ "Bot authentication service unavailable": {
+  "ja": "ボット認証サービスは利用できません"
+ },
+ "Bot sender is not in the service account allowlist": {
+  "ja": "ボットの送信者がサービスアカウントの許可リストにありません"
+ },
+ "Both sides of expression %q are required: %s": {
+  "ja": "式 %q の両辺は必須です: %s"
+ },
+ "Both sides of the matches expression are required: %s": {
+  "ja": "matches 式の両辺は必須です: %s"
+ },
+ "Built-in system roles cannot be modified. Create a custom role instead": {
+  "ja": "システム組み込みロールは変更できません。カスタムロールを作成してください"
+ },
+ "C2 HITL approval timed out; the dangerous task was rejected automatically": {
+  "ja": "C2 の HITL 承認がタイムアウトしたため、危険なタスクは自動的に拒否されました"
+ },
+ "C2 approval was cancelled": {
+  "ja": "C2 の承認はキャンセルされました"
+ },
+ "C2 is turned off in system settings": {
+  "ja": "C2 機能はシステム設定で無効になっています"
+ },
+ "C2 new session online": {
+  "ja": "C2 新規セッションがオンライン"
+ },
+ "C2 profile mutation requires global scope": {
+  "ja": "C2 プロファイルの変更にはグローバルスコープが必要です"
+ },
+ "Call interception configuration version is missing. Refresh the page and try again": {
+  "ja": "呼び出し遮断設定のバージョンがありません。ページを更新してから再試行してください"
+ },
+ "Call interception service is not initialized": {
+  "ja": "呼び出し遮断サービスが初期化されていません"
+ },
+ "Cancel request submitted; the task will stop after the current step completes.": {
+  "ja": "キャンセルリクエストを送信しました。現在のステップの完了後にタスクが停止します。"
+ },
+ "Cannot start task: %w": {
+  "ja": "タスクを開始できません: %w"
+ },
+ "Cannot uniquely determine the saved credential, please select a channel or enter an API Key": {
+  "ja": "保存済みの認証情報を一意に特定できません。チャネルを選択するか、API Key を入力してください"
+ },
+ "Channel has no saved credential, please enter an API Key": {
+  "ja": "チャネルに保存済みの認証情報がありません。API Key を入力してください"
+ },
+ "Channel no longer exists, please refresh the configuration and try again": {
+  "ja": "チャネルが存在しなくなりました。設定を再読み込みしてからもう一度お試しください"
+ },
+ "Check the pairing digits in WeChat on your phone and enter them below": {
+  "ja": "スマートフォンの WeChat でペアリング用の数字を確認し、下に入力してください"
+ },
+ "Ciphertext length is not a multiple of the block size": {
+  "ja": "暗号文の長さがブロックサイズの倍数ではありません"
+ },
+ "Claude (Anthropic Messages API) does not support context window detection, please enter it manually": {
+  "ja": "Claude (Anthropic Messages API) ではコンテキストウィンドウを検出できません。手動で入力してください"
+ },
+ "Claude (Anthropic Messages API) does not support fetching the model list automatically, please enter it manually": {
+  "ja": "Claude (Anthropic Messages API) ではモデル一覧を自動取得できません。手動で入力してください"
+ },
+ "Claude model/messages are required": {
+  "ja": "Claude の model/messages が必要です"
+ },
+ "Claude stream error: %s": {
+  "ja": "Claude ストリームエラー: %s"
+ },
+ "Cleared statistics for all skills": {
+  "ja": "すべてのスキルの統計情報をクリアしました"
+ },
+ "Cleared statistics for skill '%s'": {
+  "ja": "スキル '%s' の統計情報をクリアしました"
+ },
+ "Client not found: %s": {
+  "ja": "クライアントが見つかりません: %s"
+ },
+ "Command is too long": {
+  "ja": "コマンドが長すぎます"
+ },
+ "Concurrency must be between 1 and %d": {
+  "ja": "同時実行数は 1～%d の範囲で指定してください"
+ },
+ "Condition check: %s -> no": {
+  "ja": "条件チェック: %s → いいえ"
+ },
+ "Condition check: %s -> yes": {
+  "ja": "条件チェック: %s → はい"
+ },
+ "Condition expression contains an empty segment": {
+  "ja": "条件式に空の部分があります"
+ },
+ "Condition expression is required": {
+  "ja": "条件式は必須です"
+ },
+ "Condition expression template brackets do not match: %s": {
+  "ja": "条件式テンプレートの括弧が対応していません: %s"
+ },
+ "Condition node \"%s\" has a duplicate branch label: %s": {
+  "ja": "条件ノード「%s」に重複した分岐ラベルがあります: %s"
+ },
+ "Condition node \"%s\" has an invalid expression: %w": {
+  "ja": "条件ノード「%s」の式が無効です: %w"
+ },
+ "Condition node \"%s\" requires 1 to 2 outgoing edges (yes/no)": {
+  "ja": "条件ノード「%s」には 1〜2 本の出力エッジ（はい/いいえ）が必要です"
+ },
+ "Condition node \"%s\" requires an expression": {
+  "ja": "条件ノード「%s」には式が必要です"
+ },
+ "Configuration applied": {
+  "ja": "設定を適用しました"
+ },
+ "Configuration deleted": {
+  "ja": "設定を削除しました"
+ },
+ "Configuration file %s not found, and template %s was not found": {
+  "ja": "設定ファイル %s が見つからず、テンプレート %s も見つかりません"
+ },
+ "Configuration is missing command or url, and type/transport is not specified": {
+  "ja": "設定に command または url がなく、type/transport も指定されていません"
+ },
+ "Configuration not found": {
+  "ja": "設定が見つかりません"
+ },
+ "Configuration not found: %s": {
+  "ja": "設定が見つかりません: %s"
+ },
+ "Configuration saving was not wired up for this launch, so the update source cannot be changed": {
+  "ja": "今回の起動では設定の保存が接続されていないため、更新ソースを変更できません"
+ },
+ "Configuration updated": {
+  "ja": "設定を更新しました"
+ },
+ "Connection failed: %v": {
+  "ja": "接続に失敗しました: %v"
+ },
+ "Connection failed: %w": {
+  "ja": "接続に失敗しました: %w"
+ },
+ "Context restored, resuming...": {
+  "ja": "コンテキストを復元しました。再開しています…"
+ },
+ "Conversation %v completed": {
+  "ja": "会話 %v が完了しました"
+ },
+ "Conversation %v has been running over 15 minutes": {
+  "ja": "会話 %v の実行が 15 分を超えています"
+ },
+ "Conversation %v has pending HITL approval": {
+  "ja": "会話 %v に承認待ちの HITL があります"
+ },
+ "Conversation is already bound to another project": {
+  "ja": "会話はすでに別のプロジェクトに紐づいています"
+ },
+ "Conversation not found": {
+  "ja": "会話が見つかりません"
+ },
+ "Created": {
+  "ja": "作成しました"
+ },
+ "Cron scheduling is not enabled for this queue": {
+  "ja": "このキューでは Cron スケジュールが有効になっていません"
+ },
+ "Current password and new password are required": {
+  "ja": "現在のパスワードと新しいパスワードは必須です"
+ },
+ "Current password is incorrect": {
+  "ja": "現在のパスワードが正しくありません"
+ },
+ "Database connection is not configured": {
+  "ja": "データベース接続が設定されていません"
+ },
+ "Deleted": {
+  "ja": "削除しました"
+ },
+ "Deleted successfully": {
+  "ja": "削除しました"
+ },
+ "Deletion is irreversible. To run a real cleanup, pass both dry_run=false and confirm=true": {
+  "ja": "削除は元に戻せません。実際にクリーンアップを実行するには、dry_run=false と confirm=true の両方を指定してください"
+ },
+ "Duplicate asset list is required": {
+  "ja": "重複資産リストは必須です"
+ },
+ "Duplicate header name": {
+  "ja": "ヘッダー名が重複しています"
+ },
+ "Duplicate vulnerability ID": {
+  "ja": "脆弱性 ID が重複しています"
+ },
+ "Edge \"%s\" cannot be a self-loop": {
+  "ja": "エッジ「%s」を自己ループにすることはできません"
+ },
+ "Edge \"%s\" references a nonexistent source node: %s": {
+  "ja": "エッジ「%s」が存在しない始点ノードを参照しています: %s"
+ },
+ "Edge \"%s\" references a nonexistent target node: %s": {
+  "ja": "エッジ「%s」が存在しない終点ノードを参照しています: %s"
+ },
+ "Edge not found": {
+  "ja": "エッジが見つかりません"
+ },
+ "Either command (stdio mode) or url + type (http/sse mode) is required": {
+  "ja": "command（stdio モード）または url + type（http/sse モード）のいずれかを指定してください"
+ },
+ "Embedder is not initialized": {
+  "ja": "エンベッダーが初期化されていません"
+ },
+ "Enter a retest prompt (up to 20000 bytes)": {
+  "ja": "再テスト用のプロンプトを入力してください（最大 20000 バイト）"
+ },
+ "Execution failed: %v": {
+  "ja": "実行に失敗しました: %v"
+ },
+ "Execution interrupted (service restart or session ended)": {
+  "ja": "実行が中断されました（サービスの再起動またはセッションの終了）"
+ },
+ "Execution interrupted (session ended)": {
+  "ja": "実行が中断されました（セッションが終了しました）"
+ },
+ "Execution record ID is required": {
+  "ja": "実行記録 ID は必須です"
+ },
+ "Execution record ID list is required": {
+  "ja": "実行記録 ID のリストは必須です"
+ },
+ "Execution record deleted": {
+  "ja": "実行記録を削除しました"
+ },
+ "Execution record deleted (if it existed)": {
+  "ja": "実行記録を削除しました（存在した場合）"
+ },
+ "Execution record deleted successfully": {
+  "ja": "実行記録を削除しました"
+ },
+ "Execution record not found": {
+  "ja": "実行記録が見つかりません"
+ },
+ "Execution record not found or already deleted": {
+  "ja": "実行記録が見つからないか、既に削除されています"
+ },
+ "External MCP client is not connected: %s (status: %s)": {
+  "ja": "外部 MCP クライアントが接続されていません: %s (状態: %s)"
+ },
+ "External MCP client not found: %s": {
+  "ja": "外部 MCP クライアントが見つかりません: %s"
+ },
+ "External MCP configuration not found": {
+  "ja": "外部 MCP の設定が見つかりません"
+ },
+ "External MCP connection failed: %s": {
+  "ja": "外部 MCP への接続に失敗しました: %s"
+ },
+ "External MCP connection failed: %s (error: %s)": {
+  "ja": "外部 MCP への接続に失敗しました: %s (エラー: %s)"
+ },
+ "External MCP has no cached tools: %s": {
+  "ja": "外部 MCP にキャッシュされたツールがありません: %s"
+ },
+ "External MCP service %s is temporarily circuit-broken; retry in about %s": {
+  "ja": "外部 MCP サービス %s は一時的に遮断されています。%s 後に再試行されます"
+ },
+ "External MCP start request submitted, connecting in the background": {
+  "ja": "外部 MCP の起動リクエストを送信しました。バックグラウンドで接続中です"
+ },
+ "External MCP status unknown: %s (status: %s)": {
+  "ja": "外部 MCP の状態が不明です: %s (状態: %s)"
+ },
+ "External MCP stopped": {
+  "ja": "外部 MCP を停止しました"
+ },
+ "External tool not found": {
+  "ja": "外部ツールが見つかりません"
+ },
+ "FOFA base_url is invalid: %v": {
+  "ja": "FOFA base_url が無効です: %v"
+ },
+ "FOFA is not configured: enter the FOFA API Key under Asset Management in system settings, or set the FOFA_API_KEY environment variable": {
+  "ja": "FOFA が設定されていません: システム設定の資産管理で FOFA API Key を入力するか、環境変数 FOFA_API_KEY を設定してください"
+ },
+ "FOFA returned a non-2xx status: %d": {
+  "ja": "FOFA が 2xx 以外のステータスを返しました: %d"
+ },
+ "FOFA returned an error": {
+  "ja": "FOFA がエラーを返しました"
+ },
+ "Fact is not deprecated": {
+  "ja": "ファクトは廃止状態ではありません"
+ },
+ "Fact not found": {
+  "ja": "ファクトが見つかりません"
+ },
+ "Fact saved.\nfact_key: %s\nid: %s\nconfidence: %s": {
+  "ja": "事実を保存しました。\nfact_key: %s\nid: %s\nconfidence: %s"
+ },
+ "Failed to add batch task: %w": {
+  "ja": "バッチタスクの追加に失敗しました: %w"
+ },
+ "Failed to add column %s.%s (original structure and data preserved; check column constraints and default values): %w": {
+  "ja": "列 %s.%s の追加に失敗しました（元の構造とデータは保持されています。列の制約とデフォルト値を確認してください）: %w"
+ },
+ "Failed to add edge: %w": {
+  "ja": "エッジの追加に失敗しました: %w"
+ },
+ "Failed to add index %s: %w": {
+  "ja": "インデックス %s の追加に失敗しました: %w"
+ },
+ "Failed to add message: %w": {
+  "ja": "メッセージの追加に失敗しました: %w"
+ },
+ "Failed to add or update configuration: %v": {
+  "ja": "設定の追加または更新に失敗しました: %v"
+ },
+ "Failed to add process detail: %w": {
+  "ja": "処理詳細の追加に失敗しました: %w"
+ },
+ "Failed to add task: %w": {
+  "ja": "タスクの追加に失敗しました: %w"
+ },
+ "Failed to apply tool guard configuration: %v": {
+  "ja": "呼び出し遮断設定の適用に失敗しました: %v"
+ },
+ "Failed to authorize asset: %w": {
+  "ja": "資産の認可に失敗しました: %w"
+ },
+ "Failed to authorize new asset: %w": {
+  "ja": "新しい資産の認可に失敗しました: %w"
+ },
+ "Failed to backfill message update times: %w": {
+  "ja": "メッセージ更新日時の補完に失敗しました: %w"
+ },
+ "Failed to backfill model Token usage: %w": {
+  "ja": "モデルの Token 使用量の補完に失敗しました: %w"
+ },
+ "Failed to backfill vulnerability targets: %w": {
+  "ja": "脆弱性の対象の補完に失敗しました: %w"
+ },
+ "Failed to batch delete execution records: %v": {
+  "ja": "実行記録の一括削除に失敗しました: %v"
+ },
+ "Failed to begin transaction: %w": {
+  "ja": "トランザクションの開始に失敗しました: %w"
+ },
+ "Failed to bulk delete HITL audit logs: %w": {
+  "ja": "HITL 監査ログの一括削除に失敗しました: %w"
+ },
+ "Failed to bulk delete vulnerabilities: %w": {
+  "ja": "脆弱性の一括削除に失敗しました: %w"
+ },
+ "Failed to call LLM: %w": {
+  "ja": "LLM の呼び出しに失敗しました: %w"
+ },
+ "Failed to cancel pending tasks in bulk: %w": {
+  "ja": "保留中の pending タスクの一括キャンセルに失敗しました: %w"
+ },
+ "Failed to check asset deduplication key: %w": {
+  "ja": "資産の重複排除キーの確認に失敗しました: %w"
+ },
+ "Failed to check configuration file: %w": {
+  "ja": "設定ファイルの確認に失敗しました: %w"
+ },
+ "Failed to check configuration template: %w": {
+  "ja": "設定テンプレートの確認に失敗しました: %w"
+ },
+ "Failed to check index: %w": {
+  "ja": "インデックスの確認に失敗しました: %w"
+ },
+ "Failed to clean up expired HITL audit logs: %w": {
+  "ja": "期限切れの HITL 監査ログの削除に失敗しました: %w"
+ },
+ "Failed to clean up fact-vulnerability links: %w": {
+  "ja": "ファクトと脆弱性の関連の削除に失敗しました: %w"
+ },
+ "Failed to clear HITL audit logs: %w": {
+  "ja": "HITL 監査ログの消去に失敗しました: %w"
+ },
+ "Failed to clear old edges: %w": {
+  "ja": "古いエッジの削除に失敗しました: %w"
+ },
+ "Failed to clear old incoming edges: %w": {
+  "ja": "古い入力エッジの削除に失敗しました: %w"
+ },
+ "Failed to clear statistics: %v": {
+  "ja": "統計情報のクリアに失敗しました: %v"
+ },
+ "Failed to commit SQLite schema completion: %w": {
+  "ja": "SQLite スキーマ補完のコミットに失敗しました: %w"
+ },
+ "Failed to commit transaction: %w": {
+  "ja": "トランザクションのコミットに失敗しました: %w"
+ },
+ "Failed to complete table %s: %w": {
+  "ja": "テーブル %s の補完に失敗しました: %w"
+ },
+ "Failed to compute process detail anchor position: %w": {
+  "ja": "処理詳細のアンカー位置の計算に失敗しました: %w"
+ },
+ "Failed to configure HTTP/2 for the main server: %w": {
+  "ja": "メインサーバーの HTTP/2 設定に失敗しました: %w"
+ },
+ "Failed to configure database PRAGMA: %w": {
+  "ja": "データベースの PRAGMA の設定に失敗しました: %w"
+ },
+ "Failed to configure knowledge base database PRAGMA: %w": {
+  "ja": "ナレッジベースのデータベースの PRAGMA 設定に失敗しました: %w"
+ },
+ "Failed to connect to database: %w": {
+  "ja": "データベースへの接続に失敗しました: %w"
+ },
+ "Failed to connect to knowledge base database: %w": {
+  "ja": "ナレッジベースのデータベースへの接続に失敗しました: %w"
+ },
+ "Failed to count active projects: %w": {
+  "ja": "アクティブなプロジェクト数の集計に失敗しました: %w"
+ },
+ "Failed to count batch task queues: %w": {
+  "ja": "バッチタスクキューの総数の集計に失敗しました: %w"
+ },
+ "Failed to count conversations: %w": {
+  "ja": "会話の集計に失敗しました: %w"
+ },
+ "Failed to count facts: %w": {
+  "ja": "ファクト数の集計に失敗しました: %w"
+ },
+ "Failed to count process details: %w": {
+  "ja": "処理詳細の集計に失敗しました: %w"
+ },
+ "Failed to count projects: %w": {
+  "ja": "プロジェクト数の集計に失敗しました: %w"
+ },
+ "Failed to count queues: %w": {
+  "ja": "キューの総数の集計に失敗しました: %w"
+ },
+ "Failed to count tool call details: %w": {
+  "ja": "ツール呼び出し詳細の集計に失敗しました: %w"
+ },
+ "Failed to count total vulnerabilities: %w": {
+  "ja": "脆弱性の総数の集計に失敗しました: %w"
+ },
+ "Failed to count vulnerabilities: %w": {
+  "ja": "脆弱性数の集計に失敗しました: %w"
+ },
+ "Failed to create SKILL.md: %v": {
+  "ja": "SKILL.md の作成に失敗しました: %v"
+ },
+ "Failed to create asset: %w": {
+  "ja": "資産の作成に失敗しました: %w"
+ },
+ "Failed to create batch task queue: %w": {
+  "ja": "バッチタスクキューの作成に失敗しました: %w"
+ },
+ "Failed to create batch task: %w": {
+  "ja": "バッチタスクの作成に失敗しました: %w"
+ },
+ "Failed to create configuration directory: %w": {
+  "ja": "設定ディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create configuration file: %w": {
+  "ja": "設定ファイルの作成に失敗しました: %w"
+ },
+ "Failed to create conversation attachment directory: %w": {
+  "ja": "会話の添付ファイルディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create conversation: %w": {
+  "ja": "会話の作成に失敗しました: %w"
+ },
+ "Failed to create database directory: %w": {
+  "ja": "データベースディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create directory: %w": {
+  "ja": "ディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create fact: %w": {
+  "ja": "ファクトの作成に失敗しました: %w"
+ },
+ "Failed to create knowledge base database directory: %w": {
+  "ja": "ナレッジベースのデータベースディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create knowledge base directory: %w": {
+  "ja": "ナレッジベースのディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create project: %w": {
+  "ja": "プロジェクトの作成に失敗しました: %w"
+ },
+ "Failed to create request: %v": {
+  "ja": "リクエストの作成に失敗しました: %v"
+ },
+ "Failed to create retest branch": {
+  "ja": "再テストブランチの作成に失敗しました"
+ },
+ "Failed to create role directory: %w": {
+  "ja": "ロールディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create skill directory: %v": {
+  "ja": "スキルディレクトリの作成に失敗しました: %v"
+ },
+ "Failed to create the C2 HITL approval record; execution was refused for safety: %w": {
+  "ja": "C2 の HITL 承認レコードを作成できなかったため、安全のため実行を拒否しました: %w"
+ },
+ "Failed to create upload directory: %w": {
+  "ja": "アップロードディレクトリの作成に失敗しました: %w"
+ },
+ "Failed to create vulnerability: %w": {
+  "ja": "脆弱性の作成に失敗しました: %w"
+ },
+ "Failed to create workflow node run: %w": {
+  "ja": "ワークフローのノード実行の作成に失敗しました: %w"
+ },
+ "Failed to create workflow run: %w": {
+  "ja": "ワークフロー実行の作成に失敗しました: %w"
+ },
+ "Failed to decode attachment %s: %w": {
+  "ja": "添付ファイル %s のデコードに失敗しました: %w"
+ },
+ "Failed to delete assets in bulk": {
+  "ja": "資産の一括削除に失敗しました"
+ },
+ "Failed to delete batch task queue: %w": {
+  "ja": "バッチタスクキューの削除に失敗しました: %w"
+ },
+ "Failed to delete batch task: %w": {
+  "ja": "バッチタスクの削除に失敗しました: %w"
+ },
+ "Failed to delete bot conversation binding: %w": {
+  "ja": "ボットの会話バインドの削除に失敗しました: %w"
+ },
+ "Failed to delete conversation: %w": {
+  "ja": "会話の削除に失敗しました: %w"
+ },
+ "Failed to delete duplicate assets": {
+  "ja": "重複資産の削除に失敗しました"
+ },
+ "Failed to delete execution record: %v": {
+  "ja": "実行記録の削除に失敗しました: %v"
+ },
+ "Failed to delete knowledge item: %w": {
+  "ja": "ナレッジ項目の削除に失敗しました: %w"
+ },
+ "Failed to delete process detail: %w": {
+  "ja": "処理詳細の削除に失敗しました: %w"
+ },
+ "Failed to delete project: %w": {
+  "ja": "プロジェクトの削除に失敗しました: %w"
+ },
+ "Failed to delete retrieval log: %w": {
+  "ja": "検索ログの削除に失敗しました: %w"
+ },
+ "Failed to delete skill: %v": {
+  "ja": "スキルの削除に失敗しました: %v"
+ },
+ "Failed to delete task: %w": {
+  "ja": "タスクの削除に失敗しました: %w"
+ },
+ "Failed to delete vulnerability: %w": {
+  "ja": "脆弱性の削除に失敗しました: %w"
+ },
+ "Failed to delete workflow: %w": {
+  "ja": "ワークフローの削除に失敗しました: %w"
+ },
+ "Failed to flush stdout: %w": {
+  "ja": "stdout のフラッシュに失敗しました: %w"
+ },
+ "Failed to generate MCP authentication key: %w": {
+  "ja": "MCP 認証キーの生成に失敗しました: %w"
+ },
+ "Failed to generate Word report": {
+  "ja": "Word レポートの生成に失敗しました"
+ },
+ "Failed to generate attack chain: %v": {
+  "ja": "攻撃チェーンの生成に失敗しました: %v"
+ },
+ "Failed to generate binding code": {
+  "ja": "バインドコードの生成に失敗しました"
+ },
+ "Failed to generate test image": {
+  "ja": "テスト画像の生成に失敗しました"
+ },
+ "Failed to get QR code: %v": {
+  "ja": "QR コードの取得に失敗しました: %v"
+ },
+ "Failed to get agent trace: %w": {
+  "ja": "エージェントトレースの取得に失敗しました: %w"
+ },
+ "Failed to get bot binding": {
+  "ja": "ボットのバインドの取得に失敗しました"
+ },
+ "Failed to get categories: %w": {
+  "ja": "カテゴリの取得に失敗しました: %w"
+ },
+ "Failed to get conversation messages: %w": {
+  "ja": "会話メッセージの取得に失敗しました: %w"
+ },
+ "Failed to get current working directory: %w": {
+  "ja": "現在の作業ディレクトリの取得に失敗しました: %w"
+ },
+ "Failed to get deleted row count: %w": {
+  "ja": "削除件数の取得に失敗しました: %w"
+ },
+ "Failed to get execution record: %v": {
+  "ja": "実行記録の取得に失敗しました: %v"
+ },
+ "Failed to get external MCP tools and no cache available: %w": {
+  "ja": "外部 MCP ツールの取得に失敗し、キャッシュもありません: %w"
+ },
+ "Failed to get external MCP tools: %w": {
+  "ja": "外部 MCP ツールの取得に失敗しました: %w"
+ },
+ "Failed to get knowledge item: %w": {
+  "ja": "ナレッジ項目の取得に失敗しました: %w"
+ },
+ "Failed to get knowledge items for category %s: %w": {
+  "ja": "カテゴリ %s のナレッジ項目の取得に失敗しました: %w"
+ },
+ "Failed to get project name: %w": {
+  "ja": "プロジェクト名の取得に失敗しました: %w"
+ },
+ "Failed to get project: %w": {
+  "ja": "プロジェクトの取得に失敗しました: %w"
+ },
+ "Failed to get severity statistics: %w": {
+  "ja": "重大度の統計の取得に失敗しました: %w"
+ },
+ "Failed to get status statistics: %w": {
+  "ja": "ステータスの統計の取得に失敗しました: %w"
+ },
+ "Failed to get task list": {
+  "ja": "タスク一覧の取得に失敗しました"
+ },
+ "Failed to get total knowledge item count: %w": {
+  "ja": "ナレッジ項目の総数の取得に失敗しました: %w"
+ },
+ "Failed to get total vulnerability count: %w": {
+  "ja": "脆弱性の総数の取得に失敗しました: %w"
+ },
+ "Failed to get vulnerability: %w": {
+  "ja": "脆弱性の取得に失敗しました: %w"
+ },
+ "Failed to initialize RBAC: %w": {
+  "ja": "RBAC の初期化に失敗しました: %w"
+ },
+ "Failed to initialize call interception rules: %w": {
+  "ja": "呼び出しインターセプトルールの初期化に失敗しました: %w"
+ },
+ "Failed to initialize database: %w": {
+  "ja": "データベースの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base database: %w": {
+  "ja": "ナレッジベースのデータベースの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base embedder: %w": {
+  "ja": "ナレッジベースのエンベッダーの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base indexer: %w": {
+  "ja": "ナレッジベースのインデクサーの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base retrieval pipeline: %w": {
+  "ja": "ナレッジベースの検索パイプラインの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base tables: %w": {
+  "ja": "ナレッジベースのテーブルの初期化に失敗しました: %w"
+ },
+ "Failed to initialize knowledge base: %v": {
+  "ja": "ナレッジベースの初期化に失敗しました: %v"
+ },
+ "Failed to initialize tables: %w": {
+  "ja": "テーブルの初期化に失敗しました: %w"
+ },
+ "Failed to insert knowledge item: %w": {
+  "ja": "ナレッジ項目の挿入に失敗しました: %w"
+ },
+ "Failed to iterate historical model Token usage: %w": {
+  "ja": "過去のモデル Token 使用量の走査に失敗しました: %w"
+ },
+ "Failed to iterate model Token usage details: %w": {
+  "ja": "モデルの Token 使用量の明細の走査に失敗しました: %w"
+ },
+ "Failed to iterate model Token usage groups: %w": {
+  "ja": "モデルの Token 使用量グループの走査に失敗しました: %w"
+ },
+ "Failed to iterate tool execution summaries: %w": {
+  "ja": "ツール実行サマリーの走査に失敗しました: %w"
+ },
+ "Failed to keep previous binary: %w": {
+  "ja": "以前のバイナリの保持に失敗しました: %w"
+ },
+ "Failed to list projects: %w": {
+  "ja": "プロジェクト一覧の取得に失敗しました: %w"
+ },
+ "Failed to load TLS certificate: %w": {
+  "ja": "TLS 証明書の読み込みに失敗しました: %w"
+ },
+ "Failed to load attack chain edges: %w": {
+  "ja": "攻撃チェーンのエッジの読み込みに失敗しました: %w"
+ },
+ "Failed to load attack chain nodes: %w": {
+  "ja": "攻撃チェーンのノードの読み込みに失敗しました: %w"
+ },
+ "Failed to load messages: %w": {
+  "ja": "メッセージの読み込みに失敗しました: %w"
+ },
+ "Failed to load role configurations from roles directory: %w": {
+  "ja": "ロールディレクトリからのロール設定の読み込みに失敗しました: %w"
+ },
+ "Failed to load tool configurations from tools directory: %w": {
+  "ja": "ツールディレクトリからのツール設定の読み込みに失敗しました: %w"
+ },
+ "Failed to migrate historical security interception records: %w": {
+  "ja": "過去のセキュリティ遮断記録の移行に失敗しました: %w"
+ },
+ "Failed to migrate vulnerability conversation foreign keys: %w": {
+  "ja": "脆弱性の会話外部キーの移行に失敗しました: %w"
+ },
+ "Failed to move attachment into conversation directory: %w": {
+  "ja": "添付ファイルの会話ディレクトリへの移動に失敗しました: %w"
+ },
+ "Failed to move file: %w": {
+  "ja": "ファイルの移動に失敗しました: %w"
+ },
+ "Failed to open database: %w": {
+  "ja": "データベースを開けませんでした: %w"
+ },
+ "Failed to open knowledge base database: %w": {
+  "ja": "ナレッジベースのデータベースを開けませんでした: %w"
+ },
+ "Failed to parse FOFA response: %v": {
+  "ja": "FOFA レスポンスの解析に失敗しました: %v"
+ },
+ "Failed to parse JSON: %w": {
+  "ja": "JSON の解析に失敗しました: %w"
+ },
+ "Failed to parse LLM workflow JSON: %w": {
+  "ja": "LLM のワークフロー JSON の解析に失敗しました: %w"
+ },
+ "Failed to parse Quake response: %v": {
+  "ja": "Quake レスポンスの解析に失敗しました: %v"
+ },
+ "Failed to parse Shodan response: %v": {
+  "ja": "Shodan レスポンスの解析に失敗しました: %v"
+ },
+ "Failed to parse ZoomEye response: %v": {
+  "ja": "ZoomEye レスポンスの解析に失敗しました: %v"
+ },
+ "Failed to parse agent trace JSON: %w": {
+  "ja": "エージェントのトレース JSON の解析に失敗しました: %w"
+ },
+ "Failed to parse columns of table %s: %w": {
+  "ja": "テーブル %s の列の解析に失敗しました: %w"
+ },
+ "Failed to parse configuration file: %w": {
+  "ja": "設定ファイルの解析に失敗しました: %w"
+ },
+ "Failed to parse conversation placeholders: %w": {
+  "ja": "会話プレースホルダーの解析に失敗しました: %w"
+ },
+ "Failed to parse graph JSON: %v": {
+  "ja": "graph JSON の解析に失敗しました: %v"
+ },
+ "Failed to parse latest SQLite schema: %w": {
+  "ja": "最新の SQLite スキーマの解析に失敗しました: %w"
+ },
+ "Failed to parse prompt placeholders: %w": {
+  "ja": "プロンプトプレースホルダーの解析に失敗しました: %w"
+ },
+ "Failed to parse retest prompt": {
+  "ja": "再テストプロンプトの解析に失敗しました"
+ },
+ "Failed to parse role configuration: %w": {
+  "ja": "ロール設定の解析に失敗しました: %w"
+ },
+ "Failed to parse tool configuration: %w": {
+  "ja": "ツール設定の解析に失敗しました: %w"
+ },
+ "Failed to parse workflow graph: %w": {
+  "ja": "ワークフローグラフの解析に失敗しました: %w"
+ },
+ "Failed to prepare single-task execution: %w": {
+  "ja": "単一タスク実行の準備に失敗しました: %w"
+ },
+ "Failed to preserve extra vulnerability column %s: %w": {
+  "ja": "脆弱性の追加列 %s の保持に失敗しました: %w"
+ },
+ "Failed to preserve vulnerability data: %w": {
+  "ja": "脆弱性データの保持に失敗しました: %w"
+ },
+ "Failed to query affected assets: %w": {
+  "ja": "影響を受ける資産の取得に失敗しました: %w"
+ },
+ "Failed to query affected vulnerability conversations: %w": {
+  "ja": "影響を受ける脆弱性の会話の取得に失敗しました: %w"
+ },
+ "Failed to query asset list: %w": {
+  "ja": "資産一覧の取得に失敗しました: %w"
+ },
+ "Failed to query attack chain edges: %w": {
+  "ja": "攻撃チェーンのエッジの取得に失敗しました: %w"
+ },
+ "Failed to query attack chain nodes: %w": {
+  "ja": "攻撃チェーンのノードの取得に失敗しました: %w"
+ },
+ "Failed to query batch task queue list: %w": {
+  "ja": "バッチタスクキュー一覧の取得に失敗しました: %w"
+ },
+ "Failed to query batch task queue: %w": {
+  "ja": "バッチタスクキューの取得に失敗しました: %w"
+ },
+ "Failed to query batch tasks: %w": {
+  "ja": "バッチタスクの取得に失敗しました: %w"
+ },
+ "Failed to query bot conversation binding: %w": {
+  "ja": "ボットの会話バインドの取得に失敗しました: %w"
+ },
+ "Failed to query categories: %w": {
+  "ja": "カテゴリのクエリに失敗しました: %w"
+ },
+ "Failed to query conversation ID suggestions: %w": {
+  "ja": "会話 ID の候補の取得に失敗しました: %w"
+ },
+ "Failed to query conversation list: %w": {
+  "ja": "会話一覧の取得に失敗しました: %w"
+ },
+ "Failed to query conversation project: %w": {
+  "ja": "会話のプロジェクトの取得に失敗しました: %w"
+ },
+ "Failed to query conversation tag suggestions: %w": {
+  "ja": "会話タグの候補の取得に失敗しました: %w"
+ },
+ "Failed to query conversation title: %w": {
+  "ja": "会話タイトルの取得に失敗しました: %w"
+ },
+ "Failed to query conversation: %w": {
+  "ja": "会話の取得に失敗しました: %w"
+ },
+ "Failed to query historical model Token usage: %w": {
+  "ja": "過去のモデル Token 使用量の取得に失敗しました: %w"
+ },
+ "Failed to query indexed item count: %w": {
+  "ja": "インデックス済み項目数のクエリに失敗しました: %w"
+ },
+ "Failed to query iteration details: %w": {
+  "ja": "イテレーション詳細の取得に失敗しました: %w"
+ },
+ "Failed to query knowledge items: %w": {
+  "ja": "ナレッジ項目のクエリに失敗しました: %w"
+ },
+ "Failed to query messages: %w": {
+  "ja": "メッセージの取得に失敗しました: %w"
+ },
+ "Failed to query model Token usage details: %w": {
+  "ja": "モデルの Token 使用量の明細の取得に失敗しました: %w"
+ },
+ "Failed to query model Token usage groups: %w": {
+  "ja": "モデルの Token 使用量グループの取得に失敗しました: %w"
+ },
+ "Failed to query model Token usage summary: %w": {
+  "ja": "モデルの Token 使用量サマリーの取得に失敗しました: %w"
+ },
+ "Failed to query process detail anchor: %w": {
+  "ja": "処理詳細のアンカーの取得に失敗しました: %w"
+ },
+ "Failed to query process detail durations: %w": {
+  "ja": "処理詳細の所要時間の取得に失敗しました: %w"
+ },
+ "Failed to query process detail final states: %w": {
+  "ja": "処理詳細の最終状態の取得に失敗しました: %w"
+ },
+ "Failed to query process details: %w": {
+  "ja": "処理詳細の取得に失敗しました: %w"
+ },
+ "Failed to query project ID suggestions: %w": {
+  "ja": "プロジェクト ID の候補の取得に失敗しました: %w"
+ },
+ "Failed to query project conversations: %w": {
+  "ja": "プロジェクトの会話の取得に失敗しました: %w"
+ },
+ "Failed to query queue ID suggestions: %w": {
+  "ja": "キュー ID の候補の取得に失敗しました: %w"
+ },
+ "Failed to query queue list: %w": {
+  "ja": "キュー一覧の取得に失敗しました: %w"
+ },
+ "Failed to query recent facts: %w": {
+  "ja": "最近のファクトの取得に失敗しました: %w"
+ },
+ "Failed to query retrieval logs: %w": {
+  "ja": "検索ログのクエリに失敗しました: %w"
+ },
+ "Failed to query task ID suggestions: %w": {
+  "ja": "タスク ID の候補の取得に失敗しました: %w"
+ },
+ "Failed to query task tag suggestions: %w": {
+  "ja": "タスクタグの候補の取得に失敗しました: %w"
+ },
+ "Failed to query tool execution summaries: %w": {
+  "ja": "ツール実行サマリーの取得に失敗しました: %w"
+ },
+ "Failed to query total knowledge item count: %w": {
+  "ja": "ナレッジ項目の総数のクエリに失敗しました: %w"
+ },
+ "Failed to query unindexed knowledge items: %w": {
+  "ja": "未インデックスのナレッジ項目のクエリに失敗しました: %w"
+ },
+ "Failed to query vectors: %w": {
+  "ja": "ベクトルのクエリに失敗しました: %w"
+ },
+ "Failed to query vulnerability ID suggestions: %w": {
+  "ja": "脆弱性 ID の候補の取得に失敗しました: %w"
+ },
+ "Failed to query vulnerability list: %w": {
+  "ja": "脆弱性一覧の取得に失敗しました: %w"
+ },
+ "Failed to query workflow list: %w": {
+  "ja": "ワークフロー一覧の取得に失敗しました: %w"
+ },
+ "Failed to query workflow node runs: %w": {
+  "ja": "ワークフローのノード実行の取得に失敗しました: %w"
+ },
+ "Failed to query workflow runs awaiting approval: %w": {
+  "ja": "承認待ちのワークフロー実行の取得に失敗しました: %w"
+ },
+ "Failed to query workflow runs: %w": {
+  "ja": "ワークフロー実行の取得に失敗しました: %w"
+ },
+ "Failed to query workflow: %w": {
+  "ja": "ワークフローの取得に失敗しました: %w"
+ },
+ "Failed to re-initialize knowledge base: %v": {
+  "ja": "ナレッジベースの再初期化に失敗しました: %v"
+ },
+ "Failed to read attachment %s: %w": {
+  "ja": "添付ファイル %s の読み取りに失敗しました: %w"
+ },
+ "Failed to read configuration file: %w": {
+  "ja": "設定ファイルの読み取りに失敗しました: %w"
+ },
+ "Failed to read configuration template: %w": {
+  "ja": "設定テンプレートの読み取りに失敗しました: %w"
+ },
+ "Failed to read file: %w": {
+  "ja": "ファイルの読み取りに失敗しました: %w"
+ },
+ "Failed to read or save self-signed TLS certificate %s: %w": {
+  "ja": "自己署名 TLS 証明書 %s の読み取りまたは保存に失敗しました: %w"
+ },
+ "Failed to read retest branch": {
+  "ja": "再テストブランチの読み取りに失敗しました"
+ },
+ "Failed to read retest context: %w": {
+  "ja": "再テストコンテキストの読み取りに失敗しました: %w"
+ },
+ "Failed to read roles directory: %w": {
+  "ja": "ロールディレクトリの読み取りに失敗しました: %w"
+ },
+ "Failed to read tools directory: %w": {
+  "ja": "ツールディレクトリの読み取りに失敗しました: %w"
+ },
+ "Failed to read vulnerability": {
+  "ja": "脆弱性の読み取りに失敗しました"
+ },
+ "Failed to read vulnerability targets: %w": {
+  "ja": "脆弱性の対象の読み取りに失敗しました: %w"
+ },
+ "Failed to record schedule trigger time: %w": {
+  "ja": "スケジュールのトリガー時刻の記録に失敗しました: %w"
+ },
+ "Failed to record workflow approval decision: %w": {
+  "ja": "ワークフローの承認判断の記録に失敗しました: %w"
+ },
+ "Failed to refresh asset risk scores: %w": {
+  "ja": "資産のリスクスコアの更新に失敗しました: %w"
+ },
+ "Failed to refresh asset scan status: %w": {
+  "ja": "資産のスキャンステータスの更新に失敗しました: %w"
+ },
+ "Failed to refresh asset vulnerability counts: %w": {
+  "ja": "資産の脆弱性数の更新に失敗しました: %w"
+ },
+ "Failed to reload tool config: %v": {
+  "ja": "ツール設定の再読み込みに失敗しました: %v"
+ },
+ "Failed to reset batch task queue status: %w": {
+  "ja": "バッチタスクキューのステータスのリセットに失敗しました: %w"
+ },
+ "Failed to reset batch task status: %w": {
+  "ja": "バッチタスクのステータスのリセットに失敗しました: %w"
+ },
+ "Failed to reset queue": {
+  "ja": "キューのリセットに失敗しました"
+ },
+ "Failed to run role binding flow: %v": {
+  "ja": "ロール紐付けフローの実行に失敗しました: %v"
+ },
+ "Failed to save agent trace: %w": {
+  "ja": "エージェントトレースの保存に失敗しました: %w"
+ },
+ "Failed to save config: %v": {
+  "ja": "設定の保存に失敗しました: %v"
+ },
+ "Failed to save configuration file: %w": {
+  "ja": "設定ファイルの保存に失敗しました: %w"
+ },
+ "Failed to save extended request fields for AI channel %s: %w": {
+  "ja": "AI チャネル %s の拡張リクエストフィールドの保存に失敗しました: %w"
+ },
+ "Failed to save retest prompt": {
+  "ja": "再テストプロンプトの保存に失敗しました"
+ },
+ "Failed to save task queue: %w": {
+  "ja": "タスクキューの保存に失敗しました: %w"
+ },
+ "Failed to save the project resume record; the Pi session record is still kept": {
+  "ja": "プロジェクト再開レコードの保存に失敗しました。Pi セッションレコードは保持されています"
+ },
+ "Failed to save tool guard configuration: %v": {
+  "ja": "呼び出し遮断設定の保存に失敗しました: %v"
+ },
+ "Failed to save uploaded file: %w": {
+  "ja": "アップロードファイルの保存に失敗しました: %w"
+ },
+ "Failed to save user message: %w": {
+  "ja": "ユーザーメッセージの保存に失敗しました: %w"
+ },
+ "Failed to save workflow: %w": {
+  "ja": "ワークフローの保存に失敗しました: %w"
+ },
+ "Failed to scan batch task queue: %w": {
+  "ja": "バッチタスクキューのスキャンに失敗しました: %w"
+ },
+ "Failed to scan batch tasks: %w": {
+  "ja": "バッチタスクのスキャンに失敗しました: %w"
+ },
+ "Failed to scan categories: %w": {
+  "ja": "カテゴリのスキャンに失敗しました: %w"
+ },
+ "Failed to scan conversations: %w": {
+  "ja": "会話のスキャンに失敗しました: %w"
+ },
+ "Failed to scan historical model Token usage: %w": {
+  "ja": "過去のモデル Token 使用量のスキャンに失敗しました: %w"
+ },
+ "Failed to scan iteration details: %w": {
+  "ja": "イテレーション詳細のスキャンに失敗しました: %w"
+ },
+ "Failed to scan knowledge item IDs: %w": {
+  "ja": "ナレッジ項目 ID のスキャンに失敗しました: %w"
+ },
+ "Failed to scan knowledge items: %w": {
+  "ja": "ナレッジ項目のスキャンに失敗しました: %w"
+ },
+ "Failed to scan messages: %w": {
+  "ja": "メッセージのスキャンに失敗しました: %w"
+ },
+ "Failed to scan model Token usage details: %w": {
+  "ja": "モデルの Token 使用量の明細のスキャンに失敗しました: %w"
+ },
+ "Failed to scan model Token usage groups: %w": {
+  "ja": "モデルの Token 使用量グループのスキャンに失敗しました: %w"
+ },
+ "Failed to scan process details: %w": {
+  "ja": "処理詳細のスキャンに失敗しました: %w"
+ },
+ "Failed to scan retrieval logs: %w": {
+  "ja": "検索ログのスキャンに失敗しました: %w"
+ },
+ "Failed to scan tool execution summaries: %w": {
+  "ja": "ツール実行サマリーのスキャンに失敗しました: %w"
+ },
+ "Failed to scan unindexed knowledge item IDs: %w": {
+  "ja": "未インデックスのナレッジ項目 ID のスキャンに失敗しました: %w"
+ },
+ "Failed to scan workflow: %w": {
+  "ja": "ワークフローのスキャンに失敗しました: %w"
+ },
+ "Failed to search knowledge items: %w": {
+  "ja": "ナレッジ項目の検索に失敗しました: %w"
+ },
+ "Failed to send error response: %w": {
+  "ja": "エラーレスポンスの送信に失敗しました: %w"
+ },
+ "Failed to send response: %w": {
+  "ja": "レスポンスの送信に失敗しました: %w"
+ },
+ "Failed to serialize MCP execution IDs: %w": {
+  "ja": "MCP 実行 ID のシリアライズに失敗しました: %w"
+ },
+ "Failed to serialize configuration": {
+  "ja": "設定のシリアライズに失敗しました"
+ },
+ "Failed to serialize process detail data: %w": {
+  "ja": "処理詳細データのシリアライズに失敗しました: %w"
+ },
+ "Failed to set branch permissions": {
+  "ja": "ブランチの権限の設定に失敗しました"
+ },
+ "Failed to set conversation project: %w": {
+  "ja": "会話のプロジェクトの設定に失敗しました: %w"
+ },
+ "Failed to set journal_size_limit: %w": {
+  "ja": "journal_size_limit の設定に失敗しました: %w"
+ },
+ "Failed to set wal_autocheckpoint: %w": {
+  "ja": "wal_autocheckpoint の設定に失敗しました: %w"
+ },
+ "Failed to start": {
+  "ja": "開始に失敗しました"
+ },
+ "Failed to start C2: %v": {
+  "ja": "C2 の起動に失敗しました: %v"
+ },
+ "Failed to swap in new binary: %w": {
+  "ja": "新しいバイナリの入れ替えに失敗しました: %w"
+ },
+ "Failed to unlink assets from project: %w": {
+  "ja": "資産とプロジェクトの関連付けの解除に失敗しました: %w"
+ },
+ "Failed to unlink the C2 listener from the project: %w": {
+  "ja": "C2 リスナーとプロジェクトの関連付けを解除できませんでした: %w"
+ },
+ "Failed to unlink the WebShell from the project: %w": {
+  "ja": "WebShell とプロジェクトの関連付けを解除できませんでした: %w"
+ },
+ "Failed to unlink vulnerabilities from project: %w": {
+  "ja": "脆弱性とプロジェクトの関連付けの解除に失敗しました: %w"
+ },
+ "Failed to update SKILL.md: %v": {
+  "ja": "SKILL.md の更新に失敗しました: %v"
+ },
+ "Failed to update asset risk cache: %w": {
+  "ja": "資産のリスクキャッシュの更新に失敗しました: %w"
+ },
+ "Failed to update asset: %w": {
+  "ja": "資産の更新に失敗しました: %w"
+ },
+ "Failed to update assets in bulk": {
+  "ja": "資産の一括更新に失敗しました"
+ },
+ "Failed to update assistant message: %w": {
+  "ja": "アシスタントメッセージの更新に失敗しました: %w"
+ },
+ "Failed to update batch task message: %w": {
+  "ja": "バッチタスクのメッセージの更新に失敗しました: %w"
+ },
+ "Failed to update batch task queue current index: %w": {
+  "ja": "バッチタスクキューの現在のインデックスの更新に失敗しました: %w"
+ },
+ "Failed to update batch task queue metadata: %w": {
+  "ja": "バッチタスクキューのメタデータの更新に失敗しました: %w"
+ },
+ "Failed to update batch task queue status: %w": {
+  "ja": "バッチタスクキューのステータスの更新に失敗しました: %w"
+ },
+ "Failed to update batch task schedule configuration: %w": {
+  "ja": "バッチタスクのスケジュール設定の更新に失敗しました: %w"
+ },
+ "Failed to update batch task schedule switch: %w": {
+  "ja": "バッチタスクのスケジュールスイッチの更新に失敗しました: %w"
+ },
+ "Failed to update batch task status: %w": {
+  "ja": "バッチタスクのステータスの更新に失敗しました: %w"
+ },
+ "Failed to update conversation mode: %w": {
+  "ja": "会話のモードの更新に失敗しました: %w"
+ },
+ "Failed to update conversation pinned state: %w": {
+  "ja": "会話のピン留め状態の更新に失敗しました: %w"
+ },
+ "Failed to update conversation role: %w": {
+  "ja": "会話のロールの更新に失敗しました: %w"
+ },
+ "Failed to update conversation time: %w": {
+  "ja": "会話の日時の更新に失敗しました: %w"
+ },
+ "Failed to update conversation title: %w": {
+  "ja": "会話タイトルの更新に失敗しました: %w"
+ },
+ "Failed to update fact: %w": {
+  "ja": "ファクトの更新に失敗しました: %w"
+ },
+ "Failed to update knowledge item: %w": {
+  "ja": "ナレッジ項目の更新に失敗しました: %w"
+ },
+ "Failed to update primary asset": {
+  "ja": "主資産の更新に失敗しました"
+ },
+ "Failed to update process detail: %w": {
+  "ja": "処理詳細の更新に失敗しました: %w"
+ },
+ "Failed to update project: %w": {
+  "ja": "プロジェクトの更新に失敗しました: %w"
+ },
+ "Failed to update task message: %w": {
+  "ja": "タスクメッセージの更新に失敗しました: %w"
+ },
+ "Failed to update user password": {
+  "ja": "ユーザーのパスワードの更新に失敗しました"
+ },
+ "Failed to update vulnerability: %w": {
+  "ja": "脆弱性の更新に失敗しました: %w"
+ },
+ "Failed to update workflow HITL waiting status: %w": {
+  "ja": "ワークフローの HITL 待機ステータスの更新に失敗しました: %w"
+ },
+ "Failed to update workflow node run: %w": {
+  "ja": "ワークフローのノード実行の更新に失敗しました: %w"
+ },
+ "Failed to update workflow run status: %w": {
+  "ja": "ワークフロー実行のステータスの更新に失敗しました: %w"
+ },
+ "Failed to update workflow run: %w": {
+  "ja": "ワークフロー実行の更新に失敗しました: %w"
+ },
+ "Failed to validate vulnerability association": {
+  "ja": "脆弱性の関連付けの検証に失敗しました"
+ },
+ "Failed to vectorize query: %w": {
+  "ja": "クエリのベクトル化に失敗しました: %w"
+ },
+ "Failed to verify workflow binding: %w": {
+  "ja": "ワークフローのバインドを検証できません: %w"
+ },
+ "Failed to write agent file": {
+  "ja": "エージェントファイルの書き込みに失敗しました"
+ },
+ "Failed to write bot conversation binding: %w": {
+  "ja": "ボットの会話バインドの書き込みに失敗しました: %w"
+ },
+ "Failed to write edge: %w": {
+  "ja": "エッジの書き込みに失敗しました: %w"
+ },
+ "Failed to write file %s: %w": {
+  "ja": "ファイル %s の書き込みに失敗しました: %w"
+ },
+ "Failed to write file: %w": {
+  "ja": "ファイルの書き込みに失敗しました: %w"
+ },
+ "Failed to write last run error: %w": {
+  "ja": "最後の実行エラーの書き込みに失敗しました: %w"
+ },
+ "Failed to write model Token usage: %w": {
+  "ja": "モデルの Token 使用量の書き込みに失敗しました: %w"
+ },
+ "Failed to write schedule error message: %w": {
+  "ja": "スケジュールのエラーメッセージの書き込みに失敗しました: %w"
+ },
+ "Field %s has no saved credential, please enter a new value": {
+  "ja": "フィールド %s に保存済みの認証情報がありません。新しい値を入力してください"
+ },
+ "File already exists": {
+  "ja": "ファイルは既に存在します"
+ },
+ "File not found": {
+  "ja": "ファイルが見つかりません"
+ },
+ "Final reply check has not converged, continuing from the existing trace...": {
+  "ja": "最終回答のチェックが収束していません。既存のトレースから続行しています…"
+ },
+ "Findings are required": {
+  "ja": "発見事項は必須です"
+ },
+ "Full index rebuild started and will run in the background": {
+  "ja": "フルインデックスの再構築を開始しました。バックグラウンドで実行されます"
+ },
+ "HITL Pending Approval": {
+  "ja": "HITL 承認待ち"
+ },
+ "HITL approval triggered": {
+  "ja": "HITL 承認がトリガーされました"
+ },
+ "HITL configuration persistence is unavailable": {
+  "ja": "HITL 設定の永続化は利用できません"
+ },
+ "HITL policy persistence is unavailable": {
+  "ja": "HITL ポリシーの永続化は利用できません"
+ },
+ "HITL rejected: %v": {
+  "ja": "HITL 承認で拒否されました: %v"
+ },
+ "Header credential scope mismatch": {
+  "ja": "ヘッダー認証情報のスコープが一致しません"
+ },
+ "Human approval granted, continuing execution": {
+  "ja": "人による承認が完了しました。実行を続行します"
+ },
+ "Idempotency-Key must contain 1–200 bytes": {
+  "ja": "Idempotency-Key は 1～200 バイトで指定してください"
+ },
+ "Image exceeds the limit of 8 MiB per image or 12 MiB in total per request": {
+  "ja": "画像が 1 枚あたり 8 MiB、または 1 回あたり合計 12 MiB の上限を超えています"
+ },
+ "Image resolution is too large": {
+  "ja": "画像の解像度が大きすぎます"
+ },
+ "Incorrect username or password": {
+  "ja": "ユーザー名またはパスワードが正しくありません"
+ },
+ "Index build started and will run in the background": {
+  "ja": "インデックスの構築を開始しました。バックグラウンドで実行されます"
+ },
+ "Index write failed (knowledge item: %s): %v": {
+  "ja": "インデックスの書き込みに失敗しました (ナレッジ項目: %s): %v"
+ },
+ "Indexing chain is not initialized": {
+  "ja": "インデックスチェーンが初期化されていません"
+ },
+ "Insufficient permissions": {
+  "ja": "権限が不足しています"
+ },
+ "Interactive WebSocket terminal is not supported on Windows; use POST /terminal/run or /terminal/run/stream instead.": {
+  "ja": "Windows ではインタラクティブな WebSocket ターミナルはサポートされていません。代わりに POST /terminal/run または /terminal/run/stream を使用してください"
+ },
+ "Invalid Agent ID format": {
+  "ja": "Agent ID の形式が無効です"
+ },
+ "Invalid PKCS7 padding": {
+  "ja": "PKCS7 パディングが無効です"
+ },
+ "Invalid agent name: %w": {
+  "ja": "エージェント名が無効です: %w"
+ },
+ "Invalid attachment directory": {
+  "ja": "添付ファイルのディレクトリが無効です"
+ },
+ "Invalid attachment path": {
+  "ja": "添付ファイルのパスが無効です"
+ },
+ "Invalid bot authentication mode": {
+  "ja": "ボットの認証モードが無効です"
+ },
+ "Invalid call interception configuration: %w": {
+  "ja": "呼び出しインターセプト設定が無効です: %w"
+ },
+ "Invalid cron expression: %v": {
+  "ja": "Cron 式が無効です: %v"
+ },
+ "Invalid edge type: %s": {
+  "ja": "edge type が無効です: %s"
+ },
+ "Invalid fact_key format: only letters, digits, and . _ / - are allowed, and it must start with a letter or digit (camelCase is supported)": {
+  "ja": "fact_key の形式が無効です。使用できるのは英字、数字、および . _ / - のみで、先頭は英字または数字にする必要があります（キャメルケースも使用できます）"
+ },
+ "Invalid file name": {
+  "ja": "ファイル名が無効です"
+ },
+ "Invalid header credential placeholder": {
+  "ja": "ヘッダー認証情報のプレースホルダーが無効です"
+ },
+ "Invalid image format": {
+  "ja": "画像形式が無効です"
+ },
+ "Invalid image input mode": {
+  "ja": "画像入力モードが無効です"
+ },
+ "Invalid matches regular expression: %w": {
+  "ja": "matches の正規表現が無効です: %w"
+ },
+ "Invalid mode parameter. Allowed values: missing, full": {
+  "ja": "mode パラメーターが無効です。指定可能な値: missing、full"
+ },
+ "Invalid parameters": {
+  "ja": "パラメーターが無効です"
+ },
+ "Invalid repository address (only https/http/ssh/git/file:// or a local absolute path are allowed)": {
+  "ja": "リポジトリのアドレスが無効です（https/http/ssh/git/file:// またはローカルの絶対パスのみ指定できます）"
+ },
+ "Invalid request body: the command field is required": {
+  "ja": "リクエストボディが無効です。command フィールドが必要です"
+ },
+ "Invalid request parameters: %v": {
+  "ja": "リクエストパラメーターが無効です: %v"
+ },
+ "Invalid session": {
+  "ja": "セッションが無効です"
+ },
+ "Invalid source fact_key (%s): %w": {
+  "ja": "source fact_key が無効です (%s): %w"
+ },
+ "Invalid target fact_key (%s): %w": {
+  "ja": "target fact_key が無効です (%s): %w"
+ },
+ "Invalid tool guard configuration: %v": {
+  "ja": "呼び出し遮断設定が無効です: %v"
+ },
+ "Invalid tool name format: %s": {
+  "ja": "ツール名の形式が無効です: %s"
+ },
+ "Invalid trial match parameters: %v": {
+  "ja": "試行マッチのパラメーターが無効です: %v"
+ },
+ "Invalid version number: %q": {
+  "ja": "バージョン番号が無効です: %q"
+ },
+ "Invalid working directory": {
+  "ja": "作業ディレクトリが無効です"
+ },
+ "Iteration ended, automatically terminated tool executions that were still running.": {
+  "ja": "イテレーションが終了したため、実行中だったツールの実行を自動的に終了しました。"
+ },
+ "JSONPath brackets do not match": {
+  "ja": "JSONPath の角括弧が対応していません"
+ },
+ "JSONPath is required": {
+  "ja": "JSONPath は必須です"
+ },
+ "JSONPath/JQ function format must be jsonpath(value, \"$.path\") or jq(value, \".path\")": {
+  "ja": "JSONPath/JQ 関数の形式は jsonpath(value, \"$.path\") または jq(value, \".path\") である必要があります"
+ },
+ "JSONPath/JQ path must start with $ or .": {
+  "ja": "JSONPath/JQ のパスは $ または . で始まる必要があります"
+ },
+ "Jitter must satisfy 0 <= min <= max": {
+  "ja": "Jitter は 0 <= min <= max を満たす必要があります"
+ },
+ "Knowledge base is not enabled. Enable knowledge retrieval in system settings": {
+  "ja": "ナレッジベース機能が有効になっていません。システム設定でナレッジ検索機能を有効にしてください"
+ },
+ "Knowledge base path is not configured": {
+  "ja": "ナレッジベースのパスが設定されていません"
+ },
+ "Knowledge item not found": {
+  "ja": "ナレッジ項目が見つかりません"
+ },
+ "LLM JSON is missing graph.nodes": {
+  "ja": "LLM の JSON に graph.nodes がありません"
+ },
+ "LLM generation failed: %v": {
+  "ja": "LLM による生成に失敗しました: %v"
+ },
+ "LLM response is empty": {
+  "ja": "LLM の応答が空です"
+ },
+ "LLM returned no candidate results": {
+  "ja": "LLM から候補結果が返されませんでした"
+ },
+ "Last scan time updated; the related vulnerability count is computed automatically from vulnerabilities saved in the current scan conversation": {
+  "ja": "最終スキャン日時を更新しました。関連する脆弱性数は、現在のスキャン会話で保存された脆弱性から自動的に計算されます"
+ },
+ "Line %d has an empty type or fact_key": {
+  "ja": "%d 行目の type または fact_key が空です"
+ },
+ "Line %d has an invalid format; expected type: fact_key": {
+  "ja": "%d 行目の形式が無効です。type: fact_key の形式にしてください"
+ },
+ "Listener type %s does not support %s one-liners; choose a compatible type": {
+  "ja": "リスナー種別 %s は %s 形式の oneliner に対応していません。対応する種別を選択してください"
+ },
+ "Listener type %s does not support %s; compatible types: %v": {
+  "ja": "リスナー種別 %s は %s に対応していません。対応する種別: %v"
+ },
+ "Logged out": {
+  "ja": "ログアウトしました"
+ },
+ "Login session not found or expired": {
+  "ja": "ログインセッションが見つからないか期限切れです"
+ },
+ "Login session not found or expired; please regenerate the QR code": {
+  "ja": "ログインセッションが見つからないか期限切れです。QR コードを再生成してください"
+ },
+ "Long Running Task": {
+  "ja": "長時間実行中のタスク"
+ },
+ "Max iterations cannot be negative": {
+  "ja": "最大反復回数は負の値にできません"
+ },
+ "Maximum retries reached (%d): %v": {
+  "ja": "最大再試行回数に達しました (%d): %v"
+ },
+ "Merge group not found or you have no permission to modify all members": {
+  "ja": "統合グループが見つからないか、すべてのメンバーを変更する権限がありません"
+ },
+ "Merged records must belong to the same project": {
+  "ja": "統合するレコードは同じプロジェクトに属している必要があります"
+ },
+ "Merged result would exceed 30 tags": {
+  "ja": "統合後のタグが 30 個を超えます"
+ },
+ "Merged user addition with the latest trace, continuing reasoning...": {
+  "ja": "ユーザーの追加内容を最新のトレースにマージしました。推論を続行しています…"
+ },
+ "Message length out of range": {
+  "ja": "メッセージ長が範囲外です"
+ },
+ "Messages parsed from the agent trace are empty": {
+  "ja": "エージェントのトレースから解析したメッセージが空です"
+ },
+ "Missing CREATE TABLE column definitions": {
+  "ja": "CREATE TABLE の列定義がありません"
+ },
+ "Model identity or address has changed, please re-enter header credentials": {
+  "ja": "モデルの識別情報またはアドレスが変更されました。ヘッダー認証情報を再入力してください"
+ },
+ "Model is required": {
+  "ja": "モデルは必須です"
+ },
+ "Model output reached the length limit; the reply for this turn is incomplete.": {
+  "ja": "モデルの出力が長さの上限に達したため、このターンの返信は未完了です。"
+ },
+ "More than %d assets matched. Narrow the filter": {
+  "ja": "一致した資産が %d 件を超えています。絞り込み条件を狭めてください"
+ },
+ "Multi-agent is not enabled. Set multi_agent.enabled: true in config.yaml": {
+  "ja": "マルチエージェントが有効になっていません。config.yaml で multi_agent.enabled: true を設定してください"
+ },
+ "Multi-agent is not enabled; enable multi_agent.enabled in settings or config.yaml": {
+  "ja": "マルチエージェントが有効になっていません。設定または config.yaml で multi_agent.enabled を有効にしてください"
+ },
+ "Must be an array of strings": {
+  "ja": "文字列の配列で指定してください"
+ },
+ "Name is required": {
+  "ja": "名前は必須です"
+ },
+ "New Vulnerability (%v)": {
+  "ja": "新しい脆弱性（%v）"
+ },
+ "New password must be at least 8 characters": {
+  "ja": "新しいパスワードは 8 文字以上にしてください"
+ },
+ "New password must differ from the old password": {
+  "ja": "新しいパスワードは古いパスワードと異なるものにしてください"
+ },
+ "No in-progress tool execution found, or the call has already finished": {
+  "ja": "実行中のツールが見つからないか、その呼び出しはすでに終了しています"
+ },
+ "No permission to access one or more execution records": {
+  "ja": "1 件以上の実行記録にアクセスする権限がありません"
+ },
+ "No permission to access the target project or source conversation": {
+  "ja": "対象プロジェクトまたは元の会話にアクセスする権限がありません"
+ },
+ "No permission to access this vulnerability": {
+  "ja": "この脆弱性にアクセスする権限がありません"
+ },
+ "No permission to create or run a retest branch for this vulnerability": {
+  "ja": "この脆弱性の再テストブランチを作成または実行する権限がありません"
+ },
+ "No permission to create vulnerabilities in this conversation": {
+  "ja": "この会話に脆弱性を作成する権限がありません"
+ },
+ "No permission to create vulnerabilities in this project": {
+  "ja": "このプロジェクトに脆弱性を作成する権限がありません"
+ },
+ "No permission to link to the target project": {
+  "ja": "対象プロジェクトに関連付ける権限がありません"
+ },
+ "No permission to write to the conversation": {
+  "ja": "会話への書き込み権限がありません"
+ },
+ "No previous binary: %s": {
+  "ja": "以前のバイナリがありません: %s"
+ },
+ "No restart hook was provided for this launch. After setup is complete, restart the service with an external process manager": {
+  "ja": "今回の起動では再起動フックが提供されていません。接続完了後に外部プロセスマネージャーでサービスを再起動してください"
+ },
+ "No restart hook was provided for this launch. After the update completes, restart the service with an external process manager": {
+  "ja": "今回の起動では再起動フックが提供されていません。更新完了後に外部プロセスマネージャーでサービスを再起動してください"
+ },
+ "No restart hook was provided for this launch. Restart the service with an external process manager": {
+  "ja": "今回の起動では再起動フックが提供されていません。外部プロセスマネージャーでサービスを再起動してください"
+ },
+ "No running task found": {
+  "ja": "実行中のタスクが見つかりません"
+ },
+ "No running tool execution found, or the task has already finished": {
+  "ja": "実行中のツール実行が見つからないか、タスクは既に終了しています"
+ },
+ "No saved API Key": {
+  "ja": "保存済みの API Key がありません"
+ },
+ "No saved header credential": {
+  "ja": "保存済みのヘッダー認証情報がありません"
+ },
+ "No valid tasks": {
+  "ja": "有効なタスクがありません"
+ },
+ "No vulnerabilities to delete under the current filters": {
+  "ja": "現在のフィルター条件に該当する削除可能な脆弱性がありません"
+ },
+ "Node \"%s\" can have at most one default branch among its conditional outgoing edges": {
+  "ja": "ノード「%s」の条件付き出力エッジには、デフォルト分岐を最大 1 つしか設定できません"
+ },
+ "Node \"%s\" cannot reach an output/end node": {
+  "ja": "ノード「%s」は output/end ノードに到達できません"
+ },
+ "Node \"%s\" did not continue execution": {
+  "ja": "ノード「%s」は実行を継続しませんでした"
+ },
+ "Node \"%s\" failed: %s": {
+  "ja": "ノード「%s」が失敗しました: %s"
+ },
+ "Node \"%s\" has an invalid edge condition: %w": {
+  "ja": "ノード「%s」のエッジ条件が無効です: %w"
+ },
+ "Node \"%s\" has no outgoing edges; connect it to an output/end node": {
+  "ja": "ノード「%s」に出力エッジがありません。output/end ノードに接続してください"
+ },
+ "Node \"%s\" is missing a node type": {
+  "ja": "ノード「%s」にノードタイプがありません"
+ },
+ "Node \"%s\" is unreachable: it is not connected from the start node": {
+  "ja": "ノード「%s」に到達できません。開始ノードから接続されていません"
+ },
+ "Node \"%s\" is unreachable: non-start nodes must have incoming edges": {
+  "ja": "ノード「%s」に到達できません。開始ノード以外には入力エッジが必要です"
+ },
+ "Node \"%s\" must declare a join strategy when it has multiple upstream nodes": {
+  "ja": "ノード「%s」に複数の上流ノードがある場合は、集約戦略を指定する必要があります"
+ },
+ "Node \"%s\" uses an unknown join strategy: %s": {
+  "ja": "ノード「%s」が不明な集約戦略を使用しています: %s"
+ },
+ "Node \"%s\" uses an unknown node type: %s": {
+  "ja": "ノード「%s」が不明なノードタイプを使用しています: %s"
+ },
+ "Node finished: %s (%s)": {
+  "ja": "ノード完了: %s（%s）"
+ },
+ "Node run id is required": {
+  "ja": "ノード実行の id は必須です"
+ },
+ "Node run id, run_id, and node_id are required": {
+  "ja": "ノード実行の id、run_id、node_id は必須です"
+ },
+ "Not a regular executable file: %s": {
+  "ja": "通常の実行可能ファイルではありません: %s"
+ },
+ "Not allowed to access this WebShell connection": {
+  "ja": "この WebShell 接続へのアクセス権限がありません"
+ },
+ "Not allowed to access this connection": {
+  "ja": "この接続へのアクセス権限がありません"
+ },
+ "Not allowed to link the target conversation": {
+  "ja": "対象の会話を関連付ける権限がありません"
+ },
+ "Not authorized to access attachment %s": {
+  "ja": "添付ファイル %s にアクセスする権限がありません"
+ },
+ "Not authorized to access the target project": {
+  "ja": "対象プロジェクトにアクセスする権限がありません"
+ },
+ "Not authorized to access this WebShell connection": {
+  "ja": "この WebShell 接続にアクセスする権限がありません"
+ },
+ "Not authorized to access this conversation": {
+  "ja": "この会話にアクセスする権限がありません"
+ },
+ "Not authorized to bind this project": {
+  "ja": "このプロジェクトにバインドする権限がありません"
+ },
+ "Not authorized to link this conversation": {
+  "ja": "この会話に関連付ける権限がありません"
+ },
+ "Not authorized to link this task queue": {
+  "ja": "このタスクキューに関連付ける権限がありません"
+ },
+ "Not connected": {
+  "ja": "未接続"
+ },
+ "Number of assets to merge must be between 2 and 100": {
+  "ja": "統合する資産の数は 2～100 の範囲で指定してください"
+ },
+ "Only a safe path subset is supported; wildcards, recursion and expressions are not supported": {
+  "ja": "安全なパスのサブセットのみサポートされます。ワイルドカード、再帰、式はサポートされません"
+ },
+ "Only completed or cancelled queues can be rerun": {
+  "ja": "再実行できるのは完了またはキャンセル済みのキューのみです"
+ },
+ "OpenAI client is not initialized": {
+  "ja": "OpenAI クライアントが初期化されていません"
+ },
+ "OpenAI model %q requires /v1/responses for function tools and does not support reasoning_effort=none; this backend uses /v1/chat/completions: select a compatible model": {
+  "ja": "OpenAI モデル %q は関数ツールに /v1/responses が必要で、reasoning_effort=none をサポートしません。このバックエンドは /v1/chat/completions を使用するため、互換性のあるモデルを選択してください"
+ },
+ "OpenAI model %q requires reasoning_effort=none for function tools in /v1/chat/completions: set reasoning mode to off; reasoning with function tools requires /v1/responses": {
+  "ja": "OpenAI モデル %q は /v1/chat/completions で関数ツールを使う場合、reasoning_effort=none が必要です。推論モードをオフにしてください。関数ツールを伴う推論には /v1/responses が必要です"
+ },
+ "Original conversation not found": {
+  "ja": "元の会話が見つかりません"
+ },
+ "Outgoing edges of condition node \"%s\" must be labeled yes/no or true/false": {
+  "ja": "条件ノード「%s」の出力エッジには、はい/いいえ または true/false のラベルが必要です"
+ },
+ "Output node \"%s\" requires an output variable name": {
+  "ja": "出力ノード「%s」には出力変数名が必要です"
+ },
+ "Pairing code submitted; please keep waiting for binding": {
+  "ja": "ペアリングコードを送信しました。連携が完了するまでお待ちください"
+ },
+ "Parse error": {
+  "ja": "解析エラー"
+ },
+ "Parsing %v response failed: %v": {
+  "ja": "%v レスポンスの解析に失敗しました: %v"
+ },
+ "Password is required": {
+  "ja": "パスワードを入力してください"
+ },
+ "Password must be at least 8 characters": {
+  "ja": "パスワードは 8 文字以上である必要があります"
+ },
+ "Password updated, please sign in again with the new password": {
+  "ja": "パスワードを更新しました。新しいパスワードで再度ログインしてください"
+ },
+ "Pausing the current reasoning has been requested; user additions will be merged into the context and execution will continue automatically (no need to stop the whole turn).": {
+  "ja": "現在の推論の一時停止をリクエストしました。ユーザーの補足はコンテキストに統合され、自動的に実行が続行されます（ターン全体を停止する必要はありません）。"
+ },
+ "Pending build state is corrupted: %w": {
+  "ja": "ビルド待ち状態が破損しています: %w"
+ },
+ "Pi %s requires at least one configured sub-agent": {
+  "ja": "Pi %s には少なくとも1つのサブエージェントの設定が必要です"
+ },
+ "Pi agent is nil": {
+  "ja": "Pi エージェントが nil です"
+ },
+ "Pi agent/config is nil": {
+  "ja": "Pi エージェント/設定が nil です"
+ },
+ "Pi build produced no worker: %w": {
+  "ja": "Pi のビルドで worker が生成されませんでした: %w"
+ },
+ "Pi protocol failure: %s": {
+  "ja": "Pi プロトコルエラー: %s"
+ },
+ "Pi request exceeds protocol record limit": {
+  "ja": "Pi リクエストがプロトコルレコードの上限を超えています"
+ },
+ "Pi requires Node.js >=22.19": {
+  "ja": "Pi には Node.js >=22.19 が必要です"
+ },
+ "Pi requires Node.js >=22.19: %w": {
+  "ja": "Pi には Node.js >=22.19 が必要です: %w"
+ },
+ "Pi returned an empty result": {
+  "ja": "Pi が空の結果を返しました"
+ },
+ "Pi returned no background proposal": {
+  "ja": "Pi がバックグラウンドの提案を返しませんでした"
+ },
+ "Pi runtime build failed: %w\n%s": {
+  "ja": "Pi ランタイムのビルドに失敗しました: %w\n%s"
+ },
+ "Pi runtime error: %s": {
+  "ja": "Pi ランタイムエラー: %s"
+ },
+ "Pi runtime protocol mismatch": {
+  "ja": "Pi ランタイムのプロトコルが一致しません"
+ },
+ "Pi runtime readiness check failed; verify Node.js >=22.19 and rebuild with bash scripts/build-pi-runtime.sh": {
+  "ja": "Pi ランタイムの準備確認に失敗しました。Node.js >=22.19 を確認し、bash scripts/build-pi-runtime.sh で再ビルドしてください"
+ },
+ "Pi sub-agent has no ID": {
+  "ja": "Pi サブエージェントに ID がありません"
+ },
+ "Pi token usage summary": {
+  "ja": "Pi トークン使用量のサマリー"
+ },
+ "Pi tool call has no identity": {
+  "ja": "Pi のツール呼び出しに識別子がありません"
+ },
+ "Pi tool concurrency limit exceeded": {
+  "ja": "Pi ツールの同時実行数の上限を超えました"
+ },
+ "Pi tool name collision: %s": {
+  "ja": "Pi ツール名が衝突しています: %s"
+ },
+ "Pi worker closed stdout before handshake": {
+  "ja": "Pi worker がハンドシェイク前に stdout を閉じました"
+ },
+ "Pi worker closed stdout without a result": {
+  "ja": "Pi worker が結果を返す前に stdout を閉じました"
+ },
+ "Pi worker does not exist: %s": {
+  "ja": "Pi worker が存在しません: %s"
+ },
+ "Pi worker missing; run bash scripts/build-pi-runtime.sh, or configure agent_runtime.worker_path": {
+  "ja": "Pi worker が見つかりません。bash scripts/build-pi-runtime.sh を実行するか、agent_runtime.worker_path を設定してください"
+ },
+ "Pi worker startup timeout": {
+  "ja": "Pi worker の起動がタイムアウトしました"
+ },
+ "Plaintext is too short": {
+  "ja": "平文が短すぎます"
+ },
+ "Please log in first": {
+  "ja": "先にログインしてください"
+ },
+ "Please provide a reason for the split": {
+  "ja": "分割の理由を入力してください"
+ },
+ "Please specify a channel or model credential scope to restore headers": {
+  "ja": "ヘッダーを復元するには、チャネルまたはモデルの認証情報スコープを指定してください"
+ },
+ "Please stop the current task before deleting the conversation turn": {
+  "ja": "会話のターンを削除する前に、現在のタスクを停止してください"
+ },
+ "Points to other facts:\n": {
+  "ja": "他の fact を指しています:\n"
+ },
+ "Primary asset does not exist or you lack permission to update it": {
+  "ja": "主資産が存在しないか、更新する権限がありません"
+ },
+ "Primary asset is required": {
+  "ja": "主資産は必須です"
+ },
+ "Primary asset not found or not authorized": {
+  "ja": "メイン資産が見つからないか、アクセス権限がありません"
+ },
+ "Process detail not found": {
+  "ja": "処理詳細が見つかりません"
+ },
+ "Process detail not found: %s": {
+  "ja": "処理詳細が見つかりません: %s"
+ },
+ "Project name is required": {
+  "ja": "プロジェクト名は必須です"
+ },
+ "Project not found": {
+  "ja": "プロジェクトが見つかりません"
+ },
+ "Project resume record saved": {
+  "ja": "プロジェクト再開レコードを保存しました"
+ },
+ "Provide the config to test": {
+  "ja": "テスト対象の config を指定してください"
+ },
+ "Provide the selected records, a name, and a merge reason": {
+  "ja": "選択したレコード、名前、統合理由を指定してください"
+ },
+ "QR code expired; please regenerate it": {
+  "ja": "QR コードの有効期限が切れました。再生成してください"
+ },
+ "Quake base_url is invalid: %v": {
+  "ja": "Quake base_url が無効です: %v"
+ },
+ "Query is required": {
+  "ja": "クエリは必須です"
+ },
+ "Queue has running tasks, cannot modify approval settings": {
+  "ja": "キューに実行中のタスクがあるため、承認設定を変更できません"
+ },
+ "Queue is running or not ready, cannot add task": {
+  "ja": "キューが実行中か準備できていないため、タスクを追加できません"
+ },
+ "Queue is running or not ready, cannot delete task": {
+  "ja": "キューが実行中か準備できていないため、タスクを削除できません"
+ },
+ "Queue is running or not ready, cannot edit task": {
+  "ja": "キューが実行中か準備できていないため、タスクを編集できません"
+ },
+ "Queue is running or not ready, cannot run a single task": {
+  "ja": "キューが実行中か準備できていないため、単一タスクを実行できません"
+ },
+ "Queue is running, cannot modify": {
+  "ja": "キューが実行中のため変更できません"
+ },
+ "Queue not found": {
+  "ja": "キューが見つかりません"
+ },
+ "Queue not found or cannot be paused": {
+  "ja": "キューが見つからないか、一時停止できません"
+ },
+ "RBAC service unavailable, cannot validate robot service account": {
+  "ja": "RBAC サービスが利用できないため、ロボットのサービスアカウントを検証できません"
+ },
+ "Reading %v response failed: %v": {
+  "ja": "%v レスポンスの読み取りに失敗しました: %v"
+ },
+ "Record is already merged; split the original merge group first": {
+  "ja": "レコードはすでに統合されています。先に元の統合グループを分割してください"
+ },
+ "Report body exceeds the 8 MiB limit; please narrow the scope": {
+  "ja": "レポート本文が 8 MiB の上限を超えています。範囲を絞ってください"
+ },
+ "Report exceeds the limit of 2000 findings": {
+  "ja": "レポートが 2000 件の発見事項の上限を超えています"
+ },
+ "Report title is required": {
+  "ja": "レポートタイトルは必須です"
+ },
+ "Request body is not valid JSON": {
+  "ja": "リクエストボディが有効な JSON ではありません"
+ },
+ "Request body must be JSON containing platform, user_id, and text": {
+  "ja": "リクエストボディは platform、user_id、text を含む JSON である必要があります"
+ },
+ "Request body must be JSON, e.g. {\"note\":\"description\"}; an empty object is allowed": {
+  "ja": "リクエストボディは JSON である必要があります。例: {\"note\":\"説明\"}（空のオブジェクトも可）"
+ },
+ "Request failed: %w": {
+  "ja": "リクエストに失敗しました: %w"
+ },
+ "Request is required": {
+  "ja": "リクエストは必須です"
+ },
+ "Request must contain exactly one JSON object": {
+  "ja": "リクエストには JSON オブジェクトを 1 つだけ含める必要があります"
+ },
+ "Resource ID is required": {
+  "ja": "リソース ID は必須です"
+ },
+ "Resource ID matches multiple types: %s (%s, %s)": {
+  "ja": "リソース ID が複数のタイプに一致します: %s (%s, %s)"
+ },
+ "Resource authorization service is unavailable": {
+  "ja": "リソース認可サービスが利用できません"
+ },
+ "Resource grant not found or already revoked": {
+  "ja": "リソースの認可が見つからないか、すでに取り消されています"
+ },
+ "Resource not found: %s": {
+  "ja": "リソースが見つかりません: %s"
+ },
+ "Resource not found: %s/%s": {
+  "ja": "リソースが見つかりません: %s/%s"
+ },
+ "Restored the default update source (official repository)": {
+  "ja": "既定の更新ソース（公式リポジトリ）に戻しました"
+ },
+ "Retrieval log not found": {
+  "ja": "検索ログが見つかりません"
+ },
+ "Robot account is missing agent:execute, chat:read or chat:write permission": {
+  "ja": "ロボットアカウントに agent:execute、chat:read、chat:write のいずれかの権限がありません"
+ },
+ "Robot conversation mode %s requires Agent multi-agent to be enabled": {
+  "ja": "ロボットの会話モード %s には Agent マルチエージェントの有効化が必要です"
+ },
+ "Role already exists": {
+  "ja": "ロールは既に存在します"
+ },
+ "Role created": {
+  "ja": "ロールを作成しました"
+ },
+ "Role deleted": {
+  "ja": "ロールを削除しました"
+ },
+ "Role is not bound to a workflow": {
+  "ja": "ロールにワークフローが紐付けられていません"
+ },
+ "Role name cannot contain control characters": {
+  "ja": "ロール名に制御文字は使用できません"
+ },
+ "Role name cannot contain path or special file name characters": {
+  "ja": "ロール名にパスやファイル名の特殊文字は使用できません"
+ },
+ "Role name cannot exceed %d characters": {
+  "ja": "ロール名は %d 文字以内にしてください"
+ },
+ "Role name cannot have leading or trailing spaces and cannot exceed 64 characters": {
+  "ja": "ロール名の先頭・末尾に空白は使用できません。また 64 文字を超えることはできません"
+ },
+ "Role name conflicts with an existing role's file name": {
+  "ja": "ロール名が既存ロールのファイル名と競合しています"
+ },
+ "Role name is required": {
+  "ja": "ロール名は必須です"
+ },
+ "Role not found": {
+  "ja": "ロールが見つかりません"
+ },
+ "Role updated": {
+  "ja": "ロールを更新しました"
+ },
+ "Rollback recovery record is missing the binary recovery decision": {
+  "ja": "ロールバック復旧記録にバイナリ復旧の判断がありません"
+ },
+ "Running branch '%s' -> %s": {
+  "ja": "ブランチ「%s」を実行 → %s"
+ },
+ "SKILL.md front matter: %w": {
+  "ja": "SKILL.md front matter: %w"
+ },
+ "SKILL.md front matter: description is required": {
+  "ja": "SKILL.md front matter: description は必須です"
+ },
+ "SKILL.md front matter: name is required": {
+  "ja": "SKILL.md front matter: name は必須です"
+ },
+ "SKILL.md front matter: unsupported key %q (allowed: name, description, license, compatibility, metadata, allowed-tools — see https://agentskills.io/specification.md)": {
+  "ja": "SKILL.md front matter: サポートされていないキー %q（使用可能: name, description, license, compatibility, metadata, allowed-tools — https://agentskills.io/specification.md を参照）"
+ },
+ "SKILL.md is empty": {
+  "ja": "SKILL.md が空です"
+ },
+ "SKILL.md must start with YAML front matter (---) per Agent Skills standard": {
+  "ja": "Agent Skills 標準に従い、SKILL.md は YAML front matter（---）で始まる必要があります"
+ },
+ "SKILL.md name %q must match directory name %q (Agent Skills spec)": {
+  "ja": "SKILL.md の name %q はディレクトリ名 %q と一致する必要があります（Agent Skills 仕様）"
+ },
+ "SKILL.md: front matter must end with a line containing only ---": {
+  "ja": "SKILL.md: front matter は --- のみの行で終わる必要があります"
+ },
+ "SKILL.md: markdown body after front matter must not be empty": {
+  "ja": "SKILL.md: front matter の後の Markdown 本文を空にすることはできません"
+ },
+ "Save failed: %v": {
+  "ja": "保存に失敗しました: %v"
+ },
+ "Saved": {
+  "ja": "保存しました"
+ },
+ "Scan complete. Indexing %d newly added or updated knowledge items": {
+  "ja": "スキャンが完了しました。新規追加または更新された %d 件のナレッジ項目のインデックス作成を開始します"
+ },
+ "Scan complete. No new or updated items need indexing": {
+  "ja": "スキャンが完了しました。インデックス対象の新規項目または更新項目はありません"
+ },
+ "Scan conversation is required": {
+  "ja": "スキャン会話は必須です"
+ },
+ "Scan the QR code with WeChat and confirm the binding": {
+  "ja": "WeChat で QR コードをスキャンし、連携を確認してください"
+ },
+ "Search keyword is required": {
+  "ja": "検索キーワードは必須です"
+ },
+ "Select 2-100 records and provide a vulnerability name and a merge reason": {
+  "ja": "2〜100 件のレコードを選択し、脆弱性名と統合の理由を入力してください"
+ },
+ "Server configuration is not loaded": {
+  "ja": "サーバー設定が読み込まれていません"
+ },
+ "Session configuration saved, but writing to config.yaml failed: %v": {
+  "ja": "セッション設定は保存されましたが、config.yaml への書き込みに失敗しました: %v"
+ },
+ "Session created": {
+  "ja": "セッションを作成しました"
+ },
+ "Session ended without a captured assistant body, auto-resuming in %d s (attempt %d/%d)...": {
+  "ja": "セッションはアシスタント本文を取得できないまま終了しました。%d 秒後に自動再開します（%d/%d 回目）…"
+ },
+ "Session expired": {
+  "ja": "セッションの有効期限が切れました"
+ },
+ "Shodan base_url is invalid: %v": {
+  "ja": "Shodan base_url が無効です: %v"
+ },
+ "Single-item execution started": {
+  "ja": "1 件の実行を開始しました"
+ },
+ "Skill already exists": {
+  "ja": "スキルは既に存在します"
+ },
+ "Skill created": {
+  "ja": "スキルを作成しました"
+ },
+ "Skill deleted": {
+  "ja": "スキルを削除しました"
+ },
+ "Skill deleted; binding automatically removed from %d roles: %s": {
+  "ja": "スキルを削除しました。%d 個のロールから紐付けを自動的に削除しました: %s"
+ },
+ "Skill directory name must consist of lowercase letters, digits, and hyphens (same as the Agent Skills name)": {
+  "ja": "スキルのディレクトリ名は小文字の英字、数字、ハイフンのみ使用できます（Agent Skills の name と同じ）"
+ },
+ "Skill name is required": {
+  "ja": "スキル名は必須です"
+ },
+ "Skill updated": {
+  "ja": "スキルを更新しました"
+ },
+ "Skipping branch '%s' -> %s": {
+  "ja": "ブランチ「%s」をスキップ → %s"
+ },
+ "Some assets do not exist or you lack permission to delete them": {
+  "ja": "一部の資産が存在しないか、削除する権限がありません"
+ },
+ "Some assets do not exist or you lack permission to update them": {
+  "ja": "一部の資産が存在しないか、更新する権限がありません"
+ },
+ "Some assets were not found or not authorized": {
+  "ja": "一部の資産が見つからないか、アクセス権限がありません"
+ },
+ "Some duplicate assets do not exist or you lack permission to delete them": {
+  "ja": "一部の重複資産が存在しないか、削除する権限がありません"
+ },
+ "Start node \"%s\" cannot have incoming edges": {
+  "ja": "開始ノード「%s」に入力エッジを設定することはできません"
+ },
+ "Start node \"%s\" requires at least one outgoing edge": {
+  "ja": "開始ノード「%s」には少なくとも 1 本の出力エッジが必要です"
+ },
+ "Starting Agent multi-agent...": {
+  "ja": "Agent マルチエージェントを起動しています..."
+ },
+ "Starting Pi single agent (ChatModelAgent)...": {
+  "ja": "Pi シングルエージェント（ChatModelAgent）を起動しています..."
+ },
+ "Storage cleanup is not initialized": {
+  "ja": "ストレージクリーンアップが初期化されていません"
+ },
+ "System configuration is not initialized": {
+  "ja": "システム設定が初期化されていません"
+ },
+ "Table %s column %s has no definition": {
+  "ja": "テーブル %[1]s の列 %[2]s に定義がありません"
+ },
+ "Task Completed": {
+  "ja": "タスク完了"
+ },
+ "Task Execution Failed": {
+  "ja": "タスク実行失敗"
+ },
+ "Task added": {
+  "ja": "タスクを追加しました"
+ },
+ "Task approval was rejected and execution was stopped.": {
+  "ja": "タスクの承認が拒否されたため、実行を停止しました。"
+ },
+ "Task completed: %s": {
+  "ja": "タスクが完了しました: %s"
+ },
+ "Task deleted": {
+  "ja": "タスクを削除しました"
+ },
+ "Task does not belong to the specified queue": {
+  "ja": "タスクは指定されたキューに属していません"
+ },
+ "Task execution failed and was stopped.": {
+  "ja": "タスクの実行に失敗したため、停止しました。"
+ },
+ "Task execution timed out and was terminated automatically.": {
+  "ja": "タスクの実行がタイムアウトしたため、自動的に終了しました。"
+ },
+ "Task failed: %s (%s)": {
+  "ja": "タスクが失敗しました: %s (%s)"
+ },
+ "Task interrupted by a service restart.": {
+  "ja": "サービスの再起動によりタスクが中断されました。"
+ },
+ "Task interrupted by a service restart; approval cancelled.": {
+  "ja": "サービスの再起動によりタスクが中断され、承認はキャンセルされました。"
+ },
+ "Task is ready, but automatic start failed: %v": {
+  "ja": "タスクの準備は完了しましたが、自動開始に失敗しました: %v"
+ },
+ "Task is ready, but the queue does not exist": {
+  "ja": "タスクの準備は完了しましたが、キューが存在しません"
+ },
+ "Task list is required": {
+  "ja": "タスクリストは必須です"
+ },
+ "Task message is required": {
+  "ja": "タスクメッセージは必須です"
+ },
+ "Task not found": {
+  "ja": "タスクが見つかりません"
+ },
+ "Task timed out waiting for approval and was rejected automatically.": {
+  "ja": "承認待ちでタイムアウトしたため、タスクは自動的に拒否されました。"
+ },
+ "Task updated": {
+  "ja": "タスクを更新しました"
+ },
+ "Task was canceled by the user; subsequent operations have stopped.": {
+  "ja": "タスクはユーザーによってキャンセルされ、以降の操作は停止しました。"
+ },
+ "Termination of the current execute command has been requested; reasoning for this turn will continue after the command returns.": {
+  "ja": "現在の execute コマンドの終了をリクエストしました。コマンドが結果を返した後、このターンの推論は続行されます。"
+ },
+ "Termination of the current tool call has been requested; reasoning for this turn will continue after the tool returns (same as terminating from the MCP monitor page).": {
+  "ja": "現在のツール呼び出しの終了をリクエストしました。ツールが結果を返した後、このターンの推論は続行されます（MCP モニターページでの終了と同じです）。"
+ },
+ "Termination signal sent": {
+  "ja": "終了シグナルを送信しました"
+ },
+ "The binary on disk does not exist; cannot restart": {
+  "ja": "ディスク上のバイナリが存在しないため、再起動できません"
+ },
+ "The binary on disk matches the running process; there is no pending version": {
+  "ja": "ディスク上のバイナリは実行中のプロセスと同一です。適用待ちのバージョンはありません"
+ },
+ "The bound platform account has been disabled": {
+  "ja": "バインドされたプラットフォームアカウントは無効化されています"
+ },
+ "The built-in administrator cannot be disabled": {
+  "ja": "組み込み管理者は無効化できません"
+ },
+ "The built-in administrator must keep the administrator role": {
+  "ja": "組み込み管理者は管理者ロールを保持する必要があります"
+ },
+ "The call interception configuration was modified by another user; your changes were not saved. Refresh the page to get the latest configuration and try again": {
+  "ja": "呼び出し遮断設定は他のユーザーによって変更されたため、今回の変更は保存されませんでした。ページを更新して最新の設定を取得してから再試行してください"
+ },
+ "The current conversation is not bound to a project, so project blackboard tools are unavailable. Select a project in the conversation first, or create a conversation with a project": {
+  "ja": "現在の会話はプロジェクトに紐づいていないため、プロジェクトブラックボードツールは使用できません。先に会話でプロジェクトを選択するか、プロジェクト付きの会話を作成してください"
+ },
+ "The current conversation is not bound to a project, so vulnerabilities cannot be listed by project. Use scope=conversation, or bind a project to the conversation first": {
+  "ja": "現在の会話はプロジェクトに紐づいていないため、プロジェクト単位で脆弱性を一覧表示できません。scope=conversation を使用するか、先に会話にプロジェクトを紐づけてください"
+ },
+ "The current conversation is not bound to a project. Select a project in the conversation first, or create a conversation with a project": {
+  "ja": "現在の会話はプロジェクトに紐づいていません。先に会話でプロジェクトを選択するか、プロジェクト付きの会話を作成してください"
+ },
+ "The current queue status does not allow scheduled execution": {
+  "ja": "現在のキューの状態ではスケジュール実行できません"
+ },
+ "The dangerous C2 task was rejected by a reviewer": {
+  "ja": "危険な C2 タスクは担当者により拒否されました"
+ },
+ "The default role cannot be deleted": {
+  "ja": "デフォルトロールは削除できません"
+ },
+ "The listener does not have allow_legacy_shell enabled: tcp_reverse accepts only CSB1-encrypted Beacons (AES-GCM + Token) by default. Generate a beacon with build, or enable allow_legacy_shell explicitly (not recommended on public networks)": {
+  "ja": "リスナーで allow_legacy_shell が有効になっていません。tcp_reverse は既定で CSB1 暗号化 Beacon（AES-GCM + Token）のみを受け付けます。build で beacon を生成するか、allow_legacy_shell を明示的に有効にしてください（公開ネットワークでは非推奨）"
+ },
+ "The model request will be retried in %s (%d/%d).": {
+  "ja": "モデルリクエストは %s 後に再試行されます（%d/%d）。"
+ },
+ "The original conversation is still running. Wait for it to finish or stop it before retesting": {
+  "ja": "元の会話がまだ実行中です。完了を待つか停止してから再テストしてください"
+ },
+ "The original conversation no longer exists; cannot create a retest branch": {
+  "ja": "元の会話が存在しないため、再テストブランチを作成できません"
+ },
+ "The plan for this turn still has steps marked \"pending\" or \"in progress\", so the final reply has not been delivered yet. Check the step statuses in the plan.": {
+  "ja": "このターンのプランに「保留中」または「進行中」のステップが残っているため、最終返信はまだ提供されていません。プランのステップの状態を確認してください。"
+ },
+ "The queue executor is still running; try deleting again later": {
+  "ja": "キューのエグゼキューターがまだ実行中です。しばらくしてから削除してください"
+ },
+ "The queue is configured for Agent multi-agent mode, but multi-agent is not enabled in the system": {
+  "ja": "キューは Agent マルチエージェントモードに設定されていますが、システムでマルチエージェントが有効になっていません"
+ },
+ "The queue is running and cannot be deleted": {
+  "ja": "キューの実行中は削除できません"
+ },
+ "The queue is running; the schedule configuration cannot be modified": {
+  "ja": "キューの実行中はスケジュール設定を変更できません"
+ },
+ "The queue status does not allow starting": {
+  "ja": "キューの状態では開始できません"
+ },
+ "The schedule expression is required when Cron scheduling is enabled": {
+  "ja": "Cron スケジュールを有効にする場合、スケジュール式は必須です"
+ },
+ "The selected assets share no common domain, IP or Host, so they cannot be treated as duplicates": {
+  "ja": "選択した資産には共通のドメイン、IP、Host がないため、重複資産とは判定できません"
+ },
+ "The session already has a running task; cannot start a batch sub-task in parallel on this session": {
+  "ja": "このセッションには実行中のタスクが既にあるため、このセッションでバッチサブタスクを並行して開始できません"
+ },
+ "The task has not met the conditions for a final reply, so no success conclusion is generated.": {
+  "ja": "タスクが最終返信の条件を満たしていないため、成功の結論は生成されません。"
+ },
+ "The tool was submitted to run in the background, but this wait reached its limit.\n\nexecution_id: %s\ntool: %s\nstatus: %s\nwait_timeout: %s\nelapsed: %s\n\nYou can keep reasoning, switch to other tools, or call wait_tool_execution to keep waiting on this execution_id; you can also call cancel_tool_execution to cancel it.": {
+  "ja": "ツールはバックグラウンド実行として送信されましたが、今回の待機が上限に達しました。\n\nexecution_id: %s\ntool: %s\nstatus: %s\nwait_timeout: %s\nelapsed: %s\n\n推論を続ける、別のツールに切り替える、または wait_tool_execution を呼び出してこの execution_id の待機を続けることができます。cancel_tool_execution を呼び出してキャンセルすることもできます。"
+ },
+ "The version format cannot be replaced in place (the configuration failed to parse after the change, or read back as %q). Write aborted; the original file is unchanged": {
+  "ja": "version の記述形式はその場で置換できません（変更後に設定の解析に失敗したか、読み戻した値が %q でした）。書き込みを中止しました。元のファイルは変更されていません"
+ },
+ "The vulnerability and the original conversation belong to different projects. Check project ownership first": {
+  "ja": "脆弱性と元の会話の所属プロジェクトが一致しません。先にプロジェクトの所属を確認してください"
+ },
+ "The workflow bound to the role was not found": {
+  "ja": "ロールにバインドされたワークフローが見つかりません"
+ },
+ "There is no unique saved header credential": {
+  "ja": "一意に特定できる保存済みのヘッダー認証情報がありません"
+ },
+ "There is no unique saved header credential, please enter a new value": {
+  "ja": "一意に特定できる保存済みのヘッダー認証情報がありません。新しい値を入力してください"
+ },
+ "This WeChat account is already bound; no need to bind again": {
+  "ja": "この WeChat アカウントはすでに連携済みのため、再度連携する必要はありません"
+ },
+ "This conversation has no attack chain yet. Generate one in the conversation first": {
+  "ja": "この会話にはまだ攻撃チェーンがありません。先に会話で攻撃チェーンを生成してください"
+ },
+ "Title cannot exceed %d characters": {
+  "ja": "タイトルは %d 文字以内にしてください"
+ },
+ "Title is required": {
+  "ja": "タイトルは必須です"
+ },
+ "Too many consecutive indexing failures: %v": {
+  "ja": "インデックス作成の連続失敗回数が多すぎます: %v"
+ },
+ "Too many knowledge items failed to index (%d/%d); there may be a configuration problem. First failed item: %s, error: %v": {
+  "ja": "インデックス作成に失敗したナレッジ項目が多すぎます (%d/%d)。設定に問題がある可能性があります。最初に失敗した項目: %s、エラー: %v"
+ },
+ "Tool %s not found": {
+  "ja": "ツール %s が見つかりません"
+ },
+ "Tool %s not found or not enabled": {
+  "ja": "ツール %s が見つからないか有効ではありません"
+ },
+ "Tool %v execution failed": {
+  "ja": "ツール %v の実行に失敗しました"
+ },
+ "Tool %v is waiting for approval": {
+  "ja": "ツール %v が承認待ちです"
+ },
+ "Tool command is required": {
+  "ja": "ツールコマンドは必須です"
+ },
+ "Tool name is required": {
+  "ja": "ツール名は必須です"
+ },
+ "Tool node \"%s\" has invalid parameter JSON: %w": {
+  "ja": "ツールノード「%s」のパラメータ JSON が無効です: %w"
+ },
+ "Tool node \"%s\" must select an MCP tool": {
+  "ja": "ツールノード「%s」では MCP ツールを選択する必要があります"
+ },
+ "Tool node \"%s\" timeout must be a positive integer": {
+  "ja": "ツールノード「%s」のタイムアウトは正の整数である必要があります"
+ },
+ "Tool node timeout must be a valid positive integer number of seconds": {
+  "ja": "ツールノードのタイムアウトは有効な正の整数（秒）である必要があります"
+ },
+ "Tool not found": {
+  "ja": "ツールが見つかりません"
+ },
+ "Tools that were still running were cancelled during finalization; the task is not complete.": {
+  "ja": "終了処理中に、まだ実行中だったツールがキャンセルされました。タスクは完了していません。"
+ },
+ "TypeSafe API Key is required": {
+  "ja": "TypeSafe API Key は必須です"
+ },
+ "Unable to access update source repository %s: %s": {
+  "ja": "更新元リポジトリ %s にアクセスできません: %s"
+ },
+ "Unable to create client: unsupported transport mode": {
+  "ja": "クライアントを作成できません: サポートされていない転送モードです"
+ },
+ "Unable to determine the current conversation. Use the project fact tools within a conversation context": {
+  "ja": "現在の会話を特定できません。会話のコンテキスト内でプロジェクトファクトツールを使用してください"
+ },
+ "Unable to determine the current conversation. Use the vulnerability query tools within a conversation context": {
+  "ja": "現在の会話を特定できません。会話のコンテキスト内で脆弱性クエリツールを使用してください"
+ },
+ "Unable to determine the default branch of the update source repository: %s": {
+  "ja": "更新元リポジトリのデフォルトブランチを特定できません: %s"
+ },
+ "Unable to determine the project scope of the current conversation": {
+  "ja": "現在の会話のプロジェクト範囲を特定できません"
+ },
+ "Unable to safely remove the version number; the original configuration is unchanged": {
+  "ja": "バージョン番号を安全に削除できません。元の設定は変更されていません"
+ },
+ "Unauthorized access": {
+  "ja": "アクセスが許可されていません"
+ },
+ "Unauthorized; please sign in first": {
+  "ja": "認証されていません。先にログインしてください"
+ },
+ "Unclosed SQL comment": {
+  "ja": "SQL コメントが閉じられていません"
+ },
+ "Unclosed SQL quote": {
+  "ja": "SQL の引用符が閉じられていません"
+ },
+ "Unix launch gates are unavailable on Windows": {
+  "ja": "Windows では Unix の起動ゲートは利用できません"
+ },
+ "Unknown channel, cannot restore header credential": {
+  "ja": "不明なチャネルのため、ヘッダー認証情報を復元できません"
+ },
+ "Unknown cleanup category": {
+  "ja": "不明なクリーンアップカテゴリです"
+ },
+ "Unknown credential scope": {
+  "ja": "認証情報のスコープが不明です"
+ },
+ "Unknown permission: %s": {
+  "ja": "不明な権限です: %s"
+ },
+ "Unknown tool": {
+  "ja": "不明なツール"
+ },
+ "Unsupported provider, options: fofa, zoomeye, quake, shodan": {
+  "ja": "provider はサポートされていません。指定可能な値: fofa、zoomeye、quake、shodan"
+ },
+ "Unsupported queue approval setting: %s": {
+  "ja": "サポートされていないキューの承認設定です: %s"
+ },
+ "Unsupported resource type: %s": {
+  "ja": "サポートされていないリソースタイプです: %s"
+ },
+ "Unsupported robot agent mode: %s": {
+  "ja": "サポートされていないロボットのエージェントモードです: %s"
+ },
+ "Unsupported transport mode: %s (supported: stdio, sse, http)": {
+  "ja": "サポートされていない転送モードです: %s（サポート: stdio, sse, http）"
+ },
+ "Unsupported transport mode: %s, supported modes: http, stdio, sse": {
+  "ja": "サポートされていないトランスポートモードです: %s（サポートされるモード: http、stdio、sse）"
+ },
+ "Update source saved: %v": {
+  "ja": "更新ソースを保存しました: %v"
+ },
+ "Updated successfully": {
+  "ja": "更新しました"
+ },
+ "Upstream node \"%s\" failed; join strategy fail_fast aborted": {
+  "ja": "上流ノード「%s」が失敗したため、集約戦略 fail_fast により中止しました"
+ },
+ "Use a saved connection or enter a new connection password": {
+  "ja": "保存済みの接続を使用するか、新しい接続パスワードを入力してください"
+ },
+ "User for robots.%s.auth.service_user_id is disabled": {
+  "ja": "robots.%s.auth.service_user_id に対応するユーザーは無効化されています"
+ },
+ "User for robots.%s.auth.service_user_id not found": {
+  "ja": "robots.%s.auth.service_user_id に対応するユーザーが見つかりません"
+ },
+ "User not found": {
+  "ja": "ユーザーが見つかりません"
+ },
+ "Username is required and must not exceed 64 characters": {
+  "ja": "ユーザー名は必須で、64 文字以内で入力してください"
+ },
+ "VectorRetriever: nil retriever": {
+  "ja": "VectorRetriever: リトリーバーが nil です"
+ },
+ "Vision model is required": {
+  "ja": "ビジョンモデルは必須です"
+ },
+ "Vulnerability foreign key migration verification failed; original data preserved": {
+  "ja": "脆弱性の外部キー移行の検証に失敗しました。元のデータは保持されています"
+ },
+ "Vulnerability not found": {
+  "ja": "脆弱性が見つかりません"
+ },
+ "Vulnerability not found or you have no permission to merge it": {
+  "ja": "脆弱性が見つからないか、統合する権限がありません"
+ },
+ "WeChat server did not return a valid QR code": {
+  "ja": "微信サーバーが有効な QR コードを返しませんでした"
+ },
+ "WebShell connection not found": {
+  "ja": "WebShell 接続が見つかりません"
+ },
+ "Windows tasks require Job Object containment": {
+  "ja": "Windows のタスクには Job Object による封じ込めが必要です"
+ },
+ "Workflow ID already exists": {
+  "ja": "ワークフロー ID はすでに存在します"
+ },
+ "Workflow ID cannot be changed by editing": {
+  "ja": "ワークフロー ID は編集で変更できません"
+ },
+ "Workflow ID must start with a letter or digit, contain only letters, digits, underscores and hyphens, and be at most 128 bytes": {
+  "ja": "ワークフロー ID は英数字で始まり、英数字・アンダースコア・ハイフンのみを含み、128 バイト以内である必要があります"
+ },
+ "Workflow bound to the role is disabled: %s": {
+  "ja": "ロールに紐付けられたワークフローは無効化されています: %s"
+ },
+ "Workflow bound to the role not found: %s": {
+  "ja": "ロールに紐付けられたワークフローが見つかりません: %s"
+ },
+ "Workflow contains a cycle; Workflow orchestration must be a DAG: %s": {
+  "ja": "ワークフローに循環があります。ワークフローのオーケストレーションは DAG である必要があります: %s"
+ },
+ "Workflow contains a cycle; workflow orchestration must be a DAG: %s": {
+  "ja": "ワークフローに循環があります。ワークフローのオーケストレーションは DAG である必要があります: %s"
+ },
+ "Workflow contains a duplicate edge ID: %s": {
+  "ja": "ワークフローに重複したエッジ ID があります: %s"
+ },
+ "Workflow contains a duplicate node ID: %s": {
+  "ja": "ワークフローに重複したノード ID があります: %s"
+ },
+ "Workflow contains an edge with an empty source or target": {
+  "ja": "ワークフローに始点または終点が空のエッジがあります"
+ },
+ "Workflow contains an empty node ID": {
+  "ja": "ワークフローに空のノード ID があります"
+ },
+ "Workflow definition not found": {
+  "ja": "ワークフロー定義が見つかりません"
+ },
+ "Workflow deleted": {
+  "ja": "ワークフローを削除しました"
+ },
+ "Workflow generated by the LLM failed validation: %s": {
+  "ja": "LLM が生成したワークフローが検証に失敗しました: %s"
+ },
+ "Workflow generator has not loaded the platform AI configuration": {
+  "ja": "ワークフロージェネレーターにプラットフォームの AI 設定が読み込まれていません"
+ },
+ "Workflow graph cannot be compiled: %v": {
+  "ja": "ワークフローグラフをコンパイルできません: %v"
+ },
+ "Workflow graph is empty": {
+  "ja": "ワークフローグラフが空です"
+ },
+ "Workflow has no nodes": {
+  "ja": "ワークフローにノードがありません"
+ },
+ "Workflow id and name are required": {
+  "ja": "ワークフローの id と name は必須です"
+ },
+ "Workflow id is required": {
+  "ja": "ワークフローの id は必須です"
+ },
+ "Workflow is empty": {
+  "ja": "ワークフローが空です"
+ },
+ "Workflow is still referenced by a role; unbind it first": {
+  "ja": "ワークフローがロールから参照されています。先に紐付けを解除してください"
+ },
+ "Workflow node run is empty": {
+  "ja": "ワークフローのノード実行が空です"
+ },
+ "Workflow not found": {
+  "ja": "ワークフローが見つかりません"
+ },
+ "Workflow requirement is required": {
+  "ja": "ワークフローの要件は必須です"
+ },
+ "Workflow requires at least one output node": {
+  "ja": "ワークフローには少なくとも 1 つの出力ノードが必要です"
+ },
+ "Workflow requires at least one start node": {
+  "ja": "ワークフローには少なくとも 1 つの開始ノードが必要です"
+ },
+ "Workflow run id and workflow_id are required": {
+  "ja": "ワークフロー実行の id と workflow_id は必須です"
+ },
+ "Workflow run id is required": {
+  "ja": "ワークフロー実行の id は必須です"
+ },
+ "Workflow run is empty": {
+  "ja": "ワークフローの実行が空です"
+ },
+ "Workflow run is not awaiting approval: %s": {
+  "ja": "ワークフローの実行は承認待ち状態ではありません: %s"
+ },
+ "Workflow run is not awaiting approval: %v": {
+  "ja": "ワークフローの実行は承認待ち状態ではありません: %v"
+ },
+ "Workflow run not found": {
+  "ja": "ワークフロー実行が見つかりません"
+ },
+ "Workflow runtime is not initialized": {
+  "ja": "ワークフローランタイムが初期化されていません"
+ },
+ "Workflow saved": {
+  "ja": "ワークフローを保存しました"
+ },
+ "Workflow storage is unavailable; cannot verify binding": {
+  "ja": "ワークフローストレージが利用できないため、バインドを検証できません"
+ },
+ "Working directory must be under the current process directory": {
+  "ja": "作業ディレクトリは現在のプロセスのディレクトリ配下である必要があります"
+ },
+ "Writing the version number would change other configuration. Write aborted; the original file is unchanged": {
+  "ja": "バージョン番号の書き込みは他の設定を変更してしまうため、書き込みを中止しました。元のファイルは変更されていません"
+ },
+ "You do not have access to this resource": {
+  "ja": "このリソースにアクセスする権限がありません"
+ },
+ "You do not have permission to create batch tasks in this project": {
+  "ja": "このプロジェクトでバッチタスクを作成する権限がありません"
+ },
+ "ZoomEye base_url is invalid: %v": {
+  "ja": "ZoomEye base_url が無効です: %v"
+ },
+ "absent previous binary has a live hash": {
+  "ja": "存在しない以前のバイナリにライブハッシュがあります"
+ },
+ "admin password hash is required for initial bootstrap": {
+  "ja": "初期ブートストラップには管理者パスワードのハッシュが必要です"
+ },
+ "agent configuration is nil": {
+  "ja": "エージェント設定が nil です"
+ },
+ "agent interrupt: continue with user-supplied context": {
+  "ja": "エージェント中断: ユーザーが提供したコンテキストで続行します"
+ },
+ "agent mode unavailable": {
+  "ja": "エージェントモードは利用できません"
+ },
+ "agent task already running for conversation": {
+  "ja": "この会話のエージェントタスクはすでに実行中です"
+ },
+ "agent task cancelled by user": {
+  "ja": "エージェントタスクはユーザーによってキャンセルされました"
+ },
+ "agent.task_timeout_minutes must be between 0 and %d minutes": {
+  "ja": "agent.task_timeout_minutes は 0 から %d 分の間で指定してください"
+ },
+ "agent:local-execute permission required": {
+  "ja": "agent:local-execute 権限が必要です"
+ },
+ "agents directory is not configured": {
+  "ja": "agents ディレクトリが設定されていません"
+ },
+ "agents: %s has no YAML front matter": {
+  "ja": "agents: %s に YAML front matter がありません"
+ },
+ "agents: %s is missing the name field": {
+  "ja": "agents: %s に name フィールドがありません"
+ },
+ "agents: closing --- delimiter is missing": {
+  "ja": "agents: 終了の --- 区切りがありません"
+ },
+ "agents: failed to parse front matter: %w": {
+  "ja": "agents: front matter の解析に失敗しました: %w"
+ },
+ "agents: not a directory: %s": {
+  "ja": "agents: ディレクトリではありません: %s"
+ },
+ "agents: only one %s can be defined, already have %s": {
+  "ja": "agents: %s は 1 つしか定義できません。すでに %s があります"
+ },
+ "agents: only one main agent (Deep coordinator) can be defined, already have %s, which conflicts with %s": {
+  "ja": "agents: メインエージェント（Deep コーディネーター）は 1 つしか定義できません。すでに %s があり、%s と競合しています"
+ },
+ "ai_channel cannot be updated together with ai or openai": {
+  "ja": "ai_channel は ai または openai と同時に更新できません"
+ },
+ "already exists": {
+  "ja": "すでに存在します"
+ },
+ "api_key or model is not configured for the AI channel": {
+  "ja": "AI チャネルに api_key または model が設定されていません"
+ },
+ "asset_ids count must be between 1 and 10000": {
+  "ja": "asset_ids の数は 1～10000 の範囲で指定してください"
+ },
+ "assets count must be between 1 and 100000": {
+  "ja": "assets の数は 1～100000 の範囲で指定してください"
+ },
+ "assignment id is required": {
+  "ja": "割り当て ID が必要です"
+ },
+ "audit id is required": {
+  "ja": "監査 ID が必要です"
+ },
+ "audit log is nil": {
+  "ja": "監査ログが nil です"
+ },
+ "auth password must be configured": {
+  "ja": "認証パスワードを設定する必要があります"
+ },
+ "authenticated robot principal is required": {
+  "ja": "認証済みのロボットのプリンシパルが必要です"
+ },
+ "authentication store is not configured": {
+  "ja": "認証ストアが設定されていません"
+ },
+ "background commands require a managed task": {
+  "ja": "バックグラウンドコマンドには管理対象のタスクが必要です"
+ },
+ "background generation budget is exhausted": {
+  "ja": "バックグラウンド生成の予算を使い切りました"
+ },
+ "batch queue executor is still active": {
+  "ja": "バッチタスクのキューの実行プロセスがまだ動作中です"
+ },
+ "batch queue is still running": {
+  "ja": "バッチタスクのキューはまだ実行中です"
+ },
+ "batch queue not found": {
+  "ja": "バッチタスクのキューが見つかりません"
+ },
+ "begin tx: %w": {
+  "ja": "トランザクションの開始に失敗しました: %w"
+ },
+ "binary exists despite recorded absence": {
+  "ja": "不在と記録されているにもかかわらずバイナリが存在します"
+ },
+ "binary file not editable in UI": {
+  "ja": "バイナリファイルは UI では編集できません"
+ },
+ "binding code has already been used": {
+  "ja": "バインドコードは既に使用されています"
+ },
+ "binding code is invalid or expired": {
+  "ja": "バインドコードが無効か、有効期限が切れています"
+ },
+ "binding code is required": {
+  "ja": "バインドコードが必要です"
+ },
+ "blank Pi protocol line %d": {
+  "ja": "Pi プロトコルの %d 行目が空です"
+ },
+ "build openai models request: %w": {
+  "ja": "openai モデル一覧リクエストの作成に失敗しました: %w"
+ },
+ "build openai request: %w": {
+  "ja": "openai リクエストの作成に失敗しました: %w"
+ },
+ "build record belongs to a different update": {
+  "ja": "ビルド記録は別の更新のものです"
+ },
+ "build record contradicts rollback state": {
+  "ja": "ビルド記録がロールバック状態と矛盾しています"
+ },
+ "build record must prove previous binary hash or absence": {
+  "ja": "ビルド記録は以前のバイナリのハッシュまたは不在を証明する必要があります"
+ },
+ "build typesafe request: %w": {
+  "ja": "typesafe リクエストの作成に失敗しました: %w"
+ },
+ "call openai api: %w": {
+  "ja": "openai api の呼び出しに失敗しました: %w"
+ },
+ "call openai models api: %w": {
+  "ja": "openai モデル一覧 api の呼び出しに失敗しました: %w"
+ },
+ "call typesafe api: %w": {
+  "ja": "typesafe API の呼び出しに失敗しました: %w"
+ },
+ "cannot delete this user": {
+  "ja": "このユーザーは削除できません"
+ },
+ "cannot modify bind address while listener is running": {
+  "ja": "リスナーの実行中はバインドアドレスを変更できません"
+ },
+ "cannot persist run receipt": {
+  "ja": "実行レシートを保存できません"
+ },
+ "cannot read run": {
+  "ja": "実行を読み取れません"
+ },
+ "cannot read run receipt": {
+  "ja": "実行レシートを読み取れません"
+ },
+ "canonicalize graph_json: %w": {
+  "ja": "graph_json の正規化に失敗しました: %w"
+ },
+ "cgroup is closed": {
+  "ja": "cgroup は閉じられています"
+ },
+ "cgroup root is already owned: %w": {
+  "ja": "cgroup ルートはすでに使用されています: %w"
+ },
+ "cgroup root must be absolute": {
+  "ja": "cgroup ルートは絶対パスである必要があります"
+ },
+ "cgroup.kill requires Linux 5.14+: %w": {
+  "ja": "cgroup.kill には Linux 5.14 以上が必要です: %w"
+ },
+ "cgroup_root cannot be combined with process_group mode": {
+  "ja": "cgroup_root は process_group モードと併用できません"
+ },
+ "cgroups are Linux-only": {
+  "ja": "cgroup は Linux のみ対応です"
+ },
+ "checkpoint id is empty": {
+  "ja": "チェックポイント ID が空です"
+ },
+ "checkpoint project does not match current conversation binding": {
+  "ja": "チェックポイントのプロジェクトが現在の会話の紐付けと一致しません"
+ },
+ "chunk size must be positive": {
+  "ja": "チャンクサイズは正の値である必要があります"
+ },
+ "claude provider does not support models list API": {
+  "ja": "claude プロバイダーはモデル一覧 API をサポートしていません"
+ },
+ "clear react data: %w": {
+  "ja": "react データのクリアに失敗しました: %w"
+ },
+ "close package: %w": {
+  "ja": "パッケージのクローズに失敗しました: %w"
+ },
+ "command failed: %w": {
+  "ja": "コマンドが失敗しました: %w"
+ },
+ "command is required": {
+  "ja": "command は必須です"
+ },
+ "command is required in stdio mode": {
+  "ja": "stdio モードでは command が必須です"
+ },
+ "commit: %w": {
+  "ja": "コミットに失敗しました: %w"
+ },
+ "compatibility exceeds 500 characters (Agent Skills spec)": {
+  "ja": "compatibility が 500 文字を超えています（Agent Skills 仕様）"
+ },
+ "completed build lacks matching recovery hash": {
+  "ja": "完了したビルドに一致するリカバリハッシュがありません"
+ },
+ "completed swap has no matching rollback binary": {
+  "ja": "完了したスワップに一致するロールバック用バイナリがありません"
+ },
+ "confidence must be confirmed or tentative": {
+  "ja": "confidence は confirmed または tentative にしてください"
+ },
+ "connection not found": {
+  "ja": "接続が見つかりません"
+ },
+ "connectionID is empty": {
+  "ja": "connectionID が空です"
+ },
+ "content must be valid UTF-8": {
+  "ja": "content は有効な UTF-8 である必要があります"
+ },
+ "content too large": {
+  "ja": "content が大きすぎます"
+ },
+ "context length exceeded": {
+  "ja": "コンテキスト長を超えました"
+ },
+ "conversation already running": {
+  "ja": "会話はすでに実行中です"
+ },
+ "conversation id is required": {
+  "ja": "会話 ID が必要です"
+ },
+ "conversation id required": {
+  "ja": "conversation id は必須です"
+ },
+ "conversationId is required": {
+  "ja": "conversationId は必須です"
+ },
+ "could not compress image under max_payload_bytes %d": {
+  "ja": "画像を max_payload_bytes %d 以下に圧縮できませんでした"
+ },
+ "create diagnostic log directory: %w": {
+  "ja": "診断ログディレクトリの作成に失敗しました: %w"
+ },
+ "create workflow checkpoint dir: %w": {
+  "ja": "ワークフローのチェックポイントディレクトリの作成に失敗しました: %w"
+ },
+ "cross-origin redirect blocked for model custom headers": {
+  "ja": "モデルのカスタムヘッダーでは、クロスオリジンのリダイレクトはブロックされます"
+ },
+ "cross-origin request denied": {
+  "ja": "クロスオリジンリクエストは拒否されました"
+ },
+ "dashscope rerank decode: %w": {
+  "ja": "dashscope リランクのデコード: %w"
+ },
+ "dashscope rerank http %d: %s": {
+  "ja": "dashscope リランク HTTP %d: %s"
+ },
+ "dashscope rerank: %w": {
+  "ja": "dashscope リランク: %w"
+ },
+ "database is nil": {
+  "ja": "データベースが nil です"
+ },
+ "database is not initialized": {
+  "ja": "database が初期化されていません"
+ },
+ "database is required for authentication": {
+  "ja": "認証にはデータベースが必要です"
+ },
+ "database not available": {
+  "ja": "データベースを利用できません"
+ },
+ "database unavailable": {
+  "ja": "データベースを利用できません"
+ },
+ "days only supports 7, 30 or 90": {
+  "ja": "days は 7、30、90 のいずれかのみ指定できます"
+ },
+ "db is nil": {
+  "ja": "db が nil です"
+ },
+ "decision must be approve/reject": {
+  "ja": "decision は approve/reject である必要があります"
+ },
+ "decode image config: %w": {
+  "ja": "画像設定のデコードに失敗しました: %w"
+ },
+ "decode inspection payload: %w": {
+  "ja": "インスペクションのペイロードのデコードに失敗しました: %w"
+ },
+ "decode openai models response: %w": {
+  "ja": "openai モデル一覧レスポンスのデコードに失敗しました: %w"
+ },
+ "decode typesafe response: %w": {
+  "ja": "typesafe レスポンスのデコードに失敗しました: %w"
+ },
+ "delegate cpu, memory and pids controllers: %w": {
+  "ja": "cpu、memory、pids コントローラーの委任に失敗しました: %w"
+ },
+ "delegated root contains another process %s": {
+  "ja": "委任されたルートに別のプロセス %s が含まれています"
+ },
+ "delete messages: %w": {
+  "ja": "メッセージの削除に失敗しました: %w"
+ },
+ "deleted count mismatch": {
+  "ja": "削除件数が一致しません"
+ },
+ "depth supports only summary or full": {
+  "ja": "depth は summary または full のみ指定できます"
+ },
+ "description exceeds 1024 characters (Agent Skills limit)": {
+  "ja": "description が 1024 文字を超えています（Agent Skills の制限）"
+ },
+ "discord is not configured": {
+  "ja": "Discord が設定されていません"
+ },
+ "document %d: %w": {
+  "ja": "ドキュメント %d: %w"
+ },
+ "duplicate Pi sub-agent: %s": {
+  "ja": "Pi サブエージェントが重複しています: %s"
+ },
+ "duplicate worker %s": {
+  "ja": "ワーカー %s が重複しています"
+ },
+ "edge type is required": {
+  "ja": "edge type は必須です"
+ },
+ "embedder is nil": {
+  "ja": "エンベッダーが nil です"
+ },
+ "embedder not initialized": {
+  "ja": "エンベッダーが初期化されていません"
+ },
+ "embedding API key is not configured": {
+  "ja": "embedding API キーが設定されていません"
+ },
+ "embedding HTTP %d: %s": {
+  "ja": "埋め込み HTTP %d: %s"
+ },
+ "embedding count mismatch: %d vs %d": {
+  "ja": "埋め込み数が一致しません: %d と %d"
+ },
+ "empty content": {
+  "ja": "内容が空です"
+ },
+ "empty image payload": {
+  "ja": "画像ペイロードが空です"
+ },
+ "empty path": {
+  "ja": "パスが空です"
+ },
+ "empty qr content": {
+  "ja": "QR コンテンツが空です"
+ },
+ "empty resource path": {
+  "ja": "リソースパスが空です"
+ },
+ "empty time value": {
+  "ja": "時刻の値が空です"
+ },
+ "empty turn range": {
+  "ja": "ターン範囲が空です"
+ },
+ "enabled and rules must be provided explicitly; to clear rules, provide an empty array": {
+  "ja": "enabled と rules を明示的に指定する必要があります。ルールをクリアするには空の配列を指定してください"
+ },
+ "encode jpeg: %w": {
+  "ja": "jpeg のエンコードに失敗しました: %w"
+ },
+ "encoding_aes_key must be 32 bytes after decoding": {
+  "ja": "encoding_aes_key はデコード後 32 バイトである必要があります"
+ },
+ "event id is required": {
+  "ja": "イベント ID が必要です"
+ },
+ "event is nil": {
+  "ja": "イベントが nil です"
+ },
+ "execution already exists: %s": {
+  "ja": "実行はすでに存在します: %s"
+ },
+ "execution ended without a result": {
+  "ja": "実行が結果を返さずに終了しました"
+ },
+ "execution entry is nil": {
+  "ja": "実行エントリが nil です"
+ },
+ "execution not found: %s": {
+  "ja": "実行が見つかりません: %s"
+ },
+ "execution run func is nil": {
+  "ja": "実行の run 関数が nil です"
+ },
+ "execution run func not wired": {
+  "ja": "実行の run 関数が接続されていません"
+ },
+ "execution service is nil": {
+  "ja": "実行サービスが nil です"
+ },
+ "execution_id is required": {
+  "ja": "execution_id は必須です"
+ },
+ "exit status %d": {
+  "ja": "終了ステータス %d"
+ },
+ "expected recovery array": {
+  "ja": "リカバリ配列が必要です"
+ },
+ "expected recovery boolean": {
+  "ja": "リカバリ真偽値が必要です"
+ },
+ "expected recovery object": {
+  "ja": "リカバリオブジェクトが必要です"
+ },
+ "expected recovery string": {
+  "ja": "リカバリ文字列が必要です"
+ },
+ "external MCP client has no cancellation acknowledgement": {
+  "ja": "外部 MCP クライアントにキャンセル確認がありません"
+ },
+ "external MCP invocation requires global scope": {
+  "ja": "外部 MCP の呼び出しにはグローバルスコープが必要です"
+ },
+ "external tool authorization denied: %w": {
+  "ja": "外部ツールの認可が拒否されました: %w"
+ },
+ "external tool authorization policy is not configured": {
+  "ja": "外部ツールの認可ポリシーが設定されていません"
+ },
+ "extra JSON values": {
+  "ja": "余分な JSON 値があります"
+ },
+ "fact_key is required": {
+  "ja": "fact_key は必須です"
+ },
+ "fact_key is too long (max 128 characters)": {
+  "ja": "fact_key が長すぎます（最大 128 文字）"
+ },
+ "fact_key must not have leading or trailing whitespace": {
+  "ja": "fact_key の先頭と末尾に空白は使用できません"
+ },
+ "fact_key: %s\ncategory: %s\nconfidence: %s\nsummary: %s\nupdated_at: %s": {
+  "ja": "fact_key: %s\ncategory: %s\nconfidence: %s\nsummary: %s\nupdated_at: %s"
+ },
+ "failed to begin transaction": {
+  "ja": "トランザクションの開始に失敗しました"
+ },
+ "failed to commit read marks": {
+  "ja": "既読マークのコミットに失敗しました"
+ },
+ "failed to create stderr pipe: %w": {
+  "ja": "stderr パイプの作成に失敗しました: %w"
+ },
+ "failed to create stdout pipe: %w": {
+  "ja": "stdout パイプの作成に失敗しました: %w"
+ },
+ "failed to delete connection": {
+  "ja": "接続の削除に失敗しました"
+ },
+ "failed to delete profile": {
+  "ja": "Profile の削除に失敗しました"
+ },
+ "failed to load notification read states": {
+  "ja": "通知の既読状態の読み込みに失敗しました"
+ },
+ "failed to mark read": {
+  "ja": "既読への更新に失敗しました"
+ },
+ "failed to prepare notification read table": {
+  "ja": "通知の既読テーブルの準備に失敗しました"
+ },
+ "failed to prepare statement": {
+  "ja": "ステートメントの準備に失敗しました"
+ },
+ "failed to start command: %w": {
+  "ja": "コマンドの起動に失敗しました: %w"
+ },
+ "failed to summarize c2 session events": {
+  "ja": "C2 セッションのイベントを集計できませんでした"
+ },
+ "failed to summarize hitl notifications": {
+  "ja": "HITL 通知の集計に失敗しました"
+ },
+ "failed to summarize vulnerabilities": {
+  "ja": "脆弱性の集計に失敗しました"
+ },
+ "file exceeds 2 MiB; use execute to select a smaller region": {
+  "ja": "ファイルが 2 MiB を超えています。execute でより小さい範囲を選択してください"
+ },
+ "file field required: %v": {
+  "ja": "file フィールドは必須です: %v"
+ },
+ "file id is required": {
+  "ja": "ファイル ID が必要です"
+ },
+ "file not found": {
+  "ja": "ファイルが見つかりません"
+ },
+ "file size %d exceeds max_image_bytes %d": {
+  "ja": "ファイルサイズ %d が max_image_bytes %d を超えています"
+ },
+ "file too large for editor": {
+  "ja": "ファイルが大きすぎるため、エディターで開けません"
+ },
+ "file too large on disk": {
+  "ja": "ディスク上のファイルが大きすぎます"
+ },
+ "final_result is required": {
+  "ja": "final_result は必須です"
+ },
+ "format must be md or docx": {
+  "ja": "format は md または docx である必要があります"
+ },
+ "getMe failed: %s": {
+  "ja": "getMe に失敗しました: %s"
+ },
+ "getUpdates failed: %s": {
+  "ja": "getUpdates に失敗しました: %s"
+ },
+ "getUpdates: %s": {
+  "ja": "getUpdates: %s"
+ },
+ "getwd: %w": {
+  "ja": "getwd: %w"
+ },
+ "git %s: %s": {
+  "ja": "git %s: %s"
+ },
+ "git %s: %w": {
+  "ja": "git %s: %w"
+ },
+ "go build reported success but produced no binary at %s": {
+  "ja": "go build は成功を報告しましたが、%s にバイナリが生成されませんでした"
+ },
+ "graph is required": {
+  "ja": "graph は必須です"
+ },
+ "graph must be valid JSON": {
+  "ja": "graph は有効な JSON である必要があります"
+ },
+ "group_by supports only conversation or task": {
+  "ja": "group_by は conversation または task のみ指定できます"
+ },
+ "hitl manager unavailable": {
+  "ja": "HITL マネージャーは利用できません"
+ },
+ "http mode requires url to be configured": {
+  "ja": "http モードでは url の設定が必要です"
+ },
+ "id is required": {
+  "ja": "id は必須です"
+ },
+ "idempotency key reused with different request": {
+  "ja": "同じ冪等性キーが異なるリクエストで再利用されています"
+ },
+ "ids is required": {
+  "ja": "ids は必須です"
+ },
+ "ilink %s %s: %d %s": {
+  "ja": "ilink %s %s: %d %s"
+ },
+ "indexer is not initialized": {
+  "ja": "indexer が初期化されていません"
+ },
+ "installation locking is unavailable on this platform": {
+  "ja": "このプラットフォームではインストールのロックを利用できません"
+ },
+ "internal execution failure": {
+  "ja": "内部の実行エラーです"
+ },
+ "interrupt already resolved or decision channel busy": {
+  "ja": "割り込みは既に処理済みか、決定チャネルがビジー状態です"
+ },
+ "interrupt not found or already resolved": {
+  "ja": "割り込みが見つからないか、すでに解決済みです"
+ },
+ "invalid PID": {
+  "ja": "無効な PID です"
+ },
+ "invalid Pi protocol JSON on line %d: %w": {
+  "ja": "Pi プロトコルの %d 行目の JSON が無効です: %w"
+ },
+ "invalid approved tool arguments: %w": {
+  "ja": "承認済みのツール引数が無効です: %w"
+ },
+ "invalid body": {
+  "ja": "リクエストボディが無効です"
+ },
+ "invalid build commits": {
+  "ja": "ビルドのコミットが無効です"
+ },
+ "invalid built binary hash": {
+  "ja": "ビルドされたバイナリのハッシュが無効です"
+ },
+ "invalid cgroup guardian": {
+  "ja": "無効な cgroup ガーディアンです"
+ },
+ "invalid checkpoint id": {
+  "ja": "チェックポイント ID が無効です"
+ },
+ "invalid context checkpoint": {
+  "ja": "コンテキストチェックポイントが無効です"
+ },
+ "invalid embedding response index or vector": {
+  "ja": "埋め込みレスポンスのインデックスまたはベクトルが無効です"
+ },
+ "invalid id type": {
+  "ja": "無効な id の型です"
+ },
+ "invalid internal launch": {
+  "ja": "無効な内部起動です"
+ },
+ "invalid json: %v": {
+  "ja": "JSON が無効です: %v"
+ },
+ "invalid lark recipient": {
+  "ja": "Lark の受信者が無効です"
+ },
+ "invalid launch gate": {
+  "ja": "無効な起動ゲートです"
+ },
+ "invalid launch token": {
+  "ja": "無効な起動トークンです"
+ },
+ "invalid limit": {
+  "ja": "limit が無効です"
+ },
+ "invalid live hash": {
+  "ja": "ライブハッシュが無効です"
+ },
+ "invalid minimum severity %q": {
+  "ja": "最小の重大度 %q が無効です"
+ },
+ "invalid name": {
+  "ja": "name が無効です"
+ },
+ "invalid newName": {
+  "ja": "newName が無効です"
+ },
+ "invalid password": {
+  "ja": "パスワードが無効です"
+ },
+ "invalid path": {
+  "ja": "パスが無効です"
+ },
+ "invalid path %q": {
+  "ja": "パスが無効です %q"
+ },
+ "invalid payload id": {
+  "ja": "payload id が無効です"
+ },
+ "invalid previous binary hash": {
+  "ja": "以前のバイナリのハッシュが無効です"
+ },
+ "invalid process isolation mode %q": {
+  "ja": "無効なプロセス分離モードです: %q"
+ },
+ "invalid process isolation resource limits": {
+  "ja": "無効なプロセス分離のリソース制限です"
+ },
+ "invalid recovery key": {
+  "ja": "リカバリキーが無効です"
+ },
+ "invalid request body": {
+  "ja": "リクエストボディが無効です"
+ },
+ "invalid robot binding code": {
+  "ja": "ロボットのバインドコードが無効です"
+ },
+ "invalid robot recipient": {
+  "ja": "ロボットの受信者が無効です"
+ },
+ "invalid rollback commits": {
+  "ja": "ロールバックのコミットが無効です"
+ },
+ "invalid state binary hash": {
+  "ja": "状態のバイナリハッシュが無効です"
+ },
+ "invalid state commits": {
+  "ja": "状態のコミットが無効です"
+ },
+ "invalid target path": {
+  "ja": "対象パスが無効です"
+ },
+ "invalid task ID": {
+  "ja": "無効なタスク ID です"
+ },
+ "invalid task run ID": {
+  "ja": "無効なタスク実行 ID です"
+ },
+ "invalid task status": {
+  "ja": "無効なタスクステータスです"
+ },
+ "invalid telegram user id: %w": {
+  "ja": "Telegram ユーザー ID が無効です: %w"
+ },
+ "invalid todo": {
+  "ja": "無効な todo です"
+ },
+ "invalid todo subject/status": {
+  "ja": "無効な todo の subject/status です"
+ },
+ "invalid url": {
+  "ja": "URL が無効です"
+ },
+ "invalid url: only http(s) allowed": {
+  "ja": "URL が無効です: http(s) のみ使用できます"
+ },
+ "jitter_percent must be 0-100": {
+  "ja": "jitter_percent は 0〜100 の範囲で指定してください"
+ },
+ "job guardian exited during setup": {
+  "ja": "ジョブガーディアンがセットアップ中に終了しました"
+ },
+ "job is closed": {
+  "ja": "ジョブは閉じられています"
+ },
+ "json object not found": {
+  "ja": "JSON オブジェクトが見つかりません"
+ },
+ "kernel task containment is unavailable on this OS; use a Linux cgroup deployment": {
+  "ja": "この OS ではカーネルレベルのタスク封じ込めを利用できません。Linux cgroup 構成を使用してください"
+ },
+ "knowledge config is nil": {
+  "ja": "ナレッジベースの設定が nil です"
+ },
+ "knowledge index chain: %w": {
+  "ja": "ナレッジベースのインデックスチェーン: %w"
+ },
+ "knowledge index requires splitter and database": {
+  "ja": "ナレッジベースのインデックスにはスプリッターとデータベースが必要です"
+ },
+ "knowledge pipeline retriever: nil": {
+  "ja": "ナレッジパイプラインのリトリーバーが nil です"
+ },
+ "knowledge retrieval configuration is incomplete": {
+  "ja": "ナレッジベースの検索設定が不完全です"
+ },
+ "knowledge_embeddings schema migration: %w": {
+  "ja": "knowledge_embeddings のスキーママイグレーション: %w"
+ },
+ "lark is not configured": {
+  "ja": "Lark が設定されていません"
+ },
+ "lark send failed": {
+  "ja": "Lark への送信に失敗しました"
+ },
+ "legacy model-output recovery markers cannot be executed": {
+  "ja": "従来のモデル出力リカバリーマーカーは実行できません"
+ },
+ "legacy workflow checkpoint cannot be resumed by this Pi-only version; export prior results and start a new run": {
+  "ja": "この Pi 専用バージョンでは従来のワークフローチェックポイントを再開できません。以前の結果をエクスポートして、新しい実行を開始してください"
+ },
+ "links must be an array": {
+  "ja": "links は配列である必要があります"
+ },
+ "links[%d] has an invalid format": {
+  "ja": "links[%d] の形式が無効です"
+ },
+ "links[%d] must contain from": {
+  "ja": "links[%d] には from が必要です"
+ },
+ "links[%d] must contain type": {
+  "ja": "links[%d] には type が必要です"
+ },
+ "listener id is required": {
+  "ja": "リスナー ID が必要です"
+ },
+ "listener name is required": {
+  "ja": "リスナー名は必須です"
+ },
+ "listener not found": {
+  "ja": "リスナーが見つかりません"
+ },
+ "live binary does not match build recovery evidence": {
+  "ja": "現在のバイナリがビルドのリカバリ証跡と一致しません"
+ },
+ "load Pi agent roles: %w": {
+  "ja": "Pi エージェントロールの読み込みに失敗しました: %w"
+ },
+ "local cleanup unconfirmed: processes in uninterruptible sleep (D) with SIGKILL pending": {
+  "ja": "ローカルのクリーンアップが未確認です: プロセスが割り込み不可スリープ（D）状態で SIGKILL が保留中です"
+ },
+ "local cleanup: %v, worker cleanup: %w": {
+  "ja": "ローカルのクリーンアップ: %v、ワーカーのクリーンアップ: %w"
+ },
+ "local cleanup: %w, remote state: %v": {
+  "ja": "ローカルのクリーンアップ: %w、リモートの状態: %v"
+ },
+ "marshal manifest: %w": {
+  "ja": "manifest のシリアライズに失敗しました: %w"
+ },
+ "marshal openai payload: %w": {
+  "ja": "openai ペイロードのシリアライズに失敗しました: %w"
+ },
+ "marshal typesafe payload: %w": {
+  "ja": "typesafe ペイロードのシリアライズに失敗しました: %w"
+ },
+ "marshal workflow payload: %w": {
+  "ja": "ワークフローペイロードのシリアライズに失敗しました: %w"
+ },
+ "max_vulnerabilities must not be less than 0": {
+  "ja": "max_vulnerabilities は 0 以上で指定してください"
+ },
+ "message id required": {
+  "ja": "message id は必須です"
+ },
+ "message not found": {
+  "ja": "メッセージが見つかりません"
+ },
+ "messageID and detailID are required": {
+  "ja": "messageID と detailID が必要です"
+ },
+ "messageId required": {
+  "ja": "messageId は必須です"
+ },
+ "metadata %q: unsupported type %T": {
+  "ja": "メタデータ %q: サポートされていない型 %T です"
+ },
+ "min_vulnerabilities must not be less than 0": {
+  "ja": "min_vulnerabilities は 0 以上で指定してください"
+ },
+ "missing SKILL.md in %q (Agent Skills standard)": {
+  "ja": "%q に SKILL.md がありません（Agent Skills 標準）"
+ },
+ "missing agent:local-execute": {
+  "ja": "agent:local-execute がありません"
+ },
+ "missing authenticated principal": {
+  "ja": "認証済みのプリンシパルがありません"
+ },
+ "missing authenticated user": {
+  "ja": "認証済みユーザーが見つかりません"
+ },
+ "missing decision": {
+  "ja": "decision がありません"
+ },
+ "missing external tool name": {
+  "ja": "外部ツール名がありません"
+ },
+ "missing file": {
+  "ja": "ファイルがありません"
+ },
+ "missing metadata key %q": {
+  "ja": "メタデータキー %q がありません"
+ },
+ "missing or empty metadata %q": {
+  "ja": "メタデータ %q がないか空です"
+ },
+ "missing permission %s": {
+  "ja": "権限 %s がありません"
+ },
+ "missing permission mcp:external:execute": {
+  "ja": "権限 mcp:external:execute がありません"
+ },
+ "missing resource identifier %s": {
+  "ja": "リソース識別子 %s がありません"
+ },
+ "missing resource identifiers %ss": {
+  "ja": "リソース識別子 %ss がありません"
+ },
+ "mkdir tool output trunc dir: %w": {
+  "ja": "ツール出力の切り詰めディレクトリの作成に失敗しました: %w"
+ },
+ "mode supports only summary or split": {
+  "ja": "mode は summary または split のみ指定できます"
+ },
+ "models list is empty": {
+  "ja": "モデル一覧が空です"
+ },
+ "multiple JSON values": {
+  "ja": "複数の JSON 値があります"
+ },
+ "name exceeds 64 characters (Agent Skills limit)": {
+  "ja": "name が 64 文字を超えています（Agent Skills の制限）"
+ },
+ "name is required": {
+  "ja": "name は必須です"
+ },
+ "name must be lowercase (Agent Skills)": {
+  "ja": "name は小文字である必要があります（Agent Skills）"
+ },
+ "name must contain only lowercase letters, numbers, hyphens (Agent Skills)": {
+  "ja": "name には小文字、数字、ハイフンのみ使用できます（Agent Skills）"
+ },
+ "name must not contain consecutive hyphens (Agent Skills spec)": {
+  "ja": "name に連続したハイフンは使用できません（Agent Skills 仕様）"
+ },
+ "name must not contain reserved words anthropic or claude": {
+  "ja": "name に予約語 anthropic または claude は使用できません"
+ },
+ "name must not start or end with a hyphen (Agent Skills spec)": {
+  "ja": "name の先頭と末尾にハイフンは使用できません（Agent Skills 仕様）"
+ },
+ "name too long": {
+  "ja": "name が長すぎます"
+ },
+ "native Claude tool-call streaming requires Agent AgenticModel": {
+  "ja": "ネイティブ Claude のツール呼び出しストリーミングには Agent AgenticModel が必要です"
+ },
+ "native document splitter: %w": {
+  "ja": "ネイティブドキュメントスプリッター: %w"
+ },
+ "nil manifest": {
+  "ja": "manifest が nil です"
+ },
+ "no access to %s %s": {
+  "ja": "%s %s にアクセスする権限がありません"
+ },
+ "no access to conversation %s": {
+  "ja": "会話 %s にアクセスする権限がありません"
+ },
+ "no access to project %s": {
+  "ja": "プロジェクト %s にアクセスする権限がありません"
+ },
+ "no access to project: %w": {
+  "ja": "プロジェクトにアクセスする権限がありません: %w"
+ },
+ "no access to retest vulnerability %s": {
+  "ja": "脆弱性 %s を再テストする権限がありません"
+ },
+ "no access to tool execution %s": {
+  "ja": "ツール実行 %s にアクセスする権限がありません"
+ },
+ "no access to vulnerability %s": {
+  "ja": "脆弱性 %s にアクセスする権限がありません"
+ },
+ "no active task for this conversation": {
+  "ja": "この会話にはアクティブなタスクがありません"
+ },
+ "no authorization policy registered for builtin tool %s": {
+  "ja": "組み込みツール %s に認可ポリシーが登録されていません"
+ },
+ "no files to export": {
+  "ja": "エクスポートするファイルがありません"
+ },
+ "no result file for this task": {
+  "ja": "このタスクには結果ファイルがありません"
+ },
+ "no valid decision json in response": {
+  "ja": "レスポンスに有効な decision JSON がありません"
+ },
+ "no valid event ids": {
+  "ja": "有効なイベント ID がありません"
+ },
+ "no valid session ids": {
+  "ja": "有効なセッション ID がありません"
+ },
+ "no valid task ids": {
+  "ja": "有効なタスク ID がありません"
+ },
+ "node %s was interrupted during execution; reconcile its execution receipt before resuming": {
+  "ja": "ノード %s は実行中に中断されました。再開する前に実行レシートを照合してください"
+ },
+ "not a directory": {
+  "ja": "ディレクトリではありません"
+ },
+ "not a file": {
+  "ja": "ファイルではありません"
+ },
+ "not a regular file": {
+  "ja": "通常のファイルではありません"
+ },
+ "not found": {
+  "ja": "見つかりません"
+ },
+ "not positive integer": {
+  "ja": "正の整数ではありません"
+ },
+ "note too long (max 2000 characters)": {
+  "ja": "メモが長すぎます（最大 2000 文字）"
+ },
+ "null recovery %s": {
+  "ja": "リカバリの %s が null です"
+ },
+ "old_text must match exactly once": {
+  "ja": "old_text は正確に1回だけ一致する必要があります"
+ },
+ "open diagnostic log: %w": {
+  "ja": "診断ログのオープンに失敗しました: %w"
+ },
+ "open image: %w": {
+  "ja": "画像を開けませんでした: %w"
+ },
+ "openai api key is empty": {
+  "ja": "openai api key が空です"
+ },
+ "openai client is not initialized": {
+  "ja": "openai クライアントが初期化されていません"
+ },
+ "openai config is nil": {
+  "ja": "openai 設定が nil です"
+ },
+ "openai stream error: %s": {
+  "ja": "openai ストリームエラー: %s"
+ },
+ "openai.max_completion_tokens must be a positive number": {
+  "ja": "openai.max_completion_tokens は正の数で指定してください"
+ },
+ "owner exited before launch: %w": {
+  "ja": "起動前にオーナーが終了しました: %w"
+ },
+ "page must be between 1 and 1000000": {
+  "ja": "page は 1〜1000000 の範囲で指定してください"
+ },
+ "page_size must be between 1 and %d": {
+  "ja": "page_size は 1〜%d の範囲で指定してください"
+ },
+ "parent not found": {
+  "ja": "親ディレクトリが見つかりません"
+ },
+ "parse tool execution arguments: %w": {
+  "ja": "ツール実行の引数の解析に失敗しました: %w"
+ },
+ "password is empty": {
+  "ja": "パスワードが空です"
+ },
+ "path escapes chat_uploads root": {
+  "ja": "パスが chat_uploads のルートを超えています"
+ },
+ "path escapes conversation artifacts root": {
+  "ja": "パスが会話アーティファクトのルートを超えています"
+ },
+ "path escapes reduction root": {
+  "ja": "パスが reduction のルートを超えています"
+ },
+ "path escapes skill directory: %q": {
+  "ja": "パスがスキルディレクトリの外に出ています: %q"
+ },
+ "path escapes workspace root": {
+  "ja": "パスがワークスペースのルートを超えています"
+ },
+ "path is a directory": {
+  "ja": "パスはディレクトリです"
+ },
+ "path is empty": {
+  "ja": "パスが空です"
+ },
+ "path not found": {
+  "ja": "パスが見つかりません"
+ },
+ "path outside chat_uploads": {
+  "ja": "パスが chat_uploads の外にあります"
+ },
+ "platform %s does not support proactive alerts yet": {
+  "ja": "プラットフォーム %s はプロアクティブアラートにまだ対応していません"
+ },
+ "port must be between 0 and 65535": {
+  "ja": "port は 0〜65535 の範囲で指定してください"
+ },
+ "pre-build state contradicts previous binary hash": {
+  "ja": "ビルド前の状態が以前のバイナリのハッシュと矛盾しています"
+ },
+ "prepare Pi runtime: %w": {
+  "ja": "Pi ランタイムの準備に失敗しました: %w"
+ },
+ "previous update does not prove the current binary": {
+  "ja": "以前の更新では現在のバイナリを証明できません"
+ },
+ "process detail id required": {
+  "ja": "process detail id は必須です"
+ },
+ "process group is closed": {
+  "ja": "プロセスグループは閉じられています"
+ },
+ "process guardian acknowledgement timed out": {
+  "ja": "プロセスガーディアンの確認応答がタイムアウトしました"
+ },
+ "process guardian did not exit": {
+  "ja": "プロセスガーディアンが終了しませんでした"
+ },
+ "process guardian: %s": {
+  "ja": "プロセスガーディアン: %s"
+ },
+ "profile id is required": {
+  "ja": "プロファイル ID が必要です"
+ },
+ "profile not found": {
+  "ja": "Profile が見つかりません"
+ },
+ "project access denied": {
+  "ja": "プロジェクトへのアクセス権限がありません"
+ },
+ "project_id and conversation_id are required": {
+  "ja": "project_id と conversation_id は必須です"
+ },
+ "project_id is required": {
+  "ja": "project_id は必須です"
+ },
+ "query assistant cognition: %w": {
+  "ja": "アシスタントの認知データの取得に失敗しました: %w"
+ },
+ "query is required": {
+  "ja": "query は必須です"
+ },
+ "query path is required": {
+  "ja": "query path は必須です"
+ },
+ "query turn user message: %w": {
+  "ja": "ターンのユーザーメッセージの取得に失敗しました: %w"
+ },
+ "rate limit exceeded, please try again later": {
+  "ja": "リクエストが多すぎます。しばらくしてからもう一度お試しください"
+ },
+ "read Pi session revision: %w": {
+  "ja": "Pi セッションのリビジョンの読み取りに失敗しました: %w"
+ },
+ "read Pi worker handshake: %w": {
+  "ja": "Pi worker のハンドシェイクの読み取りに失敗しました: %w"
+ },
+ "read Pi worker output: %w": {
+  "ja": "Pi worker の出力の読み取りに失敗しました: %w"
+ },
+ "read conversation plan tasks: %w": {
+  "ja": "会話のプランタスクの読み取りに失敗しました: %w"
+ },
+ "read openai models response: %w": {
+  "ja": "openai モデル一覧レスポンスの読み取りに失敗しました: %w"
+ },
+ "read openai response timeout (25m)": {
+  "ja": "openai レスポンスの読み取りがタイムアウトしました (25m)"
+ },
+ "read openai response timeout: %w": {
+  "ja": "openai レスポンスの読み取りがタイムアウトしました: %w"
+ },
+ "read openai response: %w": {
+  "ja": "openai レスポンスの読み取りに失敗しました: %w"
+ },
+ "read openai stream: %w": {
+  "ja": "openai ストリームの読み取りに失敗しました: %w"
+ },
+ "read skills directory: %w": {
+  "ja": "スキルディレクトリの読み取りに失敗しました: %w"
+ },
+ "read typesafe response: %w": {
+  "ja": "typesafe レスポンスの読み取りに失敗しました: %w"
+ },
+ "recover %s: %w": {
+  "ja": "%s のリカバリーに失敗しました: %w"
+ },
+ "register Pi session root: %w": {
+  "ja": "Pi セッションのルートの登録に失敗しました: %w"
+ },
+ "relativeDir is not a directory": {
+  "ja": "relativeDir はディレクトリではありません"
+ },
+ "remote cancellation is unconfirmed": {
+  "ja": "リモートでのキャンセルが確認できていません"
+ },
+ "remove Pi sessions: %w": {
+  "ja": "Pi セッションの削除に失敗しました: %w"
+ },
+ "remove expired diagnostic log %s: %w": {
+  "ja": "期限切れの診断ログ %s の削除に失敗しました: %w"
+ },
+ "required isolation has no delegated cgroup root": {
+  "ja": "必須の分離に委任された cgroup ルートがありません"
+ },
+ "required isolation needs security.process_isolation.cgroup_root": {
+  "ja": "必須の分離には security.process_isolation.cgroup_root が必要です"
+ },
+ "rerank api_key is required": {
+  "ja": "rerank の api_key が必要です"
+ },
+ "rerank config is nil": {
+  "ja": "リランク設定が nil です"
+ },
+ "rerank decode: %w": {
+  "ja": "リランクのデコード: %w"
+ },
+ "rerank http %d: %s": {
+  "ja": "リランク HTTP %d: %s"
+ },
+ "rerank request: %w": {
+  "ja": "リランクリクエスト: %w"
+ },
+ "resource %s %s belongs to project %s, current conversation is unbound": {
+  "ja": "リソース %s %s はプロジェクト %s に属していますが、現在の会話はプロジェクトに紐付けられていません"
+ },
+ "resource %s %s belongs to project %s, current conversation project is %s": {
+  "ja": "リソース %s %s はプロジェクト %s に属していますが、現在の会話のプロジェクトは %s です"
+ },
+ "resource %s %s is unbound, current conversation project is %s": {
+  "ja": "リソース %s %s はプロジェクトに紐付けられていませんが、現在の会話のプロジェクトは %s です"
+ },
+ "retest conversation conflicts with current project scope": {
+  "ja": "再テストの会話が現在のプロジェクトスコープと競合しています"
+ },
+ "retest conversation project no longer matches vulnerability %s": {
+  "ja": "再テストの会話のプロジェクトが脆弱性 %s と一致しなくなりました"
+ },
+ "retriever is nil": {
+  "ja": "リトリーバーが nil です"
+ },
+ "robot identity is not bound": {
+  "ja": "ロボットの ID が紐付けられていません"
+ },
+ "robot platform and external user identity are required": {
+  "ja": "ロボットのプラットフォームと外部ユーザー ID が必要です"
+ },
+ "robots.%s.auth.service_user_id must point to an enabled RBAC user": {
+  "ja": "robots.%s.auth.service_user_id は有効な RBAC ユーザーを指す必要があります"
+ },
+ "robots.wecom.token must be configured when robots.wecom.enabled is true": {
+  "ja": "robots.wecom.enabled が true の場合は robots.wecom.token を設定する必要があります"
+ },
+ "role id is required": {
+  "ja": "ロール ID が必要です"
+ },
+ "role name is required": {
+  "ja": "ロール名が必要です"
+ },
+ "rollback absence contradicts live hash": {
+  "ja": "ロールバックの不在記録がライブハッシュと矛盾しています"
+ },
+ "rollback binary decision contradicts state": {
+  "ja": "ロールバックのバイナリ判断が状態と矛盾しています"
+ },
+ "rollback cannot skip binary restoration": {
+  "ja": "ロールバックでバイナリの復元を省略できません"
+ },
+ "rollback journal contradicts persisted state": {
+  "ja": "ロールバックのジャーナルが保存済みの状態と矛盾しています"
+ },
+ "rollback lacks binary evidence": {
+  "ja": "ロールバックにバイナリの証跡がありません"
+ },
+ "rollback lacks unchanged binary evidence": {
+  "ja": "ロールバックにバイナリ未変更の証跡がありません"
+ },
+ "rollback live hash contradicts state": {
+  "ja": "ロールバックのライブハッシュが状態と矛盾しています"
+ },
+ "rollback previous hash contradicts state": {
+  "ja": "ロールバックの以前のハッシュが状態と矛盾しています"
+ },
+ "run not found": {
+  "ja": "実行が見つかりません"
+ },
+ "runtime source must not be a symlink: %s": {
+  "ja": "ランタイムのソースはシンボリックリンクにできません: %s"
+ },
+ "scan_overdue_days must be greater than 0": {
+  "ja": "scan_overdue_days は 0 より大きい値で指定してください"
+ },
+ "scan_state must be never or scanned": {
+  "ja": "scan_state は never または scanned のみ指定できます"
+ },
+ "scans count must be between 1 and 10000": {
+  "ja": "scans の数は 1～10000 の範囲で指定してください"
+ },
+ "scope must be project or conversation, current value: %s": {
+  "ja": "scope は project または conversation のみ指定できます。現在の値: %s"
+ },
+ "sendMessage status %d": {
+  "ja": "sendMessage のステータス %d"
+ },
+ "server: TLS is enabled (tls_enabled / tls_auto_self_sign / certificate paths). Set tls_cert_path and tls_key_path, or set tls_auto_self_sign to true (test environments only)": {
+  "ja": "server: TLS が有効です（tls_enabled / tls_auto_self_sign / 証明書パス）。tls_cert_path と tls_key_path を設定するか、tls_auto_self_sign を true に設定してください（テスト環境のみ）"
+ },
+ "session id and implant_uuid are required": {
+  "ja": "セッション ID と implant_uuid が必要です"
+ },
+ "session not found": {
+  "ja": "セッションが見つかりません"
+ },
+ "session_id and remote_path required": {
+  "ja": "session_id と remote_path は必須です"
+ },
+ "session_id required": {
+  "ja": "session_id は必須です"
+ },
+ "session_key and verify_code are required": {
+  "ja": "session_key と verify_code が必要です"
+ },
+ "session_key is missing": {
+  "ja": "session_key がありません"
+ },
+ "set %s: %w": {
+  "ja": "%s の設定に失敗しました: %w"
+ },
+ "shell inactivity timeout (%ds)": {
+  "ja": "シェルの無操作タイムアウト（%d 秒）"
+ },
+ "skill %q: %w": {
+  "ja": "スキル %q: %w"
+ },
+ "skill does not exist: %v": {
+  "ja": "スキルが見つかりません: %v"
+ },
+ "skill manifest is nil": {
+  "ja": "スキル manifest が nil です"
+ },
+ "skill package exceeds %d files": {
+  "ja": "スキルパッケージのファイル数が %d を超えています"
+ },
+ "skills directory required for task board": {
+  "ja": "タスクボードにはスキルディレクトリが必要です"
+ },
+ "slack is not configured": {
+  "ja": "Slack が設定されていません"
+ },
+ "sleep_seconds must be >= 1": {
+  "ja": "sleep_seconds は 1 以上である必要があります"
+ },
+ "sort must be severity, latest or oldest": {
+  "ja": "sort は severity、latest、oldest のいずれかである必要があります"
+ },
+ "sort_by is not supported": {
+  "ja": "sort_by はサポートされていません"
+ },
+ "sort_order must be asc or desc": {
+  "ja": "sort_order は asc または desc のみ指定できます"
+ },
+ "source and target are required": {
+  "ja": "source と target は必須です"
+ },
+ "source_fact_key is required": {
+  "ja": "source_fact_key は必須です"
+ },
+ "sqlite indexer: begin tx: %w": {
+  "ja": "sqlite インデクサー: トランザクションの開始に失敗しました: %w"
+ },
+ "sqlite indexer: commit: %w": {
+  "ja": "sqlite インデクサー: コミットに失敗しました: %w"
+ },
+ "sqlite indexer: doc %d: %w": {
+  "ja": "sqlite インデクサー: ドキュメント %d: %w"
+ },
+ "sqlite indexer: embed batch %d-%d: %w": {
+  "ja": "sqlite インデクサー: 埋め込みバッチ %d-%d: %w"
+ },
+ "sqlite indexer: embed count mismatch: got %d want %d": {
+  "ja": "sqlite インデクサー: 埋め込み数が一致しません: 実際 %d、期待 %d"
+ },
+ "sqlite indexer: embedding is required": {
+  "ja": "sqlite インデクサー: エンベッダーが必要です"
+ },
+ "sqlite indexer: inconsistent embedding dim at doc %d: got %d want %d": {
+  "ja": "sqlite インデクサー: ドキュメント %d の埋め込み次元が一致しません: 実際 %d、期待 %d"
+ },
+ "sqlite indexer: insert chunk %d: %w": {
+  "ja": "sqlite インデクサー: チャンク %d の挿入に失敗しました: %w"
+ },
+ "sqlite indexer: marshal embedding: %w": {
+  "ja": "sqlite インデクサー: 埋め込みのシリアライズに失敗しました: %w"
+ },
+ "sqlite indexer: nil document at %d": {
+  "ja": "sqlite インデクサー: 位置 %d のドキュメントが nil です"
+ },
+ "sse mode requires url to be configured": {
+  "ja": "sse モードでは url の設定が必要です"
+ },
+ "start Pi runtime (requires Node.js >=22.19): %w": {
+  "ja": "Pi ランタイムの起動に失敗しました（Node.js >=22.19 が必要です）: %w"
+ },
+ "start Pi worker: %w": {
+  "ja": "Pi worker の起動に失敗しました: %w"
+ },
+ "stat: %w": {
+  "ja": "stat: %w"
+ },
+ "state binary commit is unrelated": {
+  "ja": "状態のバイナリコミットが無関係です"
+ },
+ "state contradicts binary absence": {
+  "ja": "状態がバイナリの不在と矛盾しています"
+ },
+ "state must be valid json": {
+  "ja": "state は有効な JSON である必要があります"
+ },
+ "state payload too large (max 2MB)": {
+  "ja": "state のデータが大きすぎます（最大 2MB）"
+ },
+ "status must be active or inactive": {
+  "ja": "status は active または inactive のみ指定できます"
+ },
+ "stdio mode requires command to be configured": {
+  "ja": "stdio モードでは command の設定が必要です"
+ },
+ "stdio mode requires the command and args parameters": {
+  "ja": "stdio モードでは command と args パラメーターが必要です"
+ },
+ "stopped after 10 redirects": {
+  "ja": "10 回のリダイレクト後に停止しました"
+ },
+ "sub-agent role unavailable: %s": {
+  "ja": "サブエージェントのロールが利用できません: %s"
+ },
+ "subject is required": {
+  "ja": "subject は必須です"
+ },
+ "system role cannot be deleted": {
+  "ja": "システムロールは削除できません"
+ },
+ "tags: %w": {
+  "ja": "tags: %w"
+ },
+ "target_fact_key is required": {
+  "ja": "target_fact_key は必須です"
+ },
+ "task %s: %w (process groups %v)": {
+  "ja": "タスク %s: %w（プロセスグループ %v）"
+ },
+ "task %s: process cleanup timed out (process groups %v)": {
+  "ja": "タスク %s: プロセスのクリーンアップがタイムアウトしました（プロセスグループ %v）"
+ },
+ "task does not exist": {
+  "ja": "タスクが存在しません"
+ },
+ "task event bus unavailable": {
+  "ja": "タスクイベントバスを利用できません"
+ },
+ "task id is required": {
+  "ja": "タスク ID が必要です"
+ },
+ "task is ending; new processes are not allowed": {
+  "ja": "タスクを終了中のため、新しいプロセスは許可されません"
+ },
+ "task is ending; new tool executions are not allowed": {
+  "ja": "タスクを終了中のため、新しいツール実行は許可されません"
+ },
+ "task manager is shutting down": {
+  "ja": "タスクマネージャーはシャットダウン中です"
+ },
+ "task not found": {
+  "ja": "タスクが見つかりません"
+ },
+ "task worker limit reached (%d)": {
+  "ja": "タスクのワーカー数が上限（%d）に達しました"
+ },
+ "telegram is not configured": {
+  "ja": "Telegram が設定されていません"
+ },
+ "text is required": {
+  "ja": "text は必須です"
+ },
+ "timeout waiting for task completion": {
+  "ja": "タスクの完了待ちがタイムアウトしました"
+ },
+ "todos must be an array": {
+  "ja": "todos は配列である必要があります"
+ },
+ "token count: %w": {
+  "ja": "トークン数のカウント: %w"
+ },
+ "tool authorization denied: %w": {
+  "ja": "ツールの認可が拒否されました: %w"
+ },
+ "tool authorization policy is not configured": {
+  "ja": "ツールの認可ポリシーが設定されていません"
+ },
+ "tool execution panic: %v": {
+  "ja": "ツール実行で panic が発生しました: %v"
+ },
+ "tool execution wait timeout": {
+  "ja": "ツール実行の待機がタイムアウトしました"
+ },
+ "tool guard: at most %d rules are allowed": {
+  "ja": "ツールガード: ルールは最大 %d 件までです"
+ },
+ "tool not allowed: %s": {
+  "ja": "ツールは許可されていません: %s"
+ },
+ "tool workers still running %v: %w": {
+  "ja": "ツールワーカーがまだ実行中です %v: %w"
+ },
+ "tool_guard must explicitly provide enabled and rules; to clear the rules, provide an empty array": {
+  "ja": "tool_guard には enabled と rules を明示的に指定する必要があります。ルールを空にするには空の配列を指定してください"
+ },
+ "trailing recovery data: %v": {
+  "ja": "リカバリデータの末尾に余分なデータがあります: %v"
+ },
+ "typesafe api key is empty": {
+  "ja": "typesafe の API キーが空です"
+ },
+ "typesafe client is not initialized": {
+  "ja": "typesafe クライアントが初期化されていません"
+ },
+ "typesafe questions are empty": {
+  "ja": "typesafe の質問が空です"
+ },
+ "unexpected JSON value": {
+  "ja": "予期しない JSON 値です"
+ },
+ "unexpected Pi record: %s": {
+  "ja": "予期しない Pi レコード: %s"
+ },
+ "unexpected embedding count: %d": {
+  "ja": "想定外の埋め込み数です: %d"
+ },
+ "unfiltered C2 event list requires global scope": {
+  "ja": "フィルタなしの C2 イベント一覧にはグローバルスコープが必要です"
+ },
+ "unknown action: %s": {
+  "ja": "不明な操作です: %s"
+ },
+ "unknown command": {
+  "ja": "不明なコマンドです"
+ },
+ "unknown fallback AI channel: %s": {
+  "ja": "不明なフォールバック AI チャネルです: %s"
+ },
+ "unknown guardian command": {
+  "ja": "不明なガーディアンコマンドです"
+ },
+ "unknown local tool": {
+  "ja": "不明なローカルツールです"
+ },
+ "unknown or duplicate recovery field %q": {
+  "ja": "不明または重複したリカバリフィールド %q"
+ },
+ "unknown permission: %s": {
+  "ja": "不明な権限です: %s"
+ },
+ "unknown skill: %s": {
+  "ja": "不明なスキル: %s"
+ },
+ "unknown specialist or empty task": {
+  "ja": "不明なスペシャリスト、またはタスクが空です"
+ },
+ "unmarshal openai response: %w": {
+  "ja": "openai レスポンスの解析に失敗しました: %w"
+ },
+ "unsupported agent runtime %q: this version only supports pi": {
+  "ja": "サポートされていないエージェントランタイム %q です。このバージョンでは pi のみサポートされています"
+ },
+ "unsupported guardian": {
+  "ja": "サポートされていないガーディアンです"
+ },
+ "unsupported image extension %q": {
+  "ja": "サポートされていない画像拡張子 %q"
+ },
+ "unsupported recovery type %s": {
+  "ja": "サポートされていないリカバリ型 %s"
+ },
+ "unsupported task_type: %s": {
+  "ja": "サポートされていない task_type です: %s"
+ },
+ "update: install root is required": {
+  "ja": "更新: インストールルートが必要です"
+ },
+ "url and action are required": {
+  "ja": "url と action は必須です"
+ },
+ "url and command are required": {
+  "ja": "url と command は必須です"
+ },
+ "url is required": {
+  "ja": "url は必須です"
+ },
+ "url is required in HTTP mode": {
+  "ja": "HTTP モードでは url が必須です"
+ },
+ "url is required in SSE mode": {
+  "ja": "SSE モードでは url が必須です"
+ },
+ "use a dedicated delegated cgroup, not the hierarchy root or a symlink": {
+  "ja": "階層ルートやシンボリックリンクではなく、専用の委任 cgroup を使用してください"
+ },
+ "user id is required": {
+  "ja": "ユーザー ID が必要です"
+ },
+ "user_id and password_hash are required": {
+  "ja": "user_id と password_hash が必要です"
+ },
+ "user_id and resource_ids are required": {
+  "ja": "user_id と resource_ids が必要です"
+ },
+ "user_id is required": {
+  "ja": "user_id が必要です"
+ },
+ "user_id, resource_type and resource_ids are required": {
+  "ja": "user_id、resource_type、resource_ids が必要です"
+ },
+ "username and password are required": {
+  "ja": "ユーザー名とパスワードが必要です"
+ },
+ "valid conversation ID required for a task board": {
+  "ja": "タスクボードには有効な会話 ID が必要です"
+ },
+ "vision API key is empty (set vision.api_key or openai.api_key)": {
+  "ja": "ビジョン API キーが空です（vision.api_key または openai.api_key を設定してください）"
+ },
+ "vision model is empty": {
+  "ja": "ビジョンモデルが空です"
+ },
+ "vision model returned empty content": {
+  "ja": "ビジョンモデルが空のコンテンツを返しました"
+ },
+ "webshell not found": {
+  "ja": "WebShell が見つかりません"
+ },
+ "wecom proactive API is not configured": {
+  "ja": "企業微信のプロアクティブ API が設定されていません"
+ },
+ "wecom send: %s": {
+  "ja": "企業微信送信: %s"
+ },
+ "wecom token: %s": {
+  "ja": "企業微信トークン: %s"
+ },
+ "where clause is required": {
+  "ja": "where 句が必要です"
+ },
+ "workflow changed since the checkpoint; refusing to replay a different graph": {
+  "ja": "チェックポイント以降にワークフローが変更されたため、異なるグラフの再実行は拒否されました"
+ },
+ "workflow checkpoint is missing": {
+  "ja": "ワークフローのチェックポイントがありません"
+ },
+ "workflow contains a cycle": {
+  "ja": "ワークフローに循環があります"
+ },
+ "workflow db is nil": {
+  "ja": "ワークフロー DB が nil です"
+ },
+ "workflow graph_json is required": {
+  "ja": "ワークフローの graph_json は必須です"
+ },
+ "workflow id, name and version are required": {
+  "ja": "ワークフローの id、name、version は必須です"
+ },
+ "workflow package inspection is incomplete": {
+  "ja": "ワークフローパッケージの検査が完了していません"
+ },
+ "workflow runtime missing in context": {
+  "ja": "コンテキストにワークフローランタイムがありません"
+ },
+ "workspace abs: %w": {
+  "ja": "ワークスペースの絶対パス取得に失敗しました: %w"
+ },
+ "workspace mkdir: %w": {
+  "ja": "ワークスペースディレクトリの作成に失敗しました: %w"
+ },
+ "write %s: %w": {
+  "ja": "%s の書き込みに失敗しました: %w"
+ },
+ "write tool output trunc file: %w": {
+  "ja": "ツール出力の切り詰めファイルの書き込みに失敗しました: %w"
+ },
+ "⚠️ A task is already running in this conversation. Wait for it to finish or click \"Stop task\" and try again.": {
+  "ja": "⚠️ この会話ではすでにタスクが実行中です。完了を待つか、「タスクを停止」をクリックしてから再度お試しください。"
+ },
+ "❌ Failed to start task: %v": {
+  "ja": "❌ タスクを開始できません: %v"
+ },
+ "The model request will be retried in %s (%d/%d). %s.": {
+  "ja": "モデルリクエストは %s 後に再試行されます（%d/%d）。%s。"
+ },
+ "Timed out waiting for model service response headers": {
+  "ja": "モデルサービスの応答ヘッダー待機がタイムアウトしました"
+ },
+ "No new data received on the model response stream for a long time": {
+  "ja": "モデルの応答ストリームに長時間新しいデータがありません"
+ },
+ "Model response stream closed early without receiving an end marker": {
+  "ja": "終了マーカーを受信しないままモデルの応答ストリームが閉じられました"
+ }
+}

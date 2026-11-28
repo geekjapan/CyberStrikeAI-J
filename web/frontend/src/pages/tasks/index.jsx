@@ -1,4 +1,4 @@
-/** 任务管理：批量任务队列列表、统计、创建与队列详情抽屉，深链接 ?id=。 */
+/** Task management: batch task queue list, stats, creation and queue detail drawer, deep link ?id=. */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
@@ -93,72 +93,72 @@ export default function TasksPage() {
     const startQueue = async (record) => {
         try {
             await api.post(`/batch-tasks/${record.id}/start`);
-            toastSuccess('已开始执行');
+            toastSuccess(t('ui.tasksIndex.started', null, 'Started'));
             refresh();
         } catch (error) {
-            toastError(errText(error, t('tasks.startBatchQueueFailed', null, '启动批量任务失败')));
+            toastError(errText(error, t('tasks.startBatchQueueFailed', null, 'Failed to start batch queue')));
         }
     };
 
     const pauseQueue = (record) => confirmAction({
-        title: t('tasks.statusPaused', null, '已暂停'),
-        content: t('tasks.pauseQueueConfirm', null, '确定要暂停这个批量任务队列吗？当前正在执行的任务将被停止，后续任务将保留待执行状态。'),
-        okText: t('common.confirm', null, '确认'),
+        title: t('tasks.statusPaused', null, 'Paused'),
+        content: t('tasks.pauseQueueConfirm', null, 'Pause this batch queue? The current task will be stopped; remaining tasks will stay pending.'),
+        okText: t('common.confirm', null, 'Confirm'),
         onOk: async () => {
             try {
                 await api.post(`/batch-tasks/${record.id}/pause`);
-                toastSuccess(t('tasks.statusPaused', null, '已暂停'));
+                toastSuccess(t('tasks.statusPaused', null, 'Paused'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.pauseQueueFailed', null, '暂停批量任务失败')));
+                toastError(errText(error, t('tasks.pauseQueueFailed', null, 'Failed to pause queue')));
             }
         }
     });
 
     const rerunQueue = (record) => confirmAction({
-        title: t('tasks.retry', null, '重试'),
-        content: t('tasks.rerunQueueConfirm', null, '确定要重跑一轮吗？所有子任务将被重置为待执行状态并重新开始执行。'),
-        okText: t('common.confirm', null, '确认'),
+        title: t('tasks.retry', null, 'Retry'),
+        content: t('tasks.rerunQueueConfirm', null, 'Rerun this batch queue? All tasks will be reset to pending and re-executed.'),
+        okText: t('common.confirm', null, 'Confirm'),
         onOk: async () => {
             try {
                 await api.post(`/batch-tasks/${record.id}/rerun`);
-                toastSuccess('已开始重跑');
+                toastSuccess(t('ui.tasksIndex.rerunStarted', null, 'Rerun started'));
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.rerunQueueFailed', null, '重跑批量任务失败')));
+                toastError(errText(error, t('tasks.rerunQueueFailed', null, 'Failed to rerun batch queue')));
             }
         }
     });
 
     const deleteQueue = (record) => confirmAction({
-        title: t('tasks.deleteQueue', null, '删除队列'),
-        content: t('tasks.deleteQueueConfirm', null, '确定要删除这个批量任务队列吗？此操作不可恢复。'),
-        okText: t('common.delete', null, '删除'),
+        title: t('tasks.deleteQueue', null, 'Delete queue'),
+        content: t('tasks.deleteQueueConfirm', null, 'Delete this batch queue? This cannot be undone.'),
+        okText: t('common.delete', null, 'Delete'),
         onOk: async () => {
             try {
                 await api.del(`/batch-tasks/${record.id}`);
-                toastSuccess(t('tasks.deleteQueue', null, '删除队列'));
+                toastSuccess(t('tasks.deleteQueue', null, 'Delete queue'));
                 if (selectedId === record.id) navigate(undefined, tab);
                 refresh();
             } catch (error) {
-                toastError(errText(error, t('tasks.deleteQueueFailed', null, '删除批量任务队列失败')));
+                toastError(errText(error, t('tasks.deleteQueueFailed', null, 'Failed to delete batch queue')));
             }
         }
     });
 
     const metrics = [
-        { id: 'queues', label: t('tasks.batchQueueTitle', null, '批量任务队列'), value: overviewTotals.queues, loading: overview.loading },
+        { id: 'queues', label: t('tasks.batchQueueTitle', null, 'Batch task queue'), value: overviewTotals.queues, loading: overview.loading },
         {
             id: 'running',
-            label: t('tasks.runningLabel', null, '执行中'),
+            label: t('tasks.runningLabel', null, 'Running'),
             value: overviewTotals.running,
             tone: overviewTotals.running ? 'success' : undefined,
             loading: overview.loading
         },
-        { id: 'pending', label: t('tasks.pendingLabel', null, '待执行'), value: overviewTotals.pendingTasks, loading: overview.loading },
+        { id: 'pending', label: t('tasks.pendingLabel', null, 'Pending'), value: overviewTotals.pendingTasks, loading: overview.loading },
         {
             id: 'failed',
-            label: t('tasks.failedLabel', null, '失败'),
+            label: t('tasks.failedLabel', null, 'Failed'),
             value: overviewTotals.failedTasks,
             tone: overviewTotals.failedTasks ? 'danger' : undefined,
             loading: overview.loading
@@ -167,7 +167,7 @@ export default function TasksPage() {
 
     const columns = [
         {
-            title: t('batchImportModal.queueTitle', null, '任务标题'),
+            title: t('batchImportModal.queueTitle', null, 'Queue title'),
             dataIndex: 'title',
             render: (value, record) => {
                 const view = queueStatusView(record);
@@ -178,14 +178,14 @@ export default function TasksPage() {
                         onClick={() => navigate(record.id, 'queues')}
                         title={record.id}
                     >
-                        <span className="task-queue-title">{value || t('tasks.batchQueueUntitled', null, '未命名队列')}</span>
+                        <span className="task-queue-title">{value || t('tasks.batchQueueUntitled', null, 'Untitled queue')}</span>
                         {view.sublabel ? <span className="task-queue-sub">{view.sublabel}</span> : null}
                     </button>
                 );
             }
         },
         {
-            title: t('projects.status', null, '状态'),
+            title: t('projects.status', null, 'Status'),
             dataIndex: 'status',
             width: 170,
             render: (value, record) => {
@@ -194,7 +194,7 @@ export default function TasksPage() {
             }
         },
         {
-            title: '进度',
+            title: t('ui.tasksIndex.progress', null, 'Progress'),
             dataIndex: 'progress',
             width: 190,
             render: (value, record) => {
@@ -208,45 +208,45 @@ export default function TasksPage() {
             }
         },
         {
-            title: t('batchImportModal.agentMode', null, '代理模式'),
+            title: t('batchImportModal.agentMode', null, 'Agent mode'),
             dataIndex: 'agentMode',
             width: 150,
             render: value => <Text size="small">{agentModeLabel(value)}</Text>
         },
         {
-            title: t('batchImportModal.scheduleMode', null, '调度方式'),
+            title: t('batchImportModal.scheduleMode', null, 'Schedule mode'),
             dataIndex: 'scheduleMode',
             width: 128,
             render: (value, record) => (
                 <Text size="small">
                     {value === 'cron'
                         ? `Cron · ${record.cronExpr || ''}`
-                        : t('batchImportModal.scheduleModeManual', null, '手工执行')}
+                        : t('batchImportModal.scheduleModeManual', null, 'Manual')}
                 </Text>
             )
         },
         {
-            title: t('tasks.createdTimeLabel', null, '创建时间'),
+            title: t('tasks.createdTimeLabel', null, 'Created at'),
             dataIndex: 'createdAt',
             width: 160,
             render: value => <Text type="tertiary" size="small">{formatDateTime(value)}</Text>
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 250,
             render: (value, record) => (
                 <Space spacing={2} wrap>
                     <Button size="small" theme="borderless" onClick={() => navigate(record.id, 'queues')}>
-                        {t('projects.details', null, '详情')}
+                        {t('projects.details', null, 'Details')}
                     </Button>
                     {record.status === 'running' ? (
                         <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => pauseQueue(record)}>
-                            {t('tasks.statusPaused', null, '已暂停')}
+                            {t('tasks.statusPaused', null, 'Paused')}
                         </Button>
                     ) : (
                         <Button size="small" theme="borderless" disabled={!canWrite} onClick={() => startQueue(record)}>
-                            开始执行
+                            {t('ui.tasksIndex.start', null, 'Start')}
                         </Button>
                     )}
                     <Button
@@ -255,10 +255,10 @@ export default function TasksPage() {
                         disabled={!canWrite || !['completed', 'cancelled'].includes(record.status)}
                         onClick={() => rerunQueue(record)}
                     >
-                        {t('tasks.retry', null, '重试')}
+                        {t('tasks.retry', null, 'Retry')}
                     </Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => deleteQueue(record)}>
-                        {t('common.delete', null, '删除')}
+                        {t('common.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -268,15 +268,15 @@ export default function TasksPage() {
     return (
         <div className="task-page">
             <PageHeader
-                title={t('tasks.title', null, '任务管理')}
-                description={t('tasks.pageDesc', null, '批量任务队列按并发池执行子任务；队列详情可查看进度、单条执行与结果。')}
+                title={t('tasks.title', null, 'Task Management')}
+                description={t('tasks.pageDesc', null, 'Batch task queues run subtasks through a concurrency pool; open a queue to see progress, run single items, and view results.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} theme="borderless" loading={list.loading} onClick={refresh}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setCreateVisible(true)}>
-                            {t('batchImportModal.title', null, '新建任务')}
+                            {t('batchImportModal.title', null, 'New task')}
                         </Button>
                     </Space>
                 )}
@@ -290,8 +290,8 @@ export default function TasksPage() {
                 activeKey={tab}
                 onChange={key => navigate(undefined, key)}
                 tabList={[
-                    { itemKey: 'queues', tab: t('tasks.batchQueueTitle', null, '批量任务队列') },
-                    { itemKey: 'live', tab: `${t('tasks.runningLabel', null, '执行中')}任务` }
+                    { itemKey: 'queues', tab: t('tasks.batchQueueTitle', null, 'Batch task queue') },
+                    { itemKey: 'live', tab: t('ui.tasksIndex.liveTab', null, 'Running tasks') }
                 ]}
                 className="task-tabs"
             />
@@ -300,16 +300,16 @@ export default function TasksPage() {
                 <LiveTasks />
             ) : (
                 <SectionCard
-                    title={t('tasks.batchQueueTitle', null, '批量任务队列')}
-                    description={t('tasks.finishedProgressHint', null, '进度表示已结束的任务比例，包含失败和取消，不表示成功率。')}
-                    extra={<Text type="tertiary" size="small">{t('tasks.taskCount', { count: total }, `共 ${total} 个任务`)}</Text>}
+                    title={t('tasks.batchQueueTitle', null, 'Batch task queue')}
+                    description={t('tasks.finishedProgressHint', null, 'Progress counts finished tasks, including failures and cancellations; it is not the success rate.')}
+                    extra={<Text type="tertiary" size="small">{t('tasks.taskCount', { count: total }, '{{count}} task(s)')}</Text>}
                 >
                     <div className="task-toolbar">
                         <Input
                             prefix={<IconSearch />}
                             value={keyword}
                             showClear
-                            placeholder={t('batchImportModal.queueTitlePlaceholder', null, '请输入任务标题（可选，用于标识和筛选）')}
+                            placeholder={t('batchImportModal.queueTitlePlaceholder', null, 'Enter queue title (optional, for identification and filtering)')}
                             onChange={value => { setKeyword(value); setPage(1); }}
                             style={{ width: 280 }}
                         />
@@ -326,8 +326,8 @@ export default function TasksPage() {
                         rowKey="id"
                         loading={list.loading}
                         emptyText={statusFilter !== 'all' || keyword
-                            ? t('tasks.noMatchingTasks', null, '当前没有符合条件的任务')
-                            : t('tasks.noBatchQueues', null, '当前没有批量任务队列')}
+                            ? t('tasks.noMatchingTasks', null, 'No matching tasks')
+                            : t('tasks.noBatchQueues', null, 'Currently there are no batch task queues')}
                         pagination={{
                             currentPage: page,
                             pageSize,

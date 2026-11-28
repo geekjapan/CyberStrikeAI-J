@@ -1,5 +1,5 @@
 /**
- * WebShell AI 会话：列出该连接绑定的 AI 对话并只读查看历史消息。
+ * WebShell AI conversations: list the AI conversations bound to this connection and view history messages read-only.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Empty, Spin, Tag, Typography } from '@douyinfe/semi-ui';
@@ -70,11 +70,11 @@ export default function AiTab({ connection }) {
         <div className="webshell-ai">
             <div className="webshell-ai-sidebar">
                 <div className="webshell-ai-sidebar-head">
-                    <Text strong>{t('webshell.aiPreviousConversation', null, '之前的对话')}</Text>
+                    <Text strong>{t('webshell.aiPreviousConversation', null, 'Previous conversation')}</Text>
                     <Button size="small" theme="borderless" icon={<IconRefresh />} onClick={load} loading={loading} />
                 </div>
                 {conversations.length === 0 ? (
-                    <Empty title={t('webshell.aiNoConversation', null, '暂无 AI 会话')} description={null} style={{ padding: 24 }} />
+                    <Empty title={t('webshell.aiNoConversation', null, 'No AI conversations yet')} description={null} style={{ padding: 24 }} />
                 ) : (
                     <ul className="webshell-ai-list">
                         {conversations.map(item => (
@@ -96,7 +96,7 @@ export default function AiTab({ connection }) {
                 <ErrorBanner error={error} onRetry={load} />
                 {loading && <div className="webshell-ai-loading"><Spin /></div>}
                 {!loading && messages.length === 0 && (
-                    <Empty title={t('webshell.aiNoMessage', null, '暂无对话消息')} description={null} style={{ padding: 48 }} />
+                    <Empty title={t('webshell.aiNoMessage', null, 'No messages yet')} description={null} style={{ padding: 48 }} />
                 )}
                 {!loading && messages.map(message => (
                     <div className="webshell-ai-message" key={message.id || `${message.role}-${message.createdAt}`}>

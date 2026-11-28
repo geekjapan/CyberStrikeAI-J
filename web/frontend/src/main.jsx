@@ -4,22 +4,20 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { ConfigProvider } from '@douyinfe/semi-ui';
-import zhCN from '@douyinfe/semi-ui/lib/es/locale/source/zh_CN';
 import enUS from '@douyinfe/semi-ui/lib/es/locale/source/en_US';
-import ruRU from '@douyinfe/semi-ui/lib/es/locale/source/ru_RU';
-import arSA from '@douyinfe/semi-ui/lib/es/locale/source/ar';
+import jaJP from '@douyinfe/semi-ui/lib/es/locale/source/ja_JP';
 import App from './App';
 import { AuthProvider } from './lib/auth';
 import { I18nProvider, useI18n } from './lib/i18n';
 import { ThemeProvider } from './lib/theme';
 import './styles/app.css';
 
-const SEMI_LOCALES = { 'zh-CN': zhCN, 'en-US': enUS, 'ru-RU': ruRU, 'ar-SA': arSA };
+const SEMI_LOCALES = { 'en-US': enUS, 'ja-JP': jaJP };
 
 function Shell() {
     const { lang } = useI18n();
     return (
-        <ConfigProvider locale={SEMI_LOCALES[lang] || zhCN} direction={lang === 'ar-SA' ? 'rtl' : 'ltr'}>
+        <ConfigProvider locale={SEMI_LOCALES[lang] || enUS}>
             <AuthProvider>
                 <HashRouter>
                     <App />

@@ -1,9 +1,11 @@
 /**
- * 对话流式事件归约。
- * 后端（/agent/stream、/multi-agent/stream）逐条推送 { type, message, data }，
- * 这里把事件折叠成可直接渲染的块列表（正文 / 推理 / 工具 / 迭代 / 提示）。
- * 未识别的复杂事件不丢弃：统一收进 events，由界面折叠展示原始 JSON。
+ * Chat stream event reducer.
+ * The backend (/agent/stream, /multi-agent/stream) pushes { type, message, data } one by one;
+ * here they are folded into a block list that can be rendered directly (body / reasoning / tool / iteration / notice).
+ * Unrecognized complex events are not dropped: they are collected into events and the UI shows the raw JSON collapsed.
  */
+
+import { translate } from '../../lib/i18n';
 
 export const PLAN_TOOL_NAMES = new Set(['taskcreate', 'taskupdate', 'tasklist', 'taskget', 'write_todos']);
 
@@ -29,7 +31,7 @@ function asObject(value) {
 export function truncateText(value, limit = MAX_BLOCK_TEXT) {
     const text = str(value);
     if (text.length <= limit) return text;
-    return `${text.slice(0, limit)}\n…（已截断，共 ${text.length} 字符）`;
+    return `${text.slice(0, limit)}\n${translate('ui.stream.truncated', { count: text.length }, '…(truncated, {{count}} characters in total)')}`;
 }
 
 export function prettyJson(value, limit = 6000) {
@@ -182,8 +184,8 @@ function addToolEvent(timeline, type, data, message, key, processDetailId) {
 }
 
 /**
- * 归约单个 SSE 事件（原地修改 state，调用方负责触发重渲染）。
- * 返回 state 本身，便于链式使用。
+ * Reduce a single SSE event (mutates state in place; the caller triggers the re-render).
+ * Returns state itself for chaining.
  */
 export function applyStreamEvent(state, event) {
     if (!state || !event || typeof event !== 'object') return state;
@@ -209,12 +211,12 @@ export function applyStreamEvent(state, event) {
             const scope = str(data.piScope).trim();
             const agentName = str(data.agentName).trim();
             const phase = scope === 'main'
-                ? (agentName ? `主代理 · ${agentName}` : '主代理')
-                : (scope === 'sub' ? `子代理${agentName ? ` · ${agentName}` : ''}` : '');
+                ? (agentName ? `${translate('ui.stream.mainAgent', null, 'Main agent')} · ${agentName}` : translate('ui.stream.mainAgent', null, 'Main agent'))
+                : (scope === 'sub' ? `${translate('ui.stream.subAgent', null, 'Sub-agent')}${agentName ? ` · ${agentName}` : ''}` : '');
             state.blocks.push({
                 kind: 'iteration',
                 id: nextKey(state, 'iter'),
-                title: `第 ${n} 轮迭代${phase ? ` · ${phase}` : ''}`,
+                title: `${translate('ui.stream.iteration', { n }, 'Iteration {{n}}')}${phase ? ` · ${phase}` : ''}`,
                 message: truncateText(event.message, 2000)
             });
             break;
@@ -251,7 +253,7 @@ export function applyStreamEvent(state, event) {
         }
         case 'response_start':
             if (data.conversationId) state.conversationId = str(data.conversationId);
-            if (!state.statusText) state.statusText = '正在生成回复…';
+            if (!state.statusText) state.statusText = translate('ui.stream.generatingReply', null, 'Generating reply…');
             break;
         case 'response_delta': {
             const accumulated = typeof data.accumulated === 'string' ? data.accumulated : null;
@@ -272,23 +274,23 @@ export function applyStreamEvent(state, event) {
             addToolEvent(state, type, data, event.message, prefix => nextKey(state, prefix), data.processDetailId);
             break;
         case 'tool_calls_detected':
-            pushNote(state, { title: '🔧 检测到工具调用', message: event.message, data });
+            pushNote(state, { title: `🔧 ${translate('ui.stream.toolCallsDetected', null, 'Tool calls detected')}`, message: event.message, data });
             break;
         case 'hitl_interrupt':
-            pushNote(state, { title: '🧑‍⚖️ 等待人工审批', message: `${str(data.toolName) || '工具'} · ${str(event.message) || '命中审批策略'}`, tone: 'warning', data });
+            pushNote(state, { title: `🧑‍⚖️ ${translate('ui.stream.hitlWaiting', null, 'Waiting for human approval')}`, message: `${str(data.toolName) || translate('ui.stream.toolFallback', null, 'Tool')} · ${str(event.message) || translate('ui.stream.approvalPolicyHit', null, 'Approval policy matched')}`, tone: 'warning', data });
             break;
         case 'hitl_resumed':
-            pushNote(state, { title: '✅ 审批通过', message: str(event.message), tone: 'success', data });
+            pushNote(state, { title: `✅ ${translate('ui.stream.hitlApproved', null, 'Approved')}`, message: str(event.message), tone: 'success', data });
             break;
         case 'hitl_rejected':
-            pushNote(state, { title: '⛔ 审批被拒绝', message: str(event.message), tone: 'danger', data });
+            pushNote(state, { title: `⛔ ${translate('ui.stream.hitlRejected', null, 'Approval rejected')}`, message: str(event.message), tone: 'danger', data });
             break;
         case 'hitl_audit_agent_started':
-            pushNote(state, { title: '🛡 审计代理审查中', message: str(event.message), tone: 'info', data });
+            pushNote(state, { title: `🛡 ${translate('ui.stream.auditReviewing', null, 'Audit agent reviewing')}`, message: str(event.message), tone: 'info', data });
             break;
         case 'hitl_audit_agent':
             pushNote(state, {
-                title: '🛡 审计代理已裁决',
+                title: `🛡 ${translate('ui.stream.auditDecided', null, 'Audit agent decided')}`,
                 message: `${str(data.decision) || '-'}${data.comment ? ` · ${str(data.comment)}` : ''}`,
                 tone: 'info',
                 data
@@ -297,10 +299,10 @@ export function applyStreamEvent(state, event) {
         case 'warning':
         case 'iteration_limit_reached':
         case 'pi_pending_orphaned':
-            pushNote(state, { title: `⚠️ ${str(event.message) || '提示'}`, message: str(event.message), tone: 'warning', data });
+            pushNote(state, { title: `⚠️ ${str(event.message) || translate('ui.stream.notice', null, 'Notice')}`, message: str(event.message), tone: 'warning', data });
             break;
         case 'finalization_check':
-            pushNote(state, { title: '🔎 最终化校验未通过', message: str(event.message), tone: 'warning', data });
+            pushNote(state, { title: `🔎 ${translate('ui.stream.finalizationFailed', null, 'Finalization check failed')}`, message: str(event.message), tone: 'warning', data });
             if (data.finalizable === false) state.finalizable = false;
             break;
         case 'finalization_auto_continue':
@@ -310,16 +312,16 @@ export function applyStreamEvent(state, event) {
         case 'pi_model_retry':
         case 'pi_model_failover':
         case 'pi_stream_error':
-            pushNote(state, { title: str(event.message) || '运行提示', message: str(event.message), tone: 'warning', data });
+            pushNote(state, { title: str(event.message) || translate('ui.stream.runNotice', null, 'Run notice'), message: str(event.message), tone: 'warning', data });
             break;
         case 'agent_usage_summary':
             state.blocks.push({ kind: 'usage', id: nextKey(state, 'usage'), data });
             break;
         case 'user_interrupt_continue':
-            pushNote(state, { title: '⏸️ 用户中断并继续', message: str(event.message), tone: 'info', data });
+            pushNote(state, { title: `⏸️ ${translate('ui.stream.userInterrupt', null, 'User interrupted and continued')}`, message: str(event.message), tone: 'info', data });
             break;
         case 'agent_reply':
-            pushNote(state, { title: `💬 ${str(data.agentName) || '子代理'}回复`, message: str(event.message), data });
+            pushNote(state, { title: `💬 ${translate('ui.stream.agentReply', { name: str(data.agentName) || translate('ui.stream.subAgent', null, 'Sub-agent') }, '{{name}} replied')}`, message: str(event.message), data });
             break;
         case 'workflow_start':
         case 'workflow_done':
@@ -338,23 +340,23 @@ export function applyStreamEvent(state, event) {
             break;
         case 'cancelled':
             state.status = 'cancelled';
-            state.notice = str(event.message) || '任务已取消';
+            state.notice = str(event.message) || translate('ui.stream.taskCancelled', null, 'Task cancelled');
             state.endedAt = Date.now();
             break;
         case 'error':
             state.status = 'error';
-            state.error = str(event.message) || '执行失败';
+            state.error = str(event.message) || translate('ui.stream.runFailed', null, 'Execution failed');
             state.endedAt = Date.now();
             break;
         case 'done':
             if (state.status === 'streaming') {
                 state.status = data.status === 'blocked' || state.finalizable === false ? 'blocked' : 'done';
             }
-            if (data.workflowStatus === 'awaiting_hitl') state.statusText = '工作流等待审批';
+            if (data.workflowStatus === 'awaiting_hitl') state.statusText = translate('ui.stream.workflowAwaitingHitl', null, 'Workflow waiting for approval');
             state.endedAt = Date.now();
             break;
         default:
-            // 已知但未单独建模的事件（agent_trace_*、iteration 之外的诊断事件）只进原始日志。
+            // Known events without a dedicated model (agent_trace_*, diagnostic events other than iteration) only go to the raw log.
             break;
     }
     return state;
@@ -365,15 +367,15 @@ export function isLiveStreaming(live) {
 }
 
 export const LIVE_STATUS_META = {
-    streaming: { label: '生成中', color: 'blue' },
-    done: { label: '已完成', color: 'green' },
-    blocked: { label: '未完成', color: 'orange' },
-    disconnected: { label: '连接已结束', color: 'grey' },
-    error: { label: '失败', color: 'red' },
-    cancelled: { label: '已取消', color: 'grey' }
+    streaming: { get label() { return translate('ui.stream.statusStreaming', null, 'Generating'); }, color: 'blue' },
+    done: { get label() { return translate('ui.stream.statusDone', null, 'Completed'); }, color: 'green' },
+    blocked: { get label() { return translate('ui.stream.statusBlocked', null, 'Incomplete'); }, color: 'orange' },
+    disconnected: { get label() { return translate('ui.stream.statusDisconnected', null, 'Connection ended'); }, color: 'grey' },
+    error: { get label() { return translate('ui.stream.statusError', null, 'Failed'); }, color: 'red' },
+    cancelled: { get label() { return translate('ui.stream.statusCancelled', null, 'Cancelled'); }, color: 'grey' }
 };
 
-/** 历史消息的过程详情 → 统一渲染块（与流式块的字段保持一致）。 */
+/** Process details of a history message to unified render blocks (same fields as streaming blocks). */
 export function buildHistoryBlocks(message) {
     const blocks = [];
     const timeline = { blocks, toolsByCallId: new Map() };
@@ -402,7 +404,7 @@ export function buildHistoryBlocks(message) {
                 blocks.push({
                     kind: 'iteration',
                     id: key('iter'),
-                    title: `第 ${n} 轮迭代${scope === 'main' ? ' · 主代理' : (scope === 'sub' ? ' · 子代理' : '')}${agent ? ` · ${agent}` : ''}`,
+                    title: `${translate('ui.stream.iteration', { n }, 'Iteration {{n}}')}${scope === 'main' ? ` · ${translate('ui.stream.mainAgent', null, 'Main agent')}` : (scope === 'sub' ? ` · ${translate('ui.stream.subAgent', null, 'Sub-agent')}` : '')}${agent ? ` · ${agent}` : ''}`,
                     message: truncateText(text, 2000)
                 });
                 break;
@@ -426,7 +428,7 @@ export function buildHistoryBlocks(message) {
                 break;
             case 'planning': {
                 if (!text.trim()) break;
-                blocks.push({ kind: 'note', id: key('note'), title: '📝 规划', message: truncateText(text, 4000), tone: 'info', data: null });
+                blocks.push({ kind: 'note', id: key('note'), title: `📝 ${translate('ui.stream.planning', null, 'Planning')}`, message: truncateText(text, 4000), tone: 'info', data: null });
                 break;
             }
             case 'hitl_interrupt':
@@ -436,8 +438,8 @@ export function buildHistoryBlocks(message) {
             case 'hitl_audit_agent_started': {
                 const tone = eventType === 'hitl_rejected' ? 'danger' : (eventType === 'hitl_resumed' ? 'success' : 'info');
                 const title = eventType === 'hitl_interrupt'
-                    ? '🧑‍⚖️ 人工审批'
-                    : (eventType === 'hitl_rejected' ? '⛔ 审批被拒绝' : (eventType === 'hitl_resumed' ? '✅ 审批通过' : '🛡 审计代理'));
+                    ? `🧑‍⚖️ ${translate('ui.stream.hitlManual', null, 'Human approval')}`
+                    : (eventType === 'hitl_rejected' ? `⛔ ${translate('ui.stream.hitlRejected', null, 'Approval rejected')}` : (eventType === 'hitl_resumed' ? `✅ ${translate('ui.stream.hitlApproved', null, 'Approved')}` : `🛡 ${translate('ui.stream.auditAgent', null, 'Audit agent')}`));
                 blocks.push({
                     kind: 'note',
                     id: key('note'),
@@ -451,23 +453,23 @@ export function buildHistoryBlocks(message) {
             case 'error':
             case 'timeout':
             case 'cancelled':
-                blocks.push({ kind: 'note', id: key('note'), title: eventType === 'cancelled' ? '⏹ 已取消' : '❌ 执行异常', message: text, tone: 'danger', data: null });
+                blocks.push({ kind: 'note', id: key('note'), title: eventType === 'cancelled' ? `⏹ ${translate('ui.stream.cancelledNote', null, 'Cancelled')}` : `❌ ${translate('ui.stream.execError', null, 'Execution error')}`, message: text, tone: 'danger', data: null });
                 break;
             case 'agent_reply':
-                blocks.push({ kind: 'note', id: key('note'), title: '💬 子代理回复', message: truncateText(text, 6000), tone: 'info', data: null });
+                blocks.push({ kind: 'note', id: key('note'), title: `💬 ${translate('ui.stream.subAgentReply', null, 'Sub-agent reply')}`, message: truncateText(text, 6000), tone: 'info', data: null });
                 break;
             case 'agent_usage_summary':
                 blocks.push({ kind: 'usage', id: key('usage'), data });
                 break;
             case 'progress':
-                // 心跳/进度文案不入时间线，避免历史回放噪音。
+                // Heartbeat/progress text stays out of the timeline to avoid noise in history replay.
                 break;
             default:
                 if (text.trim() || Object.keys(data).length) {
                     blocks.push({
                         kind: 'note',
                         id: key('note'),
-                        title: str(eventType) || '过程事件',
+                        title: str(eventType) || translate('ui.stream.processEvent', null, 'Process event'),
                         message: truncateText(text, 4000),
                         tone: 'info',
                         data: Object.keys(data).length ? data : null

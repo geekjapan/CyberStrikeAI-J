@@ -14,10 +14,10 @@ import (
 
 func TestWordReportEscapesEvidenceAndHonorsSections(t *testing.T) {
 	template := DefaultTemplate()
-	template.Title = "中文报告 & <客户>"
+	template.Title = "Client Report & <Customer>"
 	template.IncludeRemediation = false
-	v := &database.Vulnerability{Title: "待确认发现", Severity: "high", Status: "false_positive", Evidence: "<script>&\x00\nGET /?x=1&y=2", Recommendation: "must-be-omitted"}
-	data, err := Render(template, Snapshot{Summary: "原始回复", GeneratedAt: time.Now(), Findings: []*database.Vulnerability{v}})
+	v := &database.Vulnerability{Title: "Pending finding", Severity: "high", Status: "false_positive", Evidence: "<script>&\x00\nGET /?x=1&y=2", Recommendation: "must-be-omitted"}
+	data, err := Render(template, Snapshot{Summary: "Original reply", GeneratedAt: time.Now(), Findings: []*database.Vulnerability{v}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +54,7 @@ func TestWordReportEscapesEvidenceAndHonorsSections(t *testing.T) {
 		}
 	}
 	doc := parts["word/document.xml"]
-	for _, text := range []string{"中文报告 &amp; &lt;客户&gt;", "&lt;script&gt;&amp;", "false_positive", "原始回复"} {
+	for _, text := range []string{"Client Report &amp; &lt;Customer&gt;", "&lt;script&gt;&amp;", "false_positive", "Original reply"} {
 		if !strings.Contains(doc, text) {
 			t.Errorf("missing %q", text)
 		}
@@ -73,12 +73,52 @@ func TestWordReportEscapesEvidenceAndHonorsSections(t *testing.T) {
 			r, _ := f.Open()
 			b, _ := io.ReadAll(r)
 			r.Close()
-			if bytes.Contains(b, []byte("script")) {
+			if bytes.Contains(b, []byte("&lt;script&gt;")) {
 				t.Fatal("evidence not excluded")
 			}
 		}
 	}
 }
+
+// Non-ASCII text must survive into word/document.xml unescaped and as valid XML.
+func TestWordReportKeepsNonASCIITitleAndFinding(t *testing.T) {
+	template := DefaultTemplate()
+	// Japanese stays: multi-byte text must be written to the document as is.
+	template.Title = "脆弱性レポート"
+	v := &database.Vulnerability{Title: "SQLインジェクション", Severity: "high", Status: "open"}
+	data, err := Render(template, Snapshot{GeneratedAt: time.Now(), Findings: []*database.Vulnerability{v}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	z, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var doc []byte
+	for _, f := range z.File {
+		if f.Name != "word/document.xml" {
+			continue
+		}
+		r, err := f.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+		doc, err = io.ReadAll(r)
+		r.Close()
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := xml.Unmarshal(doc, new(struct{})); err != nil {
+		t.Fatalf("document.xml is not valid XML: %v", err)
+	}
+	for _, text := range []string{"脆弱性レポート", "SQLインジェクション"} { // Japanese stays: multi-byte handling
+		if !bytes.Contains(doc, []byte(text)) {
+			t.Errorf("document.xml lost %q", text)
+		}
+	}
+}
+
 func TestWordReportRejectsOversizedInput(t *testing.T) {
 	if _, err := Render(DefaultTemplate(), Snapshot{Summary: strings.Repeat("x", 8*1024*1024+1)}); err == nil {
 		t.Fatal("oversized report accepted")

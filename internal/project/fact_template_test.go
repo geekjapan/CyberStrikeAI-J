@@ -32,11 +32,39 @@ func TestIsSparseFactBody(t *testing.T) {
 	if !IsSparseFactBody("finding", "finding/x", long) {
 		t.Error("body without repro clues should be sparse")
 	}
-	body := "## 攻击链\n1. step\n## Exploit\n```http\nGET / HTTP/1.1\n```\n"
+	body := "## Attack chain\n1. step\n## Exploit\n```http\nGET / HTTP/1.1\n```\n"
 	if IsSparseFactBody("finding", "finding/x", body) {
 		t.Error("structured body should not be sparse")
 	}
 	if IsSparseFactBody("target", "target/x", "") {
 		t.Error("env fact empty body is ok")
+	}
+}
+
+// Each body below carries exactly one reproduction clue, so removing that
+// clue's check from IsSparseFactBody makes the case report "sparse".
+func TestIsSparseFactBodySingleClue(t *testing.T) {
+	notSparse := []struct{ name, body string }{
+		{"attack chain", "Attack chain: step one"},
+		{"attack heading", "## Attack\nstep one"},
+		{"exploit heading", "## Exploit\nstep one"},
+		{"poc heading", "## POC\nstep one"},
+		{"request", "Request: see log"},
+		{"response", "Response: see log"},
+		{"payload", "payload: see log"},
+		// Chinese below stays: these headings are in fact bodies stored by earlier versions.
+		{"legacy attack chain", "攻击链: 步骤一"},
+		{"legacy attack heading", "## 攻击步骤\n步骤一"},
+		{"legacy request", "请求: 见日志"},
+		{"legacy response", "响应: 见日志"},
+	}
+	for _, c := range notSparse {
+		if IsSparseFactBody("finding", "finding/x", c.body) {
+			t.Errorf("%s: body with a reproduction clue reported as sparse: %q", c.name, c.body)
+		}
+	}
+	// Chinese stays: a legacy conclusion-only body has no clue and must stay sparse.
+	if !IsSparseFactBody("finding", "finding/x", "结论: 存在漏洞") {
+		t.Error("conclusion-only legacy body should be sparse")
 	}
 }

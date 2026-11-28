@@ -41,43 +41,43 @@ export default function SkillsManagementPage() {
                 description: values.description.trim(),
                 content: values.content
             });
-            toastSuccess('技能已创建');
+            toastSuccess(t('ui.skillsManagement.created', null, 'Skill created'));
             setEditor(null);
             skills.reload();
         } catch (error) {
-            toastError(error, '创建技能失败');
+            toastError(error, t('ui.skillsManagement.createFailed', null, 'Failed to create skill'));
         } finally {
             setSaving(false);
         }
     };
 
     const remove = row => confirmAction({
-        title: `删除技能「${row.name}」？`,
-        content: '该技能目录及其全部文件会被移除。',
+        title: t('ui.skillsManagement.deleteTitle', { name: row.name }, 'Delete skill "{{name}}"?'),
+        content: t('ui.skillsManagement.deleteContent', null, 'The skill directory and all its files will be removed.'),
         onOk: async () => {
             await api.del(`/skills/${encodeURIComponent(row.id || row.name)}`);
-            toastSuccess('已删除');
+            toastSuccess(t('ui.skillsManagement.deleted', null, 'Deleted'));
             skills.reload();
         }
     });
 
     const columns = [
         {
-            title: '技能', dataIndex: 'name', render: (value, record) => (
+            title: t('ui.skillsManagement.skill', null, 'Skill'), dataIndex: 'name', render: (value, record) => (
                 <Space vertical spacing={0} align="start">
                     <Text strong>{value || record.id}</Text>
                     <Text type="tertiary" ellipsis={{ showTooltip: true }} style={{ maxWidth: 420 }}>{record.description}</Text>
                 </Space>
             )
         },
-        { title: '版本', dataIndex: 'version', width: 100, render: value => value || '—' },
-        { title: '文件', dataIndex: 'file_count', width: 80, render: value => String(value ?? '—') },
-        { title: '大小', dataIndex: 'file_size', width: 100, render: value => formatBytes(value) },
-        { title: '更新时间', dataIndex: 'mod_time', width: 170, render: value => (value ? formatDateTime(value) : '—') },
+        { title: t('ui.skillsManagement.version', null, 'Version'), dataIndex: 'version', width: 100, render: value => value || '—' },
+        { title: t('ui.skillsManagement.files', null, 'Files'), dataIndex: 'file_count', width: 80, render: value => String(value ?? '—') },
+        { title: t('ui.skillsManagement.size', null, 'Size'), dataIndex: 'file_size', width: 100, render: value => formatBytes(value) },
+        { title: t('ui.skillsManagement.updatedAt', null, 'Updated at'), dataIndex: 'mod_time', width: 170, render: value => (value ? formatDateTime(value) : '—') },
         {
-            title: '操作', width: 140, render: (_, record) => (
+            title: t('ui.skillsManagement.actions', null, 'Actions'), width: 140, render: (_, record) => (
                 <Space>
-                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>详情</Button>
+                    <Button size="small" theme="borderless" onClick={() => setDetail(record)}>{t('ui.skillsManagement.detail', null, 'Details')}</Button>
                     {canDelete && <Button size="small" theme="borderless" type="danger" icon={<IconDelete />} onClick={() => remove(record)} />}
                 </Space>
             )
@@ -87,16 +87,16 @@ export default function SkillsManagementPage() {
     return (
         <div>
             <PageHeader
-                title={t('skills.managementTitle', null, '技能管理')}
-                description="技能以目录形式存放在技能根目录，SKILL.md 描述触发条件与用法。"
+                title={t('skills.managementTitle', null, 'Skill Management')}
+                description={t('ui.skillsManagement.description', null, 'Skills are stored as directories under the skills root. SKILL.md describes triggers and usage.')}
                 extra={(
                     <Space>
-                        <Button icon={<IconRefresh />} onClick={() => skills.reload()} loading={skills.loading}>刷新</Button>
-                        {canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setEditor({ form: {} })}>新建技能</Button>}
+                        <Button icon={<IconRefresh />} onClick={() => skills.reload()} loading={skills.loading}>{t('ui.skillsManagement.refresh', null, 'Refresh')}</Button>
+                        {canWrite && <Button theme="solid" type="primary" icon={<IconPlus />} onClick={() => setEditor({ form: {} })}>{t('ui.skillsManagement.newSkill', null, 'New skill')}</Button>}
                     </Space>
                 )}
             />
-            <SectionCard title={`技能（${total}）`}>
+            <SectionCard title={t('ui.skillsManagement.listTitle', { count: total }, 'Skills ({{count}})')}>
                 <ErrorBanner error={skills.error} onRetry={() => skills.reload()} />
                 <DataTable
                     columns={columns}
@@ -110,15 +110,15 @@ export default function SkillsManagementPage() {
                         onPageChange: setPage,
                         onPageSizeChange: size => { setPageSize(size); setPage(1); }
                     }}
-                    toolbar={<Input prefix={<IconSearch />} value={search} onChange={value => { setSearch(value); setPage(1); }} placeholder="搜索技能名称或描述" style={{ width: 280 }} />}
+                    toolbar={<Input prefix={<IconSearch />} value={search} onChange={value => { setSearch(value); setPage(1); }} placeholder={t('ui.skillsManagement.searchPlaceholder', null, 'Search skill name or description')} style={{ width: 280 }} />}
                 />
             </SectionCard>
 
-            <Drawer title="新建技能" visible={Boolean(editor)} key="new-skill" onCancel={() => setEditor(null)} onOk={save} confirmLoading={saving} width={720}>
+            <Drawer title={t('ui.skillsManagement.newSkill', null, 'New skill')} visible={Boolean(editor)} key="new-skill" onCancel={() => setEditor(null)} onOk={save} confirmLoading={saving} width={720}>
                 <Form getFormApi={form => setEditor(current => (current ? { ...current, form } : current))}>
-                    <Form.Input field="name" label="目录名" placeholder="小写字母、数字、连字符" rules={[{ required: true, message: '请输入目录名' }, { pattern: /^[a-z0-9-]+$/, message: '只允许小写字母、数字与连字符' }]} />
-                    <Form.Input field="description" label="描述" rules={[{ required: true, message: '请输入描述' }]} />
-                    <Form.TextArea field="content" label="SKILL.md 正文" rules={[{ required: true, message: '请输入正文' }]} autosize={{ minRows: 10, maxRows: 24 }} />
+                    <Form.Input field="name" label={t('ui.skillsManagement.dirName', null, 'Directory name')} placeholder={t('ui.skillsManagement.dirNameHint', null, 'Lowercase letters, digits, hyphens')} rules={[{ required: true, message: t('ui.skillsManagement.dirNameRequired', null, 'Enter a directory name') }, { pattern: /^[a-z0-9-]+$/, message: t('ui.skillsManagement.dirNamePattern', null, 'Only lowercase letters, digits and hyphens are allowed') }]} />
+                    <Form.Input field="description" label={t('ui.skillsManagement.descriptionLabel', null, 'Description')} rules={[{ required: true, message: t('ui.skillsManagement.descriptionRequired', null, 'Enter a description') }]} />
+                    <Form.TextArea field="content" label={t('ui.skillsManagement.bodyLabel', null, 'SKILL.md body')} rules={[{ required: true, message: t('ui.skillsManagement.bodyRequired', null, 'Enter the body') }]} autosize={{ minRows: 10, maxRows: 24 }} />
                 </Form>
             </Drawer>
 
@@ -128,6 +128,7 @@ export default function SkillsManagementPage() {
 }
 
 function SkillDetail({ skill, onClose, canWrite }) {
+    const t = useT();
     const [files, setFiles] = useState([]);
     const [activeFile, setActiveFile] = useState('');
     const [content, setContent] = useState('');
@@ -151,7 +152,7 @@ function SkillDetail({ skill, onClose, canWrite }) {
             setActiveFile(path);
             setContent(payload?.content || '');
         } catch (error) {
-            toastError(error, '读取文件失败');
+            toastError(error, t('ui.skillsManagement.readFailed', null, 'Failed to read file'));
         } finally {
             setLoading(false);
         }
@@ -161,9 +162,9 @@ function SkillDetail({ skill, onClose, canWrite }) {
         setSaving(true);
         try {
             await api.put(`/skills/${encodeURIComponent(skill.id || skill.name)}/file`, { path: activeFile, content });
-            toastSuccess('文件已保存');
+            toastSuccess(t('ui.skillsManagement.fileSaved', null, 'File saved'));
         } catch (error) {
-            toastError(error, '保存文件失败');
+            toastError(error, t('ui.skillsManagement.saveFailed', null, 'Failed to save file'));
         } finally {
             setSaving(false);
         }
@@ -172,16 +173,16 @@ function SkillDetail({ skill, onClose, canWrite }) {
     const fileList = files.map(item => (typeof item === 'string' ? item : item.path || item.name));
 
     return (
-        <Drawer title={skill?.name || '技能详情'} visible={Boolean(skill)} onCancel={onClose} width={860}>
+        <Drawer title={skill?.name || t('ui.skillsManagement.detailTitle', null, 'Skill details')} visible={Boolean(skill)} onCancel={onClose} width={860}>
             {skill && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     <KeyValueList items={[
-                        { label: '目录名', value: skill.id || skill.dir_name },
-                        { label: '版本', value: skill.version || '—' },
-                        { label: '路径', value: skill.path },
-                        { label: '文件数', value: skill.file_count },
-                        { label: '触发词', value: Array.isArray(skill.triggers) ? skill.triggers.join('、') : '—' },
-                        { label: '标签', value: Array.isArray(skill.tags) ? skill.tags.join('、') : '—' }
+                        { label: t('ui.skillsManagement.dirName', null, 'Directory name'), value: skill.id || skill.dir_name },
+                        { label: t('ui.skillsManagement.version', null, 'Version'), value: skill.version || '—' },
+                        { label: t('ui.skillsManagement.path', null, 'Path'), value: skill.path },
+                        { label: t('ui.skillsManagement.fileCount', null, 'File count'), value: skill.file_count },
+                        { label: t('ui.skillsManagement.triggers', null, 'Triggers'), value: Array.isArray(skill.triggers) ? skill.triggers.join('、') : '—' },
+                        { label: t('ui.skillsManagement.tags', null, 'Tags'), value: Array.isArray(skill.tags) ? skill.tags.join('、') : '—' }
                     ]} />
                     <Text type="tertiary">{skill.description}</Text>
                     <div style={{ display: 'grid', gridTemplateColumns: '220px minmax(0, 1fr)', gap: 12 }}>
@@ -195,18 +196,18 @@ function SkillDetail({ skill, onClose, canWrite }) {
                                         style={{ cursor: 'pointer', background: item === activeFile ? 'var(--semi-color-primary-light-default)' : undefined }}
                                     />
                                 )}
-                                emptyContent="暂无文件"
+                                emptyContent={t('ui.skillsManagement.noFiles', null, 'No files')}
                             />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                             <Space>
-                                <Text strong>{activeFile || '选择左侧文件查看内容'}</Text>
-                                {canWrite && activeFile && <Button size="small" loading={saving} onClick={saveFile}>保存</Button>}
+                                <Text strong>{activeFile || t('ui.skillsManagement.pickFile', null, 'Select a file on the left to view its content')}</Text>
+                                {canWrite && activeFile && <Button size="small" loading={saving} onClick={saveFile}>{t('ui.skillsManagement.save', null, 'Save')}</Button>}
                             </Space>
                             {activeFile
                                 ? <TextArea value={content} onChange={setContent} autosize={{ minRows: 20, maxRows: 30 }} disabled={!canWrite} />
                                 : <MarkdownView content={skill.description || '—'} />}
-                            {loading && <Text type="tertiary">读取中…</Text>}
+                            {loading && <Text type="tertiary">{t('ui.skillsManagement.reading', null, 'Reading…')}</Text>}
                         </div>
                     </div>
                 </div>

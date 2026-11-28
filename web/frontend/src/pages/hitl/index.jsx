@@ -1,4 +1,4 @@
-/** 人机协同：待审批 / 审批日志 / 白名单 / 审核策略。 */
+/** Human-in-the-loop: pending approvals / approval logs / whitelist / review strategy. */
 import { useCallback, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Badge, Banner, Button, Space, Tabs, Typography } from '@douyinfe/semi-ui';
@@ -59,24 +59,24 @@ export default function HitlPage() {
     return (
         <div className="hitl-page">
             <PageHeader
-                title={t('hitl.pageTitle', null, '人机协同审批')}
-                description="敏感工具调用先进入审批队列；审计 Agent 可按策略自动裁决，白名单内工具直接放行。"
+                title={t('hitl.pageTitle', null, 'HITL approvals')}
+                description={t('ui.hitlIndex.pageDescription', null, 'Sensitive tool calls enter the approval queue first. The Audit Agent can decide automatically by policy, and allowlisted tools are approved directly.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} onClick={() => setRefreshKey(key => key + 1)}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                     </Space>
                 )}
             >
-                {!canWrite && <Text type="tertiary" size="small">当前账号只读，审批与保存操作已禁用。</Text>}
+                {!canWrite && <Text type="tertiary" size="small">{t('ui.hitlIndex.readOnly', null, 'This account is read-only. Approval and save actions are disabled.')}</Text>}
             </PageHeader>
 
             {!canRead && (
                 <Banner
                     type="warning"
                     bordered
-                    description="当前账号缺少 hitl:read 权限，无法读取待审批与审计日志。"
+                    description={t('ui.hitlIndex.noReadPermission', null, 'This account lacks the hitl:read permission and cannot read pending approvals or audit logs.')}
                 />
             )}
 
@@ -87,7 +87,7 @@ export default function HitlPage() {
                     onChange={switchTab}
                     className="hitl-tabs"
                 >
-                    <Tabs.TabPane itemKey="pending" tab={tabLabel('pending', t('hitl.tabPending', null, '待审批'))}>
+                    <Tabs.TabPane itemKey="pending" tab={tabLabel('pending', t('hitl.tabPending', null, 'Pending'))}>
                         {tab === 'pending' && (
                             <PendingPanel
                                 canWrite={canWrite}
@@ -96,7 +96,7 @@ export default function HitlPage() {
                             />
                         )}
                     </Tabs.TabPane>
-                    <Tabs.TabPane itemKey="logs" tab={t('hitl.tabLogs', null, '审批日志')}>
+                    <Tabs.TabPane itemKey="logs" tab={t('hitl.tabLogs', null, 'Audit logs')}>
                         {tab === 'logs' && (
                             <LogsPanel
                                 canWrite={canWrite}
@@ -107,12 +107,12 @@ export default function HitlPage() {
                             />
                         )}
                     </Tabs.TabPane>
-                    <Tabs.TabPane itemKey="whitelist" tab={t('hitl.tabWhitelist', null, '白名单')}>
+                    <Tabs.TabPane itemKey="whitelist" tab={t('hitl.tabWhitelist', null, 'Tool whitelist')}>
                         {tab === 'whitelist' && (
                             <WhitelistPanel canWrite={canWrite} refreshKey={refreshKey} />
                         )}
                     </Tabs.TabPane>
-                    <Tabs.TabPane itemKey="strategy" tab={t('hitl.tabStrategy', null, '审核策略')}>
+                    <Tabs.TabPane itemKey="strategy" tab={t('hitl.tabStrategy', null, 'Audit strategy')}>
                         {tab === 'strategy' && (
                             <StrategyPanel
                                 canWrite={canWrite}

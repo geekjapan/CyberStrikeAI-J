@@ -1,4 +1,4 @@
-/** 工具白名单：GET/PUT/POST /hitl/tool-whitelist（PUT 整表替换，POST 合并追加）。 */
+/** Tool whitelist: GET/PUT/POST /hitl/tool-whitelist (PUT replaces the whole table, POST merges and appends). */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Space, Tag, TextArea, Typography } from '@douyinfe/semi-ui';
 import { IconRefresh } from '@douyinfe/semi-icons';
@@ -31,11 +31,11 @@ export default function WhitelistPanel({ canWrite, refreshKey = 0 }) {
         setSaving('put');
         try {
             const payload = await api.put('/hitl/tool-whitelist', { toolWhitelist: tokens });
-            toastSuccess(t('hitl.whitelistSaved', null, '白名单已保存'));
+            toastSuccess(t('hitl.whitelistSaved', null, 'Whitelist saved.'));
             setText((payload?.toolWhitelist || tokens).join('\n'));
             reload({ silent: true });
         } catch (err) {
-            toastError(err, t('hitl.whitelistSaveFailed', null, '保存白名单失败'));
+            toastError(err, t('hitl.whitelistSaveFailed', null, 'Failed to save whitelist'));
         } finally {
             setSaving('');
         }
@@ -45,30 +45,32 @@ export default function WhitelistPanel({ canWrite, refreshKey = 0 }) {
         setSaving('post');
         try {
             const payload = await api.post('/hitl/tool-whitelist', { sensitiveTools: tokens });
-            toastSuccess(payload?.hitlGlobalWhitelistMerged ? '已合并到全局白名单' : '没有新增工具，白名单未变化');
+            toastSuccess(payload?.hitlGlobalWhitelistMerged
+                ? t('ui.hitlWhitelist.merged', null, 'Merged into the global allowlist')
+                : t('ui.hitlWhitelist.mergeNoChange', null, 'No new tools were added; the allowlist is unchanged'));
             setText((payload?.hitlGlobalToolWhitelist || tokens).join('\n'));
             reload({ silent: true });
         } catch (err) {
-            toastError(err, '合并白名单失败');
+            toastError(err, t('ui.hitlWhitelist.mergeFailed', null, 'Failed to merge allowlist'));
         } finally {
             setSaving('');
         }
-    }, [reload, tokens]);
+    }, [reload, t, tokens]);
 
     return (
         <SectionCard
-            title={t('hitl.whitelistLabel', null, '免审批工具白名单')}
-            description={t('hitl.whitelistHint', null, '每行一个或逗号分隔；保存后写入 config.yaml 全局白名单并立即生效。')}
+            title={t('hitl.whitelistLabel', null, 'Tool whitelist (no approval)')}
+            description={t('hitl.whitelistHint', null, 'One per line or comma-separated. Saved to config.yaml global whitelist and takes effect immediately (synced with chat sidebar).')}
             extra={(
                 <Space spacing={8}>
                     <Button size="small" icon={<IconRefresh />} theme="borderless" onClick={() => reload()} loading={loading}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>
                     <Button size="small" disabled={!canWrite || !dirty} loading={saving === 'put'} onClick={save}>
-                        {t('common.save', null, '保存')}
+                        {t('common.save', null, 'Save')}
                     </Button>
                     <Button size="small" theme="light" disabled={!canWrite || !tokens.length} loading={saving === 'post'} onClick={merge}>
-                        合并追加
+                        {t('ui.hitlWhitelist.mergeAppend', null, 'Merge and append')}
                     </Button>
                 </Space>
             )}
@@ -76,10 +78,10 @@ export default function WhitelistPanel({ canWrite, refreshKey = 0 }) {
             <ErrorBanner error={error} onRetry={() => reload()} />
             <div className="hitl-whitelist-meta">
                 <Text type="tertiary" size="small">
-                    {`共 ${tokens.length} 项`}
-                    {data?.defaultReviewer ? ` · 默认审批方：${reviewerLabel(data.defaultReviewer)}` : ''}
+                    {t('ui.hitlWhitelist.totalItems', { count: tokens.length }, '{{count}} items')}
+                    {data?.defaultReviewer ? ` · ${t('ui.hitlWhitelist.defaultReviewer', { reviewer: reviewerLabel(data.defaultReviewer) }, 'Default reviewer: {{reviewer}}')}` : ''}
                 </Text>
-                {dirty && <Tag size="small" color="amber">有未保存修改</Tag>}
+                {dirty && <Tag size="small" color="amber">{t('ui.hitlWhitelist.unsaved', null, 'Unsaved changes')}</Tag>}
             </div>
             <TextArea
                 rows={10}

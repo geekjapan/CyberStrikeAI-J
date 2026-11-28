@@ -1,4 +1,4 @@
-/* 信息收集页面私有布局样式。 */
+/* Private layout styles for the information gathering page. */
 .info-collect-page { display: flex; flex-direction: column; }
 
 .info-collect-permission { margin-bottom: 12px; }

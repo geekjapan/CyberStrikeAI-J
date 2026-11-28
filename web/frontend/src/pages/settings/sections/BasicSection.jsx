@@ -1,40 +1,44 @@
 /**
- * 基础配置：整份可编辑配置的 YAML 编辑区。
+ * Basic configuration: a YAML editor for the whole editable configuration.
  *
- * 读取 GET /config（密钥已脱敏为 ********），保存走两步：
- *   PUT  /config       写入 config.yaml（后端按出现的字段增量更新）
- *   POST /config/apply 重新加载并重启相关服务
- * 选择 YAML 而不是逐项表单：GET /config 暴露 18 个段落，逐项表单必然漏字段。
+ * Reads GET /config (secrets are masked as ********); saving takes two steps:
+ *   PUT  /config       writes config.yaml (the backend updates incrementally by the fields present)
+ *   POST /config/apply reloads and restarts the related services
+ * YAML was chosen over a per-field form: GET /config exposes 18 sections, and a per-field form would inevitably miss fields.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Banner, Button, Collapse, Space, Tag, TextArea, Typography } from '@douyinfe/semi-ui';
 import { IconRefresh, IconTick } from '@douyinfe/semi-icons';
 import { api, errorMessage } from '../../../lib/http';
 import { useAuth } from '../../../lib/auth';
-import { useT } from '../../../lib/i18n';
+import { translate, useT } from '../../../lib/i18n';
 import { modelChannelName } from '../../../lib/model-channel';
 import { useResource } from '../../../components/hooks';
 import {
     CopyButton, ErrorBanner, JsonViewer, KeyValueList, SectionCard, confirmAction, toastError, toastSuccess, toastWarning
 } from '../../../components/ui';
 import { formatNumber } from '../../../lib/format';
-import { dumpYaml, parseYaml } from '../lib/yaml';
+import { dumpYaml, parseYaml, setYamlTranslator } from '../lib/yaml';
 import { Hint, LoadingBlock, PermissionBanner } from './common';
 
 const { Paragraph } = Typography;
 
-/** UpdateConfigRequest 接受的顶层段落（internal/handler/config.go）。 */
+/** Top-level sections accepted by UpdateConfigRequest (internal/handler/config.go). */
 const WRITABLE_SECTIONS = ['ai', 'openai', 'vision', 'knowledge', 'storage'];
 
-const EDITOR_HEADER = [
-    '系统设置 · 原始配置（由 GET /config 生成）',
-    '',
-    '· 密钥字段显示为 ********：原样保存会沿用已保存的凭据，填写新值即替换。',
-    '· 保存 = PUT /config（写入 config.yaml）+ POST /config/apply（重新加载）。',
-    '· 只提交文本里有修改的段落，省略的段落沿用服务端配置。',
-    '· storage（清理策略）不在 GET /config 里，请到「存储与更新」分区编辑。',
-    '· 此编辑器可保存模型、视觉、知识库和存储配置。其余配置请查阅 config.yaml。'
-].join('\n');
+setYamlTranslator(translate);
+
+function editorHeader() {
+    return [
+        translate('ui.settingsBasic.headerTitle', null, 'System settings · Raw configuration (generated from GET /config)'),
+        '',
+        translate('ui.settingsBasic.headerSecrets', null, '· Secret fields are shown as ********: saving them unchanged keeps the stored credentials; enter a new value to replace them.'),
+        translate('ui.settingsBasic.headerSave', null, '· Save = PUT /config (writes config.yaml) + POST /config/apply (reloads).'),
+        translate('ui.settingsBasic.headerChanged', null, '· Only the sections you changed are submitted; omitted sections keep the server configuration.'),
+        translate('ui.settingsBasic.headerStorage', null, '· storage (cleanup policy) is not part of GET /config; edit it in the "Storage and updates" section.'),
+        translate('ui.settingsBasic.headerScope', null, '· This editor can save the model, vision, knowledge base and storage configuration. For other settings, see config.yaml.')
+    ].join('\n');
+}
 
 export default function BasicSection() {
     const t = useT();
@@ -54,7 +58,7 @@ export default function BasicSection() {
     useEffect(() => {
         if (!config.data) return;
         const { context_window_defaults: _defaults, ...configuration } = config.data;
-        const next = dumpYaml(configuration, { header: EDITOR_HEADER });
+        const next = dumpYaml(configuration, { header: editorHeader() });
         setText(next);
         setBaseline(next);
         setParseError('');
@@ -72,21 +76,21 @@ export default function BasicSection() {
         const tools = Array.isArray(data.tools) ? data.tools : [];
         const enabledTools = tools.filter(tool => tool.enabled).length;
         return [
-            { label: t('settings.defaultChannel', null, '默认 AI 通道'), value: defaultId ? modelChannelName(defaultId, channels[defaultId]) : '—' },
+            { label: t('settings.defaultChannel', null, 'Default AI channel'), value: defaultId ? modelChannelName(defaultId, channels[defaultId]) : '—' },
             {
-                label: t('settingsBasic.aiChannelSavedList', null, '已保存通道'),
-                value: `${formatNumber(channelNames.length)}${channelNames.length ? `（${channelNames.slice(0, 4).join('、')}）` : ''}`
+                label: t('settingsBasic.aiChannelSavedList', null, 'Saved channels'),
+                value: `${formatNumber(channelNames.length)}${channelNames.length ? ` (${channelNames.slice(0, 4).join(', ')})` : ''}`
             },
             {
-                label: t('settings.toolsEnabled', null, '已启用工具'),
+                label: t('settings.toolsEnabled', null, 'Enabled tools'),
                 value: `${formatNumber(enabledTools)} / ${formatNumber(tools.length)}`
             },
             {
-                label: t('settings.visionLabel', null, '视觉模型'),
-                value: data.vision?.enabled ? (data.vision.model || '已启用') : '未启用'
+                label: t('settings.visionLabel', null, 'Vision model'),
+                value: data.vision?.enabled ? (data.vision.model || t('ui.settingsBasic.enabled', null, 'Enabled')) : t('ui.settingsBasic.disabled', null, 'Disabled')
             },
-            { label: t('settings.knowledge.title', null, '知识库'), value: data.knowledge?.enabled ? '已启用' : '未启用' },
-            { label: 'C2', value: data.c2?.enabled ? '已启用' : '未启用' }
+            { label: t('settings.knowledge.title', null, 'Knowledge base'), value: data.knowledge?.enabled ? t('ui.settingsBasic.enabled', null, 'Enabled') : t('ui.settingsBasic.disabled', null, 'Disabled') },
+            { label: 'C2', value: data.c2?.enabled ? t('ui.settingsBasic.enabled', null, 'Enabled') : t('ui.settingsBasic.disabled', null, 'Disabled') }
         ];
     }, [config.data, t]);
 
@@ -99,27 +103,27 @@ export default function BasicSection() {
     const reload = useCallback(() => {
         if (dirty) {
             confirmAction({
-                title: '重新加载配置',
-                content: '当前有未保存修改，重新加载会丢弃这些修改。确认继续？',
-                okText: '确定',
+                title: t('ui.settingsBasic.reloadTitle', null, 'Reload configuration'),
+                content: t('ui.settingsBasic.reloadConfirm', null, 'You have unsaved changes, and reloading will discard them. Continue?'),
+                okText: t('ui.settingsBasic.ok', null, 'OK'),
                 onOk: doReload
             });
             return;
         }
         doReload();
-    }, [doReload, dirty]);
+    }, [doReload, dirty, t]);
 
     const formatEditor = () => {
         try {
             const value = parseYaml(text);
             if (!value || typeof value !== 'object' || Array.isArray(value)) {
-                setParseError('顶层必须是键值映射（key: value），不能是列表或标量。');
+                setParseError(t('ui.settingsBasic.topLevelMapping', null, 'The top level must be a key-value mapping (key: value), not a list or a scalar.'));
                 return;
             }
-            setText(dumpYaml(value, { header: EDITOR_HEADER }));
+            setText(dumpYaml(value, { header: editorHeader() }));
             setParseError('');
         } catch (error) {
-            setParseError(errorMessage(error, 'YAML 解析失败'));
+            setParseError(errorMessage(error, t('ui.settingsBasic.yamlParseFailed', null, 'Failed to parse YAML')));
         }
     };
 
@@ -128,11 +132,11 @@ export default function BasicSection() {
         try {
             parsed = parseYaml(text);
         } catch (error) {
-            setParseError(errorMessage(error, 'YAML 解析失败'));
+            setParseError(errorMessage(error, t('ui.settingsBasic.yamlParseFailed', null, 'Failed to parse YAML')));
             return;
         }
         if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-            setParseError('顶层必须是键值映射（key: value），不能是列表或标量。');
+            setParseError(t('ui.settingsBasic.topLevelMapping', null, 'The top level must be a key-value mapping (key: value), not a list or a scalar.'));
             return;
         }
         setParseError('');
@@ -147,8 +151,8 @@ export default function BasicSection() {
             }
         }
         if (!Object.keys(payload).length) {
-            setNotice('没有需要保存的配置修改。');
-            if (ignored.length) toastWarning(`已忽略不支持的字段：${ignored.join('、')}`);
+            setNotice(t('ui.settingsBasic.nothingToSave', null, 'There are no configuration changes to save.'));
+            if (ignored.length) toastWarning(t('ui.settingsBasic.ignoredFields', { list: ignored.join(', ') }, 'Ignored unsupported fields: {{list}}'));
             return;
         }
 
@@ -158,7 +162,7 @@ export default function BasicSection() {
         } catch (error) {
             setPhase('idle');
             setSaveError(error);
-            toastError(error, t('settings.apply.applyFailed', null, '保存配置失败'));
+            toastError(error, t('settings.apply.applyFailed', null, 'Failed to apply configuration'));
             return;
         }
 
@@ -173,19 +177,19 @@ export default function BasicSection() {
 
         if (applyError) {
             setSaveError(applyError);
-            setNotice(t('settings.apply.appliedWithError', null, '配置已写入 config.yaml，但应用失败；部分改动需要重启后才能生效。'));
-            toastWarning(t('settings.apply.appliedWithError', null, '配置已写入，但应用失败'));
+            setNotice(t('settings.apply.appliedWithError', null, 'The configuration was written to config.yaml, but applying it failed; some changes take effect only after a restart.'));
+            toastWarning(t('settings.apply.appliedWithError', null, 'The configuration was written to config.yaml, but applying it failed; some changes take effect only after a restart.'));
         } else {
-            toastSuccess(t('settings.apply.applySuccess', null, '配置已成功应用'));
+            toastSuccess(t('settings.apply.applySuccess', null, 'Configuration applied successfully!'));
         }
         if (ignored.length) {
-            toastWarning(t('settings.apply.ignoredSections', { list: ignored.join('、') }, `已忽略后端不接收的字段：${ignored.join('、')}`));
+            toastWarning(t('settings.apply.ignoredSections', { list: ignored.join(', ') }, 'Ignored fields the backend does not accept: {{list}}'));
         }
         await config.reload();
     };
 
     if (!canRead) {
-        return <PermissionBanner permission="config:read" label={t('settings.nav.basic', null, '读取基础配置')} />;
+        return <PermissionBanner permission="config:read" label={t('settings.nav.basic', null, 'Basic')} />;
     }
     if (config.loading && !config.data) return <LoadingBlock rows={8} />;
 
@@ -194,19 +198,19 @@ export default function BasicSection() {
             <ErrorBanner error={config.error} onRetry={reload} />
             {config.data && (
                 <>
-                    <SectionCard title={t('settings.overviewTitle', null, '当前配置概览')}>
+                    <SectionCard title={t('settings.overviewTitle', null, 'Current configuration overview')}>
                         <KeyValueList items={summary} columns={3} />
                     </SectionCard>
 
                     <SectionCard
-                        title={t('settings.rawTitle', null, '原始 YAML 配置')}
-                        description={t('settingsDisplay.rawYamlHelp', null, '查看或批量修改服务端高级配置。保存会写入支持的改动并尝试应用。')}
+                        title={t('settings.rawTitle', null, 'Raw YAML configuration')}
+                        description={t('settingsDisplay.rawYamlHelp', null, 'Generated from the current server configuration for viewing or bulk editing advanced options. Format and validate checks syntax; Save and apply writes supported changes and attempts to apply them.')}
                         extra={(
                             <Space>
                                 <Tag color={dirty ? 'amber' : 'green'} size="small">
-                                    {dirty ? t('settings.unsaved', null, '有未保存修改') : t('settings.savedState', null, '已与服务端同步')}
+                                    {dirty ? t('settings.unsaved', null, 'Unsaved changes') : t('settings.savedState', null, 'In sync with the server')}
                                 </Tag>
-                                <CopyButton text={text} label={t('common.copy', null, '复制')} />
+                                <CopyButton text={text} label={t('common.copy', null, 'Copy')} />
                             </Space>
                         )}
                     >
@@ -226,27 +230,27 @@ export default function BasicSection() {
                                     onClick={save}
                                 >
                                     {phase === 'applying'
-                                        ? t('settings.applying', null, '正在应用…')
-                                        : t('settings.saveAndApply', null, '保存并应用')}
+                                        ? t('settings.applying', null, 'Applying…')
+                                        : t('settings.saveAndApply', null, 'Save and apply')}
                                 </Button>
                                 <Button onClick={formatEditor} disabled={busy}>
-                                    {t('settings.formatAndValidate', null, '格式化并校验')}
+                                    {t('settings.formatAndValidate', null, 'Format and validate')}
                                 </Button>
                                 <Button
                                     onClick={() => { setText(baseline); setParseError(''); setNotice(''); }}
                                     disabled={!dirty || busy}
                                 >
-                                    {t('toolGuard.reset', null, '撤销修改')}
+                                    {t('toolGuard.reset', null, 'Discard changes')}
                                 </Button>
                                 <Button icon={<IconRefresh />} onClick={reload} loading={config.loading} disabled={busy}>
-                                    {t('common.refresh', null, '刷新')}
+                                    {t('common.refresh', null, 'Refresh')}
                                 </Button>
                             </Space>
-                            <Hint>{t('settings.lineCount', { count: text.split('\n').length }, `${text.split('\n').length} 行`)}</Hint>
+                            <Hint>{t('settings.lineCount', { count: text.split('\n').length }, '{{count}} lines')}</Hint>
                         </div>
                         {!canWrite && (
                             <Paragraph type="tertiary" size="small" className="settings-hint">
-                                {t('settings.readOnlyHint', null, '当前账号没有 config:write 权限，只能查看配置，无法保存。')}
+                                {t('settings.readOnlyHint', null, 'The current account lacks the config:write permission: the configuration can be viewed but not saved.')}
                             </Paragraph>
                         )}
                         <TextArea
@@ -260,10 +264,10 @@ export default function BasicSection() {
                         />
                     </SectionCard>
 
-                    <SectionCard title={t('settings.jsonTitle', null, '只读参考')}>
+                    <SectionCard title={t('settings.jsonTitle', null, 'Read-only reference')}>
                         <Collapse>
                             <Collapse.Panel
-                                header={t('settings.jsonPanel', null, 'GET /config 原始响应（JSON，便于核对字段名）')}
+                                header={t('settings.jsonPanel', null, 'Raw GET /config response (JSON, for checking field names)')}
                                 itemKey="json"
                             >
                                 <JsonViewer value={config.data} collapsed title="GET /config" />

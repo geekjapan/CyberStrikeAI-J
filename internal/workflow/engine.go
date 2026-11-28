@@ -168,9 +168,9 @@ func runWorkflowNodeLambda(runCtx context.Context, n graphNode) (WorkflowNodeOut
 	if !proceed && !strings.EqualFold(n.Type, "end") {
 		label := firstNonEmpty(n.Label, n.ID)
 		if errText := cfgString(result, "error"); errText != "" {
-			return result, fmt.Errorf("节点「%s」失败: %s", label, errText)
+			return result, fmt.Errorf("Node \"%s\" failed: %s", label, errText)
 		}
-		return result, fmt.Errorf("节点「%s」未继续执行", label)
+		return result, fmt.Errorf("Node \"%s\" did not continue execution", label)
 	}
 	return result, nil
 }

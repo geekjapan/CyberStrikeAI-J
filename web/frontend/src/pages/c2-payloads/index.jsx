@@ -1,5 +1,5 @@
 /**
- * C2 载荷生成：单行反弹命令（oneliner）与跨平台 Beacon 编译下载。
+ * C2 payload generation: one-line reverse command (oneliner) and cross-platform Beacon build download.
  */
 import { useMemo, useState } from 'react';
 import { Button, Input, Select, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -62,12 +62,12 @@ export default function C2PayloadsPage() {
     const generateOneliner = async () => {
         const listenerId = onelinerForm.listenerId || listeners[0]?.id;
         if (!listenerId) {
-            toastWarning(t('c2.payloads.toastPickListener', null, '请先选择一个监听器'));
+            toastWarning(t('c2.payloads.toastPickListener', null, 'Select a listener first'));
             return;
         }
         const kind = onelinerForm.kind || kindOptions[0]?.value;
         if (!kind) {
-            toastWarning(t('c2.payloads.noKindOption', null, '无可用类型'));
+            toastWarning(t('c2.payloads.noKindOption', null, 'No kinds available'));
             return;
         }
         setOnelinerBusy(true);
@@ -75,7 +75,7 @@ export default function C2PayloadsPage() {
             const payload = await c2.buildOneliner({ listener_id: listenerId, kind, host: onelinerForm.host.trim() });
             setOneliner(payload);
         } catch (err) {
-            toastError(err, t('c2.payloads.toastOnelinerFail', null, '生成 Oneliner 失败'));
+            toastError(err, t('c2.payloads.toastOnelinerFail', null, 'Failed to generate oneliner: {{msg}}'));
         } finally {
             setOnelinerBusy(false);
         }
@@ -84,7 +84,7 @@ export default function C2PayloadsPage() {
     const buildBeacon = async () => {
         const listenerId = buildForm.listenerId || listeners[0]?.id;
         if (!listenerId) {
-            toastWarning(t('c2.payloads.toastPickListener', null, '请先选择一个监听器'));
+            toastWarning(t('c2.payloads.toastPickListener', null, 'Select a listener first'));
             return;
         }
         setBuildBusy(true);
@@ -112,10 +112,10 @@ export default function C2PayloadsPage() {
                     },
                     ...current
                 ]);
-                toastSuccess(t('c2.payloads.toastBuildSuccess', null, '构建成功').replace('{{bytes}}', String(result.size_bytes || 0)));
+                toastSuccess(t('c2.payloads.toastBuildSuccess', null, 'Build succeeded: {{bytes}} bytes').replace('{{bytes}}', String(result.size_bytes || 0)));
             }
         } catch (err) {
-            toastError(err, t('c2.payloads.toastBuildFail', null, '构建 Beacon 失败'));
+            toastError(err, t('c2.payloads.toastBuildFail', null, 'Failed to build beacon: {{msg}}'));
         } finally {
             setBuildBusy(false);
         }
@@ -123,28 +123,28 @@ export default function C2PayloadsPage() {
 
     const download = async artifact => {
         if (!artifact.fileName?.startsWith('beacon_')) {
-            toastWarning(t('c2.payloads.invalidArtifact', null, '该产物不可下载'));
+            toastWarning(t('c2.payloads.invalidArtifact', null, 'This artifact cannot be downloaded'));
             return;
         }
         try {
             await c2.downloadPayload(artifact.fileName, artifact.fileName);
-            toastSuccess(t('c2.payloads.toastDownloadQueued', null, '下载任务已排队'));
+            toastSuccess(t('c2.payloads.toastDownloadQueued', null, 'Download task queued'));
         } catch (err) {
-            toastError(err, t('c2.payloads.download', null, '下载失败'));
+            toastError(err, t('c2.payloads.download', null, 'Download'));
         }
     };
 
     const artifactColumns = [
-        { title: t('c2.payloads.fileName', null, '文件'), dataIndex: 'fileName', render: value => <span className="c2-mono">{value || '—'}</span> },
-        { title: t('c2.payloads.os', null, '系统'), dataIndex: 'os', width: 100 },
-        { title: t('c2.payloads.arch', null, '架构'), dataIndex: 'arch', width: 100 },
-        { title: t('c2.payloads.size', null, '大小'), dataIndex: 'size', width: 110, render: value => formatBytes(value) },
+        { title: t('c2.payloads.fileName', null, 'File'), dataIndex: 'fileName', render: value => <span className="c2-mono">{value || '—'}</span> },
+        { title: t('c2.payloads.os', null, 'Target OS'), dataIndex: 'os', width: 100 },
+        { title: t('c2.payloads.arch', null, 'Target Arch'), dataIndex: 'arch', width: 100 },
+        { title: t('c2.payloads.size', null, 'Size'), dataIndex: 'size', width: 110, render: value => formatBytes(value) },
         {
-            title: t('c2.tasks.colActions', null, '操作'),
+            title: t('c2.tasks.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 120,
             render: (_, artifact) => (
-                <Button size="small" theme="borderless" onClick={() => download(artifact)}>{t('c2.payloads.download', null, '下载')}</Button>
+                <Button size="small" theme="borderless" onClick={() => download(artifact)}>{t('c2.payloads.download', null, 'Download')}</Button>
             )
         }
     ];
@@ -152,47 +152,47 @@ export default function C2PayloadsPage() {
     return (
         <div className="c2-page" id="page-c2-payloads">
             <PageHeader
-                title={t('c2.payloads.title', null, 'Payload 生成')}
-                description={t('c2.payloads.pageDesc', null, '生成单行反弹命令，或交叉编译完整 Beacon 二进制')}
+                title={t('c2.payloads.title', null, 'Payload Generator')}
+                description={t('c2.payloads.pageDesc', null, 'Generate a one-line callback command, or cross-compile a full Beacon binary')}
                 extra={[
-                    <Button key="refresh" onClick={reload} loading={loading}>{t('common.refresh', null, '刷新')}</Button>
+                    <Button key="refresh" onClick={reload} loading={loading}>{t('common.refresh', null, 'Refresh')}</Button>
                 ]}
             />
 
             <ErrorBanner error={error} onRetry={reload} />
 
             <div className="c2-payload-grid">
-                <SectionCard title={t('c2.payloads.oneliner', null, '单行 Payload')} description={t('c2.payloads.onelinerDesc', null, '生成可在目标机直接执行的反弹命令')}>
+                <SectionCard title={t('c2.payloads.oneliner', null, 'Oneliner Payload')} description={t('c2.payloads.onelinerDesc', null, 'Generate a one-line reverse shell for the target (Bash / Python / PowerShell / Curl).')}>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.payloads.listener', null, '监听器')}</span>
+                        <span className="c2-field-label">{t('c2.payloads.listener', null, 'Listener')}</span>
                         <Select
                             value={onelinerForm.listenerId || listeners[0]?.id || ''}
                             onChange={value => setOnelinerForm(form => ({ ...form, listenerId: value, kind: '' }))}
                             optionList={listenerOptions}
-                            placeholder={t('c2.payloads.noListenersOption', null, '暂无可用监听器')}
+                            placeholder={t('c2.payloads.noListenersOption', null, 'No listeners available')}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.payloads.kind', null, '类型')}</span>
+                        <span className="c2-field-label">{t('c2.payloads.kind', null, 'Kind')}</span>
                         <Select
                             value={onelinerForm.kind || kindOptions[0]?.value || ''}
                             onChange={value => setOnelinerForm(form => ({ ...form, kind: value }))}
                             optionList={kindOptions}
-                            placeholder={t('c2.payloads.noKindOption', null, '无可用类型')}
+                            placeholder={t('c2.payloads.noKindOption', null, 'No kinds available')}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.payloads.hostOptional', null, '回连地址（可选）')}</span>
+                        <span className="c2-field-label">{t('c2.payloads.hostOptional', null, 'Callback host (optional)')}</span>
                         <Input
                             value={onelinerForm.host}
                             onChange={value => setOnelinerForm(form => ({ ...form, host: value }))}
-                            placeholder={t('c2.payloads.placeholderListenerHost', null, '留空则使用监听器回连地址')}
+                            placeholder={t('c2.payloads.placeholderListenerHost', null, 'Leave empty: listener callback host, else bind address')}
                         />
                     </div>
                     <Button theme="solid" type="primary" block disabled={!canWrite} loading={onelinerBusy} onClick={generateOneliner}>
-                        {t('c2.payloads.generateOnelinerBtn', null, '生成 Oneliner')}
+                        {t('c2.payloads.generateOnelinerBtn', null, 'Generate Oneliner')}
                     </Button>
                     {oneliner?.oneliner && (
                         <div className="c2-oneliner-result">
@@ -201,68 +201,68 @@ export default function C2PayloadsPage() {
                                     <Tag size="small">{oneliner.kind}</Tag>
                                     <Text type="tertiary" size="small">{oneliner.host}:{oneliner.port}</Text>
                                 </Space>
-                                <CopyButton text={oneliner.oneliner} label={t('c2.payloads.copy', null, '复制')} size="small" />
+                                <CopyButton text={oneliner.oneliner} label={t('c2.payloads.copy', null, 'Copy to Clipboard')} size="small" />
                             </div>
                             <pre className="c2-pre">{oneliner.oneliner}</pre>
                         </div>
                     )}
                 </SectionCard>
 
-                <SectionCard title={t('c2.payloads.build', null, '编译 Beacon')} description={t('c2.payloads.buildDesc', null, '交叉编译多平台完整 Beacon 可执行文件')}>
+                <SectionCard title={t('c2.payloads.build', null, 'Build Beacon')} description={t('c2.payloads.buildDesc', null, 'Cross-compile a full Beacon binary for Linux / Windows / macOS.')}>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.payloads.listener', null, '监听器')}</span>
+                        <span className="c2-field-label">{t('c2.payloads.listener', null, 'Listener')}</span>
                         <Select
                             value={buildForm.listenerId || listeners[0]?.id || ''}
                             onChange={value => setBuildForm(form => ({ ...form, listenerId: value }))}
                             optionList={listenerOptions}
-                            placeholder={t('c2.payloads.noListenersOption', null, '暂无可用监听器')}
+                            placeholder={t('c2.payloads.noListenersOption', null, 'No listeners available')}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="c2-field">
-                        <span className="c2-field-label">{t('c2.payloads.hostOptional', null, '回连地址（可选）')}</span>
+                        <span className="c2-field-label">{t('c2.payloads.hostOptional', null, 'Callback host (optional)')}</span>
                         <Input
                             value={buildForm.host}
                             onChange={value => setBuildForm(form => ({ ...form, host: value }))}
-                            placeholder={t('c2.payloads.placeholderListenerHost', null, '留空则使用监听器回连地址')}
+                            placeholder={t('c2.payloads.placeholderListenerHost', null, 'Leave empty: listener callback host, else bind address')}
                         />
                     </div>
                     <div className="c2-form-row">
                         <div className="c2-field">
-                            <span className="c2-field-label">{t('c2.payloads.os', null, '目标系统')}</span>
+                            <span className="c2-field-label">{t('c2.payloads.os', null, 'Target OS')}</span>
                             <Select value={buildForm.os} onChange={value => setBuildForm(form => ({ ...form, os: value }))} optionList={OS_OPTIONS} style={{ width: '100%' }} />
                         </div>
                         <div className="c2-field">
-                            <span className="c2-field-label">{t('c2.payloads.arch', null, '目标架构')}</span>
+                            <span className="c2-field-label">{t('c2.payloads.arch', null, 'Target Arch')}</span>
                             <Select value={buildForm.arch} onChange={value => setBuildForm(form => ({ ...form, arch: value }))} optionList={ARCH_OPTIONS} style={{ width: '100%' }} />
                         </div>
                     </div>
                     <Button theme="solid" type="primary" block disabled={!canWrite} loading={buildBusy} onClick={buildBeacon}>
-                        {t('c2.payloads.buildBeaconBtn', null, '构建 Beacon')}
+                        {t('c2.payloads.buildBeaconBtn', null, 'Build Beacon')}
                     </Button>
                     {buildResult && (
                         <div className="c2-build-result">
-                            <Title heading={6}>{t('c2.payloads.buildSuccessTitle', null, '构建成功')}</Title>
+                            <Title heading={6}>{t('c2.payloads.buildSuccessTitle', null, 'Build succeeded')}</Title>
                             <Text type="tertiary" size="small">
-                                {t('c2.payloads.buildMetaOsArch', null, '系统 / 架构').replace('{{os}}', buildResult.os || '—').replace('{{arch}}', buildResult.arch || '—')}
+                                {t('c2.payloads.buildMetaOsArch', null, 'OS: {{os}} | Arch: {{arch}}').replace('{{os}}', buildResult.os || '—').replace('{{arch}}', buildResult.arch || '—')}
                             </Text>
-                            <Text type="tertiary" size="small">{t('c2.payloads.buildSize', null, '大小').replace('{{bytes}}', String(buildResult.size_bytes || 0))}</Text>
+                            <Text type="tertiary" size="small">{t('c2.payloads.buildSize', null, 'Size: {{bytes}} bytes').replace('{{bytes}}', String(buildResult.size_bytes || 0))}</Text>
                             <pre className="c2-pre">{buildResult.output_path}</pre>
                             <Button size="small" onClick={() => download({ fileName: String(buildResult.output_path || '').split(/[\\/]/).pop(), ...buildResult })}>
-                                {t('c2.payloads.download', null, '下载')}
+                                {t('c2.payloads.download', null, 'Download')}
                             </Button>
                         </div>
                     )}
                 </SectionCard>
             </div>
 
-            <SectionCard title={t('c2.payloads.artifacts', null, '本次会话构建产物')}>
+            <SectionCard title={t('c2.payloads.artifacts', null, 'Build artifacts from this session')}>
                 <DataTable
                     columns={artifactColumns}
                     dataSource={artifacts}
                     rowKey="id"
                     pagination={{ pageSize: 10 }}
-                    emptyText={t('c2.payloads.noArtifacts', null, '暂无构建产物')}
+                    emptyText={t('c2.payloads.noArtifacts', null, 'No build artifacts yet')}
                 />
             </SectionCard>
         </div>

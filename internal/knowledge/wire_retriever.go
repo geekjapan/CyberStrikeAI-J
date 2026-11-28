@@ -89,7 +89,7 @@ func (q *nativeMultiQuery) Retrieve(ctx context.Context, query string, opts ...R
 		if ctx.Err() != nil {
 			return nil, ctx.Err()
 		}
-		q.logger.Warn("查询扩展失败，使用原始查询", zap.Error(err))
+		q.logger.Warn("Query expansion failed, using original query", zap.Error(err))
 	}
 	scores := map[string]float64{}
 	docs := map[string]*Document{}

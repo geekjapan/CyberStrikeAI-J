@@ -14,7 +14,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// Indexer 使用 Agent Compose 索引链（Markdown/递归分块、Lambda  enrich、SQLite 索引）与嵌入写入。
+// Indexer uses the Agent Compose indexing chain (Markdown/recursive chunking, Lambda  enrich, SQLite index) and embedding writes.
 type Indexer struct {
 	db          *sql.DB
 	embedder    *Embedder
@@ -40,7 +40,7 @@ type Indexer struct {
 	rebuildLastChunks int
 }
 
-// NewIndexer 创建索引器并编译 Agent 索引链；kcfg 为完整知识库配置（含 indexing 与路径相关行为）。
+// NewIndexer creates the indexer and compiles the Agent indexing chain; kcfg is the complete knowledge base config (including indexing and path-related behavior).
 func NewIndexer(ctx context.Context, db *sql.DB, embedder *Embedder, logger *zap.Logger, kcfg *config.KnowledgeConfig) (*Indexer, error) {
 	if db == nil {
 		return nil, fmt.Errorf("db is nil")
@@ -49,7 +49,7 @@ func NewIndexer(ctx context.Context, db *sql.DB, embedder *Embedder, logger *zap
 		return nil, fmt.Errorf("embedder is nil")
 	}
 	if err := EnsureKnowledgeEmbeddingsSchema(db); err != nil {
-		return nil, fmt.Errorf("knowledge_embeddings 结构迁移: %w", err)
+		return nil, fmt.Errorf("knowledge_embeddings schema migration: %w", err)
 	}
 	if kcfg == nil {
 		kcfg = &config.KnowledgeConfig{}
@@ -87,10 +87,10 @@ func NewIndexer(ctx context.Context, db *sql.DB, embedder *Embedder, logger *zap
 	}, nil
 }
 
-// RecompileIndexChain 在配置或嵌入模型变更后重建 Agent 索引链（无需重启进程）。
+// RecompileIndexChain rebuilds the Agent indexing chain after a config or embedding model change (no process restart needed).
 func (idx *Indexer) RecompileIndexChain(ctx context.Context) error {
 	if idx == nil || idx.db == nil || idx.embedder == nil {
-		return fmt.Errorf("indexer 未初始化")
+		return fmt.Errorf("indexer is not initialized")
 	}
 	if err := EnsureKnowledgeEmbeddingsSchema(idx.db); err != nil {
 		return err
@@ -108,19 +108,19 @@ func (idx *Indexer) RecompileIndexChain(ctx context.Context) error {
 	return nil
 }
 
-// IndexItem 索引单个知识项：先清空旧向量，再走 Compose 链（分块、嵌入、写入）。
+// IndexItem indexes a single knowledge item: first clears the old vectors, then runs the Compose chain (chunking, embedding, writing).
 func (idx *Indexer) IndexItem(ctx context.Context, itemID string) error {
 	if idx.indexChain == nil {
-		return fmt.Errorf("索引链未初始化")
+		return fmt.Errorf("Indexing chain is not initialized")
 	}
 	if idx.embedder == nil {
-		return fmt.Errorf("嵌入器未初始化")
+		return fmt.Errorf("Embedder is not initialized")
 	}
 
 	var content, category, title, filePath string
 	err := idx.db.QueryRow("SELECT content, category, title, file_path FROM knowledge_base_items WHERE id = ?", itemID).Scan(&content, &category, &title, &filePath)
 	if err != nil {
-		return fmt.Errorf("获取知识项失败：%w", err)
+		return fmt.Errorf("Failed to get knowledge item: %w", err)
 	}
 
 	body := strings.TrimSpace(content)
@@ -128,7 +128,7 @@ func (idx *Indexer) IndexItem(ctx context.Context, itemID string) error {
 		if b, err := os.ReadFile(strings.TrimSpace(filePath)); err == nil && strings.TrimSpace(string(b)) != "" {
 			body = string(b)
 		} else if err != nil && idx.logger != nil {
-			idx.logger.Warn("源文件读取失败，使用数据库正文", zap.Error(err))
+			idx.logger.Warn("Failed to read source file, using database content", zap.Error(err))
 		}
 	}
 
@@ -149,7 +149,7 @@ func (idx *Indexer) IndexItem(ctx context.Context, itemID string) error {
 
 	ids, err := idx.indexChain.Invoke(ctx, []*Document{root}, idxOpts...)
 	if err != nil {
-		msg := fmt.Sprintf("索引写入失败 (知识项：%s): %v", itemID, err)
+		msg := fmt.Sprintf("Index write failed (knowledge item: %s): %v", itemID, err)
 		idx.mu.Lock()
 		idx.lastError = msg
 		idx.lastErrorTime = time.Now()
@@ -158,7 +158,7 @@ func (idx *Indexer) IndexItem(ctx context.Context, itemID string) error {
 	}
 
 	if idx.logger != nil {
-		idx.logger.Info("知识项索引完成", zap.String("itemId", itemID), zap.Int("chunks", len(ids)))
+		idx.logger.Info("Knowledge item indexing completed", zap.String("itemId", itemID), zap.Int("chunks", len(ids)))
 	}
 	idx.rebuildMu.Lock()
 	idx.rebuildLastItemID = itemID
@@ -167,12 +167,12 @@ func (idx *Indexer) IndexItem(ctx context.Context, itemID string) error {
 	return nil
 }
 
-// HasIndex 检查是否存在索引
+// HasIndex checks whether an index exists
 func (idx *Indexer) HasIndex() (bool, error) {
 	var count int
 	err := idx.db.QueryRow("SELECT COUNT(*) FROM knowledge_embeddings").Scan(&count)
 	if err != nil {
-		return false, fmt.Errorf("检查索引失败：%w", err)
+		return false, fmt.Errorf("Failed to check index: %w", err)
 	}
 	return count > 0, nil
 }
@@ -182,7 +182,7 @@ func (idx *Indexer) beginIndexRun() error {
 	defer idx.rebuildMu.Unlock()
 
 	if idx.isRebuilding {
-		return fmt.Errorf("索引任务已在进行中")
+		return fmt.Errorf("An indexing task is already in progress")
 	}
 	idx.isRebuilding = true
 	idx.rebuildTotalItems = 0
@@ -194,7 +194,7 @@ func (idx *Indexer) beginIndexRun() error {
 	return nil
 }
 
-// TryBeginIndexRun 同步占用索引任务槽位；调用方必须在后台任务结束时调用 FinishIndexRun。
+// TryBeginIndexRun synchronously takes the index task slot; the caller must call FinishIndexRun when the background task ends.
 func (idx *Indexer) TryBeginIndexRun() error {
 	return idx.beginIndexRun()
 }
@@ -219,7 +219,7 @@ func (idx *Indexer) setIndexRunTotal(total int) {
 	idx.rebuildMu.Unlock()
 }
 
-// IndexMissing 为尚无向量的知识项构建索引（默认推荐路径，适合冷启动与中断续跑）。
+// IndexMissing builds indexes for knowledge items that have no vectors yet (the recommended default path, suitable for cold start and resuming after an interruption).
 func (idx *Indexer) IndexMissing(ctx context.Context) error {
 	if err := idx.beginIndexRun(); err != nil {
 		return err
@@ -228,7 +228,7 @@ func (idx *Indexer) IndexMissing(ctx context.Context) error {
 	return idx.runIndexMissing(ctx)
 }
 
-// RebuildIndex 全量重建所有知识项索引（显式 opt-in，成本更高）。
+// RebuildIndex fully rebuilds the index for all knowledge items (explicit opt-in, higher cost).
 func (idx *Indexer) RebuildIndex(ctx context.Context) error {
 	if err := idx.beginIndexRun(); err != nil {
 		return err
@@ -237,12 +237,12 @@ func (idx *Indexer) RebuildIndex(ctx context.Context) error {
 	return idx.runRebuildIndex(ctx)
 }
 
-// RunRebuildIndex 在已占用索引任务槽位后执行全量重建（供 HTTP handler 后台任务使用）。
+// RunRebuildIndex performs a full rebuild after the index task slot has been taken (used by HTTP handler background tasks).
 func (idx *Indexer) RunRebuildIndex(ctx context.Context) error {
 	return idx.runRebuildIndex(ctx)
 }
 
-// RunIndexMissing 在已占用索引任务槽位后执行缺失索引补齐（供 HTTP handler 后台任务使用）。
+// RunIndexMissing fills in missing indexes after the index task slot has been taken (used by HTTP handler background tasks).
 func (idx *Indexer) RunIndexMissing(ctx context.Context) error {
 	return idx.runIndexMissing(ctx)
 }
@@ -252,7 +252,7 @@ func (idx *Indexer) runRebuildIndex(ctx context.Context) error {
 
 	rows, err := idx.db.QueryContext(ctx, "SELECT id FROM knowledge_base_items ORDER BY updated_at ASC, id ASC")
 	if err != nil {
-		return fmt.Errorf("查询知识项失败：%w", err)
+		return fmt.Errorf("Failed to query knowledge items: %w", err)
 	}
 	defer rows.Close()
 
@@ -262,9 +262,9 @@ func (idx *Indexer) runRebuildIndex(ctx context.Context) error {
 	}
 
 	idx.setIndexRunTotal(len(itemIDs))
-	idx.logger.Info("开始重建索引", zap.Int("totalItems", len(itemIDs)))
+	idx.logger.Info("Started rebuilding index", zap.Int("totalItems", len(itemIDs)))
 
-	return idx.indexItemIDs(ctx, itemIDs, "索引重建完成")
+	return idx.indexItemIDs(ctx, itemIDs, "Index rebuild completed")
 }
 
 func (idx *Indexer) runIndexMissing(ctx context.Context) error {
@@ -278,19 +278,19 @@ func (idx *Indexer) runIndexMissing(ctx context.Context) error {
 		ORDER BY i.updated_at ASC, i.id ASC
 	`)
 	if err != nil {
-		return fmt.Errorf("查询未索引知识项失败：%w", err)
+		return fmt.Errorf("Failed to query unindexed knowledge items: %w", err)
 	}
 	defer rows.Close()
 
 	itemIDs, err := scanKnowledgeItemIDs(rows)
 	if err != nil {
-		return fmt.Errorf("扫描未索引知识项 ID 失败：%w", err)
+		return fmt.Errorf("Failed to scan unindexed knowledge item IDs: %w", err)
 	}
 
 	idx.setIndexRunTotal(len(itemIDs))
-	idx.logger.Info("开始补齐缺失索引", zap.Int("totalItems", len(itemIDs)))
+	idx.logger.Info("Started filling in missing indexes", zap.Int("totalItems", len(itemIDs)))
 
-	return idx.indexItemIDs(ctx, itemIDs, "索引构建完成")
+	return idx.indexItemIDs(ctx, itemIDs, "Index build completed")
 }
 
 func scanKnowledgeItemIDs(rows *sql.Rows) ([]string, error) {
@@ -298,12 +298,12 @@ func scanKnowledgeItemIDs(rows *sql.Rows) ([]string, error) {
 	for rows.Next() {
 		var id string
 		if err := rows.Scan(&id); err != nil {
-			return nil, fmt.Errorf("扫描知识项 ID 失败：%w", err)
+			return nil, fmt.Errorf("Failed to scan knowledge item IDs: %w", err)
 		}
 		itemIDs = append(itemIDs, id)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("扫描知识项 ID 失败：%w", err)
+		return nil, fmt.Errorf("Failed to scan knowledge item IDs: %w", err)
 	}
 	return itemIDs, nil
 }
@@ -323,7 +323,7 @@ func (idx *Indexer) indexItemIDs(ctx context.Context, itemIDs []string, doneMess
 			if consecutiveFailures == 1 {
 				firstFailureItemID = itemID
 				firstFailureError = err
-				idx.logger.Warn("索引知识项失败",
+				idx.logger.Warn("Failed to index knowledge item",
 					zap.String("itemId", itemID),
 					zap.Int("totalItems", len(itemIDs)),
 					zap.Error(err),
@@ -331,30 +331,30 @@ func (idx *Indexer) indexItemIDs(ctx context.Context, itemIDs []string, doneMess
 			}
 
 			if consecutiveFailures >= maxConsecutiveFailures {
-				errorMsg := fmt.Sprintf("连续 %d 个知识项索引失败，可能存在配置问题（如嵌入模型配置错误、API 密钥无效、余额不足等）。第一个失败项：%s, 错误：%v", consecutiveFailures, firstFailureItemID, firstFailureError)
+				errorMsg := fmt.Sprintf("%d consecutive knowledge items failed to index; there may be a configuration problem (e.g. wrong embedding model configuration, invalid API key, insufficient balance). First failed item: %s, error: %v", consecutiveFailures, firstFailureItemID, firstFailureError)
 				idx.mu.Lock()
 				idx.lastError = errorMsg
 				idx.lastErrorTime = time.Now()
 				idx.mu.Unlock()
 
-				idx.logger.Error("连续索引失败次数过多，立即停止索引",
+				idx.logger.Error("Too many consecutive indexing failures, stopping indexing immediately",
 					zap.Int("consecutiveFailures", consecutiveFailures),
 					zap.Int("totalItems", len(itemIDs)),
 					zap.Int("processedItems", i+1),
 					zap.String("firstFailureItemId", firstFailureItemID),
 					zap.Error(firstFailureError),
 				)
-				return fmt.Errorf("连续索引失败次数过多：%v", firstFailureError)
+				return fmt.Errorf("Too many consecutive indexing failures: %v", firstFailureError)
 			}
 
 			if failedCount > len(itemIDs)*3/10 && failedCount == len(itemIDs)*3/10+1 {
-				errorMsg := fmt.Sprintf("索引失败的知识项过多 (%d/%d)，可能存在配置问题。第一个失败项：%s, 错误：%v", failedCount, len(itemIDs), firstFailureItemID, firstFailureError)
+				errorMsg := fmt.Sprintf("Too many knowledge items failed to index (%d/%d); there may be a configuration problem. First failed item: %s, error: %v", failedCount, len(itemIDs), firstFailureItemID, firstFailureError)
 				idx.mu.Lock()
 				idx.lastError = errorMsg
 				idx.lastErrorTime = time.Now()
 				idx.mu.Unlock()
 
-				idx.logger.Error("索引失败的知识项过多，可能存在配置问题",
+				idx.logger.Error("Too many knowledge items failed to index; there may be a configuration problem",
 					zap.Int("failedCount", failedCount),
 					zap.Int("totalItems", len(itemIDs)),
 					zap.String("firstFailureItemId", firstFailureItemID),
@@ -376,7 +376,7 @@ func (idx *Indexer) indexItemIDs(ctx context.Context, itemIDs []string, doneMess
 		idx.rebuildMu.Unlock()
 
 		if (i+1)%10 == 0 || (len(itemIDs) > 0 && (i+1)*100/len(itemIDs)%10 == 0 && (i+1)*100/len(itemIDs) > 0) {
-			idx.logger.Info("索引进度", zap.Int("current", i+1), zap.Int("total", len(itemIDs)), zap.Int("failed", failedCount))
+			idx.logger.Info("Indexing progress", zap.Int("current", i+1), zap.Int("total", len(itemIDs)), zap.Int("failed", failedCount))
 		}
 	}
 
@@ -384,14 +384,14 @@ func (idx *Indexer) indexItemIDs(ctx context.Context, itemIDs []string, doneMess
 	return nil
 }
 
-// GetLastError 获取最近一次错误信息
+// GetLastError gets the most recent error message
 func (idx *Indexer) GetLastError() (string, time.Time) {
 	idx.mu.RLock()
 	defer idx.mu.RUnlock()
 	return idx.lastError, idx.lastErrorTime
 }
 
-// GetRebuildStatus 获取重建索引状态
+// GetRebuildStatus gets the index rebuild status
 func (idx *Indexer) GetRebuildStatus() (isRebuilding bool, totalItems int, current int, failed int, lastItemID string, lastChunks int, startTime time.Time) {
 	idx.rebuildMu.RLock()
 	defer idx.rebuildMu.RUnlock()

@@ -1,6 +1,6 @@
 /**
- * WebShell 虚拟终端：逐条下发命令并把回显写回输出区。
- * 输出只保留在内存中，命令历史由上层持久化到连接状态。
+ * WebShell virtual terminal: send commands one at a time and write the echo back to the output area.
+ * Output stays in memory only; command history is persisted to the connection state by the parent.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Input, Space, Tag } from '@douyinfe/semi-ui';
@@ -37,7 +37,7 @@ export default function TerminalTab({ connection, canWrite, onRecordCommand }) {
         const cmd = String(raw ?? command).trim();
         if (!cmd) return;
         if (!canWrite) {
-            toastWarning(t('webshell.webshellWriteRequired', null, '当前账号没有执行权限'));
+            toastWarning(t('webshell.webshellWriteRequired', null, 'The current account is not allowed to run commands'));
             return;
         }
         setCommand('');
@@ -49,10 +49,10 @@ export default function TerminalTab({ connection, canWrite, onRecordCommand }) {
             if (result?.output) append({ kind: 'out', text: result.output });
             if (result?.error) append({ kind: 'err', text: result.error });
             if (!result?.ok && !result?.error) {
-                append({ kind: 'err', text: t('webshell.execError', null, '执行失败') });
+                append({ kind: 'err', text: t('webshell.execError', null, 'Execution failed') });
             }
         } catch (error) {
-            append({ kind: 'err', text: error?.message || t('webshell.execError', null, '执行失败') });
+            append({ kind: 'err', text: error?.message || t('webshell.execError', null, 'Execution failed') });
             toastError(error);
         } finally {
             setRunning(false);
@@ -63,9 +63,9 @@ export default function TerminalTab({ connection, canWrite, onRecordCommand }) {
         const text = entries.map(entry => (entry.kind === 'cmd' ? `$ ${entry.text}` : entry.text)).join('\n');
         try {
             await navigator.clipboard.writeText(text);
-            toastSuccess(t('webshell.terminalCopyOk', null, '日志已复制'));
+            toastSuccess(t('webshell.terminalCopyOk', null, 'Log copied'));
         } catch (error) {
-            toastError(error, t('webshell.terminalCopyFail', null, '复制失败'));
+            toastError(error, t('webshell.terminalCopyFail', null, 'Copy failed'));
         }
     };
 
@@ -74,35 +74,35 @@ export default function TerminalTab({ connection, canWrite, onRecordCommand }) {
             <div className="webshell-terminal-bar">
                 <Space spacing={8}>
                     <Tag size="small" color={running ? 'amber' : 'green'}>
-                        {running ? t('webshell.terminalRunning', null, '执行中') : t('webshell.terminalIdle', null, '空闲')}
+                        {running ? t('webshell.terminalRunning', null, 'Running') : t('webshell.terminalIdle', null, 'Idle')}
                     </Tag>
-                    <Button size="small" theme="borderless" onClick={() => setEntries([])}>{t('webshell.clearScreen', null, '清屏')}</Button>
-                    <Button size="small" theme="borderless" onClick={copyLog}>{t('webshell.copyTerminalLog', null, '复制日志')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setEntries([])}>{t('webshell.clearScreen', null, 'Clear')}</Button>
+                    <Button size="small" theme="borderless" onClick={copyLog}>{t('webshell.copyTerminalLog', null, 'Copy log')}</Button>
                 </Space>
             </div>
             <div className="webshell-terminal-log" ref={logRef}>
                 <div className="webshell-terminal-welcome">
-                    {t('webshell.terminalWelcome', null, 'WebShell 虚拟终端 — 输入命令后按回车执行（Ctrl+L 清屏）')}
+                    {t('webshell.terminalWelcome', null, 'WebShell virtual terminal — type a command and press Enter (Ctrl+L clear)')}
                 </div>
                 {entries.map(entry => (
                     <pre key={entry.id} className={`webshell-terminal-line kind-${entry.kind}`}>
                         {entry.kind === 'cmd' ? `$ ${entry.text}` : entry.text}
                     </pre>
                 ))}
-                {running && <div className="webshell-terminal-pending">{t('webshell.running', null, '执行中…')}</div>}
+                {running && <div className="webshell-terminal-pending">{t('webshell.running', null, 'Running…')}</div>}
             </div>
             <div className="webshell-terminal-input">
                 <Input
                     value={command}
                     onChange={setCommand}
-                    onEnterPress={() => (running ? toastWarning(t('webshell.waitFinish', null, '请等待当前命令执行完成')) : run())}
+                    onEnterPress={() => (running ? toastWarning(t('webshell.waitFinish', null, 'Please wait for the current command to finish')) : run())}
                     onKeyDown={event => {
                         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'l') {
                             event.preventDefault();
                             setEntries([]);
                         }
                     }}
-                    placeholder={t('webshell.commandPlaceholder', null, '输入命令后回车执行')}
+                    placeholder={t('webshell.commandPlaceholder', null, 'Type a command and press Enter to run')}
                     disabled={running || !canWrite}
                     prefix="$"
                 />
@@ -114,7 +114,7 @@ export default function TerminalTab({ connection, canWrite, onRecordCommand }) {
                     disabled={!canWrite}
                     onClick={() => run()}
                 >
-                    {t('webshell.runCommand', null, '执行')}
+                    {t('webshell.runCommand', null, 'Run')}
                 </Button>
             </div>
         </div>

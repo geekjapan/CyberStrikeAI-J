@@ -1,4 +1,4 @@
-/** 批量导入：CSV / JSON 文本或文件上传，先校验预览再提交 /assets/import。 */
+/** Bulk import: CSV / JSON text or file upload; validate and preview first, then submit to /assets/import. */
 import { useMemo, useRef, useState } from 'react';
 import {
     Banner, Button, RadioGroup, Space, Table, TextArea, Typography
@@ -13,28 +13,28 @@ import { csvTemplate, downloadTextFile, recordsFromCsv, recordsFromJson } from '
 const { Text } = Typography;
 
 const PREVIEW_COLUMNS = (t) => [
-    { title: t('assets.rowNumber', null, '行号'), dataIndex: 'rowNumber', width: 70 },
+    { title: t('assets.rowNumber', null, 'Row'), dataIndex: 'rowNumber', width: 70 },
     {
-        title: t('assets.target', null, '目标'),
+        title: t('assets.target', null, 'Target'),
         dataIndex: 'target',
         render: (_, record) => assetTargetLabel(record.asset || { target: record.values?.target })
     },
     {
-        title: t('assets.project', null, '所属项目'),
+        title: t('assets.project', null, 'Project'),
         dataIndex: 'project',
         render: (_, record) => record.projectName || record.values?.project || '—'
     },
     {
-        title: t('assets.status', null, '状态'),
+        title: t('assets.status', null, 'Status'),
         dataIndex: 'status',
         render: (_, record) => record.asset?.status || record.values?.status || '—'
     },
     {
-        title: t('assets.validationResult', null, '校验结果'),
+        title: t('assets.validationResult', null, 'Validation'),
         dataIndex: 'error',
         render: value => (value
             ? <Text type="danger" size="small">{value}</Text>
-            : <Text type="success" size="small">{t('assets.validationPassed', null, '通过')}</Text>)
+            : <Text type="success" size="small">{t('assets.validationPassed', null, 'Valid')}</Text>)
     }
 ];
 
@@ -85,11 +85,11 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
         const name = String(file.name || '');
         const extension = name.split('.').pop().toLowerCase();
         if (!['csv', 'json', 'txt'].includes(extension)) {
-            setError('仅支持 .csv / .json / .txt 文件');
+            setError(t('ui.assetImport.unsupportedFile', null, 'Only .csv, .json, and .txt files are supported'));
             return;
         }
         if (file.size > 100 * 1024 * 1024) {
-            setError(t('assets.fileTooLarge', null, '文件不能超过 100 MB'));
+            setError(t('assets.fileTooLarge', null, 'The file must not exceed 100 MB'));
             return;
         }
         try {
@@ -98,7 +98,7 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
             setText(content);
             setFileName(name);
         } catch (readError) {
-            setError(errorMessage(readError, t('assets.fileParseFailed', null, '无法解析文件，请确认文件格式正确')));
+            setError(errorMessage(readError, t('assets.fileParseFailed', null, 'Could not parse the file; make sure it is valid and not corrupted')));
         }
     };
 
@@ -117,12 +117,12 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
                 created: Number(result?.created || 0),
                 updated: Number(result?.updated || 0),
                 skipped
-            }, `导入完成：新增 ${Number(result?.created || 0)} 条，更新 ${Number(result?.updated || 0)} 条，跳过 ${skipped} 条`));
+            }, 'Import complete: {{created}} created, {{updated}} updated, {{skipped}} skipped'));
             reset();
             onDone?.();
             onClose?.();
         } catch (submitError) {
-            setError(errorMessage(submitError, t('assets.importFailed', null, '资产入库失败')));
+            setError(errorMessage(submitError, t('assets.importFailed', null, 'Failed to import assets')));
         } finally {
             setBusy(false);
         }
@@ -131,16 +131,16 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
     return (
         <Drawer
             visible={visible}
-            title={t('assets.bulkImportTitle', null, '批量导入资产')}
+            title={t('assets.bulkImportTitle', null, 'Bulk import assets')}
             width={880}
             onCancel={close}
             onOk={submit}
-            okText={t('assets.importValidRowsCount', { count: valid.length }, `导入 ${valid.length} 条有效数据`)}
+            okText={t('assets.importValidRowsCount', { count: valid.length }, 'Import {{count}} valid rows')}
             okButtonProps={{ disabled: !valid.length }}
             confirmLoading={busy}
         >
             <Text type="tertiary">
-                {t('assets.bulkImportSubtitle', null, '支持 CSV / JSON 文本粘贴或文件上传，提交前会先校验并预览数据')}
+                {t('assets.bulkImportSubtitle', null, 'Fill in a template, upload it, then review validation results before importing')}
             </Text>
             {displayError && (
                 <Banner type="danger" bordered closeIcon={null} description={displayError} className="asset-library-form-error" />
@@ -160,7 +160,7 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
                         icon={<IconCloudUploadStroked />}
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        {t('assets.chooseOrDropFile', null, '选择文件')}
+                        {t('assets.chooseOrDropFile', null, 'Choose a file or drop it here')}
                     </Button>
                     <input
                         ref={fileInputRef}
@@ -176,7 +176,7 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
                         theme="borderless"
                         onClick={() => downloadTextFile('asset-import-template.csv', csvTemplate())}
                     >
-                        {t('assets.downloadCsv', null, '下载 CSV 模板')}
+                        {t('assets.downloadCsv', null, 'Download CSV template')}
                     </Button>
                     {fileName && <Text type="tertiary" size="small">{fileName}</Text>}
                 </Space>
@@ -194,7 +194,7 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
                         <Text strong>
                             {t('assets.importPreviewSummary', {
                                 total: records.length, valid: valid.length, invalid
-                            }, `共 ${records.length} 行，${valid.length} 行有效，${invalid} 行需修正`)}
+                            }, '{{total}} rows: {{valid}} valid, {{invalid}} need attention')}
                         </Text>
                         <Table
                             columns={PREVIEW_COLUMNS(t)}
@@ -205,7 +205,7 @@ export default function AssetImportModal({ visible, projects, defaultProjectId, 
                         />
                         {records.length > 10 && (
                             <Text type="tertiary" size="small">
-                                {t('assets.previewLimitedShort', { count: records.length }, `仅展示前 10 行；提交时将处理全部 ${records.length} 行`)}
+                                {t('assets.previewLimitedShort', { count: records.length }, 'Showing the first 10 rows only; all {{count}} rows are processed on submit')}
                             </Text>
                         )}
                     </div>

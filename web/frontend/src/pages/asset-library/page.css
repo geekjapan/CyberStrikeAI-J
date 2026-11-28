@@ -1,4 +1,4 @@
-/* 资产库页面私有布局样式（颜色一律使用 Semi 变量）。 */
+/* Private layout styles for the asset library page (colors always use Semi variables). */
 .asset-library-page { display: flex; flex-direction: column; gap: 0; }
 
 .asset-library-filters { display: flex; flex-direction: column; gap: 8px; }

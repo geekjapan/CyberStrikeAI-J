@@ -43,8 +43,8 @@ function GraphSearch({ nodes, onSelect, t }) {
                 prefix={<IconSearch />}
                 value={query}
                 showClear
-                placeholder={t('projects.graphSearchPlaceholder', null, '搜索节点…')}
-                aria-label={t('projects.graphSearchSr', null, '搜索节点')}
+                placeholder={t('projects.graphSearchPlaceholder', null, 'Search nodes…')}
+                aria-label={t('projects.graphSearchSr', null, 'Search nodes')}
                 aria-controls={open ? resultsId : undefined}
                 onChange={value => { setQuery(value); setOpen(true); }}
                 onFocus={() => setOpen(true)}
@@ -61,8 +61,8 @@ function GraphSearch({ nodes, onSelect, t }) {
                 <div className="project-graph-search-results" id={resultsId}>
                     <div className="project-graph-search-count" role="status">
                         {matches.length
-                            ? t('projects.graphSearchCount', { count: matches.length }, `${matches.length} 个节点`)
-                            : t('projects.graphNoMatches', null, '未找到匹配节点')}
+                            ? t('projects.graphSearchCount', { count: matches.length }, '{{count}} nodes')
+                            : t('projects.graphNoMatches', null, 'No matching nodes')}
                     </div>
                     {matches.length > 0 && <ul className="project-graph-search-list">
                         {matches.map(node => (
@@ -140,28 +140,28 @@ export default function FactGraphPanel({
 
     const deleteEdge = edge => {
         confirmAction({
-            title: t('projects.graphDeleteEdge', null, '删边'),
-            content: t('projects.confirmDeleteGraphEdge', null, '确定删除此关系边？'),
-            okText: t('common.delete', null, '删除'),
+            title: t('projects.graphDeleteEdge', null, 'Delete'),
+            content: t('projects.confirmDeleteGraphEdge', null, 'Delete this link?'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.del(`/projects/${projectId}/fact-edges/${edge.id}`);
-                    toastSuccess(t('projects.graphEdgeDeleteSuccess', null, '边已删除'));
+                    toastSuccess(t('projects.graphEdgeDeleteSuccess', null, 'Edge deleted'));
                     refresh();
                 } catch (error) {
-                    toastError(errText(error, t('projects.graphEdgeDeleteFailed', null, '删除边失败')));
+                    toastError(errText(error, t('projects.graphEdgeDeleteFailed', null, 'Failed to delete edge')));
                 }
             }
         });
     };
     const stats = (nodeCount, edgeCount) => t(
-        'projects.graphStats', { nodes: nodeCount, edges: edgeCount }, `${nodeCount} 个节点 · ${edgeCount} 条关系`
+        'projects.graphStats', { nodes: nodeCount, edges: edgeCount }, 'Nodes: {{nodes}} | Edges: {{edges}}'
     );
 
-    const graphLabel = t('projects.tabGraph', null, '攻击路径');
+    const graphLabel = t('projects.tabGraph', null, 'Attack path');
     const viewHint = {
-        reading: t('projects.graphReadingHint', null, '已保留可读字号，拖动画布浏览其他节点。'),
-        overview: t('projects.graphFullOverviewHint', null, '悬停预览节点摘要，点选查看详情。')
+        reading: t('projects.graphReadingHint', null, 'Text stays readable. Drag the canvas to browse more nodes.'),
+        overview: t('projects.graphFullOverviewHint', null, 'Hover to preview a node. Select it to see its details.')
     }[fitView];
     const factSelected = selected && selected.type !== 'missing' && !selected.id.startsWith('vuln:');
     return (
@@ -173,7 +173,7 @@ export default function FactGraphPanel({
                     <Text type="tertiary" size="small">{stats(nodes.length, edges.length)}</Text>
                     <Button
                         icon={<IconRefresh />}
-                        aria-label={t('common.refresh', null, '刷新')}
+                        aria-label={t('common.refresh', null, 'Refresh')}
                         theme="borderless"
                         loading={graph.loading}
                         onClick={refresh}
@@ -185,12 +185,12 @@ export default function FactGraphPanel({
             <div className="project-toolbar project-graph-toolbar">
                 <Select
                     value={view}
-                    aria-label={t('projects.graphScope', null, '关系范围')}
+                    aria-label={t('projects.graphScope', null, 'Relationship scope')}
                     onChange={next => { setSelectedId(''); setView(next); }}
                     style={{ width: 134 }}
                     optionList={[
-                        { value: 'path', label: t('projects.graphViewPath', null, '攻击路径') },
-                        { value: 'full', label: t('projects.graphViewFull', null, '完整关系') }
+                        { value: 'path', label: t('projects.graphViewPath', null, 'Attack path') },
+                        { value: 'full', label: t('projects.graphViewFull', null, 'Full graph') }
                     ]}
                 />
                 <GraphSearch nodes={nodes} onSelect={openNode} t={t} />
@@ -198,10 +198,10 @@ export default function FactGraphPanel({
                     setSelectedId('');
                     setHideDeprecated(event.target.checked);
                 }}>
-                    {t('projects.hideDeprecated', null, '隐藏废弃')}
+                    {t('projects.hideDeprecated', null, 'Hide deprecated')}
                 </Checkbox>
                 <Button className="project-graph-edges-toggle" aria-expanded={showEdges} onClick={() => setShowEdges(value => !value)}>
-                    {t('projects.graphEdgesTitle', null, '关系边')}
+                    {t('projects.graphEdgesTitle', null, 'Links')}
                 </Button>
             </div>
             {nodes.length > 0 ? (
@@ -210,16 +210,16 @@ export default function FactGraphPanel({
                         {selected ? (
                             <>
                                 <Button size="small" theme="light" type="primary" onClick={() => setSelectedId('')}>
-                                    {t('projects.graphBackToOverview', null, '返回全图')}
+                                    {t('projects.graphBackToOverview', null, 'Back to overview')}
                                 </Button>
                                 <Text size="small" aria-live="polite">
-                                    {t('projects.graphFocus', { stats: stats(shownNodes.length, shownEdges.length) }, `聚焦直接关系 · ${stats(shownNodes.length, shownEdges.length)}`)}
+                                    {t('projects.graphFocus', { stats: stats(shownNodes.length, shownEdges.length) }, 'Direct connections · {{stats}}')}
                                 </Text>
                             </>
                         ) : null}
                         {(!selected || viewHint) && (
                             <Text type="tertiary" size="small">
-                                {viewHint || t('projects.graphOverviewHint', null, '点选节点查看直接关系和摘要。')}
+                                {viewHint || t('projects.graphOverviewHint', null, 'Select a node to see its summary and connections.')}
                             </Text>
                         )}
                     </div>
@@ -233,8 +233,8 @@ export default function FactGraphPanel({
                                 chartRef={chartRef}
                                 typeLabel={typeLabel}
                                 onFitChange={setFitView}
-                                label={t('projects.graphCanvas', null, '攻击路径画布')}
-                                errorText={t('projects.graphRenderError', null, '图谱加载失败，请刷新重试。')}
+                                label={t('projects.graphCanvas', null, 'Attack path canvas')}
+                                errorText={t('projects.graphRenderError', null, 'Could not load the graph. Refresh to retry.')}
                             />
                             <div className="project-graph-footer">
                                 <div className="project-graph-legend">
@@ -245,31 +245,31 @@ export default function FactGraphPanel({
                                         </span>
                                     ))}
                                     {shownEdges.some(edge => edge.confidence === 'tentative') && (
-                                        <span><i className="project-graph-legend-dash" aria-hidden="true" />{t('projects.graphTentativeEdge', null, '待确认关系')}</span>
+                                        <span><i className="project-graph-legend-dash" aria-hidden="true" />{t('projects.graphTentativeEdge', null, 'Tentative link')}</span>
                                     )}
                                 </div>
                                 <Space spacing={4} wrap>
-                                    <Button size="small" icon={<IconMinus />} aria-label={t('projects.graphZoomOut', null, '缩小')} onClick={() => chartRef.current?.zoom(1 / 1.3)} />
-                                    <Button size="small" icon={<IconPlus />} aria-label={t('projects.graphZoomIn', null, '放大')} onClick={() => chartRef.current?.zoom(1.3)} />
+                                    <Button size="small" icon={<IconMinus />} aria-label={t('projects.graphZoomOut', null, 'Zoom out')} onClick={() => chartRef.current?.zoom(1 / 1.3)} />
+                                    <Button size="small" icon={<IconPlus />} aria-label={t('projects.graphZoomIn', null, 'Zoom in')} onClick={() => chartRef.current?.zoom(1.3)} />
                                     <Button
                                         size="small"
                                         aria-pressed={fitView === 'fitted' || fitView === 'reading'}
                                         onClick={() => chartRef.current?.fit()}
                                     >
-                                        {t('projects.graphFit', null, '适合画布')}
+                                        {t('projects.graphFit', null, 'Fit to canvas')}
                                     </Button>
                                     <Button
                                         size="small"
                                         aria-pressed={fitView === 'overview'}
                                         onClick={() => chartRef.current?.overview()}
                                     >
-                                        {t('projects.graphFullOverview', null, '全图总览')}
+                                        {t('projects.graphFullOverview', null, 'Full overview')}
                                     </Button>
                                 </Space>
                             </div>
                         </div>
                         {selected && (
-                            <aside ref={sideRef} className="project-graph-side" aria-label={t('projects.graphNodeDetails', null, '节点详情')}>
+                            <aside ref={sideRef} className="project-graph-side" aria-label={t('projects.graphNodeDetails', null, 'Node details')}>
                                 <div className="project-detail-stack">
                                     <div>
                                         <Text strong>{nodeTitle(selected)}</Text>
@@ -285,14 +285,14 @@ export default function FactGraphPanel({
                                     </div>
                                     {factSelected && (
                                         <Space>
-                                            <Button size="small" onClick={() => onOpenFact(selected.fact_key)}>{t('projects.details', null, '详情')}</Button>
+                                            <Button size="small" onClick={() => onOpenFact(selected.fact_key)}>{t('projects.details', null, 'Details')}</Button>
                                             <Button size="small" disabled={!canWrite} onClick={() => onEditFact(selected.fact_key)}>
-                                                {t('common.edit', null, '编辑')}
+                                                {t('common.edit', null, 'Edit')}
                                             </Button>
                                         </Space>
                                     )}
                                     <div>
-                                        <Text strong size="small">{t('projects.graphDirectLinks', null, '直接关系')} · {shownEdges.length}</Text>
+                                        <Text strong size="small">{t('projects.graphDirectLinks', null, 'Direct connections')} · {shownEdges.length}</Text>
                                         {shownEdges.length ? (
                                             <ul className="project-graph-neighbors">
                                                 {shownEdges.map((edge, index) => {
@@ -301,9 +301,9 @@ export default function FactGraphPanel({
                                                     return (
                                                         <li key={edge.id || index}>
                                                             <div className="project-graph-edge-meta">
-                                                                <span>{outgoing ? '→' : '←'} {outgoing ? t('projects.graphEdgeOutgoing', null, '出边') : t('projects.graphEdgeIncoming', null, '入边')}</span>
+                                                                <span>{outgoing ? '→' : '←'} {outgoing ? t('projects.graphEdgeOutgoing', null, 'Outgoing') : t('projects.graphEdgeIncoming', null, 'Incoming')}</span>
                                                                 <code>{edge.type}</code>
-                                                                {edge.confidence === 'tentative' && <span>{t('projects.graphConfidence.tentative', null, '待确认')}</span>}
+                                                                {edge.confidence === 'tentative' && <span>{t('projects.graphConfidence.tentative', null, 'Tentative')}</span>}
                                                             </div>
                                                             <button type="button" className="project-graph-peer project-link-button" onClick={() => openNode(peer.id)} title={peer.fact_key}>
                                                                 {nodeTitle(peer)}
@@ -312,7 +312,7 @@ export default function FactGraphPanel({
                                                     );
                                                 })}
                                             </ul>
-                                        ) : <div><Text type="tertiary" size="small">{t('projects.graphEdgesEmpty', null, '暂无关系边')}</Text></div>}
+                                        ) : <div><Text type="tertiary" size="small">{t('projects.graphEdgesEmpty', null, 'No links yet')}</Text></div>}
                                     </div>
                                 </div>
                             </aside>
@@ -323,17 +323,17 @@ export default function FactGraphPanel({
                 <div className="project-graph-loading"><Spin /></div>
             ) : currentGraph && !graph.error ? (
                 <Empty
-                    title={t('projects.graphEmptyTitle', null, '构建攻击路径图')}
-                    description={t('projects.graphEmpty', null, '暂无路径图数据。为 finding/exploit 类事实添加关系边（discovered_on → target/*）后将在此展示。')}
+                    title={t('projects.graphEmptyTitle', null, 'Build your attack path')}
+                    description={t('projects.graphEmpty', null, 'No graph data yet. Add links on finding/exploit facts (discovered_on → target/*) to build the path.')}
                     style={{ padding: 40 }}
                 >
                     <div className="project-graph-empty-steps">
-                        <Text type="tertiary">{t('projects.graphEmptyStep1', null, '添加 target 类事实（目标、域名、入口）')}</Text>
-                        <Text type="tertiary">{t('projects.graphEmptyStep2', null, '记录 finding / exploit 并在 links 中连边')}</Text>
-                        <Text type="tertiary">{t('projects.graphEmptyStep3', null, '使用「连边」模式或编辑事实手动补关系')}</Text>
+                        <Text type="tertiary">{t('projects.graphEmptyStep1', null, 'Add target facts (domains, endpoints, scope)')}</Text>
+                        <Text type="tertiary">{t('projects.graphEmptyStep2', null, 'Record findings/exploits with links between facts')}</Text>
+                        <Text type="tertiary">{t('projects.graphEmptyStep3', null, 'Use Connect mode or edit facts to add relationships')}</Text>
                     </div>
                     <Button type="primary" disabled={!canWrite} onClick={onAddFact}>
-                        {t('projects.graphEmptyCta', null, '添加第一条事实')}
+                        {t('projects.graphEmptyCta', null, 'Add first fact')}
                     </Button>
                 </Empty>
             ) : null}
@@ -359,13 +359,13 @@ export default function FactGraphPanel({
                                         disabled={!canWrite}
                                         onClick={() => deleteEdge(edge)}
                                     >
-                                        {t('projects.graphDeleteEdge', null, '删边')}
+                                        {t('projects.graphDeleteEdge', null, 'Delete')}
                                     </Button>
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <Text type="tertiary" size="small">{t('projects.graphEdgesEmpty', null, '暂无关系边')}</Text>
+                        <Text type="tertiary" size="small">{t('projects.graphEdgesEmpty', null, 'No links yet')}</Text>
                     )}
                 </div>
             ) : null}

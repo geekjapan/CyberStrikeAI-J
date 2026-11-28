@@ -1,30 +1,34 @@
-/** 工作流页私有工具：图解析、节点字典、运行状态、工作流包错误码映射。 */
+/** Workflow page private helpers: graph parsing, node dictionary, run status, workflow package error code mapping. */
+import { lazyLabels, translate } from '../../lib/i18n';
 
-export const NODE_TYPES = [
-    { value: 'start', label: '开始' },
-    { value: 'tool', label: '工具' },
-    { value: 'agent', label: 'Agent' },
-    { value: 'condition', label: '条件' },
-    { value: 'hitl', label: '审批' },
-    { value: 'output', label: '输出' },
-    { value: 'end', label: '结束' }
-];
+export const NODE_TYPE_LABEL = lazyLabels('ui.workflowsHelpers.nodeType', {
+    start: 'Start',
+    tool: 'Tool',
+    agent: 'Agent',
+    condition: 'Condition',
+    hitl: 'Approval',
+    output: 'Output',
+    end: 'End'
+});
 
-export const NODE_TYPE_LABEL = Object.fromEntries(NODE_TYPES.map(item => [item.value, item.label]));
+export const NODE_TYPES = Object.keys(NODE_TYPE_LABEL).map(value => ({
+    value,
+    get label() { return NODE_TYPE_LABEL[value]; }
+}));
 
 export const RUN_STATUS = {
-    running: { label: '执行中', color: 'blue' },
-    awaiting_hitl: { label: '等待审批', color: 'amber' },
-    completed: { label: '已完成', color: 'green' },
-    failed: { label: '失败', color: 'red' },
-    cancelled: { label: '已取消', color: 'grey' },
-    pending: { label: '待执行', color: 'amber' }
+    running: { get label() { return translate('ui.workflowsHelpers.runStatus.running', null, 'Running'); }, color: 'blue' },
+    awaiting_hitl: { get label() { return translate('ui.workflowsHelpers.runStatus.awaitingHitl', null, 'Awaiting approval'); }, color: 'amber' },
+    completed: { get label() { return translate('ui.workflowsHelpers.runStatus.completed', null, 'Completed'); }, color: 'green' },
+    failed: { get label() { return translate('ui.workflowsHelpers.runStatus.failed', null, 'Failed'); }, color: 'red' },
+    cancelled: { get label() { return translate('ui.workflowsHelpers.runStatus.cancelled', null, 'Cancelled'); }, color: 'grey' },
+    pending: { get label() { return translate('ui.workflowsHelpers.runStatus.pending', null, 'Pending'); }, color: 'amber' }
 };
 
 export const GRAPH_TEMPLATE = {
     nodes: [
-        { id: 'start', type: 'start', label: '开始', position: { x: 80, y: 140 }, config: {} },
-        { id: 'out', type: 'output', label: '输出', position: { x: 380, y: 140 }, config: { output_key: 'result' } }
+        { id: 'start', type: 'start', label: 'Start', position: { x: 80, y: 140 }, config: {} },
+        { id: 'out', type: 'output', label: 'Output', position: { x: 380, y: 140 }, config: { output_key: 'result' } }
     ],
     edges: [{ id: 'e1', source: 'start', target: 'out', label: '' }],
     config: {}
@@ -53,10 +57,22 @@ export const PACKAGE_ERROR_KEYS = {
 };
 
 export const PACKAGE_ACTIONS = {
-    create: { label: '创建导入', hint: '导入后会创建一个新的本地工作流。' },
-    keep_existing: { label: '保留本地版本', hint: '不修改当前本地工作流；导入记录会保留。' },
-    overwrite: { label: '覆盖本地版本', hint: '替换名称、描述、图定义和启用状态；需要再次确认。' },
-    rename: { label: '另存为新 ID', hint: '保留当前本地工作流，并以新的 ID 创建副本。' }
+    create: {
+        get label() { return translate('ui.workflowsHelpers.actionCreateLabel', null, 'Create from import'); },
+        get hint() { return translate('ui.workflowsHelpers.actionCreateHint', null, 'A new local workflow will be created after import.'); }
+    },
+    keep_existing: {
+        get label() { return translate('ui.workflowsHelpers.actionKeepLabel', null, 'Keep local version'); },
+        get hint() { return translate('ui.workflowsHelpers.actionKeepHint', null, 'The current local workflow is not modified; the import record is kept.'); }
+    },
+    overwrite: {
+        get label() { return translate('ui.workflowsHelpers.actionOverwriteLabel', null, 'Overwrite local version'); },
+        get hint() { return translate('ui.workflowsHelpers.actionOverwriteHint', null, 'Replaces the name, description, graph definition and enabled state; requires another confirmation.'); }
+    },
+    rename: {
+        get label() { return translate('ui.workflowsHelpers.actionRenameLabel', null, 'Save as new ID'); },
+        get hint() { return translate('ui.workflowsHelpers.actionRenameHint', null, 'Keeps the current local workflow and creates a copy with a new ID.'); }
+    }
 };
 
 export const CONFLICT_ACTIONS = {
@@ -70,10 +86,10 @@ export function allowedActions(conflictState) {
 }
 
 export function parseGraph(raw) {
-    if (!raw || !String(raw).trim()) return { graph: null, error: '图定义不能为空' };
+    if (!raw || !String(raw).trim()) return { graph: null, error: translate('ui.workflowsHelpers.graphEmpty', null, 'The graph definition cannot be empty') };
     try {
         const parsed = JSON.parse(raw);
-        if (!parsed || typeof parsed !== 'object') return { graph: null, error: '图定义必须是 JSON 对象' };
+        if (!parsed || typeof parsed !== 'object') return { graph: null, error: translate('ui.workflowsHelpers.graphNotObject', null, 'The graph definition must be a JSON object') };
         return {
             graph: {
                 nodes: Array.isArray(parsed.nodes) ? parsed.nodes : [],
@@ -83,7 +99,7 @@ export function parseGraph(raw) {
             error: null
         };
     } catch (error) {
-        return { graph: null, error: error.message || 'JSON 解析失败' };
+        return { graph: null, error: error.message || translate('ui.workflowsHelpers.jsonParseFailed', null, 'Failed to parse JSON') };
     }
 }
 
@@ -100,7 +116,7 @@ export function shortHash(value, size = 12) {
     return body.length > size ? `${body.slice(0, size)}…` : body;
 }
 
-export function errText(error, fallback = '操作失败') {
+export function errText(error, fallback = translate('ui.workflowsHelpers.operationFailed', null, 'Operation failed')) {
     if (!error) return fallback;
     if (typeof error === 'string') return error;
     const payload = error.payload;
@@ -118,7 +134,7 @@ export function errText(error, fallback = '操作失败') {
     return fallback;
 }
 
-export function errorProp(error, fallback = '加载失败') {
+export function errorProp(error, fallback = translate('ui.workflowsHelpers.loadFailed', null, 'Failed to load')) {
     if (!error) return null;
     return { message: errText(error, fallback) };
 }
@@ -129,14 +145,14 @@ export function packageErrorCode(error) {
     return '';
 }
 
-/** 工作流包接口用 {error:{code,message}}，优先按 code 取本地化提示。 */
+/** Workflow package endpoints use {error:{code,message}}; prefer the localized hint by code. */
 export function packageErrorText(error, t) {
     const code = packageErrorCode(error);
     if (code && PACKAGE_ERROR_KEYS[code]) {
         const text = t?.(PACKAGE_ERROR_KEYS[code], null, '');
         if (text) return text;
     }
-    return errText(error, '操作未完成，请稍后重试。');
+    return errText(error, translate('ui.workflowsHelpers.operationIncomplete', null, 'The operation did not complete. Try again later.'));
 }
 
 export function createIdempotencyKey() {

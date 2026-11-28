@@ -1,5 +1,5 @@
 /**
- * 编辑所选模型通道，并使用表单中的值测试连接或探测模型能力。
+ * Edit the selected model channel, and test the connection or probe model capabilities with the values in the form.
  */
 import { useEffect, useId, useState } from 'react';
 import { Banner, Button, Collapse, Input, Select, Space, Tag, Typography } from '@douyinfe/semi-ui';
@@ -15,14 +15,14 @@ const MAIN_CHANNEL = '__main__';
 const NO_CHANNELS = {};
 const DEFAULT_FORM_CONTEXT_WINDOW = 1048576;
 const PROVIDERS = [
-    { value: 'openai_compatible', key: 'settingsProbe.compatible', fallback: '兼容 OpenAI 的接口' },
+    { value: 'openai_compatible', key: 'settingsProbe.compatible', fallback: 'OpenAI-compatible API' },
     { value: 'claude', key: 'settingsBasic.providerClaude', fallback: 'Claude（Anthropic Messages）' }
 ];
 const CONTEXT_PROFILES = ['', 'auto', 'local_auto', 'local', 'economy', 'custom'];
 const TOKEN_LIMITS = [
-    ['context_window', 'settingsBasic.contextWindow', '模型上下文窗口（Token）'],
-    ['max_total_tokens', 'settingsBasic.maxTotalTokens', '最大上下文令牌数'],
-    ['max_completion_tokens', 'settingsBasic.maxCompletionTokens', '最大输出令牌数']
+    ['context_window', 'settingsBasic.contextWindow', 'Model Context Window (tokens)'],
+    ['max_total_tokens', 'settingsBasic.maxTotalTokens', 'Max Context Tokens'],
+    ['max_completion_tokens', 'settingsBasic.maxCompletionTokens', 'Max Output Tokens']
 ];
 const EMPTY_PROBE = { key: '', payload: null, error: null };
 const CONTEXT_WARNING_KEYS = {
@@ -40,7 +40,7 @@ const CONTEXT_WARNING_KEYS = {
 const BACKEND_NAMES = { ollama: 'Ollama', llamacpp: 'llama.cpp', lmstudio: 'LM Studio', omlx: 'oMLX', vllm: 'vLLM' };
 
 function profileLabel(t, value) {
-    return t('settingsProbe.profiles.' + (value || 'default'), null, value || '使用默认设置');
+    return t('settingsProbe.profiles.' + (value || 'default'), null, value || 'Use defaults');
 }
 
 function numberValue(raw) {
@@ -69,12 +69,12 @@ function channelValues(channel) {
 
 function summarizeTest(t, payload) {
     return [
-        { label: t('settingsProbe.result', null, '测试结果'), value: <Tag color="green">{t('settingsBasic.testSuccess', null, '连接成功')}</Tag> },
-        { label: t('settingsBasic.model', null, '模型'), value: payload.model || '—' },
+        { label: t('settingsProbe.result', null, 'Test result'), value: <Tag color="green">{t('settingsBasic.testSuccess', null, 'Connection successful')}</Tag> },
+        { label: t('settingsBasic.model', null, 'Model'), value: payload.model || '—' },
         {
-            label: t('settingsProbe.latency', null, '响应耗时'),
+            label: t('settingsProbe.latency', null, 'Response latency'),
             value: payload.latency_ms != null
-                ? t('settingsProbe.milliseconds', { value: payload.latency_ms }, `${payload.latency_ms} 毫秒`)
+                ? t('settingsProbe.milliseconds', { value: payload.latency_ms }, '{{value}} ms')
                 : '—'
         }
     ];
@@ -86,19 +86,19 @@ function summarizeContext(t, payload, fallbackWindow) {
     const backend = payload.context_backend;
     return [
         ...summarizeTest(t, payload),
-        { label: t('settingsProbe.window', null, '上下文窗口'), value: payload.context_window || fallbackWindow || '—' },
+        { label: t('settingsProbe.window', null, 'Context window'), value: payload.context_window || fallbackWindow || '—' },
         {
-            label: t('settingsProbe.backend', null, '模型接口类型'),
+            label: t('settingsProbe.backend', null, 'Model API type'),
             value: backend === 'openai_compatible'
-                ? t('settingsProbe.compatible', null, '兼容 OpenAI 的接口')
+                ? t('settingsProbe.compatible', null, 'OpenAI-compatible API')
                 : BACKEND_NAMES[backend] || backend || '—'
         },
         {
-            label: t('settingsProbe.source', null, '窗口信息来源'),
-            value: fallbackWindow ? t('settingsProbe.windowDefault', null, '默认值') : (source ? t('settingsProbe.sources.' + sourceKey, null, source) : '—')
+            label: t('settingsProbe.source', null, 'Context window source'),
+            value: fallbackWindow ? t('settingsProbe.windowDefault', null, 'Default') : (source ? t('settingsProbe.sources.' + sourceKey, null, source) : '—')
         },
-        { label: t('settingsProbe.profile', null, '上下文配置'), value: profileLabel(t, payload.context_profile) },
-        { label: t('settingsProbe.effectiveBudget', null, '实际可用上下文令牌数'), value: payload.effective_max_total_tokens ?? '—' }
+        { label: t('settingsProbe.profile', null, 'Context profile'), value: profileLabel(t, payload.context_profile) },
+        { label: t('settingsProbe.effectiveBudget', null, 'Effective context token budget'), value: payload.effective_max_total_tokens ?? '—' }
     ];
 }
 
@@ -116,16 +116,16 @@ function ProbeOutput({ state, defaultWindow, model, onModelChange, disabled }) {
                     type={payload.supported === false ? 'info' : 'danger'}
                     bordered
                     closeIcon={null}
-                    description={payload.error || t('settingsBasic.modelsListFailed', null, '获取模型列表失败')}
+                    description={payload.error || t('settingsBasic.modelsListFailed', null, 'Failed to fetch model list')}
                 />
             );
         }
         const models = Array.isArray(payload.models) ? payload.models : [];
-        const selectLabel = t('settingsBasic.modelsListSelectPlaceholder', null, '请选择模型');
+        const selectLabel = t('settingsBasic.modelsListSelectPlaceholder', null, 'Select a model');
         return (
             <div className="settings-probe-result">
                 <Space wrap spacing={8}>
-                    <Text>{t('settingsBasic.modelsListSuccess', { count: payload.count ?? models.length }, `已获取 ${payload.count ?? models.length} 个模型`)}</Text>
+                    <Text>{t('settingsBasic.modelsListSuccess', { count: payload.count ?? models.length }, 'Retrieved {{count}} models')}</Text>
                     <span id={pickerLabelId} hidden>{selectLabel}</span>
                     {models.length > 0 && (
                         <Select
@@ -151,18 +151,18 @@ function ProbeOutput({ state, defaultWindow, model, onModelChange, disabled }) {
                     <KeyValueList
                         columns={3}
                         items={summarizeTest(t, payload).map((item, index) => key === 'image' && index === 0
-                            ? { ...item, value: <Tag color="green">{t('settingsProbe.imageReadSuccess', null, '图片读取成功')}</Tag> }
+                            ? { ...item, value: <Tag color="green">{t('settingsProbe.imageReadSuccess', null, 'Image read successfully')}</Tag> }
                             : item)}
                     />
                 ) : (
-                    <Banner type="danger" bordered closeIcon={null} description={payload.error || t('settingsBasic.testFailed', null, '连接失败')} />
+                    <Banner type="danger" bordered closeIcon={null} description={payload.error || t('settingsBasic.testFailed', null, 'Connection failed')} />
                 )}
             </div>
         );
     }
 
     if (!payload.success) {
-        return <Banner type="danger" bordered closeIcon={null} description={payload.error || t('settingsBasic.testFailed', null, '连接失败')} />;
+        return <Banner type="danger" bordered closeIcon={null} description={payload.error || t('settingsBasic.testFailed', null, 'Connection failed')} />;
     }
     const fallbackWindow = !payload.context_window && !payload.context_runtime_unknown ? defaultWindow : 0;
     const warnings = (Array.isArray(payload.context_warnings) ? payload.context_warnings : [])
@@ -177,13 +177,13 @@ function ProbeOutput({ state, defaultWindow, model, onModelChange, disabled }) {
                     closeIcon={null}
                     description={(
                         <div>
-                            <Text strong>{t('settingsProbe.warnings', null, '上下文提示')}</Text>
+                            <Text strong>{t('settingsProbe.warnings', null, 'Context notices')}</Text>
                             <ul>
                                 {[...new Set(warnings)].map(code => (
                                     <li key={code}>
                                         {Object.hasOwn(CONTEXT_WARNING_KEYS, code)
                                             ? t('settingsBasic.' + CONTEXT_WARNING_KEYS[code], null, code)
-                                            : t('settingsProbe.unknownWarning', { code }, `收到未识别的上下文提示（${code}）`)}
+                                            : t('settingsProbe.unknownWarning', { code }, 'Unrecognized context notice ({{code}})')}
                                     </li>
                                 ))}
                             </ul>
@@ -228,7 +228,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
     const [applyPending, setApplyPending] = useState(false);
     const locked = !canWrite || saving || busy === 'image' || busy === 'list';
     const channelOptions = legacy
-        ? [{ value: MAIN_CHANNEL, label: t('settingsProbe.mainChannel', null, '主模型通道') }]
+        ? [{ value: MAIN_CHANNEL, label: t('settingsProbe.mainChannel', null, 'Primary model channel') }]
         : modelChannelOptions(Object.entries(channels));
     const providerOptions = PROVIDERS.map(({ value, key, fallback }) => ({ value, label: t(key, null, fallback) }));
     if (!providerOptions.some(option => option.value === form.provider)) {
@@ -290,7 +290,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
             || !Number.isSafeInteger(Number(form[key])));
         if (invalidLimit) {
             const [, key, fallback] = invalidLimit;
-            setSaveError(new Error(t('settingsProbe.invalidLimit', { field: t(key, null, fallback) }, '请输入非负整数')));
+            setSaveError(new Error(t('settingsProbe.invalidLimit', { field: t(key, null, fallback) }, 'Enter a non-negative integer for {{field}}.')));
             return;
         }
         const changes = { ...draft };
@@ -307,8 +307,8 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
             await api.put('/config', { ai_channel: { channel_id: legacy ? '' : channelId, make_default: makeDefault, ...changes } });
             clearDraft();
             await apply(makeDefault
-                ? t('settingsBasic.aiChannelDefaultSaved', null, '已设为默认通道')
-                : t('settingsBasic.aiChannelSaved', null, '通道已保存'));
+                ? t('settingsBasic.aiChannelDefaultSaved', null, 'Default channel saved')
+                : t('settingsBasic.aiChannelSaved', null, 'Channel saved'));
             await reloadConfig({ silent: true });
         } catch (error) {
             setSaveError(error);
@@ -322,7 +322,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
         setSaving(true);
         setSaveError(null);
         try {
-            await apply(t('settings.apply.applySuccess', null, '配置已成功应用'));
+            await apply(t('settings.apply.applySuccess', null, 'Configuration applied successfully!'));
         } finally {
             setSaving(false);
         }
@@ -381,10 +381,10 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
     const auditClaude = ['claude', 'anthropic'].includes(auditProvider.toLowerCase());
     const auditProtocol = auditTypeSafe ? 'TypeSafe / Jev'
         : auditClaude ? 'Claude (Anthropic Messages)'
-            : t('settingsProbe.compatible', null, '兼容 OpenAI 的接口');
+            : t('settingsProbe.compatible', null, 'OpenAI-compatible API');
     const auditSource = auditTypeSafe || ['provider', 'base_url', 'api_key', 'model'].some(key => auditModel[key])
         ? auditModel.model || auditProtocol
-        : t('settingsProbe.auditInherit', null, '继承主模型');
+        : t('settingsProbe.auditInherit', null, 'Inherits primary model');
     const auditURLPlaceholder = auditTypeSafe ? 'https://api.typesafe.ai'
         : config.openai?.base_url || (auditClaude ? 'https://api.anthropic.com' : 'https://api.openai.com/v1');
     const [auditDraft, setAuditDraft] = useState({});
@@ -414,32 +414,32 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
 
     return (
         <SectionCard
-            title={t('settingsProbe.channelTitle', null, '模型通道与连接测试')}
-            description={t('settingsProbe.channelHelp', null, '保存后应用所选通道的设置。显示 ******** 时沿用已保存的密钥。')}
+            title={t('settingsProbe.channelTitle', null, 'Model Channels and Connection Tests')}
+            description={t('settingsProbe.channelHelp', null, 'Connection tests use the values in the form. Save Channel applies your changes. A key shown as ******** uses the saved credential.')}
             className="settings-channel-panel"
             extra={canWrite ? (
                 <Space wrap>
                     {dirty && (
                         <Button disabled={saving || !!busy} onClick={discardDraft}>
-                            {t('toolGuard.reset', null, '撤销修改')}
+                            {t('toolGuard.reset', null, 'Discard changes')}
                         </Button>
                     )}
                     {!legacy && channelId !== defaultId && (
                         <Button disabled={saving || !!busy} onClick={() => save(true)}>
-                            {t('settingsBasic.aiChannelSetDefault', null, '设为默认')}
+                            {t('settingsBasic.aiChannelSetDefault', null, 'Set default')}
                         </Button>
                     )}
                     <Button theme="solid" type="primary" loading={saving} disabled={!dirty || !!busy} onClick={() => save()}>
-                        {t('settingsProbe.saveChannel', null, '保存通道')}
+                        {t('settingsProbe.saveChannel', null, 'Save Channel')}
                     </Button>
                 </Space>
             ) : (
-                <Tag color="grey" size="small">{t('settingsProbe.channelReadOnly', null, '只读')}</Tag>
+                <Tag color="grey" size="small">{t('settingsProbe.channelReadOnly', null, 'Read-only')}</Tag>
             )}
         >
             <div className="settings-probe-form">
                 <div className="settings-field">
-                    <Text id={channelLabelId} type="tertiary" size="small">{t('settings.checkChannel', null, '通道')}</Text>
+                    <Text id={channelLabelId} type="tertiary" size="small">{t('settings.checkChannel', null, 'Channel')}</Text>
                     <Select
                         value={channelId}
                         onChange={selectChannel}
@@ -451,7 +451,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                     />
                 </div>
                 <label className="settings-field">
-                    <Text type="tertiary" size="small">{t('settingsBasic.apiProvider', null, 'API 提供商')}</Text>
+                    <Text type="tertiary" size="small">{t('settingsBasic.apiProvider', null, 'API Provider')}</Text>
                     <Select
                         value={form.provider}
                         onChange={value => update('provider', value)}
@@ -461,28 +461,28 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                     />
                 </label>
                 <label className="settings-field settings-field-wide">
-                    <Text type="tertiary" size="small">{t('settingsBasic.baseUrl', null, 'API 地址')}</Text>
+                    <Text type="tertiary" size="small">{t('settingsBasic.baseUrl', null, 'Base URL')}</Text>
                     <Input value={form.base_url} onChange={value => update('base_url', value)} readOnly={locked} placeholder="https://api.openai.com/v1" />
                 </label>
                 <label className="settings-field">
                     <Space spacing={6}>
-                        <Text type="tertiary" size="small">{t('settingsBasic.model', null, '模型')}</Text>
+                        <Text type="tertiary" size="small">{t('settingsBasic.model', null, 'Model')}</Text>
                         {(imageEnabled || state.key === 'image' && state.payload?.success) && (
-                            <Tag size="small" color="green">{t('settingsProbe.imageInputSupported', null, '支持图片')}</Tag>
+                            <Tag size="small" color="green">{t('settingsProbe.imageInputSupported', null, 'Image input')}</Tag>
                         )}
                     </Space>
                     <Input value={form.model} onChange={value => update('model', value)} readOnly={locked} placeholder="gpt-4o-mini" />
                 </label>
                 <label className="settings-field">
-                    <Text type="tertiary" size="small">{t('settingsBasic.aiChannelName', null, '通道名称')}</Text>
+                    <Text type="tertiary" size="small">{t('settingsBasic.aiChannelName', null, 'Channel name')}</Text>
                     <Input value={form.name} onChange={value => update('name', value)} readOnly={locked} placeholder={legacy ? '' : channelId} />
                 </label>
                 <label className="settings-field">
-                    <Text type="tertiary" size="small">{t('settingsBasic.apiKey', null, 'API 密钥')}</Text>
+                    <Text type="tertiary" size="small">{t('settingsBasic.apiKey', null, 'API Key')}</Text>
                     <Input mode="password" autoComplete="new-password" value={form.api_key} onChange={value => update('api_key', value)} readOnly={locked} />
                 </label>
                 <label className="settings-field">
-                    <Text type="tertiary" size="small">{t('settingsProbe.profile', null, '上下文配置')}</Text>
+                    <Text type="tertiary" size="small">{t('settingsProbe.profile', null, 'Context profile')}</Text>
                     <Select
                         value={form.context_profile || ''}
                         onChange={value => update('context_profile', value)}
@@ -507,7 +507,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                                 inputMode="numeric"
                                 readOnly={locked}
                                 placeholder={isWindow
-                                    ? t('settingsProbe.windowExample', { value: t('settingsBasic.contextWindowPlaceholder', null, '131072') }, '例如 131072')
+                                    ? t('settingsProbe.windowExample', { value: t('settingsBasic.contextWindowPlaceholder', null, '131072') }, 'e.g. {{value}}')
                                     : '0'}
                             />
                         </label>
@@ -520,9 +520,9 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                     {applyPending && (
                         <Banner type="warning" bordered closeIcon={null} description={(
                             <Space wrap>
-                                {t('settingsProbe.savedApplyFailed', null, '通道已写入配置，应用失败。')}
+                                {t('settingsProbe.savedApplyFailed', null, 'The channel was saved, but applying the configuration failed.')}
                                 <Button size="small" disabled={locked || !!busy} onClick={retryApply}>
-                                    {t('settingsProbe.retryApply', null, '重试应用')}
+                                    {t('settingsProbe.retryApply', null, 'Retry Apply')}
                                 </Button>
                             </Space>
                         )} />
@@ -537,18 +537,18 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                     disabled={locked || !!busy}
                     onClick={() => run('test', '/config/test-openai', probeBody())}
                 >
-                    {t('settingsBasic.test', null, '测试连接')}
+                    {t('settingsBasic.test', null, 'Test connection')}
                 </Button>
                 <Button
                     loading={busy === 'image'}
                     disabled={locked || !!busy}
                     onClick={() => run('image', '/config/test-openai', { ...probeBody(), test_image: true })}
                 >
-                    {t('settingsProbe.testImage', null, '测试图片')}
+                    {t('settingsProbe.testImage', null, 'Test image')}
                 </Button>
                 {!imageEnabled && state.key === 'image' && state.payload?.success && (
                     <Button type="tertiary" disabled={locked || !!busy} onClick={() => update('image_input', 'enabled')}>
-                        {t('settingsProbe.enableImageInput', null, '为此通道启用图片')}
+                        {t('settingsProbe.enableImageInput', null, 'Enable images for this channel')}
                     </Button>
                 )}
                 <Button
@@ -556,7 +556,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                     disabled={locked || !!busy}
                     onClick={() => run('context', '/config/detect-context', probeBody())}
                 >
-                    {t('settingsBasic.detectContext', null, '探测上下文窗口')}
+                    {t('settingsBasic.detectContext', null, 'Auto-detect')}
                 </Button>
                 <Button
                     loading={busy === 'list'}
@@ -570,7 +570,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                         api_key: form.api_key
                     })}
                 >
-                    {t('settingsBasic.modelsList', null, '获取模型列表')}
+                    {t('settingsBasic.modelsList', null, 'Fetch model list')}
                 </Button>
             </Space>
             <ProbeOutput
@@ -584,7 +584,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
             <Collapse className="settings-audit-model">
                 <Collapse.Panel itemKey="audit-model" header={(
                     <Space wrap spacing={8}>
-                        <Text strong>{t('settingsProbe.auditModelTitle', null, '审计模型')}</Text>
+                        <Text strong>{t('settingsProbe.auditModelTitle', null, 'Audit model')}</Text>
                         <Text type="tertiary" size="small">{auditSource}</Text>
                     </Space>
                 )}>
@@ -592,14 +592,14 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                         <div><Tag size="small">{auditProtocol}</Tag></div>
                         <Hint>
                             {auditTypeSafe
-                                ? t('settingsProbe.auditTypeSafeHint', null, '按已配置的 TypeSafe / Jev 后端测试。地址和模型留空使用 Jev 默认值；密钥沿用已保存的审计密钥，不继承主模型。')
-                                : t('settingsProbe.auditChatHint', null, '按已配置的审计模型协议测试。地址和模型留空继承主模型；密钥留空或显示 ******** 时沿用已保存的审计密钥，未配置则继承主模型。')}
+                                ? t('settingsProbe.auditTypeSafeHint', null, 'Tests the configured TypeSafe / Jev backend. Blank URL and model use Jev defaults. A blank or masked key uses the saved audit key; the main model key is never inherited.')
+                                : t('settingsProbe.auditChatHint', null, 'Tests the configured audit model protocol. Blank URL and model inherit the main model. A blank or masked key uses the saved audit key, or inherits the main model key if none is configured.')}
                         </Hint>
                         <div className="settings-probe-inline">
                             {[
-                                ['base_url', 'baseUrl', 'API 地址', auditURLPlaceholder],
-                                ['api_key', 'apiKey', 'API 密钥', '********'],
-                                ['model', 'model', '模型', auditTypeSafe ? 'jev-latest' : config.openai?.model || '']
+                                ['base_url', 'baseUrl', 'Base URL', auditURLPlaceholder],
+                                ['api_key', 'apiKey', 'API Key', '********'],
+                                ['model', 'model', 'Model', auditTypeSafe ? 'jev-latest' : config.openai?.model || '']
                             ].map(([field, key, fallback, placeholder]) => (
                                 <label key={field} className="settings-field">
                                     <Text type="tertiary" size="small">{t('settingsBasic.' + key, null, fallback)}</Text>
@@ -619,7 +619,7 @@ export default function ProbePanel({ config, canWrite, reloadConfig }) {
                         </div>
                         <Space>
                             <Button size="small" loading={auditBusy} disabled={!canWrite} onClick={testAuditModel}>
-                                {t('settingsProbe.testAuditModel', null, '测试审计模型')}
+                                {t('settingsProbe.testAuditModel', null, 'Test audit model')}
                             </Button>
                         </Space>
                         <ProbeOutput state={auditState} />

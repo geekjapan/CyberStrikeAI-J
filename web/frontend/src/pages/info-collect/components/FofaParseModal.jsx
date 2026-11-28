@@ -1,4 +1,4 @@
-/** 自然语言 → 查询语法：调用 /fofa/parse，结果可编辑后再回填执行。 */
+/** Natural language -> query syntax: calls /fofa/parse; the result can be edited before filling back and running. */
 import { useEffect, useState } from 'react';
 import { Banner, Button, Space, Spin, TextArea, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../../lib/http';
@@ -46,29 +46,29 @@ export default function FofaParseModal({ visible, provider, text, onClose, onApp
     return (
         <Drawer
             visible={visible}
-            title={t('infoCollect.parseResultTitle', null, '语法解析结果')}
+            title={t('infoCollect.parseResultTitle', null, 'AI parse result')}
             width={640}
             onCancel={onClose}
             footer={(
                 <Space>
-                    <Button theme="borderless" onClick={onClose}>{t('common.cancel', null, '取消')}</Button>
+                    <Button theme="borderless" onClick={onClose}>{t('common.cancel', null, 'Cancel')}</Button>
                     <Button onClick={() => apply(false)} disabled={!query.trim() || loading}>
-                        {t('infoCollect.parseModalApply', null, '填入查询框')}
+                        {t('infoCollect.parseModalApply', null, 'Fill into query')}
                     </Button>
                     <Button theme="solid" type="primary" onClick={() => apply(true)} disabled={!query.trim() || loading}>
-                        {t('infoCollect.parseModalApplyRun', null, '填入并查询')}
+                        {t('infoCollect.parseModalApplyRun', null, 'Fill and query')}
                     </Button>
                 </Space>
             )}
         >
             <Space vertical align="start" spacing={10} style={{ width: '100%' }}>
                 <Text type="tertiary">
-                    {t('infoCollect.naturalLanguageLabel', null, '自然语言')}：{String(text || '').trim() || '—'}
+                    {t('infoCollect.naturalLanguageLabel', null, 'Natural language')}：{String(text || '').trim() || '—'}
                 </Text>
                 {loading && (
                     <Space>
                         <Spin size="small" />
-                        <Text type="tertiary">{t('infoCollect.parsePending', null, '正在解析，请稍候…')}</Text>
+                        <Text type="tertiary">{t('infoCollect.parsePending', null, 'AI parsing...')}</Text>
                     </Space>
                 )}
                 <ErrorBanner error={error} onRetry={() => setAttempt(value => value + 1)} />
@@ -82,7 +82,7 @@ export default function FofaParseModal({ visible, provider, text, onClose, onApp
                         />
                         {result.explanation && (
                             <div className="info-collect-parse-block">
-                                <Text strong size="small">{t('infoCollect.explanation', null, '字段映射说明')}</Text>
+                                <Text strong size="small">{t('infoCollect.explanation', null, 'Explanation')}</Text>
                                 <Text type="tertiary" size="small">{result.explanation}</Text>
                             </div>
                         )}

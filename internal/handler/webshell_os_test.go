@@ -22,7 +22,7 @@ func TestNormalizeWebshellOS(t *testing.T) {
 		"Linux":   "linux",
 		"windows": "windows",
 		"WINDOWS": "windows",
-		"macos":   "auto", // 未支持的回退 auto
+		"macos":   "auto", // unsupported values fall back to auto
 		"solaris": "auto",
 	}
 	for in, want := range cases {
@@ -39,12 +39,12 @@ func TestResolveWebshellOS(t *testing.T) {
 		want      string
 	}
 	cases := []testCase{
-		// 显式 OS：按用户选择，忽略 shellType
+		// Explicit OS: follow the user choice and ignore shellType
 		{"linux", "asp", "linux"},
 		{"windows", "php", "windows"},
 		{"LINUX", "jsp", "linux"},
 
-		// auto + 各种 shellType：asp/aspx → windows，其他 → linux
+		// auto + various shellType values: asp/aspx -> windows, others -> linux
 		{"auto", "asp", "windows"},
 		{"auto", "aspx", "windows"},
 		{"auto", "ASP", "windows"},
@@ -53,7 +53,7 @@ func TestResolveWebshellOS(t *testing.T) {
 		{"auto", "custom", "linux"},
 		{"auto", "", "linux"},
 
-		// 空/未知 OS 等价 auto
+		// Empty/unknown OS is equivalent to auto
 		{"", "asp", "windows"},
 		{"", "php", "linux"},
 		{"unknown", "aspx", "windows"},
@@ -68,11 +68,11 @@ func TestResolveWebshellOS(t *testing.T) {
 
 func TestQuoteCmdPath(t *testing.T) {
 	cases := map[string]string{
-		"":                     `"."`,
-		`C:\Windows\Temp`:      `"C:\Windows\Temp"`,
-		`C:\Program Files\a`:   `"C:\Program Files\a"`,
-		`C:\weird"name\f.txt`:  `"C:\weird""name\f.txt"`,
-		`.`:                    `"."`,
+		"":                    `"."`,
+		`C:\Windows\Temp`:     `"C:\Windows\Temp"`,
+		`C:\Program Files\a`:  `"C:\Program Files\a"`,
+		`C:\weird"name\f.txt`: `"C:\weird""name\f.txt"`,
+		`.`:                   `"."`,
 	}
 	for in, want := range cases {
 		if got := quoteCmdPath(in); got != want {
@@ -83,8 +83,8 @@ func TestQuoteCmdPath(t *testing.T) {
 
 func TestQuoteShellSinglePosix(t *testing.T) {
 	cases := map[string]string{
-		"":             ".",
-		"/tmp/a b":     "'/tmp/a b'",
+		"":              ".",
+		"/tmp/a b":      "'/tmp/a b'",
 		"/tmp/it's.txt": `'/tmp/it'\''s.txt'`,
 	}
 	for in, want := range cases {
@@ -94,7 +94,7 @@ func TestQuoteShellSinglePosix(t *testing.T) {
 	}
 }
 
-// TestBuildFileCommand_LinuxBranch 覆盖 Linux 目标下每个 action 产出的命令
+// TestBuildFileCommand_LinuxBranch covers the command produced by every action for a Linux target
 func TestBuildFileCommand_LinuxBranch(t *testing.T) {
 	h := newTestWebShellHandler()
 	base := fileCommandInput{OS: "linux", ShellType: "php"}
@@ -175,6 +175,7 @@ func TestBuildFileCommand_LinuxBranch(t *testing.T) {
 	in = base
 	in.Action = "write"
 	in.Path = "/tmp/w.txt"
+	// Chinese stays: non-ASCII content must round-trip through the base64 command.
 	in.Content = "hello 世界"
 	cmd, _ = h.buildFileCommand(in)
 	b64 := base64.StdEncoding.EncodeToString([]byte("hello 世界"))
@@ -217,7 +218,7 @@ func TestBuildFileCommand_LinuxBranch(t *testing.T) {
 	}
 }
 
-// TestBuildFileCommand_WindowsBranch 覆盖 Windows 目标下每个 action 产出的命令
+// TestBuildFileCommand_WindowsBranch covers the command produced by every action for a Windows target
 func TestBuildFileCommand_WindowsBranch(t *testing.T) {
 	h := newTestWebShellHandler()
 	base := fileCommandInput{OS: "windows", ShellType: "php"}
@@ -281,6 +282,7 @@ func TestBuildFileCommand_WindowsBranch(t *testing.T) {
 	in = base
 	in.Action = "write"
 	in.Path = `C:\out.txt`
+	// Chinese stays: non-ASCII content must round-trip through the base64 command.
 	in.Content = "hello 世界"
 	cmd, _ = h.buildFileCommand(in)
 	wantB64 := base64.StdEncoding.EncodeToString([]byte("hello 世界"))
@@ -312,12 +314,12 @@ func TestBuildFileCommand_WindowsBranch(t *testing.T) {
 	mustContain(t, cmd, "[IO.FileMode]::Append", "FromBase64String('YWJjZA==')")
 }
 
-// TestBuildFileCommand_AutoFallbackMatchesLegacyBehavior 确保 os=auto 时与旧版 shellType 判定行为完全一致
-// asp/aspx 视为 Windows（旧行为），其他视为 Linux。
+// TestBuildFileCommand_AutoFallbackMatchesLegacyBehavior ensures os=auto behaves exactly like the legacy shellType detection:
+// asp/aspx are treated as Windows (legacy behaviour), everything else as Linux.
 func TestBuildFileCommand_AutoFallbackMatchesLegacyBehavior(t *testing.T) {
 	h := newTestWebShellHandler()
 
-	// asp + auto → windows 命令
+	// asp + auto -> windows command
 	cmd, _ := h.buildFileCommand(fileCommandInput{Action: "list", OS: "auto", ShellType: "asp"})
 	if !strings.Contains(cmd, "dir /a") {
 		t.Errorf("auto + asp should use Windows cmd, got: %s", cmd)
@@ -328,7 +330,7 @@ func TestBuildFileCommand_AutoFallbackMatchesLegacyBehavior(t *testing.T) {
 		t.Errorf("auto + aspx should use Windows cmd, got: %s", cmd)
 	}
 
-	// php/jsp/custom + auto → linux 命令（与历史行为一致）
+	// php/jsp/custom + auto -> linux command (same as the historical behaviour)
 	for _, st := range []string{"php", "jsp", "custom", ""} {
 		cmd, _ = h.buildFileCommand(fileCommandInput{Action: "list", OS: "auto", ShellType: st})
 		if !strings.Contains(cmd, "ls -la") {
@@ -336,7 +338,7 @@ func TestBuildFileCommand_AutoFallbackMatchesLegacyBehavior(t *testing.T) {
 		}
 	}
 
-	// 显式 OS 覆盖 shellType
+	// Explicit OS overrides shellType
 	cmd, _ = h.buildFileCommand(fileCommandInput{Action: "list", OS: "windows", ShellType: "php"})
 	if !strings.Contains(cmd, "dir /a") {
 		t.Errorf("explicit windows should override php shellType, got: %s", cmd)

@@ -2,7 +2,7 @@ package config
 
 import "strings"
 
-// MainWebUIUsesHTTPS 判断主 Web UI 是否以 HTTPS 监听（与 internal/app.prepareMainServerTLS 前置条件一致）。
+// MainWebUIUsesHTTPS reports whether the main Web UI listens over HTTPS (consistent with the preconditions of internal/app.prepareMainServerTLS).
 func MainWebUIUsesHTTPS(s *ServerConfig) bool {
 	if s == nil {
 		return false
@@ -18,7 +18,7 @@ func MainWebUIUsesHTTPS(s *ServerConfig) bool {
 	return cert != "" && key != ""
 }
 
-// ServerHTTPRedirectEnabled 是否在主站启用 HTTPS 时把明文 HTTP 请求重定向到 HTTPS（默认开启）。
+// ServerHTTPRedirectEnabled controls whether plaintext HTTP requests are redirected to HTTPS when HTTPS is enabled on the main site (enabled by default).
 func ServerHTTPRedirectEnabled(s *ServerConfig) bool {
 	if s == nil || !MainWebUIUsesHTTPS(s) {
 		return false
@@ -29,8 +29,8 @@ func ServerHTTPRedirectEnabled(s *ServerConfig) bool {
 	return *s.TLSHTTPRedirect
 }
 
-// ApplyDevHTTPSBootstrap 供 --https / 一键脚本使用：强制开启主站 TLS。
-// 若已配置 tls_cert_path 与 tls_key_path 则使用 PEM，否则启用 tls_auto_self_sign（仅本地测试）。
+// ApplyDevHTTPSBootstrap is used by --https / one-click scripts: forces TLS on for the main site.
+// Use PEM if tls_cert_path and tls_key_path are both configured; otherwise enable tls_auto_self_sign (local testing only).
 func ApplyDevHTTPSBootstrap(cfg *Config) {
 	if cfg == nil {
 		return
@@ -45,8 +45,8 @@ func ApplyDevHTTPSBootstrap(cfg *Config) {
 	cfg.Server.TLSAutoSelfSign = true
 }
 
-// ApplyPlainHTTPBootstrap 供 --http / 一键脚本使用：强制主站使用明文 HTTP。
-// 它会覆盖配置文件中的 TLS 开关、自签证书以及证书路径，避免 --http 仍被配置中的 HTTPS 选项重新启用。
+// ApplyPlainHTTPBootstrap is used by --http / one-click scripts: forces plaintext HTTP for the main site.
+// It overrides the TLS switch, self-signed certificate and certificate paths in the config file, so --http is not re-enabled by HTTPS options in the config.
 func ApplyPlainHTTPBootstrap(cfg *Config) {
 	if cfg == nil {
 		return

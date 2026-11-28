@@ -1,6 +1,6 @@
 /**
- * 漏洞复测的跨页交接：漏洞页创建分支后写入待发送提示词，
- * 聊天页加载到对应分支时取出并自动发送；sessionStorage 使刷新后仍可恢复。
+ * Cross-page handoff for vulnerability retests: after the vulnerability page creates a branch it writes a pending prompt;
+ * the chat page takes it and sends it automatically when it loads that branch; sessionStorage lets it survive a refresh.
  */
 export const RETEST_AUTOSEND_KEY = 'csai-retest-autosend';
 

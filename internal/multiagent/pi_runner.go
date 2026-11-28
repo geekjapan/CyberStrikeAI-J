@@ -454,9 +454,9 @@ func (r *piRun) run(ctx context.Context, message string) (*RunResult, error) {
 			if json.Unmarshal(e.Data, &data) == nil && data.Result != nil {
 				key, err := savePiContextCheckpoint(r.db, r.cfg.Project, r.projectID, r.conversationID, r.agentID, data.Result.Summary, data.SessionFile, data.EntryID)
 				if err != nil {
-					progress("progress", "保存项目续接记录失败；Pi 会话记录仍保留", map[string]any{"kind": "context_checkpoint_error"})
+					progress("progress", "Failed to save the project resume record; the Pi session record is still kept", map[string]any{"kind": "context_checkpoint_error"})
 				} else if key != "" {
-					progress("context_checkpoint", "已保存项目续接记录", map[string]any{"factKey": key, "sessionFile": data.SessionFile, "sessionEntryId": data.EntryID})
+					progress("context_checkpoint", "Project resume record saved", map[string]any{"factKey": key, "sessionFile": data.SessionFile, "sessionEntryId": data.EntryID})
 				}
 			}
 		}
@@ -526,9 +526,9 @@ func (r *piRun) run(ctx context.Context, message string) (*RunResult, error) {
 			}
 			if json.Unmarshal(e.Data, &retry) == nil {
 				code, detail := piModelTransportFailure(retry.ErrorMessage)
-				message := fmt.Sprintf("模型请求将在 %s 后重试（%d/%d）。", time.Duration(retry.DelayMS)*time.Millisecond, retry.Attempt, retry.MaxAttempts)
+				message := fmt.Sprintf("The model request will be retried in %s (%d/%d).", time.Duration(retry.DelayMS)*time.Millisecond, retry.Attempt, retry.MaxAttempts)
 				if detail != "" {
-					message += detail + "。"
+					message = fmt.Sprintf("The model request will be retried in %s (%d/%d). %s.", time.Duration(retry.DelayMS)*time.Millisecond, retry.Attempt, retry.MaxAttempts, detail)
 				}
 				progress("pi_model_retry", message, map[string]any{
 					"attempt": retry.Attempt, "maxAttempts": retry.MaxAttempts, "delayMs": retry.DelayMS, "reasonCode": code,

@@ -45,13 +45,13 @@ function PageHost() {
     }, [page, hasPermission, hasAnyPermission]);
 
     if (!page) {
-        return <StatusPage code="404" title={t('common.pageNotFound', null, '页面不存在')} />;
+        return <StatusPage code="404" title={t('common.pageNotFound', null, 'Page not found')} />;
     }
     if (!Component) {
-        return <StatusPage code="404" title={page.fallback} description={t('common.pagePending', null, '页面尚未注册')} />;
+        return <StatusPage code="404" title={page.fallback} description={t('common.pagePending', null, 'Page not registered yet')} />;
     }
     if (!allowed) {
-        return <StatusPage code="403" title={t('common.forbidden', null, '当前账号没有访问该页面的权限')} />;
+        return <StatusPage code="403" title={t('common.forbidden', null, 'The current account is not allowed to open this page')} />;
     }
     return (
         <Suspense fallback={<Loading />}>

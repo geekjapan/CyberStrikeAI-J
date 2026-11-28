@@ -1,4 +1,4 @@
-/** 资产详情抽屉：全字段 + 关联漏洞/项目跳转。 */
+/** Asset detail drawer: all fields plus links to related vulnerabilities/projects. */
 import { useNavigate } from 'react-router-dom';
 import { Button, Divider, SideSheet, Space, Typography } from '@douyinfe/semi-ui';
 import { CopyButton, KeyValueList } from '../../../components/ui';
@@ -31,52 +31,52 @@ export default function AssetDetailDrawer({ asset, visible, onClose, onEdit, onD
     const items = [
         { label: 'Host', value: asset.host || '—' },
         { label: 'IP', value: asset.ip || '—' },
-        { label: t('assets.domain', null, '域名'), value: asset.domain || '—' },
-        { label: t('assets.service', null, '服务'), value: <ProtocolTag protocol={asset.protocol} port={asset.port} /> },
-        { label: t('assets.project', null, '所属项目'), value: asset.project_name || asset.project_id || '—' },
-        { label: t('assets.status', null, '状态'), value: <AssetStatusTag status={asset.status} /> },
-        { label: t('assets.riskLevel', null, '风险等级'), value: <RiskTag asset={asset} /> },
-        { label: t('assets.environment', null, '环境'), value: environmentLabel(asset.environment) || '—' },
-        { label: t('assets.criticality', null, '重要性'), value: criticalityLabel(asset.criticality) || '—' },
+        { label: t('assets.domain', null, 'Domain'), value: asset.domain || '—' },
+        { label: t('assets.service', null, 'Service'), value: <ProtocolTag protocol={asset.protocol} port={asset.port} /> },
+        { label: t('assets.project', null, 'Project'), value: asset.project_name || asset.project_id || '—' },
+        { label: t('assets.status', null, 'Status'), value: <AssetStatusTag status={asset.status} /> },
+        { label: t('assets.riskLevel', null, 'Risk'), value: <RiskTag asset={asset} /> },
+        { label: t('assets.environment', null, 'Environment'), value: environmentLabel(asset.environment) || '—' },
+        { label: t('assets.criticality', null, 'Criticality'), value: criticalityLabel(asset.criticality) || '—' },
         {
-            label: t('assets.location', null, '地区'),
+            label: t('assets.location', null, 'Location'),
             value: [asset.country, asset.province, asset.city].filter(Boolean).join(' / ') || '—'
         },
-        { label: t('assets.responsiblePerson', null, '负责人'), value: asset.responsible_person || '—' },
-        { label: t('assets.department', null, '部门'), value: asset.department || '—' },
-        { label: t('assets.businessSystem', null, '业务系统'), value: asset.business_system || '—' },
-        { label: t('assets.title', null, '标题/指纹'), value: asset.title || '—' },
-        { label: t('assets.server', null, '服务指纹'), value: asset.server || '—' },
-        { label: t('assets.source', null, '来源'), value: asset.source || '—' },
+        { label: t('assets.responsiblePerson', null, 'Owner'), value: asset.responsible_person || '—' },
+        { label: t('assets.department', null, 'Department'), value: asset.department || '—' },
+        { label: t('assets.businessSystem', null, 'Business system'), value: asset.business_system || '—' },
+        { label: t('assets.title', null, 'Title / fingerprint'), value: asset.title || '—' },
+        { label: t('assets.server', null, 'Server fingerprint'), value: asset.server || '—' },
+        { label: t('assets.source', null, 'Source'), value: asset.source || '—' },
         {
-            label: t('assets.sourceQuery', null, '来源查询'),
+            label: t('assets.sourceQuery', null, 'Source query'),
             value: asset.source_query ? <Text code size="small">{asset.source_query}</Text> : '—'
         },
-        { label: t('assets.tagsLabel', null, '标签'), value: <TagList tags={asset.tags} max={6} /> },
-        { label: t('assets.firstSeen', null, '首次发现'), value: formatDateTime(asset.first_seen_at) },
-        { label: t('assets.lastSeen', null, '最近发现'), value: formatDateTime(asset.last_seen_at) },
-        { label: t('assets.lastScan', null, '上次扫描'), value: formatDateTime(asset.last_scan_at) },
-        { label: '创建时间', value: formatDateTime(asset.created_at) },
-        { label: '更新时间', value: formatDateTime(asset.updated_at) },
-        { label: '资产 ID', value: <Text copyable={{ content: asset.id }} size="small">{asset.id}</Text> }
+        { label: t('assets.tagsLabel', null, 'Tags'), value: <TagList tags={asset.tags} max={6} /> },
+        { label: t('assets.firstSeen', null, 'First seen'), value: formatDateTime(asset.first_seen_at) },
+        { label: t('assets.lastSeen', null, 'Last seen'), value: formatDateTime(asset.last_seen_at) },
+        { label: t('assets.lastScan', null, 'Last scan'), value: formatDateTime(asset.last_scan_at) },
+        { label: t('ui.assetDetailDrawer.createdAt', null, 'Created'), value: formatDateTime(asset.created_at) },
+        { label: t('ui.assetDetailDrawer.updatedAt', null, 'Updated'), value: formatDateTime(asset.updated_at) },
+        { label: t('ui.assetDetailDrawer.assetId', null, 'Asset ID'), value: <Text copyable={{ content: asset.id }} size="small">{asset.id}</Text> }
     ];
 
     return (
         <SideSheet
             visible={visible}
             onCancel={onClose}
-            title={t('assets.detailTitle', null, '资产详情')}
+            title={t('assets.detailTitle', null, 'Asset details')}
             width={620}
             placement="right"
             footer={(
                 <Space>
-                    {canWrite && <Button onClick={() => onEdit(asset)}>{t('common.edit', null, '编辑')}</Button>}
+                    {canWrite && <Button onClick={() => onEdit(asset)}>{t('common.edit', null, 'Edit')}</Button>}
                     {canDelete && (
                         <Button type="danger" onClick={() => onDelete(asset)}>
-                            {t('common.delete', null, '删除')}
+                            {t('common.delete', null, 'Delete')}
                         </Button>
                     )}
-                    <Button theme="borderless" onClick={onClose}>{t('common.close', null, '关闭')}</Button>
+                    <Button theme="borderless" onClick={onClose}>{t('common.close', null, 'Close')}</Button>
                 </Space>
             )}
         >
@@ -92,7 +92,7 @@ export default function AssetDetailDrawer({ asset, visible, onClose, onEdit, onD
                     <AssetStatusTag status={asset.status} />
                     <RiskTag asset={asset} />
                     <Text type="tertiary" size="small">
-                        {t('assets.relatedVulnerabilities', null, '相关漏洞')}：
+                        {t('assets.relatedVulnerabilities', null, 'Related findings')}：
                         {Number(asset.vulnerability_count || 0)}
                         {asset.risk_level ? `（${riskLabel(asset.risk_level)}）` : ''}
                     </Text>
@@ -103,14 +103,14 @@ export default function AssetDetailDrawer({ asset, visible, onClose, onEdit, onD
             <Divider margin="12px" />
             <Space>
                 <Button theme="light" onClick={openVulnerabilities}>
-                    {t('assets.viewRelatedVulnerabilities', null, '查看关联漏洞')}
+                    {t('assets.viewRelatedVulnerabilities', null, 'View related vulnerabilities')}
                 </Button>
                 {asset.project_id && (
                     <Button
                         theme="borderless"
                         onClick={() => navigate(`/projects?id=${encodeURIComponent(asset.project_id)}`)}
                     >
-                        {t('assets.viewProject', null, '查看项目')}
+                        {t('assets.viewProject', null, 'View project')}
                     </Button>
                 )}
             </Space>

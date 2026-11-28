@@ -1,6 +1,6 @@
 # Security Hardening
 
-[中文](../zh-CN/security-hardening.md)
+[日本語](../ja-JP/security-hardening.md)
 
 This checklist covers pre-production and continuous hardening for CyberStrikeAI.
 

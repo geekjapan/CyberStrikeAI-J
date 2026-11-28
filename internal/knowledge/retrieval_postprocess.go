@@ -15,15 +15,15 @@ import (
 	"github.com/pkoukk/tiktoken-go"
 )
 
-// postRetrieveMaxPrefetchCap 限制单次向量候选上限，避免误配置导致全表扫压力过大。
+// postRetrieveMaxPrefetchCap limits the upper bound of vector candidates per query, to avoid excessive full-table scan pressure from misconfiguration.
 const postRetrieveMaxPrefetchCap = 200
 
-// DocumentReranker 精排（HTTP dashscope / Cohere 兼容 API），由 [WireRetrieverPipeline] 注入。
+// DocumentReranker performs reranking (HTTP dashscope / Cohere-compatible API), injected by [WireRetrieverPipeline].
 type DocumentReranker interface {
 	Rerank(ctx context.Context, query string, docs []*Document) ([]*Document, error)
 }
 
-// NopDocumentReranker 占位实现，便于测试或未启用重排时显式注入。
+// NopDocumentReranker is a placeholder implementation, for explicit injection in tests or when reranking is not enabled.
 type NopDocumentReranker struct{}
 
 // Rerank implements [DocumentReranker] as no-op.
@@ -64,7 +64,7 @@ func countDocTokens(text, model string) (int, error) {
 	return len(toks), nil
 }
 
-// normalizeContentFingerprintKey 去重键：trim + 空白折叠（不改动大小写，避免合并仅大小写不同的代码片段）。
+// normalizeContentFingerprintKey is the dedupe key: trim + whitespace collapsing (does not change case, to avoid merging code snippets that differ only in case).
 func normalizeContentFingerprintKey(s string) string {
 	s = strings.TrimSpace(s)
 	var b strings.Builder
@@ -96,7 +96,7 @@ func contentNormKey(d *Document) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// dedupeByNormalizedContent 按规范化正文去重，保留向量检索顺序中首次出现的文档（同正文仅保留一条）。
+// dedupeByNormalizedContent deduplicates by normalized body, keeping the first occurrence in vector retrieval order (only one copy of identical bodies is kept).
 func dedupeByNormalizedContent(docs []*Document) []*Document {
 	if len(docs) < 2 {
 		return docs
@@ -121,7 +121,7 @@ func dedupeByNormalizedContent(docs []*Document) []*Document {
 	return out
 }
 
-// truncateDocumentsByBudget 按检索顺序整段保留文档，直至字符数或 token 数（任一启用）超限则停止。
+// truncateDocumentsByBudget keeps whole documents in retrieval order, and stops once the character count or token count (whichever is enabled) exceeds its limit.
 func truncateDocumentsByBudget(docs []*Document, maxRunes, maxTokens int, tokenModel string) ([]*Document, error) {
 	if len(docs) == 0 {
 		return docs, nil
@@ -166,7 +166,7 @@ func truncateDocumentsByBudget(docs []*Document, maxRunes, maxTokens int, tokenM
 	return out, nil
 }
 
-// EffectivePrefetchTopK 计算每条 MultiQuery 变体在向量阶段的候选条数（供融合 / 重排 / 后处理）。
+// EffectivePrefetchTopK computes the number of vector-stage candidates per MultiQuery variant (for fusion / reranking / post-processing).
 func EffectivePrefetchTopK(topK int, po *config.PostRetrieveConfig) int {
 	if topK < 1 {
 		topK = 5
@@ -184,7 +184,7 @@ func EffectivePrefetchTopK(topK int, po *config.PostRetrieveConfig) int {
 	return fetch
 }
 
-// ApplyPostRetrieve 检索后处理：规范化正文去重 → 预算截断 → 最终 TopK（精排已在流水线中完成）。
+// ApplyPostRetrieve is post-processing after retrieval: normalized-body dedupe → budget truncation → final TopK (reranking has already been completed in the pipeline).
 func ApplyPostRetrieve(docs []*Document, po *config.PostRetrieveConfig, tokenModel string, finalTopK int) ([]*Document, error) {
 	if finalTopK < 1 {
 		finalTopK = 5

@@ -1,4 +1,4 @@
-/** FOFA/ZoomEye/Quake/Shodan 结果行 → 资产结构，并批量入库。 */
+/** FOFA/ZoomEye/Quake/Shodan result rows to asset objects, then bulk import. */
 import { api } from '../../../lib/http';
 import { isIPv4, isIPv6, normalizeDomain } from './assetTarget';
 
@@ -22,7 +22,7 @@ function firstValue(row, fields, names) {
     return '';
 }
 
-/** 把一条检索结果转换成 /assets/import 可接受的资产对象。 */
+/** Convert one search result into an asset object accepted by /assets/import. */
 export function fofaRowToAsset(row, fields, provider = 'fofa') {
     const port = Number.parseInt(cellValue(row, fields, 'port'), 10);
     const rawIP = firstValue(row, fields, ['ip', 'ip_str']);
@@ -53,8 +53,8 @@ export function fofaRowToAsset(row, fields, provider = 'fofa') {
 }
 
 /**
- * 将选中的结果行入库。
- * 返回 { assets, invalidCount, created, updated, skipped }。
+ * Import the selected result rows.
+ * Returns { assets, invalidCount, created, updated, skipped }.
  */
 export async function importFofaRows(rows, { fields, provider, query, projectId }) {
     const converted = (rows || []).map(row => fofaRowToAsset(row, fields, provider));

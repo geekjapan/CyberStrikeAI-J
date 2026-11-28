@@ -19,7 +19,7 @@ export default function LoginPage() {
         try {
             await login(values.username, values.password);
         } catch (err) {
-            setError(errorMessage(err, t('login.loginFailed', null, '登录失败')));
+            setError(errorMessage(err, t('login.loginFailed', null, 'Sign-in failed')));
         } finally {
             setLoading(false);
         }
@@ -34,45 +34,45 @@ export default function LoginPage() {
                 </div>
                 <div className="cs-login-intro">
                     <span className="cs-login-emblem" aria-hidden="true"><IconShield size="extra-large" /></span>
-                    <Title heading={1} className="cs-login-headline">{t('login.headline', null, '让每一次探索，都有据可循。')}</Title>
-                    <Paragraph type="tertiary">{t('login.intro', null, '从目标梳理到证据归档，在一个工作台中完成你的安全研究。')}</Paragraph>
+                    <Title heading={1} className="cs-login-headline">{t('login.headline', null, 'Every exploration, backed by evidence.')}</Title>
+                    <Paragraph type="tertiary">{t('login.intro', null, 'From scoping targets to archiving evidence, do your security research in one workspace.')}</Paragraph>
                     <div className="cs-login-features">
-                        <div className="cs-login-feature"><IconBriefcase size="large" /><div><strong>{t('login.projectTitle', null, '围绕项目协作')}</strong>{t('login.projectHint', null, '跨会话共享目标、上下文与研究进展')}</div></div>
-                        <div className="cs-login-feature"><IconArticle size="large" /><div><strong>{t('login.evidenceTitle', null, '以证据支撑结论')}</strong>{t('login.evidenceHint', null, '保留发现、来源与验收记录')}</div></div>
+                        <div className="cs-login-feature"><IconBriefcase size="large" /><div><strong>{t('login.projectTitle', null, 'Collaborate around projects')}</strong>{t('login.projectHint', null, 'Share targets, context, and progress across conversations')}</div></div>
+                        <div className="cs-login-feature"><IconArticle size="large" /><div><strong>{t('login.evidenceTitle', null, 'Back conclusions with evidence')}</strong>{t('login.evidenceHint', null, 'Keep findings, sources, and acceptance records')}</div></div>
                     </div>
                 </div>
-                <Text type="tertiary" size="small">{t('login.platformTagline', null, 'AI 驱动的安全研究工作台')}</Text>
+                <Text type="tertiary" size="small">{t('login.platformTagline', null, 'AI-driven security research workspace')}</Text>
             </section>
             <section className="cs-login-form-panel">
                 <Card className="cs-login-card" bordered={false}>
-                    <Title heading={2} className="cs-login-form-heading">{t('login.welcome', null, '欢迎回来')}</Title>
-                    <Text type="tertiary">{t('login.welcomeHint', null, '登录你的安全工作台，继续探索。')}</Text>
+                    <Title heading={2} className="cs-login-form-heading">{t('login.welcome', null, 'Welcome back')}</Title>
+                    <Text type="tertiary">{t('login.welcomeHint', null, 'Sign in to your security workspace and keep exploring.')}</Text>
                     <Form onSubmit={submit} className="cs-login-form">
                         {error && <Banner type="danger" description={error} closeIcon={null} className="cs-error-banner" />}
                         <Form.Input
                             field="username"
-                            label={t('login.username', null, '用户名')}
+                            label={t('login.username', null, 'Username')}
                             prefix={<IconUser />}
-                            placeholder={t('login.usernamePlaceholder', null, '请输入用户名')}
+                            placeholder={t('login.usernamePlaceholder', null, 'admin')}
                             size="large"
                             autoComplete="username"
-                            rules={[{ required: true, message: t('login.usernameRequired', null, '请输入用户名') }]}
+                            rules={[{ required: true, message: t('login.usernameRequired', null, 'Enter your username') }]}
                         />
                         <Form.Input
                             field="password"
-                            label={t('login.password', null, '密码')}
+                            label={t('login.password', null, 'Password')}
                             prefix={<IconLock />}
                             type="password"
                             size="large"
                             autoComplete="current-password"
-                            placeholder={t('login.passwordPlaceholder', null, '请输入密码')}
-                            rules={[{ required: true, message: t('login.passwordRequired', null, '请输入密码') }]}
+                            placeholder={t('login.passwordPlaceholder', null, 'Enter password')}
+                            rules={[{ required: true, message: t('login.passwordRequired', null, 'Enter your password') }]}
                         />
                         <Button htmlType="submit" theme="solid" type="primary" size="large" block loading={loading}>
-                            {t('login.submit', null, '登录')}
+                            {t('login.submit', null, 'Sign in')}
                         </Button>
                     </Form>
-                    <Text type="tertiary" className="cs-login-note">{t('login.authorizedOnly', null, '仅在明确授权的范围内开展安全测试')}</Text>
+                    <Text type="tertiary" className="cs-login-note">{t('login.authorizedOnly', null, 'Perform security testing only within an explicitly authorized scope')}</Text>
                 </Card>
             </section>
         </main>

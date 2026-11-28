@@ -1,5 +1,7 @@
 # Pi context and project checkpoints
 
+[日本語](../ja-JP/blackboard-context-memory.md)
+
 Pi SessionManager retains the full JSONL session and compaction entries. The current model context is a projection of that history, not the only copy of it.
 
 When project memory is enabled and a conversation is bound to a project, a successful `compaction_end` saves a `note/context-*` checkpoint containing the summary, conversation/agent scope, session path and real entry ID. SQLite enforces `note`, `tentative` and unpinned status, and checks project binding atomically. Rebinding a conversation prevents stale runs from updating its former project's memory.

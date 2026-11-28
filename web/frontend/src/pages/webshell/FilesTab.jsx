@@ -1,6 +1,6 @@
 /**
- * WebShell 文件管理：目录浏览、读取/编辑/下载、新建、重命名与删除。
- * 文件操作全部经 /api/webshell/file 代理到目标 Shell 执行。
+ * WebShell file management: directory browsing, read/edit/download, create, rename and delete.
+ * All file operations are proxied to the target shell through /api/webshell/file.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Input, Space, Tag, TextArea, Typography } from '@douyinfe/semi-ui';
@@ -96,7 +96,7 @@ export default function FilesTab({ connection, canWrite }) {
                 toastError(result.error);
                 return;
             }
-            toastSuccess(t('webshell.saveFile', null, '已保存'));
+            toastSuccess(t('webshell.saveFile', null, 'Save'));
             setEditor(current => ({ ...current, visible: false }));
             load(path);
         } catch (err) {
@@ -112,7 +112,7 @@ export default function FilesTab({ connection, canWrite }) {
 
     const remove = targetPath => {
         confirmAction({
-            title: t('webshell.deleteFile', null, '删除文件'),
+            title: t('webshell.deleteFile', null, 'Delete'),
             content: targetPath,
             onOk: async () => {
                 try {
@@ -121,7 +121,7 @@ export default function FilesTab({ connection, canWrite }) {
                         toastError(result.error);
                         return;
                     }
-                    toastSuccess(t('webshell.deleteFile', null, '已删除'));
+                    toastSuccess(t('webshell.deleteFile', null, 'Delete'));
                     load(path);
                 } catch (err) {
                     toastError(err);
@@ -133,7 +133,7 @@ export default function FilesTab({ connection, canWrite }) {
     const submitPrompt = async () => {
         const value = String(prompt.value || '').trim();
         if (!value) {
-            toastWarning(t('webshell.filePath', null, '请填写路径'));
+            toastWarning(t('webshell.filePath', null, 'Current path'));
             return;
         }
         try {
@@ -143,14 +143,14 @@ export default function FilesTab({ connection, canWrite }) {
                     toastError(result.error);
                     return;
                 }
-                toastSuccess(t('webshell.newDir', null, '目录已创建'));
+                toastSuccess(t('webshell.newDir', null, 'New directory'));
             } else if (prompt.mode === 'create') {
                 const result = await fileOp({ connection, action: 'write', path: joinPath(path, value), content: '' });
                 if (result?.error && !result?.ok) {
                     toastError(result.error);
                     return;
                 }
-                toastSuccess(t('webshell.newFile', null, '文件已创建'));
+                toastSuccess(t('webshell.newFile', null, 'New file'));
             } else if (prompt.mode === 'rename') {
                 const result = await fileOp({
                     connection,
@@ -162,7 +162,7 @@ export default function FilesTab({ connection, canWrite }) {
                     toastError(result.error);
                     return;
                 }
-                toastSuccess(t('webshell.rename', null, '已重命名'));
+                toastSuccess(t('webshell.rename', null, 'Rename'));
             }
             setPrompt(current => ({ ...current, visible: false }));
             load(path);
@@ -181,7 +181,7 @@ export default function FilesTab({ connection, canWrite }) {
 
     const columns = [
         {
-            title: t('webshell.colName', null, '名称'),
+            title: t('webshell.colName', null, 'Name'),
             dataIndex: 'name',
             render: (name, item) => (
                 <button
@@ -194,13 +194,13 @@ export default function FilesTab({ connection, canWrite }) {
                 </button>
             )
         },
-        { title: t('webshell.colType', null, '类型'), dataIndex: 'type', width: 90 },
-        { title: t('webshell.colSize', null, '大小'), dataIndex: 'size', width: 110 },
-        { title: t('webshell.colModifiedAt', null, '修改时间'), dataIndex: 'mtime', width: 170 },
-        { title: t('webshell.colOwner', null, '所有者'), dataIndex: 'owner', width: 120 },
-        { title: t('webshell.colPerms', null, '权限'), dataIndex: 'mode', width: 130 },
+        { title: t('webshell.colType', null, 'Type'), dataIndex: 'type', width: 90 },
+        { title: t('webshell.colSize', null, 'Size'), dataIndex: 'size', width: 110 },
+        { title: t('webshell.colModifiedAt', null, 'Modified'), dataIndex: 'mtime', width: 170 },
+        { title: t('webshell.colOwner', null, 'Owner'), dataIndex: 'owner', width: 120 },
+        { title: t('webshell.colPerms', null, 'Permissions'), dataIndex: 'mode', width: 130 },
         {
-            title: t('webshell.moreActions', null, '操作'),
+            title: t('webshell.moreActions', null, 'More actions'),
             dataIndex: 'ops',
             width: 240,
             render: (_, item) => {
@@ -208,25 +208,25 @@ export default function FilesTab({ connection, canWrite }) {
                 return (
                     <Space spacing={4} wrap>
                         {item.isDir ? (
-                            <Button size="small" theme="borderless" onClick={() => load(target)}>{t('webshell.listDir', null, '打开')}</Button>
+                            <Button size="small" theme="borderless" onClick={() => load(target)}>{t('webshell.listDir', null, 'List directory')}</Button>
                         ) : (
                             <>
-                                <Button size="small" theme="borderless" onClick={() => openEditor(target, 'read')}>{t('webshell.readFile', null, '读取')}</Button>
-                                <Button size="small" theme="borderless" onClick={() => openEditor(target, 'write')}>{t('webshell.editFile', null, '编辑')}</Button>
-                                <Button size="small" theme="borderless" onClick={() => download(target, item.name)}>{t('webshell.downloadFile', null, '下载')}</Button>
+                                <Button size="small" theme="borderless" onClick={() => openEditor(target, 'read')}>{t('webshell.readFile', null, 'Read')}</Button>
+                                <Button size="small" theme="borderless" onClick={() => openEditor(target, 'write')}>{t('webshell.editFile', null, 'Edit')}</Button>
+                                <Button size="small" theme="borderless" onClick={() => download(target, item.name)}>{t('webshell.downloadFile', null, 'Download')}</Button>
                             </>
                         )}
                         <Button
                             size="small"
                             theme="borderless"
                             disabled={!canWrite}
-                            onClick={() => setPrompt({ visible: true, mode: 'rename', title: t('webshell.rename', null, '重命名'), value: item.name, target })}
+                            onClick={() => setPrompt({ visible: true, mode: 'rename', title: t('webshell.rename', null, 'Rename'), value: item.name, target })}
                         >
-                            {t('webshell.rename', null, '重命名')}
+                            {t('webshell.rename', null, 'Rename')}
                         </Button>
                         {!item.isDir && (
                             <Button size="small" theme="borderless" type="danger" disabled={!canWrite} onClick={() => remove(target)}>
-                                {t('webshell.deleteFile', null, '删除')}
+                                {t('webshell.deleteFile', null, 'Delete')}
                             </Button>
                         )}
                     </Space>
@@ -239,27 +239,27 @@ export default function FilesTab({ connection, canWrite }) {
         <div className="webshell-files">
             <div className="webshell-file-toolbar">
                 <Space spacing={8} wrap>
-                    <Button size="small" onClick={() => load(parentPath(path))}>{t('webshell.parentDir', null, '上级目录')}</Button>
-                    <Button size="small" icon={<IconRefresh />} onClick={() => load(path)} loading={loading}>{t('webshell.refresh', null, '刷新')}</Button>
+                    <Button size="small" onClick={() => load(parentPath(path))}>{t('webshell.parentDir', null, 'Parent directory')}</Button>
+                    <Button size="small" icon={<IconRefresh />} onClick={() => load(path)} loading={loading}>{t('webshell.refresh', null, 'Refresh')}</Button>
                     <Button
                         size="small"
                         disabled={!canWrite}
-                        onClick={() => setPrompt({ visible: true, mode: 'mkdir', title: t('webshell.newDir', null, '新建目录'), value: '', target: '' })}
+                        onClick={() => setPrompt({ visible: true, mode: 'mkdir', title: t('webshell.newDir', null, 'New directory'), value: '', target: '' })}
                     >
-                        {t('webshell.newDir', null, '新建目录')}
+                        {t('webshell.newDir', null, 'New directory')}
                     </Button>
                     <Button
                         size="small"
                         disabled={!canWrite}
-                        onClick={() => setPrompt({ visible: true, mode: 'create', title: t('webshell.newFile', null, '新建文件'), value: '', target: '' })}
+                        onClick={() => setPrompt({ visible: true, mode: 'create', title: t('webshell.newFile', null, 'New file'), value: '', target: '' })}
                     >
-                        {t('webshell.newFile', null, '新建文件')}
+                        {t('webshell.newFile', null, 'New file')}
                     </Button>
                 </Space>
             </div>
 
             <div className="webshell-file-pathbar">
-                <Text type="tertiary">{t('webshell.filePath', null, '当前路径')}</Text>
+                <Text type="tertiary">{t('webshell.filePath', null, 'Current path')}</Text>
                 <Input
                     value={pathInput}
                     onChange={setPathInput}
@@ -267,11 +267,11 @@ export default function FilesTab({ connection, canWrite }) {
                     size="small"
                     className="webshell-file-path-input"
                 />
-                <Button size="small" icon={<IconSearch />} onClick={() => load(pathInput)}>{t('webshell.listDir', null, '列出目录')}</Button>
+                <Button size="small" icon={<IconSearch />} onClick={() => load(pathInput)}>{t('webshell.listDir', null, 'List directory')}</Button>
                 <Input
                     value={filter}
                     onChange={setFilter}
-                    placeholder={t('webshell.filterPlaceholder', null, '过滤文件名')}
+                    placeholder={t('webshell.filterPlaceholder', null, 'Filter by name')}
                     size="small"
                     className="webshell-file-filter"
                 />
@@ -282,7 +282,7 @@ export default function FilesTab({ connection, canWrite }) {
                     <span key={segment.path} className="webshell-breadcrumb-item">
                         {index > 0 && <span className="webshell-breadcrumb-sep">/</span>}
                         <button type="button" onClick={() => load(segment.path)} title={segment.path}>
-                            {index === 0 ? t('webshell.breadcrumbHome', null, '根') : segment.label}
+                            {index === 0 ? t('webshell.breadcrumbHome', null, 'Root') : segment.label}
                         </button>
                     </span>
                 ))}
@@ -291,7 +291,7 @@ export default function FilesTab({ connection, canWrite }) {
             <ErrorBanner error={error} onRetry={() => load(path)} />
 
             {items.length === 0 && raw.trim() && !loading ? (
-                <JsonViewer title={t('webshell.filePath', null, '原始输出')} value={raw} />
+                <JsonViewer title={t('webshell.filePath', null, 'Current path')} value={raw} />
             ) : (
                 <DataTable
                     columns={columns}
@@ -299,20 +299,20 @@ export default function FilesTab({ connection, canWrite }) {
                     rowKey="name"
                     loading={loading}
                     pagination={{ pageSize: 20 }}
-                    emptyText={t('webshell.emptyDir', null, '目录为空')}
+                    emptyText={t('webshell.emptyDir', null, 'Directory is empty')}
                 />
             )}
 
             <Drawer
                 visible={editor.visible}
-                title={editor.mode === 'write' ? t('webshell.editFile', null, '编辑文件') : t('webshell.readFile', null, '读取文件')}
+                title={editor.mode === 'write' ? t('webshell.editFile', null, 'Edit') : t('webshell.readFile', null, 'Read')}
                 width={760}
                 onCancel={() => setEditor(current => ({ ...current, visible: false }))}
                 footer={
                     <Space>
-                        <Button onClick={() => setEditor(current => ({ ...current, visible: false }))}>{t('webshell.cancelEdit', null, '关闭')}</Button>
+                        <Button onClick={() => setEditor(current => ({ ...current, visible: false }))}>{t('webshell.cancelEdit', null, 'Cancel')}</Button>
                         {editor.mode === 'write' && (
-                            <Button theme="solid" type="primary" disabled={!canWrite} onClick={saveEditor}>{t('webshell.saveFile', null, '保存')}</Button>
+                            <Button theme="solid" type="primary" disabled={!canWrite} onClick={saveEditor}>{t('webshell.saveFile', null, 'Save')}</Button>
                         )}
                     </Space>
                 }
@@ -339,7 +339,7 @@ export default function FilesTab({ connection, canWrite }) {
                 <Input
                     value={prompt.value}
                     onChange={value => setPrompt(current => ({ ...current, value }))}
-                    placeholder={prompt.mode === 'rename' ? t('webshell.rename', null, '新名称') : t('webshell.filePath', null, '名称或路径')}
+                    placeholder={prompt.mode === 'rename' ? t('webshell.rename', null, 'Rename') : t('webshell.filePath', null, 'Current path')}
                 />
             </Drawer>
         </div>

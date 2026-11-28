@@ -1,4 +1,6 @@
-/** MCP 监控页展示工具：状态映射、工具名归一化、耗时与成功率计算。 */
+/** Display helpers for the MCP monitor page: status mapping, tool name normalization, duration and success rate. */
+import { currentLocale } from '../../lib/format';
+import { translate } from '../../lib/i18n';
 
 export const STATUS_VALUES = ['completed', 'running', 'queued', 'failed', 'blocked', 'hard_timeout', 'cancelled', 'orphaned'];
 
@@ -15,15 +17,15 @@ const STATUS_KEY = {
 };
 
 const STATUS_FALLBACK = {
-    pending: '等待中',
-    queued: '排队中',
-    running: '执行中',
-    completed: '已完成',
-    failed: '失败',
-    blocked: '已拦截',
-    cancelled: '已终止',
-    hard_timeout: '执行超时',
-    orphaned: '孤儿任务'
+    pending: 'Pending',
+    queued: 'Queued',
+    running: 'Running',
+    completed: 'Completed',
+    failed: 'Failed',
+    blocked: 'Blocked',
+    cancelled: 'Cancelled',
+    hard_timeout: 'Timed out',
+    orphaned: 'Orphaned'
 };
 
 const STATUS_TAG_COLOR = {
@@ -52,19 +54,19 @@ export function statusTagColor(status) {
     return STATUS_TAG_COLOR[normalizeStatus(status)] || 'grey';
 }
 
-/** 只有 running 才能终止（排队中的调用尚未建立取消通道）。 */
+/** Only running calls can be cancelled (queued calls have no cancel channel yet). */
 export function isRunning(status) {
     return normalizeStatus(status) === 'running';
 }
 
-/** 模型侧显示为 mcp__tool，内部存储为 mcp::tool；统一按模型侧展示。 */
+/** The model side shows mcp__tool while storage uses mcp::tool; always display the model-side form. */
 export function toolDisplayName(name) {
     const value = String(name || '').trim();
     if (!value) return '';
     return value.includes('::') ? value.replace(/::/g, '__') : value;
 }
 
-/** 从 duration（Go time.Duration，纳秒）或起止时间推算毫秒。 */
+/** Derive milliseconds from duration (Go time.Duration, nanoseconds) or start/end times. */
 export function executionDurationMs(exec) {
     if (!exec) return null;
     const raw = Number(exec.duration);
@@ -82,12 +84,12 @@ export function formatDurationMs(ms) {
     if (value < 60_000) return `${(value / 1000).toFixed(2)} s`;
     const minutes = Math.floor(value / 60_000);
     const seconds = Math.round((value % 60_000) / 1000);
-    if (minutes < 60) return `${minutes} 分 ${seconds} 秒`;
+    if (minutes < 60) return translate('ui.mcpUtils.minutesSeconds', { minutes, seconds }, '{{minutes}} min {{seconds}} s');
     const hours = Math.floor(minutes / 60);
-    return `${hours} 小时 ${minutes % 60} 分`;
+    return translate('ui.mcpUtils.hoursMinutes', { hours, minutes: minutes % 60 }, '{{hours}} h {{minutes}} min');
 }
 
-/** 成功率的分子排除被拦截调用（拦截既非成功也非执行失败）。 */
+/** The success-rate numerator excludes blocked calls (blocked is neither success nor execution failure). */
 export function successRate(summary) {
     if (!summary) return null;
     const total = Number(summary.totalCalls) || 0;
@@ -102,7 +104,7 @@ export function formatPercentValue(rate, digits = 1) {
     return `${(Number(rate) * 100).toFixed(digits)}%`;
 }
 
-/** 当前页计时记录的平均耗时。 */
+/** Average duration of the timed records on the current page. */
 export function averageDurationMs(executions) {
     const samples = (executions || [])
         .map(executionDurationMs)
@@ -122,11 +124,11 @@ export function formatBucketLabel(iso, range) {
 }
 
 export function formatBucketTooltip(point, t) {
-    const time = point?.t ? new Date(point.t).toLocaleString('zh-CN', { hour12: false }) : '—';
+    const time = point?.t ? new Date(point.t).toLocaleString(currentLocale(), { hourCycle: 'h23' }) : '—';
     return t('mcpMonitor.timelineTooltip', {
         time,
         total: point?.total || 0,
         failed: point?.failed || 0,
         blocked: point?.blocked || 0
-    }, `${time} 总调用 ${point?.total || 0}，失败 ${point?.failed || 0}，拦截 ${point?.blocked || 0}`);
+    }, '{{time}}: {{total}} calls ({{failed}} failed, {{blocked}} blocked)');
 }

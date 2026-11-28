@@ -1,4 +1,6 @@
-/** 调用拦截页的工具函数：配置归一化、字节长度、规则校验与草稿比较。 */
+/** Helpers for the call interception page: config normalization, byte length, rule validation and draft comparison. */
+
+import { translate } from '../../lib/i18n';
 
 export const MAX_RULES = 100;
 const NAME_LIMIT = 200;
@@ -10,7 +12,7 @@ export function clone(value) {
 
 export function normalizeConfig(raw) {
     if (!raw || typeof raw.enabled !== 'boolean' || (raw.rules != null && !Array.isArray(raw.rules))) {
-        throw new Error('服务端返回的配置格式不正确');
+        throw new Error(translate('ui.toolGuardUtils.badConfig', null, 'The configuration returned by the server has an invalid format'));
     }
     return {
         enabled: raw.enabled,
@@ -39,24 +41,24 @@ export function byteLength(text) {
     return new TextEncoder().encode(String(text || '')).length;
 }
 
-/** 返回 null 表示通过，否则返回 { index, field, message }。 */
+/** Returns null when valid, otherwise { index, field, message }. */
 export function validateRules(config) {
-    if (!config) return { index: -1, field: '', message: '请先加载拦截配置' };
+    if (!config) return { index: -1, field: '', message: translate('ui.toolGuardUtils.loadFirst', null, 'Load the interception configuration first') };
     if (config.rules.length > MAX_RULES) {
-        return { index: -1, field: '', message: `最多可配置 ${MAX_RULES} 条拦截规则` };
+        return { index: -1, field: '', message: translate('ui.toolGuardUtils.maxRules', { max: MAX_RULES }, 'You can configure at most {{max}} interception rules') };
     }
     for (let index = 0; index < config.rules.length; index += 1) {
         const rule = config.rules[index];
-        if (!rule.name.trim()) return { index, field: 'name', message: `第 ${index + 1} 条规则缺少名称` };
-        if (!rule.pattern.trim()) return { index, field: 'pattern', message: `第 ${index + 1} 条规则缺少匹配正则` };
+        if (!rule.name.trim()) return { index, field: 'name', message: translate('ui.toolGuardUtils.missingName', { n: index + 1 }, 'Rule {{n}} is missing a name') };
+        if (!rule.pattern.trim()) return { index, field: 'pattern', message: translate('ui.toolGuardUtils.missingPattern', { n: index + 1 }, 'Rule {{n}} is missing a match regex') };
         if (byteLength(rule.name) > NAME_LIMIT) {
-            return { index, field: 'name', message: `第 ${index + 1} 条规则名称超过 ${NAME_LIMIT} 字节` };
+            return { index, field: 'name', message: translate('ui.toolGuardUtils.nameTooLong', { n: index + 1, limit: NAME_LIMIT }, 'The name of rule {{n}} exceeds {{limit}} bytes') };
         }
         if (byteLength(rule.pattern) > TEXT_LIMIT) {
-            return { index, field: 'pattern', message: `第 ${index + 1} 条规则正则超过 ${TEXT_LIMIT} 字节` };
+            return { index, field: 'pattern', message: translate('ui.toolGuardUtils.patternTooLong', { n: index + 1, limit: TEXT_LIMIT }, 'The regex of rule {{n}} exceeds {{limit}} bytes') };
         }
         if (byteLength(rule.message) > TEXT_LIMIT) {
-            return { index, field: 'message', message: `第 ${index + 1} 条规则提醒超过 ${TEXT_LIMIT} 字节` };
+            return { index, field: 'message', message: translate('ui.toolGuardUtils.messageTooLong', { n: index + 1, limit: TEXT_LIMIT }, 'The reminder of rule {{n}} exceeds {{limit}} bytes') };
         }
     }
     return null;
@@ -80,7 +82,7 @@ export function requestConfig(config) {
     };
 }
 
-/** 单条规则校验时使用：忽略总开关与规则启停，只看这一条。 */
+/** Used for single-rule validation: ignores the master switch and rule enable state, looks only at this rule. */
 export function singleRuleConfig(rule) {
     return {
         enabled: true,

@@ -1,6 +1,6 @@
 module cyberstrike-ai
 
-// 若 go mod download 超时，可执行: go env -w GOPROXY=https://goproxy.cn,direct
+// If go mod download times out, run: go env -w GOPROXY=https://goproxy.cn,direct
 
 go 1.25.0
 
@@ -23,6 +23,7 @@ require (
 	github.com/tencent-connect/botgo v0.2.1
 	go.uber.org/zap v1.26.0
 	golang.org/x/crypto v0.50.0
+	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8
 	golang.org/x/net v0.53.0
 	golang.org/x/sys v0.43.0
 	golang.org/x/term v0.42.0
@@ -65,12 +66,11 @@ require (
 	go.uber.org/goleak v1.3.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.15.0 // indirect
-	golang.org/x/image v0.0.0-20191009234506-e7c1f5e7dbb8 // indirect
 	golang.org/x/oauth2 v0.34.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	google.golang.org/protobuf v1.36.10 // indirect
 )
 
-// 修复钉钉 Stream SDK 在长连接断开（熄屏/网络中断）后 "panic: send on closed channel" 问题
-// 详见: https://github.com/open-dingtalk/dingtalk-stream-sdk-go/issues/28
+// Fix for the DingTalk Stream SDK "panic: send on closed channel" after a long-lived connection drops (screen off / network interruption)
+// See: https://github.com/open-dingtalk/dingtalk-stream-sdk-go/issues/28
 replace github.com/open-dingtalk/dingtalk-stream-sdk-go => github.com/uouuou/dingtalk-stream-sdk-go v0.0.0-20250626025113-079132acc406

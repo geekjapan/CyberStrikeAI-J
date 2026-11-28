@@ -1,61 +1,61 @@
-# 角色配置文件说明
+# Role Configuration Files
 
-本目录包含所有角色配置文件，每个角色定义了AI的行为模式与可用工具。
+This directory contains all role configuration files. Each role defines the AI's behavior pattern and the tools available to it.
 
-## 创建新角色
+## Creating a New Role
 
-创建新角色时，请在 `roles/` 目录下创建 YAML 文件，格式如下：
+To create a new role, add a YAML file under the `roles/` directory in the following format:
 
-**方式1：显式指定工具列表（推荐）**
+**Option 1: Specify the tool list explicitly (recommended)**
 ```yaml
-name: 角色名称
-description: 角色描述
-user_prompt: 用户提示词（追加到用户消息前，用于引导AI行为）
-icon: "图标（可选）"
+name: Role name
+description: Role description
+user_prompt: User prompt (prepended to the user message to guide the AI's behavior)
+icon: "Icon (optional)"
 tools:
-    # 添加你需要的工具...
-    # ⚠️ 重要：建议包含以下核心内置 MCP 工具（漏洞与知识库）
+    # Add the tools you need...
+    # ⚠️ Important: include the following core built-in MCP tools (vulnerability and knowledge base)
     - record_vulnerability
     - list_knowledge_risk_types
     - search_knowledge_base
 enabled: true
 ```
 
-**方式2：不设置tools字段（使用所有已开启的工具）**
+**Option 2: Omit the tools field (use all enabled tools)**
 ```yaml
-name: 角色名称
-description: 角色描述
-user_prompt: 用户提示词（追加到用户消息前，用于引导AI行为）
-icon: "图标（可选）"
-# 不设置tools字段，将默认使用所有MCP管理中已开启的工具
+name: Role name
+description: Role description
+user_prompt: User prompt (prepended to the user message to guide the AI's behavior)
+icon: "Icon (optional)"
+# Without a tools field, all tools enabled in MCP management are used by default
 enabled: true
 ```
 
-## ⚠️ 重要提醒：核心内置 MCP 工具
+## ⚠️ Important: Core Built-in MCP Tools
 
-**如果设置了 `tools` 字段，请务必在列表中包含以下工具（至少这三项）：**
+**If you set the `tools` field, make sure the list includes the following tools (at least these three):**
 
-1. **`record_vulnerability`** - 漏洞管理工具，用于记录发现的漏洞
-2. **`list_knowledge_risk_types`** - 知识库工具，列出可用的风险类型
-3. **`search_knowledge_base`** - 知识库工具，搜索知识库内容
+1. **`record_vulnerability`** - Vulnerability management tool, used to record discovered vulnerabilities
+2. **`list_knowledge_risk_types`** - Knowledge base tool, lists the available risk types
+3. **`search_knowledge_base`** - Knowledge base tool, searches the knowledge base content
 
-按需还可加入 WebShell、批量任务等其它内置或外部工具（以 MCP 管理中已启用的为准）。
+You can also add other built-in or external tools, such as WebShell and batch task tools, as needed (whatever is enabled in MCP management applies).
 
-**Skills（技能包）**：在 **Pi 单代理或多代理** 会话中由内置 **`skill`** 工具按需加载 `skills_dir` 下的包，与角色 YAML 无绑定关系。
+**Skills (skill packages)**: In **Pi single-agent or multi-agent** sessions, the built-in **`skill`** tool loads packages from `skills_dir` on demand. Skills are not bound to the role YAML.
 
-**注意**：如果不设置 `tools` 字段，系统会默认使用所有 MCP 管理中已开启的工具。为明确控制角色可用工具，建议显式设置 `tools` 字段。
+**Note**: If you omit the `tools` field, the system uses all tools enabled in MCP management by default. To control explicitly which tools a role can use, set the `tools` field.
 
-## 角色配置字段说明
+## Role Configuration Fields
 
-- **name**: 角色名称（必填）
-- **description**: 角色描述（必填）
-- **user_prompt**: 用户提示词，会追加到用户消息前，用于引导AI采用特定的测试方法和关注点（可选）
-- **icon**: 角色图标，支持Unicode emoji（可选）
-- **tools**: 工具列表，指定该角色可用的工具（可选）
-  - **如果不设置 `tools` 字段**：默认会选中**全部MCP管理中已开启的工具**
-  - **如果设置了 `tools` 字段**：只使用列表中指定的工具（建议至少包含上述核心内置工具）
-- **enabled**: 是否启用该角色（必填，true/false）
+- **name**: Role name (required)
+- **description**: Role description (required)
+- **user_prompt**: User prompt, prepended to the user message to guide the AI toward specific testing methods and focus areas (optional)
+- **icon**: Role icon, supports Unicode emoji (optional)
+- **tools**: Tool list that specifies which tools the role can use (optional)
+  - **If the `tools` field is omitted**: **all tools enabled in MCP management** are selected by default
+  - **If the `tools` field is set**: only the tools listed are used (include at least the core built-in tools above)
+- **enabled**: Whether the role is enabled (required, true/false)
 
-## 示例
+## Examples
 
-参考本目录下的其他角色文件，如 `渗透测试.yaml`、`Web应用扫描.yaml` 等。
+See the other role files in this directory, such as `penetration-testing.yaml` and `web-application-scanning.yaml`.

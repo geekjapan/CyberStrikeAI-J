@@ -1,15 +1,15 @@
-# Semi Design 工作台
+# Semi Design Workbench
 
-CyberStrikeAI 默认从 `/` 打开 React + Semi Design 工作台。仪表盘、项目、资产、漏洞、文件、MCP 监控、
-知识、技能、角色与智能体查看、平台权限、系统设置和 API 文档共用现有登录会话与权限。
+CyberStrikeAI opens the React + Semi Design workbench from `/` by default. The dashboard, projects, assets, vulnerabilities, files, MCP monitoring,
+knowledge, skills, roles and agent views, platform permissions, system settings and API docs share the existing login session and permissions.
 
-旧入口 `/classic` 跳转到工作台，浏览器保留书签中的页面片段。`/api-docs` 跳转到 `/#/api-docs`。
-智能体与角色页提供查看功能。设置页提供 Semi 工作台现有的设置分区，API 文档页用于浏览接口定义。
+The legacy `/classic` entry redirects to the workbench, and the browser keeps the page fragment from bookmarks. `/api-docs` redirects to `/#/api-docs`.
+The agent and role pages are view-only. The settings page provides the existing settings sections of the Semi workbench, and the API docs page is for browsing API definitions.
 
-## 开发与验证
+## Development and verification
 
-使用 Node.js 22。Vite 从 `src/main.jsx` 启动 React 和 Semi Design。页面在
-`src/pages/registry.js` 注册，通过 `src/lib/http.js` 调用同源 API，词条复用 `web/static/i18n/`。
+Use Node.js 22. Vite starts React and Semi Design from `src/main.jsx`. Pages are registered in
+`src/pages/registry.js`, call same-origin APIs through `src/lib/http.js`, and reuse the strings in `web/static/i18n/`.
 
 ```sh
 npm ci --prefix web/frontend
@@ -19,9 +19,9 @@ node --test web/frontend/tests/*.test.mjs
 npm run --prefix web/frontend test:ui
 ```
 
-Vite 开发地址为 `http://localhost:5199/static/app/`。需要联调时，可为 dev 命令设置
-`CSAI_API_ORIGIN=http://127.0.0.1:8080`。浏览器回归使用匿名数据和模拟接口，覆盖登录、导航、
-权限、图谱、表单、设置及移动端布局。
+The Vite dev address is `http://localhost:5199/static/app/`. For integration work, set
+`CSAI_API_ORIGIN=http://127.0.0.1:8080` for the dev command. Browser regression tests use anonymous data and mocked APIs, covering login, navigation,
+permissions, graphs, forms, settings and mobile layout.
 
-构建产物写入 `web/static/app/`，随源码提交。服务端用现有静态资源路径提供 JS 和 CSS，
-根路径返回构建后的 HTML。
+Build output is written to `web/static/app/` and committed with the source. The server serves JS and CSS from the existing static asset path,
+and the root path returns the built HTML.

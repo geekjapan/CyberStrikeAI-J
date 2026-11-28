@@ -26,7 +26,7 @@ export default function ProjectFormModal({ visible, project, onCancel, onSaved }
             const saved = editing
                 ? await api.put(`/projects/${project.id}`, body)
                 : await api.post('/projects', body);
-            toastSuccess(editing ? t('projects.saved', null, '已保存') : t('projects.createProject', null, '创建项目'));
+            toastSuccess(editing ? t('projects.saved', null, 'Saved') : t('projects.createProject', null, 'Create project'));
             onSaved?.(saved);
         } catch (err) {
             setError(err);
@@ -43,26 +43,26 @@ export default function ProjectFormModal({ visible, project, onCancel, onSaved }
             closeOnEsc={!saving}
             onCancel={onCancel}
             cancelButtonProps={{ disabled: saving }}
-            title={editing ? t('projects.modalEditTitle', null, '编辑项目') : t('projects.modalNewTitle', null, '新建项目')}
+            title={editing ? t('projects.modalEditTitle', null, 'Edit project') : t('projects.modalNewTitle', null, 'New project')}
             formId={formId}
-            okText={editing ? t('projects.saveChanges', null, '保存修改') : t('projects.createProject', null, '创建项目')}
+            okText={editing ? t('projects.saveChanges', null, 'Save changes') : t('projects.createProject', null, 'Create project')}
             confirmLoading={saving}
         >
             <Text type="tertiary" size="small">
                 {editing
-                    ? t('projects.modalEditSubtitle', null, '修改项目名称与描述')
-                    : t('projects.modalNewSubtitle', null, '创建后可绑定对话，跨会话共享事实黑板')}
+                    ? t('projects.modalEditSubtitle', null, 'Update project name and description')
+                    : t('projects.modalNewSubtitle', null, 'After creation, bind conversations to share fact board across chats')}
             </Text>
             <Form id={formId} key={`${visible}-${project?.id || 'new'}`} onSubmit={submit}
                 initValues={{ name: project?.name || '', description: project?.description || '' }}>
                 <Form.Input id={`${formId}-name`} field="name" maxLength={MAX_NAME}
-                    label={t('projects.projectName', null, '项目名称')}
-                    placeholder={t('projects.projectNamePlaceholder', null, '例如：某客户 Web 渗透')}
-                    rules={[{ required: true, whitespace: true, message: t('projects.enterProjectName', null, '请输入项目名称') }]} />
+                    label={t('projects.projectName', null, 'Project name')}
+                    placeholder={t('projects.projectNamePlaceholder', null, 'e.g. Client A Web pentest')}
+                    rules={[{ required: true, whitespace: true, message: t('projects.enterProjectName', null, 'Please enter project name') }]} />
                 <Form.TextArea id={`${formId}-description`} field="description" rows={4} maxCount={MAX_DESCRIPTION}
-                    label={t('projects.projectDescription', null, '项目描述')}
-                    placeholder={t('projects.projectDescriptionPlaceholder', null, '客户/任务备注、协作说明…')}
-                    extraText={t('projects.descriptionLengthHint', null, '仅供团队成员查阅，Agent 不会读取；需让 Agent 知晓的内容请写入事实黑板')} />
+                    label={t('projects.projectDescription', null, 'Project description')}
+                    placeholder={t('projects.projectDescriptionPlaceholder', null, 'Client/task notes, team collaboration…')}
+                    extraText={t('projects.descriptionLengthHint', null, 'For team reference only — the Agent does not read this. Keep it brief (max 4000 chars). Put anything the Agent should know in the fact board.')} />
                 <ErrorBanner error={error} />
             </Form>
         </Drawer>

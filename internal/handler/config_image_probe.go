@@ -46,7 +46,7 @@ func (h *ConfigHandler) testChannelImage(c *gin.Context, req TestOpenAIRequest, 
 	draw.NearestNeighbor.Scale(large, large.Bounds(), small, small.Bounds(), draw.Src, nil)
 	var encoded bytes.Buffer
 	if err := png.Encode(&encoded, large); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成测试图片失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate test image"})
 		return
 	}
 
@@ -57,9 +57,9 @@ func (h *ConfigHandler) testChannelImage(c *gin.Context, req TestOpenAIRequest, 
 	response := gin.H{"success": false, "model": model.Model, "latency_ms": time.Since(started).Milliseconds()}
 	switch {
 	case err != nil || result == nil || result.Status != "completed":
-		response["error"] = "图片请求失败，请确认当前通道的模型和 API 协议支持图片输入"
+		response["error"] = "Image request failed. Confirm that the model and API protocol of the current channel support image input"
 	case !matchesImageProbeCode(result.Response, code):
-		response["error"] = "模型未正确读取测试图片中的字符"
+		response["error"] = "The model did not read the characters in the test image correctly"
 	default:
 		response["success"] = true
 	}

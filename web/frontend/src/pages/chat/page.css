@@ -1,4 +1,4 @@
-/* 对话工作台：沿用 Semi 主题，主间距 20px，独立保留消息滚动容器。 */
+/* Conversation workspace: keeps the Semi theme, 20px main spacing, and a separate message scroll container. */
 
 .chat-page {
     display: flex;
@@ -8,7 +8,7 @@
     min-height: 0;
 }
 
-/* ---------- 会话栏 ---------- */
+/* ---------- Session bar ---------- */
 
 .chat-sidebar {
     flex: 0 0 272px;
@@ -131,7 +131,7 @@
 .chat-conv-edit { display: flex; flex-direction: column; gap: 8px; padding: 10px 6px; width: 100%; min-width: 0; }
 .chat-conv-edit-actions { display: flex; gap: 6px; flex-wrap: wrap; }
 
-/* ---------- 标题与主区域 ---------- */
+/* ---------- Title and main area ---------- */
 
 .chat-main,
 .chat-panel {
@@ -161,7 +161,7 @@
 .chat-header-tags .semi-tag { max-width: 100%; }
 .chat-header-actions .semi-button { height: auto; min-height: 32px; white-space: normal; text-align: start; }
 
-/* ---------- 消息与欢迎区 ---------- */
+/* ---------- Messages and welcome area ---------- */
 
 .chat-message-wrap { flex: 1 1 auto; min-width: 0; min-height: 0; position: relative; display: flex; }
 .chat-messages {
@@ -199,7 +199,7 @@
 .chat-bubble-actions { margin-inline-start: auto; display: flex; gap: 2px; }
 .chat-live-status { flex: 1 1 160px; min-width: 0; font-size: 12px; color: var(--semi-color-text-2); overflow-wrap: anywhere; }
 
-/* 操作不占用正文空间；键盘聚焦与触屏均可发现。 */
+/* Actions take no body space; discoverable by keyboard focus and touch. */
 .chat-conv-actions,
 .chat-bubble-actions { opacity: 0; transition: opacity .15s ease; }
 .chat-conv-item:hover .chat-conv-actions,
@@ -240,7 +240,7 @@
     max-height: 320px;
     overflow: auto;
 }
-/* 放在 .chat-pre 之后，保持流式正文与 Markdown 同字号，且不被代码块限高。 */
+/* Placed after .chat-pre so streamed text matches Markdown font size and is not height-limited like code blocks. */
 .chat-stream-text { border: none; background: none; padding: 0; max-height: none; font-family: inherit; font-size: 15px; line-height: 1.85; }
 
 .chat-block-collapse { margin-top: 6px; min-width: 0; border: 1px solid var(--semi-color-border); border-radius: 12px; background: var(--semi-color-bg-2); overflow: hidden; }
@@ -278,7 +278,7 @@
 .chat-events-strip .semi-collapse-header { padding: 6px 0; font-size: 12px; margin: 0; }
 .chat-events-strip .semi-collapse-content { padding: 0 0 8px; }
 
-/* ---------- HITL 审批停靠区 ---------- */
+/* ---------- HITL approval dock ---------- */
 
 .chat-hitl-dock {
     border-top: 2px solid var(--semi-color-warning);
@@ -300,7 +300,7 @@
 .chat-hitl-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
 .chat-hitl-comment { flex: 1 1 220px; min-width: 160px; }
 
-/* ---------- 发送区 ---------- */
+/* ---------- Composer ---------- */
 
 .chat-composer {
     flex: 0 0 auto;
@@ -489,7 +489,7 @@
 .chat-setting-reviewer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; }
 .chat-setting-reviewer .semi-radio-addon-buttonRadio { flex: 1; text-align: center; }
 
-/* ---------- 侧滑面板 ---------- */
+/* ---------- Side sheet ---------- */
 
 .chat-plan { display: flex; flex-direction: column; gap: 10px; }
 .chat-plan-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -528,7 +528,7 @@
 }
 .chat-plan-strip-bar { flex: 1 1 auto; margin: 0; min-width: 80px; }
 
-/* ---------- 窄屏与输入方式 ---------- */
+/* ---------- Narrow screens and input methods ---------- */
 
 @container chat-workspace (max-width: 560px) {
     .chat-header { padding: 8px 12px 16px; gap: 10px; }

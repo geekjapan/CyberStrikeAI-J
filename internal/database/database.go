@@ -18,11 +18,11 @@ const (
 	sqliteMaxOpenConns  = 8
 	sqliteMaxIdleConns  = 4
 	sqliteBusyTimeoutMS = 30000
-	// 以页为单位的自动 checkpoint 触发阈值（默认 1000 页，约 4MB @ 4KB/page）。
+	// Automatic checkpoint trigger threshold, in pages (default 1000 pages, about 4MB at 4KB/page).
 	sqliteWALAutoCheckpointPages = 1000
-	// 控制 WAL 目标上限，避免异常场景持续膨胀（256MB）。
+	// Caps the WAL target size, to prevent unbounded growth in abnormal situations (256MB).
 	sqliteJournalSizeLimitBytes = 256 * 1024 * 1024
-	// 定时执行 PASSIVE checkpoint，平滑推进 WAL 回收。
+	// Periodically runs a PASSIVE checkpoint to steadily advance WAL reclamation.
 	sqlitePassiveCheckpointInterval = 300 * time.Second
 )
 
@@ -33,25 +33,25 @@ func sqliteOpenDSN(path string) string {
 	return fmt.Sprintf("%s?_journal_mode=WAL&_foreign_keys=1&_busy_timeout=%d&_synchronous=NORMAL&_txlock=immediate", path, sqliteBusyTimeoutMS)
 }
 
-// configureDBPool 设置 SQLite 连接池，保留少量连接给 WAL 并发读。
+// configureDBPool sets the SQLite connection pool, reserving a few connections for concurrent WAL reads.
 func configureDBPool(db *sql.DB) {
 	db.SetMaxOpenConns(sqliteMaxOpenConns)
 	db.SetMaxIdleConns(sqliteMaxIdleConns)
 	db.SetConnMaxLifetime(30 * time.Minute)
 }
 
-// configureSQLitePragmas 调整 WAL 回收行为，降低 -wal 文件长期膨胀风险。
+// configureSQLitePragmas adjusts WAL reclamation behavior, reducing the risk of the -wal file growing indefinitely.
 func configureSQLitePragmas(db *sql.DB) error {
 	if _, err := db.Exec(fmt.Sprintf("PRAGMA wal_autocheckpoint=%d", sqliteWALAutoCheckpointPages)); err != nil {
-		return fmt.Errorf("设置 wal_autocheckpoint 失败: %w", err)
+		return fmt.Errorf("Failed to set wal_autocheckpoint: %w", err)
 	}
 	if _, err := db.Exec(fmt.Sprintf("PRAGMA journal_size_limit=%d", sqliteJournalSizeLimitBytes)); err != nil {
-		return fmt.Errorf("设置 journal_size_limit 失败: %w", err)
+		return fmt.Errorf("Failed to set journal_size_limit: %w", err)
 	}
 	return nil
 }
 
-// DB 数据库连接
+// DB database connection
 type DB struct {
 	*sql.DB
 	logger                   *zap.Logger
@@ -69,7 +69,7 @@ type DB struct {
 	vulnerabilityCreatedHook func(*Vulnerability)
 }
 
-// startPassiveCheckpointLoop 启动后台 PASSIVE checkpoint 循环。
+// startPassiveCheckpointLoop starts the background PASSIVE checkpoint loop.
 func (db *DB) startPassiveCheckpointLoop(name string) {
 	if sqlitePassiveCheckpointInterval <= 0 || db == nil || db.DB == nil {
 		return
@@ -83,7 +83,7 @@ func (db *DB) startPassiveCheckpointLoop(name string) {
 		ticker := time.NewTicker(sqlitePassiveCheckpointInterval)
 		defer ticker.Stop()
 
-		// 启动后先尝试一次，尽快回收已有 WAL 堆积。
+		// Run once right after startup, to reclaim any existing WAL backlog as soon as possible.
 		db.runPassiveCheckpoint("startup")
 		for {
 			select {
@@ -96,7 +96,7 @@ func (db *DB) startPassiveCheckpointLoop(name string) {
 	}()
 }
 
-// runPassiveCheckpoint 执行一次 PRAGMA wal_checkpoint(PASSIVE)。
+// runPassiveCheckpoint runs PRAGMA wal_checkpoint(PASSIVE) once.
 func (db *DB) runPassiveCheckpoint(trigger string) {
 	if db == nil || db.DB == nil {
 		return
@@ -116,34 +116,34 @@ func (db *DB) runPassiveCheckpoint(trigger string) {
 		zap.Int64("elapsed_ms", time.Since(startAt).Milliseconds()),
 	}
 	if err != nil {
-		db.logger.Warn("SQLite PASSIVE checkpoint 完成（失败）",
+		db.logger.Warn("SQLite PASSIVE checkpoint finished (failed)",
 			append(fields, zap.Error(err))...,
 		)
 		return
 	}
 	if busy > 0 {
-		db.logger.Debug("SQLite PASSIVE checkpoint 完成（部分推进）", fields...)
+		db.logger.Debug("SQLite PASSIVE checkpoint finished (partial progress)", fields...)
 		return
 	}
-	db.logger.Debug("SQLite PASSIVE checkpoint 完成（成功）", fields...)
+	db.logger.Debug("SQLite PASSIVE checkpoint finished (success)", fields...)
 }
 
-// NewDB 创建数据库连接
+// NewDB creates a database connection
 func NewDB(dbPath string, logger *zap.Logger) (*DB, error) {
 	db, err := sql.Open("sqlite3", sqliteOpenDSN(dbPath))
 	if err != nil {
-		return nil, fmt.Errorf("打开数据库失败: %w", err)
+		return nil, fmt.Errorf("Failed to open database: %w", err)
 	}
 
 	configureDBPool(db)
 
 	if err := db.Ping(); err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("连接数据库失败: %w", err)
+		return nil, fmt.Errorf("Failed to connect to database: %w", err)
 	}
 	if err := configureSQLitePragmas(db); err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("配置数据库 PRAGMA 失败: %w", err)
+		return nil, fmt.Errorf("Failed to configure database PRAGMA: %w", err)
 	}
 
 	database := &DB{
@@ -155,13 +155,13 @@ func NewDB(dbPath string, logger *zap.Logger) (*DB, error) {
 	if mkErr := os.MkdirAll(baseDir, 0o755); mkErr == nil {
 		database.conversationArtifactsDir = baseDir
 	} else if logger != nil {
-		logger.Warn("创建 conversation artifacts 目录失败", zap.String("dir", baseDir), zap.Error(mkErr))
+		logger.Warn("Failed to create conversation artifacts directory", zap.String("dir", baseDir), zap.Error(mkErr))
 	}
 
-	// 初始化表
+	// Initialize tables
 	if err := database.initTables(); err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("初始化表失败: %w", err)
+		return nil, fmt.Errorf("Failed to initialize tables: %w", err)
 	}
 	if err := database.initAgentRuns(); err != nil {
 		_ = db.Close()
@@ -169,7 +169,7 @@ func NewDB(dbPath string, logger *zap.Logger) (*DB, error) {
 	}
 	if err := database.migrateLegacyToolGuardBlocks(); err != nil {
 		_ = db.Close()
-		return nil, fmt.Errorf("迁移历史安全拦截记录失败: %w", err)
+		return nil, fmt.Errorf("Failed to migrate historical security interception records: %w", err)
 	}
 	database.startPassiveCheckpointLoop("conversations")
 
@@ -200,44 +200,44 @@ func (db *DB) SetChatUploadsDir(dir string) {
 	db.chatUploadsDir = strings.TrimSpace(dir)
 }
 
-// initTables 初始化数据库表
+// initTables initializes the database tables
 func (db *DB) initTables() error {
 	if err := db.reconcileSchema(applicationSchema); err != nil {
 		return err
 	}
 	// Data migrations are separate from schema repair.
 	if _, err := db.Exec("UPDATE messages SET updated_at = created_at WHERE updated_at IS NULL OR updated_at = ''"); err != nil {
-		return fmt.Errorf("回填消息更新时间失败: %w", err)
+		return fmt.Errorf("Failed to backfill message update times: %w", err)
 	}
 	if err := db.migrateVulnerabilitiesConversationFK(); err != nil {
-		return fmt.Errorf("迁移漏洞会话外键失败: %w", err)
+		return fmt.Errorf("Failed to migrate vulnerability conversation foreign keys: %w", err)
 	}
 	if err := db.backfillVulnerabilityTargets(); err != nil {
-		return fmt.Errorf("回填漏洞目标失败: %w", err)
+		return fmt.Errorf("Failed to backfill vulnerability targets: %w", err)
 	}
 	if err := db.BackfillModelTokenUsageFromProcessDetails(); err != nil {
-		return fmt.Errorf("回填模型Token用量失败: %w", err)
+		return fmt.Errorf("Failed to backfill model Token usage: %w", err)
 	}
-	db.logger.Debug("数据库结构检查及补齐完成")
+	db.logger.Debug("Database schema check and completion finished")
 	return nil
 }
 
-// NewKnowledgeDB 创建知识库数据库连接（只包含知识库相关的表）
+// NewKnowledgeDB creates a knowledge base database connection (containing only knowledge base tables)
 func NewKnowledgeDB(dbPath string, logger *zap.Logger) (*DB, error) {
 	sqlDB, err := sql.Open("sqlite3", sqliteOpenDSN(dbPath))
 	if err != nil {
-		return nil, fmt.Errorf("打开知识库数据库失败: %w", err)
+		return nil, fmt.Errorf("Failed to open knowledge base database: %w", err)
 	}
 
 	configureDBPool(sqlDB)
 
 	if err := sqlDB.Ping(); err != nil {
 		_ = sqlDB.Close()
-		return nil, fmt.Errorf("连接知识库数据库失败: %w", err)
+		return nil, fmt.Errorf("Failed to connect to knowledge base database: %w", err)
 	}
 	if err := configureSQLitePragmas(sqlDB); err != nil {
 		_ = sqlDB.Close()
-		return nil, fmt.Errorf("配置知识库数据库 PRAGMA 失败: %w", err)
+		return nil, fmt.Errorf("Failed to configure knowledge base database PRAGMA: %w", err)
 	}
 
 	database := &DB{
@@ -245,26 +245,26 @@ func NewKnowledgeDB(dbPath string, logger *zap.Logger) (*DB, error) {
 		logger: logger,
 	}
 
-	// 初始化知识库表
+	// Initialize knowledge base tables
 	if err := database.initKnowledgeTables(); err != nil {
 		_ = sqlDB.Close()
-		return nil, fmt.Errorf("初始化知识库表失败: %w", err)
+		return nil, fmt.Errorf("Failed to initialize knowledge base tables: %w", err)
 	}
 	database.startPassiveCheckpointLoop("knowledge")
 
 	return database, nil
 }
 
-// initKnowledgeTables 初始化知识库数据库表（只包含知识库相关的表）
+// initKnowledgeTables initializes the knowledge base database tables (containing only knowledge base tables)
 func (db *DB) initKnowledgeTables() error {
 	if err := db.reconcileSchema(knowledgeSchema); err != nil {
 		return err
 	}
-	db.logger.Info("数据库结构检查及补齐完成")
+	db.logger.Info("Database schema check and completion finished")
 	return nil
 }
 
-// Close 关闭数据库连接
+// Close closes the database connection
 func (db *DB) Close() error {
 	if db == nil {
 		return nil

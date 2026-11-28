@@ -23,35 +23,35 @@ export default function RolesManagementPage() {
 
     const columns = [
         {
-            title: '角色', dataIndex: 'name', render: (value, record) => (
+            title: t('ui.rolesManagement.role', null, 'Role'), dataIndex: 'name', render: (value, record) => (
                 <Space vertical spacing={0} align="start">
                     <Space>
                         <Text strong>{value}</Text>
-                        {record.enabled === false && <Tag size="small" color="grey">已停用</Tag>}
+                        {record.enabled === false && <Tag size="small" color="grey">{t('ui.rolesManagement.disabled', null, 'Disabled')}</Tag>}
                     </Space>
                     <Text type="tertiary" ellipsis={{ showTooltip: true }} style={{ maxWidth: 460 }}>{record.description || '—'}</Text>
                 </Space>
             )
         },
         {
-            title: '工具', dataIndex: 'tools', width: 260,
+            title: t('ui.rolesManagement.tools', null, 'Tools'), dataIndex: 'tools', width: 260,
             render: value => (Array.isArray(value) && value.length
                 ? <Space wrap spacing={4}>{value.slice(0, 4).map(tool => <Tag size="small" key={tool}>{tool}</Tag>)}{value.length > 4 && <Text type="tertiary">+{value.length - 4}</Text>}</Space>
-                : <Text type="tertiary">未绑定</Text>)
+                : <Text type="tertiary">{t('ui.rolesManagement.unbound', null, 'None bound')}</Text>)
         },
-        { title: '工作流', dataIndex: 'workflow_id', width: 160, render: value => value || '—' },
+        { title: t('ui.rolesManagement.workflow', null, 'Workflow'), dataIndex: 'workflow_id', width: 160, render: value => value || '—' },
     ];
 
     return (
         <div>
             <PageHeader
-                title={t('roles.title', null, '角色管理')}
-                description="角色定义对话的系统提示词、可用工具与绑定工作流。"
+                title={t('roles.title', null, 'Role Management')}
+                description={t('ui.rolesManagement.description', null, 'Roles define the system prompt, available tools and bound workflow of a conversation.')}
                 extra={(
-                    <Button icon={<IconRefresh />} onClick={() => roles.reload()} loading={roles.loading}>刷新</Button>
+                    <Button icon={<IconRefresh />} onClick={() => roles.reload()} loading={roles.loading}>{t('ui.rolesManagement.refresh', null, 'Refresh')}</Button>
                 )}
             />
-            <SectionCard title={`角色（${rows.length}）`}>
+            <SectionCard title={t('ui.rolesManagement.listTitle', { count: rows.length }, 'Roles ({{count}})')}>
                 <ErrorBanner error={roles.error} onRetry={() => roles.reload()} />
                 <DataTable
                     columns={columns}
@@ -59,7 +59,7 @@ export default function RolesManagementPage() {
                     rowKey="name"
                     loading={roles.loading}
                     pagination={{ pageSize: 20 }}
-                    toolbar={<Input prefix={<IconSearch />} value={search} onChange={setSearch} placeholder="搜索角色名称" style={{ width: 260 }} />}
+                    toolbar={<Input prefix={<IconSearch />} value={search} onChange={setSearch} placeholder={t('ui.rolesManagement.searchPlaceholder', null, 'Search role name')} style={{ width: 260 }} />}
                 />
             </SectionCard>
         </div>

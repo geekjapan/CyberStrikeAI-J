@@ -1,8 +1,8 @@
-/** 事实新增 / 编辑弹窗：fact_key 与 summary 必填，body 存攻击链与 POC，links 维护入边。 */
+/** Fact create / edit dialog: fact_key and summary are required, body holds the attack chain and POC, links maintain incoming edges. */
 import { useEffect, useMemo, useState } from 'react';
 import { Checkbox, Input, Select, TextArea, Typography } from '@douyinfe/semi-ui';
 import { api } from '../../lib/http';
-import { useT } from '../../lib/i18n';
+import { translate, useT } from '../../lib/i18n';
 import { Drawer, toastError, toastSuccess } from '../../components/ui';
 import {
     CONFIDENCE_OPTIONS, EDGE_TYPE_HINTS, FACT_CATEGORIES, errText, formatIncomingLinks
@@ -46,7 +46,7 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                 if (cancelled || !fact) return;
                 const category = fact.category || 'note';
                 if (!FACT_CATEGORIES.some(item => item.value === category)) {
-                    setCategoryOptions([...FACT_CATEGORIES, { value: category, label: `${category}（自定义）` }]);
+                    setCategoryOptions([...FACT_CATEGORIES, { value: category, label: translate('ui.factForm.customCategory', { category }, '{{category}} (custom)') }]);
                 }
                 setFactId(fact.id || '');
                 setForm({
@@ -61,7 +61,7 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                 });
             })
             .catch(error => {
-                if (!cancelled) toastError(errText(error, t('projects.loadFactFailed', null, '加载事实失败')));
+                if (!cancelled) toastError(errText(error, t('projects.loadFactFailed', null, 'Failed to load fact')));
             })
             .finally(() => { if (!cancelled) setLoading(false); });
         return () => { cancelled = true; };
@@ -69,13 +69,13 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
 
     const update = (patch) => setForm(prev => ({ ...prev, ...patch }));
 
-    const linksHint = useMemo(() => EDGE_TYPE_HINTS.join('、'), []);
+    const linksHint = useMemo(() => EDGE_TYPE_HINTS.join(t('ui.factForm.listSeparator', null, '、')), [t]);
 
     const submit = async () => {
         const key = form.fact_key.trim();
         const summary = form.summary.trim();
         if (!key || !summary) {
-            toastError(t('projects.factKeySummaryRequired', null, 'fact_key 与 summary 必填'));
+            toastError(t('projects.factKeySummaryRequired', null, 'fact_key and summary are required'));
             return;
         }
         const payload = {
@@ -89,7 +89,7 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
             links_text: form.links_text
         };
         if (editing && !factId) {
-            toastError(t('projects.loadFactFailed', null, '加载事实失败'));
+            toastError(t('projects.loadFactFailed', null, 'Failed to load fact'));
             return;
         }
         setSaving(true);
@@ -99,10 +99,10 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
             } else {
                 await api.post(`/projects/${projectId}/facts`, payload);
             }
-            toastSuccess(t('projects.saved', null, '已保存'));
+            toastSuccess(t('projects.saved', null, 'Saved'));
             onSaved?.();
         } catch (error) {
-            toastError(errText(error, t('projects.saveFailed', null, '保存失败')));
+            toastError(errText(error, t('projects.saveFailed', null, 'Save failed')));
         } finally {
             setSaving(false);
         }
@@ -111,16 +111,16 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
     return (
         <Drawer
             visible={visible}
-            title={editing ? t('projects.editFact', null, '编辑事实') : t('projects.addFact', null, '添加事实')}
+            title={editing ? t('projects.editFact', null, 'Edit fact') : t('projects.addFact', null, 'Add fact')}
             onCancel={onCancel}
             onOk={submit}
-            okText={editing ? t('projects.saveChanges', null, '保存修改') : t('projects.saveFact', null, '保存事实')}
-            cancelText={t('common.cancel', null, '取消')}
+            okText={editing ? t('projects.saveChanges', null, 'Save changes') : t('projects.saveFact', null, 'Save fact')}
+            cancelText={t('common.cancel', null, 'Cancel')}
             confirmLoading={saving}
             width={720}
         >
             <Text type="tertiary" size="small">
-                {t('projects.factModalSubtitle', null, '摘要注入黑板索引；body 沉淀攻击链与 POC，供审计复现（与漏洞记录分工）')}
+                {t('projects.factModalSubtitle', null, 'Summary is indexed on board; body stores attack chain and POC for audit reproduction (separate from vulnerability records).')}
             </Text>
 
             <div className="project-form-grid">
@@ -134,7 +134,7 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                     />
                 </div>
                 <div className="project-form-field">
-                    <Text strong size="small">{t('projects.category', null, '分类')}</Text>
+                    <Text strong size="small">{t('projects.category', null, 'Category')}</Text>
                     <Select
                         value={form.category}
                         optionList={categoryOptions}
@@ -145,17 +145,17 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
             </div>
 
             <div className="project-form-field">
-                <Text strong size="small">{t('projects.summary', null, '摘要')}</Text>
+                <Text strong size="small">{t('projects.summary', null, 'Summary')}</Text>
                 <Input
                     value={form.summary}
-                    placeholder={t('projects.summary', null, '摘要') + '：什么 + 在哪 + 如何验证'}
+                    placeholder={t('ui.factForm.summaryPlaceholder', { summary: t('projects.summary', null, '{{summary}}: what + where + how to verify') }, 'Summary')}
                     onChange={value => update({ summary: value })}
                 />
             </div>
 
             <div className="project-form-grid">
                 <div className="project-form-field">
-                    <Text strong size="small">{t('projects.confidence', null, '置信度')}</Text>
+                    <Text strong size="small">{t('projects.confidence', null, 'Confidence')}</Text>
                     <Select
                         value={form.confidence}
                         optionList={CONFIDENCE_OPTIONS}
@@ -164,10 +164,10 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                     />
                 </div>
                 <div className="project-form-field">
-                    <Text strong size="small">{t('projects.relatedVulnIdLabel', null, '关联漏洞 ID')}</Text>
+                    <Text strong size="small">{t('projects.relatedVulnIdLabel', null, 'Related vulnerability ID')}</Text>
                     <Input
                         value={form.related_vulnerability_id}
-                        placeholder={t('projects.optional', null, '可选')}
+                        placeholder={t('projects.optional', null, 'Optional')}
                         onChange={value => update({ related_vulnerability_id: value })}
                     />
                 </div>
@@ -178,16 +178,16 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                 <TextArea
                     value={form.body}
                     rows={10}
-                    placeholder={'## 验证步骤\n1. …\n\n```http\nGET /path HTTP/1.1\n```'}
+                    placeholder={t('ui.factForm.bodyPlaceholder', null, '## Verification steps\n1. …\n\n```http\nGET /path HTTP/1.1\n```')}
                     onChange={value => update({ body: value })}
                 />
                 <Text type="tertiary" size="small">
-                    {t('projects.factBodyRelationsHint', null, '正文中的 discovered_on 等关系请填写到下方“关系边”字段，才能生成图谱连线。')}
+                    {t('projects.factBodyRelationsHint', null, 'Enter relationships such as discovered_on in the Links field below to create graph edges.')}
                 </Text>
             </div>
 
             <div className="project-form-field">
-                <Text strong size="small">{t('projects.factLinksLabel', null, '关系边（from → 本事实）')}</Text>
+                <Text strong size="small">{t('projects.factLinksLabel', null, 'Links (from → this fact)')}</Text>
                 <TextArea
                     value={form.links_text}
                     rows={3}
@@ -195,13 +195,13 @@ export default function FactFormModal({ visible, projectId, factKey, onCancel, o
                     onChange={value => update({ links_text: value })}
                 />
                 <Text type="tertiary" size="small">
-                    {t('projects.factLinksHint', null, '每行一条：type: source_fact_key（来源 → 当前事实）。')}
-                    {' '}常用 type：{linksHint}。
+                    {t('projects.factLinksHint', null, 'One per line: type: source_fact_key (source → this fact). Common types: discovered_on, depends_on, leads_to, enables, exploits. Saving replaces all links.')}
+                    {' '}{t('ui.factForm.commonTypes', { hint: linksHint }, 'Common types: {{hint}}.')}
                 </Text>
             </div>
 
             <Checkbox checked={form.pinned} onChange={event => update({ pinned: event.target.checked })}>
-                {t('projects.pinFact', null, '置顶事实（列表与黑板索引优先）')}
+                {t('projects.pinFact', null, 'Pin fact (prioritize in list and blackboard index)')}
             </Checkbox>
         </Drawer>
     );

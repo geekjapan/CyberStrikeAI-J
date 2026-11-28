@@ -1,4 +1,4 @@
-/** 会话级写操作：新建、重命名、置顶、删除、批量删除、删除某一轮。 */
+/** Conversation-level write actions: create, rename, pin, delete, bulk delete, delete a turn. */
 import { useCallback } from 'react';
 import { api } from '../../lib/http';
 import { confirmAction, toastError, toastSuccess, toastWarning } from '../../components/ui';
@@ -17,26 +17,26 @@ export function useConversationActions({
         if (!canWrite) return;
         try {
             const payload = await api.post('/conversations', {
-                title: t('chat.newChat', null, '新对话'),
+                title: t('chat.newChat', null, 'New chat'),
                 projectId: newProjectId || undefined
             });
             const id = payload?.id;
             reloadList();
             if (id) navigate({ conversation: id });
-            toastSuccess(t('chat.created', null, '已创建对话'));
+            toastSuccess(t('chat.created', null, 'Conversation created'));
         } catch (error) {
-            toastError(error, t('chat.createFailed', null, '创建对话失败'));
+            toastError(error, t('chat.createFailed', null, 'Failed to create conversation'));
         }
     }, [canWrite, navigate, newProjectId, reloadList, t]);
 
     const renameConversation = useCallback(async (id, title) => {
         try {
             await api.put(`/conversations/${encodeURIComponent(id)}`, { title });
-            toastSuccess(t('chat.renamed', null, '已重命名'));
+            toastSuccess(t('chat.renamed', null, 'Renamed'));
             reloadList();
             if (id === conversationRef.current) requestDetailReload(id, { silent: true });
         } catch (error) {
-            toastError(error, t('chat.renameFailed', null, '重命名失败'));
+            toastError(error, t('chat.renameFailed', null, 'Rename failed'));
         }
     }, [conversationRef, reloadList, requestDetailReload, t]);
 
@@ -45,29 +45,29 @@ export function useConversationActions({
             await api.put(`/conversations/${encodeURIComponent(item.id)}/pinned`, { pinned: !item.pinned });
             reloadList();
         } catch (error) {
-            toastError(error, t('chat.pinFailed', null, '置顶操作失败'));
+            toastError(error, t('chat.pinFailed', null, 'Failed to change the pin'));
         }
     }, [reloadList, t]);
 
     const deleteConversation = useCallback(async item => {
         try {
             await api.del(`/conversations/${encodeURIComponent(item.id)}`);
-            toastSuccess(t('chat.deleted', null, '已删除对话'));
+            toastSuccess(t('chat.deleted', null, 'Conversation deleted'));
             if (item.id === conversationRef.current) {
                 onSelectionCleared();
                 navigate({}, { replace: true });
             }
             reloadList();
         } catch (error) {
-            toastError(error, t('chat.deleteFailed', null, '删除对话失败'));
+            toastError(error, t('chat.deleteFailed', null, 'Failed to delete conversation'));
         }
     }, [conversationRef, navigate, onSelectionCleared, reloadList, t]);
 
     const batchDelete = useCallback(async ids => {
         const results = await Promise.allSettled(ids.map(id => api.del(`/conversations/${encodeURIComponent(id)}`)));
         const failed = results.filter(result => result.status === 'rejected').length;
-        if (failed) toastWarning(t('chat.batchDeletePartial', { failed }, `有 ${failed} 个对话删除失败`));
-        else toastSuccess(t('chat.batchDeleted', { count: ids.length }, `已删除 ${ids.length} 个对话`));
+        if (failed) toastWarning(t('chat.batchDeletePartial', { failed }, '{{failed}} conversations could not be deleted'));
+        else toastSuccess(t('chat.batchDeleted', { count: ids.length }, 'Deleted {{count}} conversations'));
         if (ids.includes(conversationRef.current)) {
             onSelectionCleared();
             navigate({}, { replace: true });
@@ -79,17 +79,17 @@ export function useConversationActions({
         const id = conversationRef.current;
         if (!id || !message?.id) return;
         confirmAction({
-            title: t('chat.deleteTurnTitle', null, '删除本轮'),
-            content: t('chat.deleteTurnConfirm', null, '将删除该轮提问与全部回答，删除后不可恢复。'),
-            okText: t('common.delete', null, '删除'),
+            title: t('chat.deleteTurnTitle', null, 'Delete this turn'),
+            content: t('chat.deleteTurnConfirm', null, 'Delete this entire turn (user message and assistant reply)? This cannot be undone. The next reply will use only the remaining messages; saved context snapshots will be cleared.'),
+            okText: t('common.delete', null, 'Delete'),
             onOk: async () => {
                 try {
                     await api.post(`/conversations/${encodeURIComponent(id)}/delete-turn`, { messageId: message.id });
-                    toastSuccess(t('chat.turnDeleted', null, '已删除该轮'));
+                    toastSuccess(t('chat.turnDeleted', null, 'Turn deleted'));
                     await requestDetailReload(id, { silent: true });
                     reloadList();
                 } catch (error) {
-                    toastError(error, t('chat.deleteTurnFailed', null, '删除轮次失败'));
+                    toastError(error, t('chat.deleteTurnFailed', null, 'Failed to delete turn'));
                 }
             }
         });

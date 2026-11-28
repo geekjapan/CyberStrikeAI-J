@@ -1,4 +1,4 @@
-/** 执行记录列表：筛选、分页、批量选择、行操作。 */
+/** Execution record list: filtering, pagination, batch selection, row actions. */
 import { Button, Input, Select, Space, Tag } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
 import { DataTable, ErrorBanner } from '../../components/ui';
@@ -27,44 +27,44 @@ export default function ExecutionTable({
     const total = Number(data?.total) || 0;
 
     const statusOptions = [
-        { value: 'all', label: t('mcp.filterAll', null, '全部') },
+        { value: 'all', label: t('mcp.filterAll', null, 'All') },
         ...STATUS_VALUES.map(value => ({ value, label: statusLabel(t, value) }))
     ];
 
     const columns = [
         {
-            title: t('mcpMonitor.columnTool', null, '工具'),
+            title: t('mcpMonitor.columnTool', null, 'Tool'),
             dataIndex: 'toolName',
             render: value => (
-                <span className="mcp-monitor-cell-tool">{toolDisplayName(value) || t('mcpMonitor.unknownTool', null, '未知工具')}</span>
+                <span className="mcp-monitor-cell-tool">{toolDisplayName(value) || t('mcpMonitor.unknownTool', null, 'Unknown tool')}</span>
             )
         },
         {
-            title: t('mcpMonitor.columnStatus', null, '状态'),
+            title: t('mcpMonitor.columnStatus', null, 'Status'),
             dataIndex: 'status',
             width: 110,
             render: value => <ExecutionStatusTag status={value} />
         },
         {
-            title: t('mcpMonitor.columnStartTime', null, '开始时间'),
+            title: t('mcpMonitor.columnStartTime', null, 'Start time'),
             dataIndex: 'startTime',
             width: 180,
             render: value => formatDateTime(value)
         },
         {
-            title: t('mcpMonitor.columnDuration', null, '耗时'),
+            title: t('mcpMonitor.columnDuration', null, 'Duration'),
             dataIndex: 'duration',
             width: 110,
             render: (value, record) => formatDurationMs(executionDurationMs(record))
         },
         {
-            title: t('common.actions', null, '操作'),
+            title: t('common.actions', null, 'Actions'),
             dataIndex: 'id',
             width: 230,
             render: (id, record) => (
                 <Space spacing={4} wrap>
                     <Button size="small" theme="borderless" onClick={() => onOpenDetail(id)}>
-                        {t('mcpMonitor.viewDetail', null, '详情')}
+                        {t('mcpMonitor.viewDetail', null, 'View details')}
                     </Button>
                     {isRunning(record.status) && (
                         <Button
@@ -73,7 +73,7 @@ export default function ExecutionTable({
                             disabled={!canWrite}
                             onClick={() => onCancel(record)}
                         >
-                            {t('mcpMonitor.terminateExecution', null, '终止')}
+                            {t('mcpMonitor.terminateExecution', null, 'Stop')}
                         </Button>
                     )}
                     <Button
@@ -83,7 +83,7 @@ export default function ExecutionTable({
                         disabled={!canDelete}
                         onClick={() => onDelete(record)}
                     >
-                        {t('common.delete', null, '删除')}
+                        {t('common.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -111,7 +111,7 @@ export default function ExecutionTable({
                 loading={loading}
                 pagination={pagination}
                 onRefresh={onRefresh}
-                emptyText={t('mcpMonitor.noExecutions', null, '暂无执行记录')}
+                emptyText={t('mcpMonitor.noExecutions', null, 'No execution records')}
                 rowSelection={{
                     selectedRowKeys: selected,
                     onChange: keys => onSelectionChange(keys || [])
@@ -123,7 +123,7 @@ export default function ExecutionTable({
                             value={toolInput}
                             showClear
                             style={{ width: 220 }}
-                            placeholder={t('mcp.toolSearchPlaceholder', null, '输入工具名称…')}
+                            placeholder={t('mcp.toolSearchPlaceholder', null, 'Enter tool name...')}
                             onChange={value => onQuery({ toolInput: value })}
                         />
                         <Select

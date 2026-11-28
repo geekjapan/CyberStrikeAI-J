@@ -1,4 +1,4 @@
-/* 调用拦截页私有布局样式：只做排版，颜色沿用 Semi 变量。 */
+/* Private layout styles for the call interception page: typography only, colors follow Semi variables. */
 
 .tool-guard-page { display: flex; flex-direction: column; min-width: 0; }
 

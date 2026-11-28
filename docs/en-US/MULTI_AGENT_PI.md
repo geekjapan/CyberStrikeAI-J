@@ -1,5 +1,7 @@
 # Pi single and multi-agent execution
 
+[日本語](../ja-JP/MULTI_AGENT_PI.md)
+
 Pi is the only runtime. Go owns business state, tool permissions, HITL, execution receipts and finalization. The SDK owns model loops, sessions, compaction and streaming. See [Pi runtime](pi-runtime.md).
 
 Canonical single-agent endpoints are `/api/agent`, `/api/agent/stream`, and `/api/agent/runs`; the mode is `single`. Multi-agent endpoints retain `/api/multi-agent` and support `deep`, `plan_execute`, and `supervisor`. Older route/mode identifiers are input aliases only and cannot select another engine.

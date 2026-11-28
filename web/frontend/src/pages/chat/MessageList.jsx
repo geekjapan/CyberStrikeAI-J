@@ -1,4 +1,4 @@
-/** 消息区：运行中跟随输出，结束后定位到最终总结的开头。 */
+/** Message area: follows the output while running, jumps to the start of the final summary when finished. */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Avatar, Button, Empty, Spin, Tag, Tooltip, Typography } from '@douyinfe/semi-ui';
 import { IconArrowDown, IconComment, IconDelete, IconRefresh, IconUser } from '@douyinfe/semi-icons';
@@ -16,10 +16,10 @@ function ChatWelcome() {
         <div className="chat-welcome">
             <Empty
                 image={<span className="chat-welcome-mark" aria-hidden="true"><IconComment size="extra-large" /></span>}
-                title={t('chat.welcomeHeading', null, '让安全探索，从对话开始')}
+                title={t('chat.welcomeHeading', null, 'Security exploration starts with a conversation')}
                 description={(
                     <Paragraph type="tertiary" className="chat-welcome-description">
-                        {t('chat.welcomeScopeDescription', null, '描述测试目标与授权范围，或上传相关材料，即可开始对话。')}
+                        {t('chat.welcomeScopeDescription', null, 'Describe the test target and authorized scope, or upload related material, to start a conversation.')}
                     </Paragraph>
                 )}
             />
@@ -65,18 +65,18 @@ function MessageRow({ message, canDelete, onDeleteTurn }) {
             </Avatar>
             <div className="chat-bubble">
                 <div className="chat-bubble-head">
-                    <span className="chat-bubble-role">{isUser ? t('chat.you', null, '我') : t('chat.assistant', null, '助手')}</span>
+                    <span className="chat-bubble-role">{isUser ? t('chat.you', null, 'Me') : t('chat.assistant', null, 'Assistant')}</span>
                     {time && <span className="chat-bubble-time">{time}</span>}
                     <span className="chat-bubble-actions">
                         {!isUser && content && <CopyButton text={content} size="small" />}
                         {canDelete && isUser && message.id && (
-                            <Tooltip content={t('chat.deleteTurnTitle', null, '删除本轮')}>
+                            <Tooltip content={t('chat.deleteTurnTitle', null, 'Delete this turn')}>
                                 <Button
                                     size="small"
                                     theme="borderless"
                                     type="danger"
                                     icon={<IconDelete />}
-                                    aria-label={t('chat.deleteTurnTitle', null, '删除本轮')}
+                                    aria-label={t('chat.deleteTurnTitle', null, 'Delete this turn')}
                                     onClick={() => onDeleteTurn(message)}
                                 />
                             </Tooltip>
@@ -100,7 +100,7 @@ function LiveRow({ live }) {
             <Avatar size="small" color="blue" className="chat-avatar">AI</Avatar>
             <div className="chat-bubble">
                 <div className="chat-bubble-head">
-                    <span className="chat-bubble-role">{t('chat.assistant', null, '助手')}</span>
+                    <span className="chat-bubble-role">{t('chat.assistant', null, 'Assistant')}</span>
                     <Tag size="small" color={meta.color} shape="circle">{meta.label}</Tag>
                     {elapsed && <span className="chat-bubble-time">{elapsed}</span>}
                     {live.statusText && <span className="chat-live-status">{live.statusText}</span>}
@@ -116,7 +116,7 @@ function LiveRow({ live }) {
                 {live.error && <div className="chat-live-error">{live.error}</div>}
                 {live.notice && <div className="chat-live-notice">{live.notice}</div>}
                 {live.finalizable === false && (
-                    <div className="chat-live-notice">本轮回复未通过最终化校验，内容可能不完整。</div>
+                    <div className="chat-live-notice">{t('ui.messageList.notFinalizable', null, 'This reply did not pass the finalization check and may be incomplete.')}</div>
                 )}
             </div>
         </div>
@@ -233,7 +233,7 @@ export default function MessageList({
                 {live && <LiveRow live={live} />}
                 {error && !loading && (
                     <Button icon={<IconRefresh />} theme="borderless" onClick={onRetry} className="chat-retry-inline">
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>
                 )}
             </div>
@@ -249,7 +249,7 @@ export default function MessageList({
                         scrollToBottom(true);
                     }}
                 >
-                    {t('chat.returnToLatest', null, '回到底部')}
+                    {t('chat.returnToLatest', null, 'Jump to latest message')}
                 </Button>
             )}
         </div>

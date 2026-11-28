@@ -1,4 +1,4 @@
-/** 系统设置各分区的共用小件：权限提示、加载骨架、只读键值行。 */
+/** Shared widgets of the settings sections: permission notice, loading skeleton, read-only key-value row. */
 import { Banner, Skeleton, Typography } from '@douyinfe/semi-ui';
 import { useT } from '../../../lib/i18n';
 
@@ -13,8 +13,8 @@ export function PermissionBanner({ permission, label }) {
             closeIcon={null}
             description={t(
                 'settings.permissionMissing',
-                { permission },
-                `当前账号缺少 ${permission} 权限，无法${label || '访问该分区'}。`
+                { permission, section: label || t('settings.thisSection', null, 'this section') },
+                'The current account lacks the {{permission}} permission and cannot open "{{section}}".'
             )}
         />
     );

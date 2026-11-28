@@ -19,46 +19,45 @@ export const UI_PERMISSIONS = [
     'project:write', 'vulnerability:write'
 ];
 
-const translations = new Map(['zh-CN', 'en-US'].map(lang => [
+const translations = new Map(['en-US', 'ja-JP'].map(lang => [
     lang, JSON.parse(readFileSync(new URL(`../../static/i18n/${lang}.json`, import.meta.url), 'utf8'))
 ]));
 // Use the real dictionaries, not stubbed translations that hide localization changes.
-export function label(key, fallback) {
-    for (const lang of ['zh-CN', 'en-US']) {
-        const value = key.split('.').reduce((node, part) => node?.[part], translations.get(lang));
-        if (typeof value === 'string') return value;
-    }
-    return fallback;
+// English is the base language of the UI; pass another language only for tests that switch language.
+export function label(key, lang = 'en-US') {
+    const value = key.split('.').reduce((node, part) => node?.[part], translations.get(lang));
+    if (typeof value !== 'string') throw new Error(`Missing ${lang} i18n key: ${key}`);
+    return value;
 }
 
 export const STAMP = '2026-11-01T08:00:00Z';
 export const PROJECT = {
-    id: 'fixture-project', name: '示例项目', description: '仅用于本地浏览器回归的匿名项目',
+    id: 'fixture-project', name: 'Sample project', description: 'Anonymous project used only for local browser regression tests',
     status: 'active', pinned: false, created_at: STAMP, updated_at: STAMP
 };
 export const FACT = {
     id: 'fixture-fact', project_id: PROJECT.id, project_name: PROJECT.name,
     fact_key: 'fixture.localhost.scope', category: 'target', confidence: 'confirmed',
-    summary: '示例目标仅限 localhost', body: '仅检查 http://localhost:8080/ 的匿名示例。',
+    summary: 'Sample target is limited to localhost', body: 'Anonymous sample that only checks http://localhost:8080/.',
     created_at: STAMP, updated_at: STAMP, incoming_links: [], outgoing_links: [],
     link_counts: { incoming: 0, outgoing: 0 }
 };
 export const VULNERABILITY = {
-    id: 'fixture-vulnerability', title: '示例访问控制问题', severity: 'critical', status: 'open',
-    type: '访问控制', project_id: PROJECT.id, target: 'http://localhost:8080/example',
-    host: 'localhost', description: '匿名回归数据，不代表真实漏洞。',
-    evidence: 'FAKE-EVIDENCE: local fixture only', recommendation: '核对示例访问权限。',
-    conversation_id: 'fixture-conversation', retest_notes: '修复后该路径应返回 403。',
+    id: 'fixture-vulnerability', title: 'Sample access control issue', severity: 'critical', status: 'open',
+    type: 'Access control', project_id: PROJECT.id, target: 'http://localhost:8080/example',
+    host: 'localhost', description: 'Anonymous regression data; not a real vulnerability.',
+    evidence: 'FAKE-EVIDENCE: local fixture only', recommendation: 'Review the sample access permissions.',
+    conversation_id: 'fixture-conversation', retest_notes: 'After the fix, this path should return 403.',
     created_at: STAMP, updated_at: STAMP
 };
 export const CONVERSATION = {
-    id: 'fixture-conversation', title: '示例会话', createdAt: STAMP, updatedAt: STAMP,
+    id: 'fixture-conversation', title: 'Sample conversation', createdAt: STAMP, updatedAt: STAMP,
     messages: [
-        { id: 'fixture-user-message', role: 'user', content: '仅整理 localhost 示例范围。', createdAt: STAMP },
-        { id: 'fixture-assistant-message', role: 'assistant', content: '已记录示例范围，未执行任何工具。', createdAt: STAMP }
+        { id: 'fixture-user-message', role: 'user', content: 'Only summarize the localhost sample scope.', createdAt: STAMP },
+        { id: 'fixture-assistant-message', role: 'assistant', content: 'Sample scope recorded; no tools were run.', createdAt: STAMP }
     ]
 };
-export const STREAM_REPLY = '模拟回复完成：仅处理匿名 localhost 数据，未执行真实任务。';
+export const STREAM_REPLY = 'Simulated reply complete: only anonymous localhost data was handled; no real task ran.';
 const STREAM_ID = 'fixture-stream-conversation';
 
 export function conversationListFixture(items, url) {
@@ -83,8 +82,8 @@ export function conversationListFixture(items, url) {
 function makeReads(session) {
     const vulnerabilities = [
         VULNERABILITY,
-        { ...VULNERABILITY, id: 'fixture-vulnerability-high', title: '示例响应头问题', severity: 'high' },
-        { ...VULNERABILITY, id: 'fixture-vulnerability-low', title: '示例信息提示', severity: 'low' }
+        { ...VULNERABILITY, id: 'fixture-vulnerability-high', title: 'Sample response header issue', severity: 'high' },
+        { ...VULNERABILITY, id: 'fixture-vulnerability-low', title: 'Sample informational notice', severity: 'low' }
     ];
     const monitor = {
         summary: { totalCalls: 10, successCalls: 8, failedCalls: 2, runningCalls: 0, toolCount: 2 },
@@ -98,7 +97,7 @@ function makeReads(session) {
         '/api/notifications/summary': { items: [] },
         '/api/agent-loop/tasks': { tasks: [1, 2].map(id => ({
             runId: `fixture-run-${id}`, conversationId: CONVERSATION.id,
-            title: `示例任务 ${id}`, status: 'running', startedAt: STAMP
+            title: `Sample task ${id}`, status: 'running', startedAt: STAMP
         })) },
         '/api/vulnerabilities/stats': { total: 3, distinct: 3, by_severity: { critical: 1, high: 1, medium: 0, low: 1, info: 0 }, by_status: { open: 3 } },
         '/api/vulnerabilities': { vulnerabilities, total: 3, page: 1, limit: 20 },
@@ -117,7 +116,7 @@ function makeReads(session) {
         '/api/knowledge/retrieval-logs': { logs: [], total: 0 },
         '/api/skills/stats': { total_skills: 0, total_calls: 0, total_success: 0, stats: [] },
         '/api/skills': { skills: [], total: 0 },
-        '/api/roles': { roles: [{ name: '示例只读角色', description: '匿名角色', tools: [], enabled: true }] },
+        '/api/roles': { roles: [{ name: 'Sample read-only role', description: 'Anonymous role', tools: [], enabled: true }] },
         '/api/multi-agent/markdown-agents': { agents: [] },
         '/api/hitl/pending': { items: [], total: 0, page: 1, pageSize: 20 },
         '/api/external-mcp/stats': { total: 0, enabled: 0, connected: 0, disabled: 0 },
@@ -151,8 +150,8 @@ function makeReads(session) {
         '/api/rbac/users': { users: [session.user] },
         '/api/rbac/resource-assignments': { assignments: [] },
         '/api/openapi/spec': {
-            openapi: '3.0.3', info: { title: '匿名本地 API 文档', version: 'fixture' },
-            paths: { '/api/auth/validate': { get: { summary: '验证示例会话', tags: ['示例'], responses: { 200: { description: '示例响应' } } } } }
+            openapi: '3.0.3', info: { title: 'Anonymous local API documentation', version: 'fixture' },
+            paths: { '/api/auth/validate': { get: { summary: 'Validate sample session', tags: ['Sample'], responses: { 200: { description: 'Sample response' } } } } }
         }
     }));
 }
@@ -172,7 +171,7 @@ class MockApi {
         this.overrides.set(`${method.toUpperCase()} ${path}`, response);
     }
 
-    fail(method, path, message = '示例接口暂不可用，请重试') {
+    fail(method, path, message = 'Sample endpoint is temporarily unavailable; please retry') {
         this.respond(method, path, { status: 503, json: { error: message } });
     }
 
@@ -190,7 +189,7 @@ class MockApi {
 
     enableChatStream(message) {
         const conversation = {
-            id: STREAM_ID, title: '示例流式会话', createdAt: STAMP, updatedAt: STAMP,
+            id: STREAM_ID, title: 'Sample streaming conversation', createdAt: STAMP, updatedAt: STAMP,
             messages: [
                 { id: 'fixture-stream-user', role: 'user', content: message, createdAt: STAMP },
                 { id: 'fixture-stream-assistant', role: 'assistant', content: STREAM_REPLY, createdAt: STAMP }
@@ -203,8 +202,8 @@ class MockApi {
             const events = [
                 { type: 'conversation', data: { conversationId: STREAM_ID } },
                 { type: 'response_start', data: { conversationId: STREAM_ID } },
-                { type: 'response_delta', message: '模拟回复完成：', data: {} },
-                { type: 'response_delta', message: STREAM_REPLY.slice('模拟回复完成：'.length), data: { accumulated: STREAM_REPLY } },
+                { type: 'response_delta', message: 'Simulated reply complete: ', data: {} },
+                { type: 'response_delta', message: STREAM_REPLY.slice('Simulated reply complete: '.length), data: { accumulated: STREAM_REPLY } },
                 { type: 'response', message: STREAM_REPLY, data: { conversationId: STREAM_ID, messageId: 'fixture-stream-assistant', finalizable: true } },
                 { type: 'done', data: {} }
             ];
@@ -254,7 +253,7 @@ class MockApi {
             entry.status = response.status ?? 200;
             return;
         }
-        const language = /^\/static\/i18n\/(zh-CN|en-US)\.json$/.exec(url.pathname)?.[1];
+        const language = /^\/static\/i18n\/(en-US|ja-JP)\.json$/.exec(url.pathname)?.[1];
         if (method === 'GET' && language) return route.fulfill({ json: translations.get(language) });
         // Only local Vite modules/documents and static visual assets may reach the dev server.
         // fetch/XHR outside the explicitly mocked endpoints is never passed through.
@@ -273,7 +272,7 @@ export const test = base.extend({
     mockApi: [async ({ context, authenticated, appPermissions }, use, testInfo) => {
         const session = {
             token: FAKE_TOKEN, expiresAt: new Date(Date.now() + 86_400_000).toISOString(),
-            user: { id: 'FAKE-PLAYWRIGHT-USER', username: 'FAKE_TEST_USER', display_name: '示例用户' },
+            user: { id: 'FAKE-PLAYWRIGHT-USER', username: 'FAKE_TEST_USER', display_name: 'Sample user' },
             roles: ['FAKE_TEST_ROLE'], permissions: [...appPermissions]
         };
         const mock = new MockApi(session);
@@ -290,7 +289,7 @@ export const test = base.extend({
             if (location.origin !== origin || localStorage.getItem('FAKE_PLAYWRIGHT_SEEDED')) return;
             localStorage.clear();
             localStorage.setItem('FAKE_PLAYWRIGHT_SEEDED', '1');
-            localStorage.setItem('csai_lang', 'zh-CN');
+            localStorage.setItem('csai_lang', 'en-US');
             localStorage.setItem('cyberstrike-theme', 'system');
             localStorage.setItem('csai-nav-collapsed', '0');
             localStorage.setItem('csai-chat-agent-mode', JSON.stringify('single'));
@@ -315,7 +314,7 @@ export async function ready(page) {
     // Wait for actual data loading indicators, not just the always-present layout main.
     await expect(main.locator('.semi-spin:not(.semi-spin-hidden):visible')).toHaveCount(0);
     await expect(main.locator('[aria-busy="true"]:visible')).toHaveCount(0);
-    await expect(main.getByText(label('common.forbidden', '当前账号没有访问该页面的权限'), { exact: true })).toHaveCount(0);
+    await expect(main.getByText(label('common.forbidden'), { exact: true })).toHaveCount(0);
     return main;
 }
 

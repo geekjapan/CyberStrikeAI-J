@@ -1,6 +1,6 @@
 # Testing Guide
 
-[中文](../zh-CN/testing.md)
+[日本語](../ja-JP/testing.md)
 
 Testing CyberStrikeAI means more than running Go tests. Agent, MCP, HITL, C2, WebShell, and frontend streaming all have different failure modes.
 

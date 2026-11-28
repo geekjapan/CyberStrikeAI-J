@@ -1,4 +1,4 @@
-/** MCP 监控统计卡与工具调用排行。 */
+/** MCP monitor stat cards and tool call ranking. */
 import { useMemo } from 'react';
 import { Tag } from '@douyinfe/semi-ui';
 import { SectionCard, StatGrid, DataTable } from '../../components/ui';
@@ -7,8 +7,8 @@ import { formatDateTime, formatPercent } from '../../lib/format';
 import { formatDurationMs, formatPercentValue, successRate, toolDisplayName } from './utils';
 
 /**
- * 统计卡：调用次数 / 成功率 / 平均耗时 / 失败数。
- * GET /monitor/stats 不含耗时字段，平均耗时由调用方按当前列表的计时记录计算后传入。
+ * Stat cards: call count / success rate / average duration / failure count.
+ * GET /monitor/stats has no duration field; the caller computes the average from the timing records of the current list and passes it in.
  */
 export function MonitorStats({ summary, loading, avgMs = null, avgSamples = 0 }) {
     const t = useT();
@@ -19,38 +19,38 @@ export function MonitorStats({ summary, loading, avgMs = null, avgSamples = 0 })
             metrics={[
                 {
                     id: 'calls',
-                    label: t('mcpMonitor.totalCalls', null, '调用次数'),
+                    label: t('mcpMonitor.totalCalls', null, 'Total calls'),
                     value: summary ? (summary.totalCalls ?? 0) : '—',
                     detail: summary
-                        ? t('mcpMonitor.statsFromAllTools', null, '全部工具累计，含已拦截调用')
+                        ? t('mcpMonitor.statsFromAllTools', null, 'From all tool calls')
                         : undefined,
                     loading
                 },
                 {
                     id: 'rate',
-                    label: t('mcpMonitor.successRate', null, '成功率'),
+                    label: t('mcpMonitor.successRate', null, 'Success rate'),
                     value: formatPercentValue(rate),
                     detail: summary
-                        ? `${t('common.ok', null, '成功')} ${summary.successCalls ?? 0} / ${t('mcpMonitor.failedColumn', null, '失败')} ${summary.failedCalls ?? 0}`
+                        ? `${t('common.ok', null, 'OK')} ${summary.successCalls ?? 0} / ${t('mcpMonitor.failedColumn', null, 'Failed')} ${summary.failedCalls ?? 0}`
                         : undefined,
                     tone: rate === null ? undefined : (rate >= 0.95 ? 'success' : rate >= 0.8 ? 'warning' : 'danger'),
                     loading
                 },
                 {
                     id: 'avg',
-                    label: '平均耗时',
+                    label: t('ui.mcpStats.avgDuration', null, 'Average duration'),
                     value: avgMs === null ? '—' : formatDurationMs(avgMs),
                     detail: avgSamples > 0
-                        ? `按当前页 ${avgSamples} 条计时记录估算`
-                        : '当前页暂无可计时的执行记录',
+                        ? t('ui.mcpStats.avgEstimated', { count: avgSamples }, 'Estimated from {{count}} timed records on this page')
+                        : t('ui.mcpStats.avgNone', null, 'No timed execution records on this page'),
                     loading
                 },
                 {
                     id: 'failed',
-                    label: t('mcpMonitor.failedMetric', null, '失败数'),
+                    label: t('mcpMonitor.failedMetric', null, 'Failures'),
                     value: summary ? (summary.failedCalls ?? 0) : '—',
                     detail: summary
-                        ? `${t('mcpMonitor.blockedCount', { n: summary.blockedCalls ?? 0 }, `安全拦截 ${summary.blockedCalls ?? 0}`)} · ${t('mcpMonitor.lastCall', null, '最近调用')} ${summary.lastCallTime ? formatDateTime(summary.lastCallTime) : '—'}`
+                        ? `${t('mcpMonitor.blockedCount', { n: summary.blockedCalls ?? 0 }, 'Blocked {{n}}')} · ${t('mcpMonitor.lastCall', null, 'Last call')} ${summary.lastCallTime ? formatDateTime(summary.lastCallTime) : '—'}`
                         : undefined,
                     tone: summary && summary.failedCalls > 0 ? 'danger' : undefined,
                     loading
@@ -77,7 +77,7 @@ export function ToolRankCard({ topTools, loading, onFilterTool, activeTool }) {
 
     const columns = [
         {
-            title: t('mcpMonitor.columnTool', null, '工具'),
+            title: t('mcpMonitor.columnTool', null, 'Tool'),
             dataIndex: 'displayName',
             render: (value, record) => (
                 <button
@@ -85,36 +85,36 @@ export function ToolRankCard({ topTools, loading, onFilterTool, activeTool }) {
                     className={`mcp-monitor-tool-link ${activeTool && activeTool === record.toolName ? 'mcp-monitor-link-active' : ''}`}
                     onClick={() => onFilterTool?.(record.toolName)}
                 >
-                    {value || t('mcpMonitor.unknownTool', null, '未知工具')}
+                    {value || t('mcpMonitor.unknownTool', null, 'Unknown tool')}
                 </button>
             )
         },
         {
-            title: t('mcpMonitor.columnCalls', null, '调用'),
+            title: t('mcpMonitor.columnCalls', null, 'Calls'),
             dataIndex: 'totalCalls',
             width: 90,
             render: value => value ?? 0
         },
         {
-            title: t('mcpMonitor.successColumn', null, '成功'),
+            title: t('mcpMonitor.successColumn', null, 'Succeeded'),
             dataIndex: 'successCalls',
             width: 90,
             render: value => value ?? 0
         },
         {
-            title: t('mcpMonitor.failedColumn', null, '失败'),
+            title: t('mcpMonitor.failedColumn', null, 'Failed'),
             dataIndex: 'failedCalls',
             width: 90,
             render: value => <span className={value > 0 ? 'mcp-monitor-danger' : undefined}>{value ?? 0}</span>
         },
         {
-            title: t('mcpMonitor.blockedColumn', null, '拦截'),
+            title: t('mcpMonitor.blockedColumn', null, 'Blocked'),
             dataIndex: 'blockedCalls',
             width: 90,
             render: value => (value ? <Tag size="small" color="orange">{value}</Tag> : 0)
         },
         {
-            title: t('mcpMonitor.columnSuccessRate', null, '成功率'),
+            title: t('mcpMonitor.columnSuccessRate', null, 'Success rate'),
             dataIndex: 'rate',
             width: 110,
             render: value => (value === null ? '—' : formatPercent(value, 1))
@@ -123,8 +123,8 @@ export function ToolRankCard({ topTools, loading, onFilterTool, activeTool }) {
 
     return (
         <SectionCard
-            title={t('mcpMonitor.toolStatsTitle', null, '工具统计')}
-            description={t('mcpMonitor.toolStatsHint', null, '点击工具名筛选下方执行记录')}
+            title={t('mcpMonitor.toolStatsTitle', null, 'Tool statistics')}
+            description={t('mcpMonitor.toolStatsHint', null, 'Click a bar segment or row to filter records below; hover to highlight')}
         >
             <DataTable
                 columns={columns}
@@ -133,7 +133,7 @@ export function ToolRankCard({ topTools, loading, onFilterTool, activeTool }) {
                 loading={loading}
                 pagination={false}
                 size="small"
-                emptyText={t('mcpMonitor.noStatsData', null, '暂无统计数据')}
+                emptyText={t('mcpMonitor.noStatsData', null, 'No statistical data')}
             />
         </SectionCard>
     );

@@ -100,8 +100,8 @@ test.describe('login', () => {
     test('keyboard focus outlines the entire login input, including its icon', async ({ page }) => {
         await page.goto('/static/app/');
         const form = page.locator('.cs-login-form');
-        const username = form.getByLabel(label('login.username', '用户名'), { exact: true });
-        const password = form.getByLabel(label('login.password', '密码'), { exact: true });
+        const username = form.getByLabel(label('login.username'), { exact: true });
+        const password = form.getByLabel(label('login.password'), { exact: true });
 
         await expect(username).toBeVisible();
         for (const input of [username, password]) {
@@ -118,21 +118,21 @@ test.describe('login', () => {
     test('empty fields validate locally; only explicitly fake credentials may be submitted', async ({ page, mockApi }) => {
         await page.goto('/static/app/');
         const form = page.locator('.cs-login-form');
-        const submit = button(form, label('login.submit', '登录'));
+        const submit = button(form, label('login.submit'));
         await submit.click();
-        await expect(form.getByText(label('login.usernameRequired', '请输入用户名'), { exact: true })).toBeVisible();
-        await expect(form.getByText(label('login.passwordRequired', '请输入密码'), { exact: true })).toBeVisible();
+        await expect(form.getByText(label('login.usernameRequired'), { exact: true })).toBeVisible();
+        await expect(form.getByText(label('login.passwordRequired'), { exact: true })).toBeVisible();
         expect(mockApi.requests).toEqual([]);
 
-        await form.getByLabel(label('login.username', '用户名'), { exact: true }).fill('FAKE_TEST_USER');
+        await form.getByLabel(label('login.username'), { exact: true }).fill('FAKE_TEST_USER');
         await submit.click();
-        await expect(form.getByText(label('login.passwordRequired', '请输入密码'), { exact: true })).toBeVisible();
+        await expect(form.getByText(label('login.passwordRequired'), { exact: true })).toBeVisible();
         expect(mockApi.writes()).toEqual([]);
 
-        mockApi.respond('POST', '/api/auth/login', { status: 401, json: { error: 'FAKE 测试登录被拒绝' } });
-        await form.getByLabel(label('login.password', '密码'), { exact: true }).fill('FAKE_PASSWORD_NOT_A_CREDENTIAL');
+        mockApi.respond('POST', '/api/auth/login', { status: 401, json: { error: 'FAKE test login rejected' } });
+        await form.getByLabel(label('login.password'), { exact: true }).fill('FAKE_PASSWORD_NOT_A_CREDENTIAL');
         await submit.click();
-        await expect(form.getByText('FAKE 测试登录被拒绝', { exact: true })).toBeVisible();
+        await expect(form.getByText('FAKE test login rejected', { exact: true })).toBeVisible();
         expect(mockApi.calls('POST', '/api/auth/login').map(call => call.body)).toEqual([
             { username: 'FAKE_TEST_USER', password: 'FAKE_PASSWORD_NOT_A_CREDENTIAL' }
         ]);
@@ -144,11 +144,11 @@ test.describe('login', () => {
 test('dashboard: exact populated metrics and anonymous records', async ({ page }) => {
     const main = await visit(page, 'dashboard');
     const metrics = [
-        [label('dashboard.runningConversations', '运行中任务'), '2'],
-        [label('dashboard.vulnTotal', '漏洞总数'), '3'],
-        [label('dashboard.toolCalls', '工具调用'), '10'],
-        [label('dashboard.successRate', '执行成功率'), '80.0%'],
-        [label('dashboard.tokenUsage', 'Token 用量（7 天）'), '1,200']
+        [label('dashboard.runningConversations'), '2'],
+        [label('dashboard.vulnTotal'), '3'],
+        [label('dashboard.toolCalls'), '10'],
+        [label('dashboard.successRate'), '80.0%'],
+        [label('dashboard.tokenUsage'), '1,200']
     ];
     const metricCards = main.locator('.cs-stat-grid .cs-stat-card');
     await expect(metricCards).toHaveCount(metrics.length);
@@ -159,24 +159,25 @@ test('dashboard: exact populated metrics and anonymous records', async ({ page }
     await expect(button(main, PROJECT.name)).toBeVisible();
     await expect(button(main, VULNERABILITY.title)).toBeVisible();
     await expect(main.getByText(FACT.summary, { exact: true })).toBeVisible();
-    await expect(main.getByText(/^(部分数据不可用|数据暂不可用)$/)).toHaveCount(0);
+    await expect(main.getByText(/^(Some data unavailable|Data unavailable)$/)).toHaveCount(0);
 });
 
 test('dashboard: feed cards align above full-width facts that stack on small screens', async ({ page, mockApi }, testInfo) => {
     const vulnerabilities = Array.from({ length: 8 }, (_, index) => ({
         ...VULNERABILITY, id: `fixture-vulnerability-${index}`
     }));
-    const facts = [FACT, { ...FACT, id: 'fixture-long-fact', summary: `示例事实 ${'localhost/'.repeat(45)}` }];
+    const facts = [FACT, { ...FACT, id: 'fixture-long-fact', summary: `Sample fact ${'localhost/'.repeat(45)}` }];
     mockApi.respond('GET', '/api/vulnerabilities', () => ({ json: { vulnerabilities } }));
     mockApi.respond('GET', '/api/projects/dashboard-summary', () => ({
         json: { totals: { active_projects: 1, total_facts: facts.length }, projects: [PROJECT], recent_facts: facts }
     }));
 
     const main = await visit(page, 'dashboard');
-    const card = name => main.locator('.cs-section-card').filter({ has: page.getByText(name, { exact: true }) });
-    const recentVulnerabilities = await card('最近漏洞').boundingBox();
-    const capabilities = await card('能力与运行态').boundingBox();
-    const recentFacts = card('近期事实');
+    // Match the card title only: in English the project summary uses the same "Recent facts" text for a totals label.
+    const card = name => main.locator('.cs-section-card').filter({ has: page.locator('.cs-section-title').getByText(name, { exact: true }) });
+    const recentVulnerabilities = await card('Recent vulnerabilities').boundingBox();
+    const capabilities = await card('Capabilities and runtime').boundingBox();
+    const recentFacts = card('Recent facts');
     const factItems = recentFacts.locator('.semi-list-item');
     await expect(factItems).toHaveCount(2);
     const factsBox = await recentFacts.boundingBox();
@@ -192,11 +193,13 @@ test('dashboard: feed cards align above full-width facts that stack on small scr
     await screenshot(page, testInfo, 'dashboard-facts-desktop');
 
     await page.setViewportSize({ width: 390, height: 844 });
+    // The first frame after a resize can still show the desktop layout (main content 166px wide); wait for the mobile layout.
+    await expect.poll(() => page.evaluate(() => document.querySelector('#main-content').clientWidth)).toBe(390);
     const [first, second] = await Promise.all([factItems.nth(0).boundingBox(), factItems.nth(1).boundingBox()]);
     expect(first.x).toBeCloseTo(second.x, 0);
     expect(second.y).toBeGreaterThan(first.y + first.height);
     await assertNoOverflow(page);
-    await factItems.first().getByRole('button', { name: '查看所属项目' }).click();
+    await factItems.first().getByRole('button', { name: 'View project' }).click();
     await expect(page).toHaveURL(new RegExp(`#/projects\\?id=${PROJECT.id}$`));
 });
 
@@ -210,7 +213,7 @@ test('dashboard: severity segment and legend carry the active status into the vu
     await expect(main.locator('.dashboard-risk-value')).toHaveText('50.0%');
     const card = main.locator('.dashboard-vulnerability-card');
     await card.locator('.semi-select').click();
-    await page.getByRole('option', { name: /已修复$/ }).click();
+    await page.getByRole('option', { name: /Fixed$/ }).click();
     await page.mouse.move(1, 1);
     await expect(card.locator('.dashboard-ring-center strong')).toHaveText('4');
     const segment = card.locator('.dashboard-ring-link[data-severity="high"] path');
@@ -246,16 +249,16 @@ test('dashboard: severity segment and legend carry the active status into the vu
     expect(mockApi.writes()).toEqual([]);
 });
 
-for (const [key, fallback, target] of [
-    ['dashboard.runningConversations', '运行中任务', 'tasks'],
-    ['dashboard.vulnTotal', '漏洞总数', 'vulnerabilities'],
-    ['dashboard.toolCalls', '工具调用', 'mcp-monitor'],
-    ['dashboard.successRate', '执行成功率', 'mcp-monitor'],
-    ['dashboard.tokenUsage', 'Token 用量（7 天）', 'settings?section=token-usage']
+for (const [key, target] of [
+    ['dashboard.runningConversations', 'tasks'],
+    ['dashboard.vulnTotal', 'vulnerabilities'],
+    ['dashboard.toolCalls', 'mcp-monitor'],
+    ['dashboard.successRate', 'mcp-monitor'],
+    ['dashboard.tokenUsage', 'settings?section=token-usage']
 ]) {
     test(`dashboard: metric navigates to ${target} (${key})`, async ({ page }) => {
         const main = await visit(page, 'dashboard');
-        await button(main, label(key, fallback)).click();
+        await button(main, label(key)).click();
         await expect(page).toHaveURL(new URL(`/static/app/#/${target}`, page.url()).href);
         await ready(page);
     });
@@ -268,34 +271,31 @@ test('navigation: four Semi groups, parent expansion, child selection and collap
     await expect(version).toBeVisible();
     await expect(sidebar.locator('.cs-nav-section')).toHaveCount(4);
     await expect(sidebar.getByRole('menu')).toHaveCount(4);
-    for (const [key, fallback] of [
-        ['groupWorkspace', '工作台'], ['groupOperations', '安全作业'],
-        ['groupCapabilities', '能力中心'], ['groupPlatform', '平台管理']
-    ]) {
-        const section = sidebar.getByRole('region', { name: label(`nav.${key}`, fallback), exact: true });
+    for (const key of ['groupWorkspace', 'groupOperations', 'groupCapabilities', 'groupPlatform']) {
+        const section = sidebar.getByRole('region', { name: label(`nav.${key}`), exact: true });
         await expect(section).toBeVisible();
         await expect(section.getByRole('menu')).toHaveCount(1);
     }
-    const parent = sidebar.getByRole('menuitem', { name: label('nav.assets', '资产管理'), exact: true });
-    const selected = sidebar.getByRole('menuitem', { name: label('nav.assetLibrary', '资产库'), exact: true });
+    const parent = sidebar.getByRole('menuitem', { name: label('nav.assets'), exact: true });
+    const selected = sidebar.getByRole('menuitem', { name: label('nav.assetLibrary'), exact: true });
     await expect(parent).toHaveAttribute('aria-expanded', 'true');
     await expect(selected).toHaveClass(/semi-navigation-item-selected/);
     await expect(sidebar.locator('.semi-navigation-item-selected')).toHaveCount(1);
-    const overview = sidebar.getByRole('menuitem', { name: label('nav.assetOverview', '资产概览'), exact: true });
+    const overview = sidebar.getByRole('menuitem', { name: label('nav.assetOverview'), exact: true });
     await overview.click();
     await expect(page).toHaveURL(/#\/asset-overview$/);
     await expect(overview).toHaveClass(/semi-navigation-item-selected/);
     await expect(selected).not.toHaveClass(/semi-navigation-item-selected/);
 
     const wide = await sidebar.boundingBox();
-    await button(sidebar, label('nav.collapse', '收起菜单')).click();
+    await button(sidebar, label('nav.collapse')).click();
     await expect(page.locator('.cs-shell')).toHaveClass(/is-collapsed/);
     await expect(version).toBeHidden();
     await expect.poll(async () => (await sidebar.boundingBox()).width).toBeLessThan(wide.width);
     await page.reload();
     await ready(page);
     await expect(page.locator('.cs-shell')).toHaveClass(/is-collapsed/);
-    await button(sidebar, label('nav.expand', '展开菜单')).click();
+    await button(sidebar, label('nav.expand')).click();
     await expect(page.locator('.cs-shell')).not.toHaveClass(/is-collapsed/);
     await expect(version).toBeVisible();
     await expect(parent).toHaveAttribute('aria-expanded', 'true');
@@ -307,7 +307,7 @@ test.describe('asset library project scope', () => {
     test.use({ appPermissions: [...UI_PERMISSIONS, 'asset:write', 'asset:delete'] });
 
     test('shows all assets by default and clears a pending selection on project switch', async ({ page, mockApi }) => {
-        const other = { id: 'other-project', name: '另一个项目' };
+        const other = { id: 'other-project', name: 'Another project' };
         const rows = [
             { id: 'asset-one', host: 'one.example.test', project_id: PROJECT.id, project_name: PROJECT.name },
             { id: 'asset-two', host: 'two.example.test', project_id: other.id, project_name: other.name },
@@ -353,7 +353,7 @@ test.describe('asset library project scope', () => {
             return respond(request, url);
         });
         const selectAll = count => button(main, label('assets.selectAllResults').replace('{{count}}', String(count)));
-        const bulkDelete = button(main, label('assets.batchDelete', '批量删除…'));
+        const bulkDelete = button(main, label('assets.batchDelete'));
         await selectAll(1).click();
         try {
             await expect.poll(() => mockApi.calls('GET', '/api/assets/selection').length).toBe(1);
@@ -377,7 +377,7 @@ test.describe('asset library project scope', () => {
     });
 
     test('opens project assets and imports blank project fields into that scope', async ({ page, mockApi }) => {
-        const other = { id: 'other-project', name: '另一个项目' };
+        const other = { id: 'other-project', name: 'Another project' };
         mockApi.respond('GET', '/api/projects', { json: { projects: [PROJECT, other], total: 2 } });
         const main = await visit(page, 'projects');
         await button(main, label('assets.projectAssets')).click();
@@ -388,9 +388,9 @@ test.describe('asset library project scope', () => {
         await button(main, label('assets.bulkImport')).click();
         const drawer = page.getByRole('dialog', { name: label('assets.bulkImportTitle') });
         await drawer.locator('textarea').fill(`target,project\r\nhttps://one.example.test,\r\nhttps://two.example.test,${other.name}`);
-        await expect(drawer.getByText('该行的项目与当前资产范围不一致', { exact: true })).toBeVisible();
+        await expect(drawer.getByText('The project in this row does not match the current asset scope', { exact: true })).toBeVisible();
         mockApi.respond('POST', '/api/assets/import', { json: { created: 1, updated: 0, skipped: 0 } });
-        await drawer.getByRole('button', { name: /导入 1 条有效数据/ }).click();
+        await drawer.getByRole('button', { name: /Import 1 valid rows/ }).click();
         await expect(drawer).toHaveCount(0);
         const [request] = mockApi.writes();
         expect(request.path).toBe('/api/assets/import');
@@ -402,11 +402,11 @@ test.describe('asset library project scope', () => {
 test('navigation: collapsed submenus fit their labels and center beside the parent', async ({ page }, testInfo) => {
     await visit(page, 'chat');
     const sidebar = page.locator('.cs-sider');
-    await button(sidebar, label('nav.collapse', '收起菜单')).click();
+    await button(sidebar, label('nav.collapse')).click();
     await expect(page.locator('.cs-shell')).toHaveClass(/is-collapsed/);
 
     const mcp = sidebar.getByRole('menuitem', { name: 'MCP', exact: true });
-    const monitor = page.getByRole('menuitem', { name: label('nav.mcpMonitor', 'MCP状态监控'), exact: true });
+    const monitor = page.getByRole('menuitem', { name: label('nav.mcpMonitor'), exact: true });
     const mcpMenu = page.locator('.semi-navigation-popover').filter({ has: monitor });
     await mcp.hover();
     await expect(monitor).toBeVisible();
@@ -417,16 +417,19 @@ test('navigation: collapsed submenus fit their labels and center beside the pare
     }).toBeLessThanOrEqual(1);
     await expect.poll(async () => {
         const menuBox = await mcpMenu.boundingBox();
-        const monitorText = await monitor.locator('.semi-navigation-item-text').boundingBox();
-        const leftPadding = monitorText.x - menuBox.x;
-        const rightPadding = menuBox.x + menuBox.width - monitorText.x - monitorText.width;
+        // The popover is sized by its longest label, so check that label (the items differ in length in English).
+        const texts = await mcpMenu.locator('.semi-navigation-item-text').all();
+        const boxes = await Promise.all(texts.map(text => text.boundingBox()));
+        const widest = boxes.reduce((best, box) => (box.width > best.width ? box : best));
+        const leftPadding = widest.x - menuBox.x;
+        const rightPadding = menuBox.x + menuBox.width - widest.x - widest.width;
         return Math.abs(leftPadding - rightPadding);
     }).toBeLessThanOrEqual(1);
     const menuBox = await mcpMenu.boundingBox();
     await screenshot(page, testInfo, 'collapsed-mcp-menu');
 
     const c2 = sidebar.getByRole('menuitem', { name: 'C2', exact: true });
-    const profiles = page.getByRole('menuitem', { name: label('nav.c2Profiles', '流量伪装'), exact: true });
+    const profiles = page.getByRole('menuitem', { name: label('nav.c2Profiles'), exact: true });
     const c2Menu = page.locator('.semi-navigation-popover').filter({ has: profiles });
     await c2.hover();
     await expect(c2Menu.getByRole('menuitem')).toHaveCount(6);
@@ -453,10 +456,10 @@ test('navigation: collapsed submenus fit their labels and center beside the pare
 
 test('theme: menu switches dark/light, actual primary colors, reload preserves preference', async ({ page }, testInfo) => {
     await visit(page, 'dashboard');
-    let current = label('theme.system', '跟随系统');
+    let current = label('theme.system');
     for (const [theme, name, hex, rgb] of [
-        ['dark', label('theme.dark', '暗色'), '#81a7ff', 'rgb(129, 167, 255)'],
-        ['light', label('theme.light', '浅色'), '#3266e3', 'rgb(50, 102, 227)']
+        ['dark', label('theme.dark'), '#81a7ff', 'rgb(129, 167, 255)'],
+        ['light', label('theme.light'), '#3266e3', 'rgb(50, 102, 227)']
     ]) {
         await button(page.locator('.cs-header'), current).click();
         await page.getByRole('menuitem', { name, exact: true }).click();
@@ -464,7 +467,7 @@ test('theme: menu switches dark/light, actual primary colors, reload preserves p
         await expect(page.locator('body')).toHaveAttribute('theme-mode', theme);
         await expect.poll(() => page.evaluate(() => localStorage.getItem('cyberstrike-theme'))).toBe(theme);
         await expect.poll(() => page.evaluate(() => getComputedStyle(document.body).getPropertyValue('--semi-color-primary').trim().toLowerCase())).toBe(hex);
-        await expect(button(page.locator('#main-content'), '进入对话')).toHaveCSS('background-color', rgb);
+        await expect(button(page.locator('#main-content'), 'Open conversation')).toHaveCSS('background-color', rgb);
         await page.reload();
         await ready(page);
         await expect(page.locator('html')).toHaveAttribute('data-theme-preference', theme);
@@ -478,55 +481,55 @@ test('theme: menu switches dark/light, actual primary colors, reload preserves p
 test('chat: empty state, blank Enter and Shift+Enter never send', async ({ page, mockApi }) => {
     const main = await visit(page, 'chat');
     await expect(main.locator('.chat-welcome')).toBeVisible();
-    const input = main.getByRole('textbox', { name: label('chat.composerLabel', '对话内容'), exact: true });
+    const input = main.getByRole('textbox', { name: label('chat.composerLabel'), exact: true });
     await input.press('Enter');
-    await expect(page.getByText(label('chat.emptyMessage', '请输入内容或添加附件'), { exact: true })).toBeVisible();
-    await input.fill('FAKE：仅整理 localhost 示例范围');
+    await expect(page.getByText(label('chat.emptyMessage'), { exact: true })).toBeVisible();
+    await input.fill('FAKE: only summarize the localhost sample scope');
     await input.press('End');
     await input.press('Shift+Enter');
     await input.pressSequentially('FAKE second line');
-    await expect(input).toHaveValue('FAKE：仅整理 localhost 示例范围\nFAKE second line');
+    await expect(input).toHaveValue('FAKE: only summarize the localhost sample scope\nFAKE second line');
     expect(mockApi.writes()).toEqual([]);
 });
 
 for (const uploadFails of [false, true]) {
     test(`chat: attachment plus ${uploadFails ? 'preserves failed uploads until removed' : 'uploads and sends the selected file'}`, async ({ page, mockApi }) => {
-        const message = 'FAKE：整理附件内容。';
+        const message = 'FAKE: summarize the attachment content.';
         const id = mockApi.enableChatStream(message);
         let releaseUpload;
         const uploadReady = new Promise(resolve => { releaseUpload = resolve; });
         mockApi.respond('POST', '/api/chat-uploads', async () => {
             await uploadReady;
             return uploadFails
-                ? { status: 503, json: { error: 'fixture 附件上传失败' } }
+                ? { status: 503, json: { error: 'fixture attachment upload failed' } }
                 : { json: { absolutePath: '/tmp/fixture-attachment.txt' } };
         });
         const main = await visit(page, 'chat');
         const composer = main.locator('.chat-composer');
-        const input = composer.getByRole('textbox', { name: label('chat.composerLabel', '对话内容') });
+        const input = composer.getByRole('textbox', { name: label('chat.composerLabel') });
         await input.fill(message);
         const chooserPending = page.waitForEvent('filechooser');
-        await button(composer, label('chat.attachmentsLabel', '附件')).click();
+        await button(composer, label('chat.attachmentsLabel')).click();
         const chooser = await chooserPending;
         await chooser.setFiles({ name: 'fixture-attachment.txt', mimeType: 'text/plain', buffer: Buffer.from('FAKE fixture attachment') });
         try {
-            await expect(composer.locator('.chat-file-chip')).toContainText('上传中');
-            await expect(button(composer, label('chat.send', '发送'))).toBeDisabled();
+            await expect(composer.locator('.chat-file-chip')).toContainText('Uploading');
+            await expect(button(composer, label('chat.send'))).toBeDisabled();
             await input.press('Enter');
             expect(mockApi.calls('POST', '/api/agent/stream')).toEqual([]);
         } finally {
             releaseUpload();
         }
         if (uploadFails) {
-            await expect(composer.locator('.chat-file-chip')).toContainText('上传失败');
+            await expect(composer.locator('.chat-file-chip')).toContainText('Upload failed');
             await input.press('Enter');
             await expect(input).toHaveValue(message);
-            await expect(page.getByText(label('chat.attachmentsUploadIncomplete', '存在上传失败的附件，请移除后再发送'), { exact: true })).toBeVisible();
+            await expect(page.getByText(label('chat.attachmentsUploadIncomplete'), { exact: true })).toBeVisible();
             expect(mockApi.calls('POST', '/api/agent/stream')).toEqual([]);
             await composer.locator('.chat-file-chip .semi-tag-close').click();
             await expect(composer.locator('.chat-file-chip')).toHaveCount(0);
         } else {
-            await expect(composer.locator('.chat-file-chip')).toContainText('已上传');
+            await expect(composer.locator('.chat-file-chip')).toContainText('Uploaded');
         }
         await input.press('Enter');
         await expect(page).toHaveURL(new RegExp(`#/chat\\?conversation=${id}$`));
@@ -541,11 +544,11 @@ for (const uploadFails of [false, true]) {
 for (const width of [1440, 1024, 390]) {
     test(`chat: header spacing and composer settings stay usable at ${width}px`, async ({ page, mockApi }, testInfo) => {
         await page.setViewportSize({ width, height: 900 });
-        const longTitle = '用于验证对话页标题换行与操作区布局的长会话名称'.repeat(4);
+        const longTitle = 'A long conversation name used to verify title wrapping and action area layout in the chat page'.repeat(4);
         mockApi.respond('GET', `/api/conversations/${CONVERSATION.id}`, { json: { ...CONVERSATION, title: longTitle, projectId: PROJECT.id } });
         mockApi.respond('GET', '/api/config', { json: { ai: {
             default_channel: 'fixture-long-model',
-            channels: { 'fixture-long-model': { name: '用于验证输入区长名称的模型通道'.repeat(3), model: 'fixture-model' } }
+            channels: { 'fixture-long-model': { name: 'A model channel with a long name used to verify the composer layout'.repeat(3), model: 'fixture-model' } }
         } } });
         mockApi.respond('GET', '/api/agent-loop/tasks', { json: { tasks: [] } });
         mockApi.respond('GET', '/api/hitl/default-config', { json: { defaultMode: 'off' } });
@@ -556,12 +559,12 @@ for (const width of [1440, 1024, 390]) {
             const header = main.locator('.chat-header');
             const title = header.locator('.chat-header-title');
             const composer = main.locator('.chat-composer');
-            const input = composer.getByRole('textbox', { name: label('chat.composerLabel', '对话内容') });
-            await expect(title).toHaveText(stored ? longTitle : label('chat.newChat', '新对话'));
+            const input = composer.getByRole('textbox', { name: label('chat.composerLabel') });
+            await expect(title).toHaveText(stored ? longTitle : label('chat.newChat'));
             await expect(button(header, label('chat.sessionSettingsTitle'))).toHaveCount(0);
-            await expect(button(header, label('chat.tokenUsage', 'Token 用量'))).toHaveCount(0);
+            await expect(button(header, label('dashboard.tokenUsage'))).toHaveCount(0);
             await expect(button(header, label('chat.refreshConversation'))).toHaveCount(stored ? 1 : 0);
-            await expect(button(composer, label('chat.sessionSettingsTitle', '会话设置'))).toHaveCount(0);
+            await expect(button(composer, label('chat.sessionSettingsTitle'))).toHaveCount(0);
             const [workspaceBox, titleBox, textBox, actionsBox] = await Promise.all(
                 [main.locator('.chat-main'), title, header.locator('.chat-header-main'), header.locator('.chat-header-actions')]
                     .map(element => element.boundingBox())
@@ -571,13 +574,13 @@ for (const width of [1440, 1024, 390]) {
             for (const action of await header.getByRole('button').all()) {
                 await expect(action).toBeInViewport({ ratio: 1 });
             }
-            await expect(button(composer, label('chat.send', '发送'))).toBeInViewport({ ratio: 1 });
+            await expect(button(composer, label('chat.send'))).toBeInViewport({ ratio: 1 });
             await assertNoOverflow(page);
             const card = composer.locator('.chat-composer-box');
             const context = card.locator('.chat-composer-context');
             await expect(context.getByRole('combobox')).toHaveCount(3);
             const project = context.locator('.chat-composer-project');
-            await expect(project).toHaveText(stored ? PROJECT.name : label('chat.defaultWorkspace', '默认工作区'));
+            await expect(project).toHaveText(stored ? PROJECT.name : label('chat.defaultWorkspace'));
             const contextBox = await context.boundingBox();
             const projectBounds = await project.boundingBox();
             expect(projectBounds.x + projectBounds.width).toBeLessThan(contextBox.x + contextBox.width - 16);
@@ -590,10 +593,10 @@ for (const width of [1440, 1024, 390]) {
                 const bounds = await control.boundingBox();
                 expect(bounds.y + bounds.height).toBeLessThanOrEqual(inputBox.y);
             }
-            const attachment = button(composer, label('chat.attachmentsLabel', '附件'));
+            const attachment = button(composer, label('chat.attachmentsLabel'));
             const hitl = button(composer, label('chat.hitlTitle'));
             const model = button(composer, label('chat.modelSettingsAria'));
-            const send = button(composer, label('chat.send', '发送'));
+            const send = button(composer, label('chat.send'));
             const toolbarBoxes = [];
             for (const control of [attachment, hitl, model, send]) {
                 await expect(control).toBeInViewport({ ratio: 1 });
@@ -613,13 +616,13 @@ for (const width of [1440, 1024, 390]) {
             await title.click();
             await expect(modelPopover).not.toBeVisible();
 
-            await input.fill('保留会话草稿');
+            await input.fill('Keep conversation draft');
             await hitl.click();
             const settings = page.getByRole('dialog').filter({ hasText: label('chat.hitlTitle') });
             await expect(settings.getByRole('combobox', { name: label('chat.hitlModeLabel') })).toBeVisible();
             await settings.locator('button.semi-sidesheet-close').click();
             await expect(settings).not.toBeVisible();
-            await expect(input).toHaveValue('保留会话草稿');
+            await expect(input).toHaveValue('Keep conversation draft');
         }
         expect(mockApi.writes()).toEqual([]);
     });
@@ -632,12 +635,12 @@ for (const width of [1440, 390]) {
             await page.emulateMedia({ colorScheme });
             mockApi.respond('GET', '/api/config', { json: { ai: {
                 default_channel: 'fixture-model',
-                channels: { 'fixture-model': { name: '示例模型', model: 'fixture-model' } }
+                channels: { 'fixture-model': { name: 'Sample model', model: 'fixture-model' } }
             } } });
             const main = await visit(page, 'chat');
             const composer = main.locator('.chat-composer');
             const openModel = button(composer, label('chat.modelSettingsAria'));
-            await expect(openModel).toContainText('示例模型');
+            await expect(openModel).toContainText('Sample model');
             await openModel.click();
             const popover = page.locator('.chat-model-popover');
             const slider = popover.getByRole('slider', { name: label('chat.reasoningEffortLabel') });
@@ -774,32 +777,32 @@ for (const width of [1440, 390]) {
 }
 
 test('chat: create a project from the composer and select it for the current draft', async ({ page, mockApi }) => {
-    const created = { ...PROJECT, id: 'fixture-new-chat-project', name: '对话中新建的项目' };
+    const created = { ...PROJECT, id: 'fixture-new-chat-project', name: 'Project created in chat' };
     mockApi.respond('POST', '/api/projects', { json: created });
     const main = await visit(page, 'chat');
     const composer = main.locator('.chat-composer');
-    const input = composer.getByRole('textbox', { name: label('chat.composerLabel', '对话内容') });
-    const projectSelect = composer.getByRole('combobox').filter({ hasText: label('chat.defaultWorkspace', '默认工作区') });
-    const createOption = page.getByRole('option').filter({ hasText: `+ ${label('projects.newProject', '新建项目')}` });
-    const dialog = page.getByRole('dialog', { name: label('projects.modalNewTitle', '新建项目') });
+    const input = composer.getByRole('textbox', { name: label('chat.composerLabel') });
+    const projectSelect = composer.getByRole('combobox').filter({ hasText: label('chat.defaultWorkspace') });
+    const createOption = page.getByRole('option').filter({ hasText: `+ ${label('projects.newProject')}` });
+    const dialog = page.getByRole('dialog', { name: label('projects.modalNewTitle') });
 
-    await input.fill('项目工作记录草稿');
+    await input.fill('Project work notes draft');
     await readsCompleted(mockApi, ['/api/projects']);
     await projectSelect.click();
     await expect(page.getByRole('option', { name: PROJECT.name })).toBeVisible();
     await createOption.click();
     await expect(dialog).toHaveClass(/semi-sidesheet-inner/);
-    await button(dialog, label('common.cancel', '取消')).click();
+    await button(dialog, label('common.cancel')).click();
     await expect(projectSelect).toBeVisible();
     expect(mockApi.writes()).toEqual([]);
 
     await projectSelect.click();
     await createOption.click();
-    await dialog.getByLabel(label('projects.projectName', '项目名称'), { exact: true }).fill(created.name);
-    await button(dialog, label('projects.createProject', '创建项目')).click();
+    await dialog.getByLabel(label('projects.projectName'), { exact: true }).fill(created.name);
+    await button(dialog, label('projects.createProject')).click();
     await expect(dialog).not.toBeVisible();
     await expect(composer.getByRole('combobox').filter({ hasText: created.name })).toBeVisible();
-    await expect(input).toHaveValue('项目工作记录草稿');
+    await expect(input).toHaveValue('Project work notes draft');
     await expect(page).toHaveURL(/#\/chat$/);
     expect(mockApi.calls('POST', '/api/projects').map(call => call.body)).toEqual([
         { name: created.name, description: '' }
@@ -811,14 +814,14 @@ test.describe('chat: read-only permissions', () => {
     test.use({ appPermissions: READ_PERMISSIONS });
     test('no chat:write disables input, attachment and send', async ({ page, mockApi }) => {
         const main = await visit(page, 'chat');
-        const input = main.getByRole('textbox', { name: label('chat.composerLabel', '对话内容'), exact: true });
+        const input = main.getByRole('textbox', { name: label('chat.composerLabel'), exact: true });
         await expect(input).toBeDisabled();
-        await expect(button(main, label('chat.send', '发送'))).toBeDisabled();
-        await expect(button(main, label('chat.attachmentsLabel', '附件'))).toBeDisabled();
-        await expect(main.getByText(label('chat.noWritePermission', '当前账号没有对话写入权限（chat:write），发送已禁用。'), { exact: true })).toBeVisible();
+        await expect(button(main, label('chat.send'))).toBeDisabled();
+        await expect(button(main, label('chat.attachmentsLabel'))).toBeDisabled();
+        await expect(main.getByText(label('chat.noWritePermission'), { exact: true })).toBeVisible();
         await readsCompleted(mockApi, ['/api/projects', '/api/conversations']);
-        await expect(button(main, label('chat.batchManage', '批量管理'))).toHaveCount(0);
-        await expect(main.locator('.chat-composer-context').getByRole('combobox').filter({ hasText: label('chat.defaultWorkspace', '默认工作区') })).toBeDisabled();
+        await expect(button(main, label('chat.batchManage'))).toHaveCount(0);
+        await expect(main.locator('.chat-composer-context').getByRole('combobox').filter({ hasText: label('chat.defaultWorkspace') })).toBeDisabled();
         await expect(main.locator('.chat-composer-mode')).toBeDisabled();
         // Send real keyboard events, without force-enabling a disabled application control.
         await main.locator('.chat-header-title').click();
@@ -834,7 +837,7 @@ test.describe('chat: execution permission boundary', () => {
     test('chat:write without agent:execute must not send an agent request', async ({ page, mockApi }) => {
         const main = await visit(page, 'chat');
         // Strict regression, not test.fail/skip: backend requires agent:execute for /agent/stream.
-        await expect(button(main, label('chat.send', '发送'))).toBeDisabled();
+        await expect(button(main, label('chat.send'))).toBeDisabled();
         expect(mockApi.writes()).toEqual([]);
     });
 });
@@ -894,13 +897,13 @@ test.describe('chat: batch selection', () => {
     const conversations = Array.from({ length: 23 }, (_, index) => ({
         ...CONVERSATION,
         id: `fixture-batch-${index + 1}`,
-        title: `批量示例 ${String(index + 1).padStart(2, '0')}`,
+        title: `Bulk sample ${String(index + 1).padStart(2, '0')}`,
         projectId: ''
     }));
     const projectConversations = conversations.slice(0, 21).map((item, index) => ({
         ...item,
         id: 'fixture-project-chat-' + (index + 1),
-        title: '项目示例 ' + String(index + 1).padStart(2, '0'),
+        title: 'Project sample ' + String(index + 1).padStart(2, '0'),
         projectId: PROJECT.id
     }));
 
@@ -919,20 +922,20 @@ test.describe('chat: batch selection', () => {
         test(`select, clear and delete only the current page at ${width}px`, async ({ page, mockApi }, testInfo) => {
             await page.setViewportSize({ width, height: 1000 });
             const main = await visit(page, 'chat');
-            if (width < 900) await button(main, label('chat.conversations', '会话')).click();
+            if (width < 900) await button(main, label('chat.conversations')).click();
             const sidebar = page.locator('.chat-sidebar-inner:visible');
             await expect(sidebar.locator('.chat-conv-item')).toHaveCount(20);
-            await button(sidebar, label('chat.batchManage', '批量管理')).click();
+            await button(sidebar, label('chat.batchManage')).click();
             const bar = sidebar.locator('.chat-batch-bar');
             const selectPage = bar.getByRole('checkbox', { name: label('chat.selectPage') });
             const rows = sidebar.locator('.chat-conv-check');
-            const deleteButton = button(bar, label('chat.batchDelete', '批量删除'));
+            const deleteButton = button(bar, label('chat.batchDelete'));
             await expect(selectPage).not.toBeChecked();
             await expect(deleteButton).toBeDisabled();
 
             await bar.getByText(label('chat.selectPage'), { exact: true }).click();
             await expect(sidebar.locator('.chat-conv-check input:checked')).toHaveCount(20);
-            await expect(bar).toContainText('已选 20');
+            await expect(bar).toContainText('Selected 20');
             await bar.getByText(label('chat.selectPage'), { exact: true }).click();
             await expect(sidebar.locator('.chat-conv-check input:checked')).toHaveCount(0);
             await expect(deleteButton).toBeDisabled();
@@ -941,7 +944,7 @@ test.describe('chat: batch selection', () => {
             await expect(bar.locator('.chat-batch-select-all')).toHaveClass(/semi-checkbox-indeterminate/);
             await bar.getByText(label('chat.selectPage'), { exact: true }).click();
             await rows.last().click();
-            await expect(bar).toContainText('已选 19');
+            await expect(bar).toContainText('Selected 19');
             await expect(bar.locator('.chat-batch-select-all')).toHaveClass(/semi-checkbox-indeterminate/);
             await rows.last().click();
             await expect(selectPage).toBeChecked();
@@ -973,25 +976,25 @@ test.describe('chat: batch selection', () => {
         const project = button(sidebar, PROJECT.name + ' 21');
         await expect(workspace).toHaveAttribute('aria-expanded', 'true');
         await expect(project).toHaveAttribute('aria-expanded', 'false');
-        await expect(sidebar.getByText('批量示例 01', { exact: true })).toBeVisible();
+        await expect(sidebar.getByText('Bulk sample 01', { exact: true })).toBeVisible();
         await project.click();
         await expect(workspace).toHaveAttribute('aria-expanded', 'false');
         await expect(project).toHaveAttribute('aria-expanded', 'true');
-        await expect(sidebar.getByText('批量示例 01', { exact: true })).toHaveCount(0);
-        await expect(sidebar.getByText('项目示例 01', { exact: true })).toBeVisible();
+        await expect(sidebar.getByText('Bulk sample 01', { exact: true })).toHaveCount(0);
+        await expect(sidebar.getByText('Project sample 01', { exact: true })).toBeVisible();
         await sidebar.getByRole('button', { name: 'Next', exact: true }).click();
-        await expect(sidebar.getByText('项目示例 21', { exact: true })).toBeVisible();
+        await expect(sidebar.getByText('Project sample 21', { exact: true })).toBeVisible();
         await expect(sidebar.getByText(PROJECT.id.slice(0, 8), { exact: true })).toHaveCount(0);
         await project.click();
         await expect(sidebar.locator('.chat-conv-item')).toHaveCount(0);
         await workspace.click();
-        await expect(sidebar.getByText('批量示例 01', { exact: true })).toBeVisible();
+        await expect(sidebar.getByText('Bulk sample 01', { exact: true })).toBeVisible();
     });
 
     test('resets selections on pagination, search, project filtering and cancel', async ({ page, mockApi }) => {
         await visit(page, 'chat');
         const sidebar = page.locator('.chat-sidebar-inner:visible');
-        const manage = button(sidebar, label('chat.batchManage', '批量管理'));
+        const manage = button(sidebar, label('chat.batchManage'));
         const bar = sidebar.locator('.chat-batch-bar');
         const selectPage = bar.getByRole('checkbox', { name: label('chat.selectPage') });
         await manage.click();
@@ -1000,34 +1003,34 @@ test.describe('chat: batch selection', () => {
         await expect(bar).toHaveCount(0);
         await expect(sidebar.locator('.chat-conv-item')).toHaveCount(3);
         await manage.click();
-        await expect(bar).toContainText('已选 0');
+        await expect(bar).toContainText('Selected 0');
         await bar.getByText(label('chat.selectPage'), { exact: true }).click();
-        await expect(bar).toContainText('已选 3');
+        await expect(bar).toContainText('Selected 3');
 
-        await sidebar.getByRole('textbox', { name: label('chat.searchHistory', '搜索历史对话') }).fill('批量示例 2');
+        await sidebar.getByRole('textbox', { name: label('chat.searchHistory') }).fill('Bulk sample 2');
         await expect(bar).toHaveCount(0);
         await expect(sidebar.locator('.chat-conv-item')).toHaveCount(4);
         await manage.click();
-        await expect(bar).toContainText('已选 0');
+        await expect(bar).toContainText('Selected 0');
         await bar.getByText(label('chat.selectPage'), { exact: true }).click();
-        await expect(bar).toContainText('已选 4');
+        await expect(bar).toContainText('Selected 4');
 
-        await sidebar.getByRole('textbox', { name: label('chat.searchHistory') }).fill('项目示例 2');
+        await sidebar.getByRole('textbox', { name: label('chat.searchHistory') }).fill('Project sample 2');
         await expect(button(sidebar, PROJECT.name + ' 2')).toBeVisible();
-        await sidebar.getByRole('combobox').filter({ hasText: label('chat.filterAllProjects', '全部项目') }).click();
+        await sidebar.getByRole('combobox').filter({ hasText: label('chat.filterAllProjects') }).click();
         await page.getByRole('option').filter({ hasText: PROJECT.name }).click();
         await expect(bar).toHaveCount(0);
         await expect(sidebar.locator('.chat-conv-item')).toHaveCount(2);
         await manage.click();
-        await expect(bar).toContainText('已选 0');
+        await expect(bar).toContainText('Selected 0');
         await bar.getByText(label('chat.selectPage'), { exact: true }).click();
-        await expect(bar).toContainText('已选 2');
-        await button(sidebar, label('common.cancel', '取消')).click();
+        await expect(bar).toContainText('Selected 2');
+        await button(sidebar, label('common.cancel')).click();
         await manage.click();
         await expect(selectPage).not.toBeChecked();
-        await expect(button(bar, label('chat.batchDelete', '批量删除'))).toBeDisabled();
+        await expect(button(bar, label('chat.batchDelete'))).toBeDisabled();
 
-        await sidebar.getByRole('textbox', { name: label('chat.searchHistory', '搜索历史对话') }).fill('没有匹配的会话');
+        await sidebar.getByRole('textbox', { name: label('chat.searchHistory') }).fill('No matching conversations');
         await expect(sidebar.locator('.chat-conv-item')).toHaveCount(0);
         await expect(manage).toHaveCount(0);
         await expect(bar).toHaveCount(0);
@@ -1044,7 +1047,7 @@ test('chat: floating composer stays aligned and shows focus', async ({ page, moc
     const assistant = messages.locator('.chat-msg-assistant').first();
     const composer = panel.locator('.chat-composer');
     const composerBox = composer.locator('.chat-composer-box');
-    const input = composer.getByRole('textbox', { name: label('chat.composerLabel', '对话内容') });
+    const input = composer.getByRole('textbox', { name: label('chat.composerLabel') });
     await expect(assistant).toBeVisible();
 
     const [timeline, footer, box] = await Promise.all(
@@ -1069,17 +1072,17 @@ test('chat: floating composer stays aligned and shows focus', async ({ page, moc
 });
 
 test('chat: fake Enter send consumes finite SSE and reconciles stored history', async ({ page, mockApi }) => {
-    const message = 'FAKE：只总结 localhost 匿名范围，不调用工具。';
+    const message = 'FAKE: only summarize the anonymous localhost scope; do not call tools.';
     const id = mockApi.enableChatStream(message);
     const main = await visit(page, 'chat');
-    const input = main.getByRole('textbox', { name: label('chat.composerLabel', '对话内容'), exact: true });
+    const input = main.getByRole('textbox', { name: label('chat.composerLabel'), exact: true });
     await input.fill(message);
     await input.press('Enter');
     await expect(page).toHaveURL(new RegExp(`#/chat\\?conversation=${id}$`));
     await expect(main.locator('.chat-msg-assistant').getByText(STREAM_REPLY, { exact: true })).toBeVisible();
     await expect(main.locator('.chat-msg-user').getByText(message, { exact: true })).toHaveCount(1);
     await expect(input).toHaveValue('');
-    await expect(button(main, label('chat.send', '发送'))).toBeEnabled();
+    await expect(button(main, label('chat.send'))).toBeEnabled();
     await readsCompleted(mockApi, [`/api/conversations/${id}`]);
     expect(mockApi.writes().map(({ method, path, body }) => ({ method, path, body }))).toEqual([
         { method: 'POST', path: '/api/agent/stream', body: { message, conversationId: '' } }
@@ -1099,10 +1102,10 @@ for (const [id, path, record] of [
     ['projects', '/api/projects', PROJECT.name]
 ]) {
     test(`retry: ${id} displays API failure then recovers through its retry button`, async ({ page, mockApi }) => {
-        mockApi.fail('GET', path, '示例列表加载失败');
+        mockApi.fail('GET', path, 'Sample list failed to load');
         const main = await visit(page, id);
         const banner = main.locator('.cs-error-banner');
-        await expect(banner).toContainText('示例列表加载失败');
+        await expect(banner).toContainText('Sample list failed to load');
         const count = mockApi.calls('GET', path).length;
         mockApi.restore('GET', path);
         await banner.getByRole('button').click();
@@ -1114,28 +1117,28 @@ for (const [id, path, record] of [
 }
 
 test('vulnerability: dashboard deep link, detail retry, evidence and close; new form validation', async ({ page, mockApi }, testInfo) => {
-    mockApi.fail('GET', `/api/vulnerabilities/${VULNERABILITY.id}/context`, '示例详情加载失败');
+    mockApi.fail('GET', `/api/vulnerabilities/${VULNERABILITY.id}/context`, 'Sample details failed to load');
     await visit(page, 'dashboard');
     await button(page.locator('#main-content'), VULNERABILITY.title).click();
     await expect(page).toHaveURL(new RegExp(`#/vulnerabilities\\?id=${VULNERABILITY.id}$`));
     const drawer = page.getByRole('dialog');
-    await expect(drawer.locator('.cs-error-banner')).toContainText('示例详情加载失败');
+    await expect(drawer.locator('.cs-error-banner')).toContainText('Sample details failed to load');
     mockApi.restore('GET', `/api/vulnerabilities/${VULNERABILITY.id}/context`);
     await drawer.locator('.cs-error-banner').getByRole('button').click();
     await expect(drawer).toContainText(VULNERABILITY.description);
-    await drawer.getByRole('tab', { name: label('vulnerabilityPage.inspector_evidence', '复现与证据'), exact: true }).click();
+    await drawer.getByRole('tab', { name: label('vulnerabilityPage.inspector_evidence'), exact: true }).click();
     await expect(drawer.getByText(VULNERABILITY.evidence, { exact: true })).toBeVisible();
     await screenshot(page, testInfo, 'vulnerability-detail');
-    await button(drawer, label('common.close', '关闭')).click();
+    await button(drawer, label('common.close')).click();
     await expect(drawer).toHaveCount(0);
     await expect(page).toHaveURL(/#\/vulnerabilities$/);
-    await button(page.locator('#main-content'), label('vulnerability.addVuln', '添加漏洞')).click();
+    await button(page.locator('#main-content'), label('vulnerability.addVuln')).click();
     const editor = page.getByRole('dialog');
     await expect(editor).toHaveClass(/semi-sidesheet-inner/);
-    await button(editor.locator('.semi-sidesheet-footer'), label('common.save', '保存')).click();
-    await expect(editor.getByText(label('vulnerabilityModal.titleRequired', '请填写漏洞标题'), { exact: true })).toBeVisible();
+    await button(editor.locator('.semi-sidesheet-footer'), label('common.save')).click();
+    await expect(editor.getByText(label('vulnerabilityModal.titleRequired'), { exact: true })).toBeVisible();
     expect(mockApi.writes()).toEqual([]);
-    await button(editor, label('common.cancel', '取消')).click();
+    await button(editor, label('common.cancel')).click();
     await expect(editor).toHaveCount(0);
 });
 
@@ -1187,12 +1190,15 @@ for (const width of [1440, 1024, 390]) {
 test('project: list height follows the active detail tab', async ({ page, mockApi }) => {
     mockApi.respond('GET', `/api/projects/${PROJECT.id}/conversations`, { json: { conversations: [] } });
     const main = await visit(page, 'projects');
-    for (const name of [label('projects.tabSettings', '设置'), label('projects.tabConversations', '关联对话'), label('projects.tabFacts', '事实黑板')]) {
+    for (const name of [label('projects.tabSettings'), label('projects.tabConversations'), label('projects.tabFacts')]) {
         await main.getByRole('tab', { name, exact: true }).click();
         await ready(page);
-        const listBox = await main.locator('.project-list-card').boundingBox();
-        const detailBottom = await main.locator('.project-detail .cs-section-card').last().boundingBox();
-        expect(Math.abs(listBox.y + listBox.height - detailBottom.y - detailBottom.height)).toBeLessThanOrEqual(1);
+        // The list height is synced after the tab content lays out, so poll instead of measuring once.
+        await expect(async () => {
+            const listBox = await main.locator('.project-list-card').boundingBox();
+            const detailBottom = await main.locator('.project-detail .cs-section-card').last().boundingBox();
+            expect(Math.abs(listBox.y + listBox.height - detailBottom.y - detailBottom.height)).toBeLessThanOrEqual(1);
+        }).toPass({ timeout: 5_000 });
     }
     expect(mockApi.writes()).toEqual([]);
 });
@@ -1201,7 +1207,7 @@ test('project: compact pagination supports selection, filtering and a shrinking 
     const projects = [PROJECT, ...Array.from({ length: 10 }, (_, index) => ({
         ...PROJECT,
         id: `fixture-project-${index + 2}`,
-        name: `示例项目 ${index + 2} with a long project name`,
+        name: `Sample project ${index + 2} with a long project name`,
         status: index === 9 ? 'archived' : 'active'
     }))];
     const lastProject = projects.at(-1);
@@ -1230,9 +1236,9 @@ test('project: compact pagination supports selection, filtering and a shrinking 
     await expect(rows).toHaveCount(10);
     await next.click();
 
-    const search = list.getByPlaceholder(label('projects.searchProjectsPlaceholder', '搜索项目…'));
+    const search = list.getByPlaceholder(label('projects.searchProjectsPlaceholder'));
     await search.fill('no-matching-project');
-    await expect(list.getByText(label('projects.noMatchingProjects', '无匹配项目'), { exact: true })).toBeVisible();
+    await expect(list.getByText(label('projects.noMatchingProjects'), { exact: true })).toBeVisible();
     await expect(pager).toHaveCount(0);
     await search.fill('');
     await expect(rows).toHaveCount(10);
@@ -1240,15 +1246,15 @@ test('project: compact pagination supports selection, filtering and a shrinking 
     await next.click();
     const status = list.locator('.project-toolbar .semi-select');
     await status.click();
-    await page.getByRole('option').filter({ hasText: label('projects.statusActive', '进行中') }).click();
+    await page.getByRole('option').filter({ hasText: label('projects.statusActive') }).click();
     await expect(rows).toHaveCount(10);
     await expect(pager).toContainText('1/1');
     await expect(next).toBeDisabled();
     await status.click();
-    await page.getByRole('option').filter({ hasText: label('projects.all', '全部') }).click();
+    await page.getByRole('option').filter({ hasText: label('projects.all') }).click();
     await next.click();
     mockApi.respond('GET', '/api/projects', { json: { projects: [PROJECT], total: 1 } });
-    await button(main.locator('.cs-page-header'), label('common.refresh', '刷新')).click();
+    await button(main.locator('.cs-page-header'), label('common.refresh')).click();
     await expect(rows).toHaveCount(1);
     await expect(rows.first()).toContainText(PROJECT.name);
     await expect(pager).toContainText('1/1');
@@ -1259,7 +1265,7 @@ test('project: compact pagination supports selection, filtering and a shrinking 
     await visit(page, 'projects');
     await page.reload();
     await ready(page);
-    await expect(list.getByText(label('projects.noProjects', '暂无项目'), { exact: true })).toBeVisible();
+    await expect(list.getByText(label('projects.noProjects'), { exact: true })).toBeVisible();
     await expect(pager).toHaveCount(0);
     await assertNoOverflow(page);
     expect(mockApi.writes()).toEqual([]);
@@ -1268,7 +1274,7 @@ test('project: compact pagination supports selection, filtering and a shrinking 
 test('project: confirm a tentative fact through the project API', async ({ page, mockApi }) => {
     const pending = {
         ...FACT, id: 'fixture-pending-fact', fact_key: 'fixture.pending', confidence: 'tentative',
-        summary: '待审核示例事实'
+        summary: 'Sample fact pending review'
     };
     const factsPath = `/api/projects/${PROJECT.id}/facts`;
     mockApi.respond('GET', factsPath, (_entry, url) => {
@@ -1281,18 +1287,18 @@ test('project: confirm a tentative fact through the project API', async ({ page,
 
     const main = await visit(page, 'projects');
     const row = main.locator('tr', { hasText: pending.summary });
-    await button(row, label('common.edit', '编辑')).click();
-    const dialog = page.getByRole('dialog', { name: label('projects.editFact', '编辑事实') });
+    await button(row, label('common.edit')).click();
+    const dialog = page.getByRole('dialog', { name: label('projects.editFact') });
     const confidence = dialog.getByRole('combobox').nth(1);
     await confidence.click();
-    await page.locator('.semi-select-option').filter({ hasText: '已确认' }).click();
-    await expect(confidence).toContainText('已确认');
-    await button(dialog, label('projects.saveChanges', '保存修改')).click();
+    await page.locator('.semi-select-option').filter({ hasText: /^Confirmed$/ }).click();
+    await expect(confidence).toContainText('Confirmed');
+    await button(dialog, label('projects.saveChanges')).click();
     await expect(dialog).toHaveCount(0);
     expect(mockApi.calls('PUT', `${factsPath}/${pending.id}`).map(call => call.body)).toEqual([
         expect.objectContaining({ confidence: 'confirmed', fact_key: pending.fact_key })
     ]);
-    await expect(row.getByText('已确认', { exact: true })).toBeVisible();
+    await expect(row.getByText('Confirmed', { exact: true })).toBeVisible();
 });
 
 test('project: dashboard jump, fact detail opens/closes and create validates then retries', async ({ page, mockApi }) => {
@@ -1309,17 +1315,17 @@ test('project: dashboard jump, fact detail opens/closes and create validates the
     await expect(drawer).toHaveCount(0);
 
     const projectRow = main.getByRole('row').filter({ hasText: PROJECT.name });
-    await button(projectRow, label('projects.archiveProject', '归档')).click();
+    await button(projectRow, label('projects.archiveProject')).click();
     const confirmation = page.getByRole('dialog');
     await expect(confirmation).toContainText(label('projects.confirmArchiveProject'));
     await page.locator('.semi-modal-wrap').click(outside);
     await expect(confirmation).toHaveCount(0);
     expect(mockApi.writes()).toEqual([]);
 
-    const openProject = button(main, label('projects.newProjectCta', '+ 新建项目'));
+    const openProject = button(main, label('projects.newProjectCta'));
     await openProject.click();
     const dialog = page.getByRole('dialog');
-    const create = button(dialog.locator('.semi-sidesheet-footer'), label('projects.createProject', '创建项目'));
+    const create = button(dialog.locator('.semi-sidesheet-footer'), label('projects.createProject'));
     await expect(dialog).toBeFocused();
     await page.keyboard.press('Shift+Tab');
     await expect(create).toBeFocused();
@@ -1331,10 +1337,10 @@ test('project: dashboard jump, fact detail opens/closes and create validates the
     await openProject.click();
 
     await create.click();
-    await expect(page.getByText(label('projects.enterProjectName', '请输入项目名称'), { exact: true })).toBeVisible();
+    await expect(page.getByText(label('projects.enterProjectName'), { exact: true })).toBeVisible();
     expect(mockApi.writes()).toEqual([]);
-    await dialog.getByLabel(label('projects.projectName', '项目名称'), { exact: true }).fill(PROJECT.name);
-    await dialog.getByLabel(label('projects.projectDescription', '项目描述'), { exact: true }).fill(PROJECT.description);
+    await dialog.getByLabel(label('projects.projectName'), { exact: true }).fill(PROJECT.name);
+    await dialog.getByLabel(label('projects.projectDescription'), { exact: true }).fill(PROJECT.description);
     let finishSave;
     const saving = new Promise(resolve => { finishSave = resolve; });
     mockApi.respond('POST', '/api/projects', () => saving);
@@ -1344,9 +1350,9 @@ test('project: dashboard jump, fact detail opens/closes and create validates the
         await backdrop.click(outside);
         await expect(dialog).toBeVisible();
     } finally {
-        finishSave({ status: 503, json: { error: '示例保存失败，可重试' } });
+        finishSave({ status: 503, json: { error: 'Sample save failed; you can retry' } });
     }
-    await expect(page.getByText('示例保存失败，可重试', { exact: true })).toBeVisible();
+    await expect(page.getByText('Sample save failed; you can retry', { exact: true })).toBeVisible();
     await expect(dialog).toBeVisible();
     await expect(dialog.locator('input')).toHaveValue(PROJECT.name);
     mockApi.respond('POST', '/api/projects', { json: PROJECT });
@@ -1362,8 +1368,8 @@ test.describe('import drawers on a narrow screen', () => {
     test.use({ appPermissions: [...UI_PERMISSIONS, 'asset:write', 'workflow:write'], viewport: { width: 390, height: 650 } });
 
     for (const [id, trigger, title, action] of [
-        ['asset-library', label('assets.bulkImport', '批量导入'), label('assets.bulkImportTitle', '批量导入资产'), /导入.*有效数据/],
-        ['workflows', label('workflows.package.importLocal', '导入本地包'), label('workflows.package.title', '导入本地包'), label('workflows.package.confirmImport', '确认导入')]
+        ['asset-library', label('assets.bulkImport'), label('assets.bulkImportTitle'), /Import.*valid rows/],
+        ['workflows', label('workflows.package.importLocal'), label('workflows.package.title'), label('workflows.package.confirmImport')]
     ]) {
         test(`${id}: import fits the viewport and keeps its action visible`, async ({ page, mockApi }) => {
             const main = await visit(page, id);
@@ -1391,7 +1397,7 @@ test.describe('import drawers on a narrow screen', () => {
 
 test('shared JsonViewer: real settings response expands and collapses', async ({ page, mockApi }) => {
     const main = await visit(page, 'settings');
-    await main.getByText(label('settings.jsonPanel', 'GET /config 原始响应（JSON，便于核对字段名）'), { exact: true }).click();
+    await main.getByText(label('settings.jsonPanel'), { exact: true }).click();
     const viewer = main.locator('.cs-json-viewer');
     const expand = viewer.getByRole('button', { expanded: false });
     await expect(expand).toBeVisible();
@@ -1410,7 +1416,7 @@ test.describe('mobile @mobile', () => {
     test('navigation opens, closes and selects a nested page without horizontal overflow', async ({ page }) => {
         await visit(page, 'dashboard');
         await expect(page.locator('.cs-sider')).toHaveCount(0);
-        const open = button(page.locator('.cs-header'), label('common.expandPanel', '展开面板'));
+        const open = button(page.locator('.cs-header'), label('common.expandPanel'));
         await open.click();
         const nav = page.getByRole('dialog').filter({ has: page.locator('.cs-sidebar-inner') });
         await expect(nav).toBeVisible();
@@ -1420,15 +1426,15 @@ test.describe('mobile @mobile', () => {
         await nav.locator('button.semi-sidesheet-close').click();
         await expect(nav).toHaveCount(0);
         await open.click();
-        await nav.getByRole('menuitem', { name: label('nav.assets', '资产管理'), exact: true }).click();
-        await nav.getByRole('menuitem', { name: label('nav.assetLibrary', '资产库'), exact: true }).click();
+        await nav.getByRole('menuitem', { name: label('nav.assets'), exact: true }).click();
+        await nav.getByRole('menuitem', { name: label('nav.assetLibrary'), exact: true }).click();
         await expect(page).toHaveURL(/#\/asset-library$/);
         await expect(nav).toHaveCount(0);
         const main = await ready(page);
         await expect(main.getByRole('combobox', { name: label('assets.scopeLabel') })).toHaveText(label('assets.scopeAll'));
         await assertNoOverflow(page);
         await open.click();
-        await expect(nav.getByRole('menuitem', { name: label('nav.assetLibrary', '资产库'), exact: true })).toHaveClass(/semi-navigation-item-selected/);
+        await expect(nav.getByRole('menuitem', { name: label('nav.assetLibrary'), exact: true })).toHaveClass(/semi-navigation-item-selected/);
         await nav.locator('button.semi-sidesheet-close').click();
     });
 
@@ -1443,10 +1449,10 @@ test.describe('mobile @mobile', () => {
 
     test('info collection: the results title and actions fit in the card header', async ({ page }) => {
         const main = await visit(page, 'info-collect');
-        const titleText = label('infoCollectPage.queryResults', '查询结果');
+        const titleText = label('infoCollectPage.queryResults');
         const header = main.locator('.semi-card-header-wrapper').filter({ hasText: titleText });
         const title = header.getByText(titleText, { exact: true });
-        const importButton = button(header, label('assets.importSelected', '入库所选'));
+        const importButton = button(header, label('assets.importSelected'));
 
         await header.scrollIntoViewIfNeeded();
         await expect(title).toBeInViewport({ ratio: 1 });
@@ -1458,8 +1464,8 @@ test.describe('mobile @mobile', () => {
 
     test('chat: composer and send remain in viewport, multiline input does not send', async ({ page, mockApi }, testInfo) => {
         const main = await visit(page, 'chat');
-        const input = main.getByRole('textbox', { name: label('chat.composerLabel', '对话内容'), exact: true });
-        const send = button(main, label('chat.send', '发送'));
+        const input = main.getByRole('textbox', { name: label('chat.composerLabel'), exact: true });
+        const send = button(main, label('chat.send'));
         await expect(main.locator('.chat-welcome')).toBeVisible();
         await expect(input).toBeInViewport({ ratio: 1 });
         await expect(send).toBeInViewport({ ratio: 1 });
@@ -1481,7 +1487,7 @@ test.describe('mobile @mobile', () => {
         await expect(drawer).toContainText(VULNERABILITY.description);
         await assertDrawerFits(page, drawer);
         await screenshot(page, testInfo, 'mobile-vulnerability-detail');
-        await button(drawer, label('common.close', '关闭')).click();
+        await button(drawer, label('common.close')).click();
         await expect(drawer).toHaveCount(0);
         await assertNoOverflow(page);
     });

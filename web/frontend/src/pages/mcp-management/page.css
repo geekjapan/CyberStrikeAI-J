@@ -1,4 +1,4 @@
-/* MCP 管理页私有布局样式。 */
+/* Private layout styles for the MCP management page. */
 
 .mcp-management-page { display: flex; flex-direction: column; }
 

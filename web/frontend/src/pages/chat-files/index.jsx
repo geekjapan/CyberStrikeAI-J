@@ -1,11 +1,11 @@
 /**
- * 对话附件管理：列表/分页/搜索、文件夹浏览、上传、建目录、预览、下载、导出与删除。
+ * Conversation attachment management: list/pagination/search, folder browsing, upload, create directory, preview, download, export and delete.
  */
 import { useMemo, useRef, useState } from 'react';
 import { Button, Input, Select, Space, Tag, Typography } from '@douyinfe/semi-ui';
 import { IconPlus, IconRefresh, IconSearch, IconUpload } from '@douyinfe/semi-icons';
 import { useAuth } from '../../lib/auth';
-import { useT } from '../../lib/i18n';
+import { lazyLabels, translate, useT } from '../../lib/i18n';
 import { useDebounced, useResource } from '../../components/hooks';
 import {
     Drawer, PageHeader, SectionCard, DataTable, ErrorBanner,
@@ -18,20 +18,20 @@ import './page.css';
 
 const { Text } = Typography;
 
-const SOURCE_OPTIONS = [
-    { value: 'all', label: '全部' },
-    { value: 'upload', label: '对话附件' },
-    { value: 'reduction', label: '工具输出' },
-    { value: 'workspace', label: '工作目录' },
-    { value: 'conversation_artifact', label: '会话产物' }
-];
+const SOURCE_LABEL = lazyLabels('ui.chatFiles.source', {
+    upload: 'Conversation attachments',
+    reduction: 'Tool output',
+    workspace: 'Workspace',
+    conversation_artifact: 'Conversation artifacts'
+});
 
-const SOURCE_LABEL = {
-    upload: '对话附件',
-    reduction: '工具输出',
-    workspace: '工作目录',
-    conversation_artifact: '会话产物'
-};
+const SOURCE_OPTIONS = [
+    { value: 'all', get label() { return translate('ui.chatFiles.sourceAll', null, 'All'); } },
+    { value: 'upload', get label() { return SOURCE_LABEL.upload; } },
+    { value: 'reduction', get label() { return SOURCE_LABEL.reduction; } },
+    { value: 'workspace', get label() { return SOURCE_LABEL.workspace; } },
+    { value: 'conversation_artifact', get label() { return SOURCE_LABEL.conversation_artifact; } }
+];
 
 function dirOf(relativePath) {
     const parts = String(relativePath || '').split('/');
@@ -91,7 +91,7 @@ export default function ChatFilesPage() {
 
     const breadcrumb = useMemo(() => {
         const parts = currentDir ? currentDir.split('/') : [];
-        const items = [{ label: t('chatFilesPage.browseRoot', null, '文件'), path: '' }];
+        const items = [{ label: t('chatFilesPage.browseRoot', null, 'Files'), path: '' }];
         parts.forEach((part, index) => items.push({ label: part, path: parts.slice(0, index + 1).join('/') }));
         return items;
     }, [currentDir, t]);
@@ -100,9 +100,9 @@ export default function ChatFilesPage() {
         try {
             const payload = await api.resolvePath(item.relativePath, 'file');
             await navigator.clipboard.writeText(payload?.absolutePath || item.relativePath);
-            toastSuccess(t('chatFilesPage.pathCopied', null, '路径已复制，可到对话中粘贴使用'));
+            toastSuccess(t('chatFilesPage.pathCopied', null, 'Path copied — paste it into chat'));
         } catch (err) {
-            toastError(err, t('chatFilesPage.errorGeneric', null, '操作失败，请稍后重试。'));
+            toastError(err, t('chatFilesPage.errorGeneric', null, 'Something went wrong. Please try again.'));
         }
     };
 
@@ -110,18 +110,18 @@ export default function ChatFilesPage() {
         try {
             await api.downloadFileByPath(item.relativePath, item.name);
         } catch (err) {
-            toastError(err, t('chatFilesPage.errorGeneric', null, '操作失败，请稍后重试。'));
+            toastError(err, t('chatFilesPage.errorGeneric', null, 'Something went wrong. Please try again.'));
         }
     };
 
     const remove = item => {
         confirmAction({
-            title: t('chatFilesPage.confirmDelete', null, '确定删除该文件？'),
+            title: t('chatFilesPage.confirmDelete', null, 'Delete this file?'),
             content: item.relativePath,
             onOk: async () => {
                 try {
                     await api.deleteFile(item.relativePath);
-                    toastSuccess(t('chatFilesPage.deleted', null, '已删除'));
+                    toastSuccess(t('chatFilesPage.deleted', null, 'Deleted'));
                     reload();
                 } catch (err) {
                     toastError(err);
@@ -141,10 +141,10 @@ export default function ChatFilesPage() {
             for (const file of list) {
                 await api.uploadFile(file, { relativeDir: mode === 'browse' ? currentDir : '' });
             }
-            toastSuccess(t('chatFilesPage.uploadOkHint', null, '上传成功。点击「复制路径」可复制绝对路径到剪贴板。'));
+            toastSuccess(t('chatFilesPage.uploadOkHint', null, 'Uploaded. Use “Copy path” to copy the absolute path.'));
             reload();
         } catch (err) {
-            toastError(err, t('chatFilesPage.errorGeneric', null, '操作失败，请稍后重试。'));
+            toastError(err, t('chatFilesPage.errorGeneric', null, 'Something went wrong. Please try again.'));
         } finally {
             setUploading(false);
         }
@@ -153,16 +153,16 @@ export default function ChatFilesPage() {
     const submitMkdir = async () => {
         const name = String(mkdir?.name || '').trim();
         if (!name || name.includes('/') || name.includes('\\') || name === '.' || name === '..') {
-            toastWarning(t('chatFilesPage.mkdirInvalidName', null, '名称无效：不能为空，且不能包含 /、\\ 或 . / ..'));
+            toastWarning(t('chatFilesPage.mkdirInvalidName', null, 'Invalid name: cannot be empty or contain /, \\, or use . or ..'));
             return;
         }
         try {
             await api.makeDirectory(mode === 'browse' ? currentDir : '', name);
-            toastSuccess(t('chatFilesPage.mkdirOk', null, '文件夹已创建'));
+            toastSuccess(t('chatFilesPage.mkdirOk', null, 'Folder created'));
             setMkdir(null);
             reload();
         } catch (err) {
-            toastError(err, t('chatFilesPage.errorGeneric', null, '操作失败，请稍后重试。'));
+            toastError(err, t('chatFilesPage.errorGeneric', null, 'Something went wrong. Please try again.'));
         }
     };
 
@@ -174,15 +174,15 @@ export default function ChatFilesPage() {
                 source: source === 'all' ? undefined : source,
                 search: search.trim() || undefined
             });
-            toastSuccess(t('chatFilesPage.exportStarted', null, '已开始导出当前文件'));
+            toastSuccess(t('chatFilesPage.exportStarted', null, 'Started exporting current files'));
         } catch (err) {
-            toastError(err, t('chatFilesPage.exportEmpty', null, '没有可导出的文件'));
+            toastError(err, t('chatFilesPage.exportEmpty', null, 'No files to export'));
         }
     };
 
     const fileColumns = [
         {
-            title: t('chatFilesPage.colName', null, '文件名'),
+            title: t('chatFilesPage.colName', null, 'Name'),
             dataIndex: 'name',
             render: (name, item) => (
                 <button type="button" className="chat-files-name" onClick={() => setPreview(item)} title={item.relativePath}>
@@ -191,41 +191,41 @@ export default function ChatFilesPage() {
             )
         },
         {
-            title: t('chatFilesPage.sourceFilter', null, '来源'),
+            title: t('chatFilesPage.sourceFilter', null, 'Source'),
             dataIndex: 'source',
             width: 110,
-            render: value => <Tag size="small">{(SOURCE_LABEL[value] || value || '对话附件')}</Tag>
+            render: value => <Tag size="small">{(SOURCE_LABEL[value] || value || SOURCE_LABEL.upload)}</Tag>
         },
         {
-            title: t('chatFilesPage.colConversation', null, '会话'),
+            title: t('chatFilesPage.colConversation', null, 'Conversation'),
             dataIndex: 'conversationTitle',
             width: 180,
             render: (value, item) => <Text type="tertiary" size="small" ellipsis={{ showTooltip: true }}>{value || item.conversationId || '—'}</Text>
         },
         {
-            title: t('chatFilesPage.colSubPath', null, '路径'),
+            title: t('chatFilesPage.colSubPath', null, 'Subfolder'),
             dataIndex: 'relativePath',
             width: 220,
             render: value => <span className="chat-files-path">{value}</span>
         },
-        { title: t('chatFilesPage.colSize', null, '大小'), dataIndex: 'size', width: 100, render: value => formatBytes(value) },
+        { title: t('chatFilesPage.colSize', null, 'Size'), dataIndex: 'size', width: 100, render: value => formatBytes(value) },
         {
-            title: t('chatFilesPage.colModified', null, '修改时间'),
+            title: t('chatFilesPage.colModified', null, 'Modified'),
             dataIndex: 'modifiedUnix',
             width: 170,
             render: value => formatDateTime(value ? value * 1000 : null)
         },
         {
-            title: t('chatFilesPage.colActions', null, '操作'),
+            title: t('chatFilesPage.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 260,
             render: (_, item) => (
                 <Space spacing={4} wrap>
-                    <Button size="small" theme="borderless" onClick={() => setPreview(item)}>{t('chatFilesPage.preview', null, '预览')}</Button>
-                    <Button size="small" theme="borderless" onClick={() => copyPath(item)}>{t('chatFilesPage.copyPath', null, '复制路径')}</Button>
-                    <Button size="small" theme="borderless" onClick={() => download(item)}>{t('chatFilesPage.download', null, '下载')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setPreview(item)}>{t('chatFilesPage.preview', null, 'Preview')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => copyPath(item)}>{t('chatFilesPage.copyPath', null, 'Copy path')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => download(item)}>{t('chatFilesPage.download', null, 'Download')}</Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove(item)}>
-                        {t('chatFilesPage.delete', null, '删除')}
+                        {t('chatFilesPage.delete', null, 'Delete')}
                     </Button>
                 </Space>
             )
@@ -234,7 +234,7 @@ export default function ChatFilesPage() {
 
     const browseColumns = [
         {
-            title: t('chatFilesPage.colName', null, '文件名'),
+            title: t('chatFilesPage.colName', null, 'Name'),
             dataIndex: 'name',
             render: (name, item) => (item.isDir ? (
                 <button type="button" className="chat-files-name is-dir" onClick={() => setCurrentDir(item.path)}>
@@ -246,28 +246,28 @@ export default function ChatFilesPage() {
                 </button>
             ))
         },
-        { title: t('chatFilesPage.colSize', null, '大小'), dataIndex: 'size', width: 110, render: value => (value === undefined ? '—' : formatBytes(value)) },
+        { title: t('chatFilesPage.colSize', null, 'Size'), dataIndex: 'size', width: 110, render: value => (value === undefined ? '—' : formatBytes(value)) },
         {
-            title: t('chatFilesPage.colModified', null, '修改时间'),
+            title: t('chatFilesPage.colModified', null, 'Modified'),
             dataIndex: 'modifiedUnix',
             width: 180,
             render: value => (value ? formatDateTime(value * 1000) : '—')
         },
         {
-            title: t('chatFilesPage.colActions', null, '操作'),
+            title: t('chatFilesPage.colActions', null, 'Actions'),
             dataIndex: 'actions',
             width: 240,
             render: (_, item) => (item.isDir ? (
                 <Space spacing={4}>
-                    <Button size="small" theme="borderless" onClick={() => setCurrentDir(item.path)}>{t('chatFilesPage.enterFolder', null, '进入')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setCurrentDir(item.path)}>{t('chatFilesPage.enterFolder', null, 'Open')}</Button>
                 </Space>
             ) : (
                 <Space spacing={4} wrap>
-                    <Button size="small" theme="borderless" onClick={() => setPreview(item)}>{t('chatFilesPage.preview', null, '预览')}</Button>
-                    <Button size="small" theme="borderless" onClick={() => copyPath(item)}>{t('chatFilesPage.copyPath', null, '复制路径')}</Button>
-                    <Button size="small" theme="borderless" onClick={() => download(item)}>{t('chatFilesPage.download', null, '下载')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => setPreview(item)}>{t('chatFilesPage.preview', null, 'Preview')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => copyPath(item)}>{t('chatFilesPage.copyPath', null, 'Copy path')}</Button>
+                    <Button size="small" theme="borderless" onClick={() => download(item)}>{t('chatFilesPage.download', null, 'Download')}</Button>
                     <Button size="small" theme="borderless" type="danger" disabled={!canDelete} onClick={() => remove(item)}>
-                        {t('chatFilesPage.delete', null, '删除')}
+                        {t('chatFilesPage.delete', null, 'Delete')}
                     </Button>
                 </Space>
             ))
@@ -289,17 +289,17 @@ export default function ChatFilesPage() {
     return (
         <div className="chat-files-page" id="page-chat-files">
             <PageHeader
-                title={t('chatFilesPage.title', null, '文件管理')}
-                description={t('chatFilesPage.intro', null, '管理在对话中上传的文件，可复制路径供 AI 引用')}
+                title={t('chatFilesPage.title', null, 'File Management')}
+                description={t('chatFilesPage.intro', null, 'Files uploaded in chat appear here. Drag files into the list below, or click Upload to pick files (multiple allowed). Click “Copy path” to copy the server absolute path and paste it into a conversation so the model can reference the file.')}
                 extra={[
-                    <Button key="export" onClick={exportCurrent}>{t('chatFilesPage.export', null, '导出当前结果')}</Button>,
+                    <Button key="export" onClick={exportCurrent}>{t('chatFilesPage.export', null, 'Export Current Results')}</Button>,
                     <Button key="mkdir" icon={<IconPlus />} disabled={!canWrite} onClick={() => setMkdir({ name: '' })}>
-                        {t('chatFilesPage.newFolderButton', null, '新建文件夹')}
+                        {t('chatFilesPage.newFolderButton', null, 'New folder')}
                     </Button>,
                     <Button key="upload" theme="solid" type="primary" icon={<IconUpload />} loading={uploading} disabled={!canWrite} onClick={pickFiles}>
-                        {t('chatFilesPage.upload', null, '上传文件')}
+                        {t('chatFilesPage.upload', null, 'Upload')}
                     </Button>,
-                    <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>{t('common.refresh', null, '刷新')}</Button>
+                    <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>{t('common.refresh', null, 'Refresh')}</Button>
                 ]}
             />
 
@@ -307,38 +307,38 @@ export default function ChatFilesPage() {
 
             <ErrorBanner error={error} onRetry={reload} />
 
-            <SectionCard title={t('chatFilesPage.filterTitle', null, '筛选')}>
+            <SectionCard title={t('chatFilesPage.filterTitle', null, 'Filters')}>
                 <div className="chat-files-fields">
                     <div className="chat-files-field">
-                        <span className="chat-files-field-label">{t('chatFilesPage.conversationFilter', null, '会话 ID')}</span>
+                        <span className="chat-files-field-label">{t('chatFilesPage.conversationFilter', null, 'Conversation ID')}</span>
                         <Input
                             value={conversation}
                             onChange={value => { setConversation(value); setPage(1); }}
-                            placeholder={t('chatFilesPage.conversationPlaceholder', null, '留空表示全部')}
+                            placeholder={t('chatFilesPage.conversationPlaceholder', null, 'Leave empty for all')}
                             style={{ width: 200 }}
                         />
                     </div>
                     <div className="chat-files-field">
-                        <span className="chat-files-field-label">{t('chatFilesPage.projectFilter', null, '项目 ID')}</span>
+                        <span className="chat-files-field-label">{t('chatFilesPage.projectFilter', null, 'Project ID')}</span>
                         <Input
                             value={project}
                             onChange={value => { setProject(value); setPage(1); }}
-                            placeholder={t('chatFilesPage.projectPlaceholder', null, '留空表示全部')}
+                            placeholder={t('chatFilesPage.projectPlaceholder', null, 'Leave empty for all')}
                             style={{ width: 200 }}
                         />
                     </div>
                     <div className="chat-files-field">
-                        <span className="chat-files-field-label">{t('chatFilesPage.searchName', null, '文件名')}</span>
+                        <span className="chat-files-field-label">{t('chatFilesPage.searchName', null, 'File name')}</span>
                         <Input
                             value={keyword}
                             onChange={value => { setKeyword(value); setPage(1); }}
                             prefix={<IconSearch />}
-                            placeholder={t('chatFilesPage.searchNamePlaceholder', null, '筛选文件名')}
+                            placeholder={t('chatFilesPage.searchNamePlaceholder', null, 'Filter by file name')}
                             style={{ width: 200 }}
                         />
                     </div>
                     <div className="chat-files-field">
-                        <span className="chat-files-field-label">{t('chatFilesPage.sourceFilter', null, '来源')}</span>
+                        <span className="chat-files-field-label">{t('chatFilesPage.sourceFilter', null, 'Source')}</span>
                         <Select
                             value={source}
                             onChange={value => { setSource(value || 'all'); setPage(1); }}
@@ -347,13 +347,13 @@ export default function ChatFilesPage() {
                         />
                     </div>
                     <div className="chat-files-field">
-                        <span className="chat-files-field-label">{t('chatFilesPage.groupBy', null, '分组方式')}</span>
+                        <span className="chat-files-field-label">{t('chatFilesPage.groupBy', null, 'Group by')}</span>
                         <Select
                             value={mode}
                             onChange={value => { setMode(value || 'list'); setPage(1); setCurrentDir(''); }}
                             optionList={[
-                                { value: 'list', label: t('chatFilesPage.groupNone', null, '不分组（平铺）') },
-                                { value: 'browse', label: t('chatFilesPage.groupByFolder', null, '按文件夹（路径浏览）') }
+                                { value: 'list', label: t('chatFilesPage.groupNone', null, 'None (flat list)') },
+                                { value: 'browse', label: t('chatFilesPage.groupByFolder', null, 'By folder (path navigation)') }
                             ]}
                             style={{ width: 200 }}
                         />
@@ -374,9 +374,9 @@ export default function ChatFilesPage() {
 
             <SectionCard
                 title={mode === 'browse'
-                    ? t('chatFilesPage.browseRoot', null, '文件')
-                    : t('chatFilesPage.listTitle', null, '附件列表')}
-                extra={<Text type="tertiary" size="small">{t('chatFilesPage.paginationInfo', null, '显示 {{start}}-{{end}} / {{total}} 个文件')
+                    ? t('chatFilesPage.browseRoot', null, 'Files')
+                    : t('chatFilesPage.listTitle', null, 'Attachments')}
+                extra={<Text type="tertiary" size="small">{t('chatFilesPage.paginationInfo', null, 'Showing {{start}}-{{end}} of {{total}} files')
                     .replace('{{start}}', rows.length ? '1' : '0')
                     .replace('{{end}}', String(rows.length))
                     .replace('{{total}}', String(mode === 'browse' ? rows.length : total))}</Text>}
@@ -395,8 +395,8 @@ export default function ChatFilesPage() {
                         onPageSizeChange: size => { setPageSize(size); setPage(1); }
                     }}
                     emptyText={mode === 'browse'
-                        ? t('chatFilesPage.folderEmpty', null, '此文件夹为空')
-                        : t('chatFilesPage.empty', null, '暂无对话附件')}
+                        ? t('chatFilesPage.folderEmpty', null, 'This folder is empty')
+                        : t('chatFilesPage.empty', null, 'No chat uploads yet')}
                 />
             </SectionCard>
 
@@ -404,18 +404,18 @@ export default function ChatFilesPage() {
 
             <Drawer
                 visible={Boolean(mkdir)}
-                title={t('chatFilesPage.newFolderTitle', null, '新建文件夹')}
+                title={t('chatFilesPage.newFolderTitle', null, 'New folder')}
                 width={420}
                 onCancel={() => setMkdir(null)}
                 onOk={submitMkdir}
             >
                 <Text type="tertiary" size="small">
-                    {t('chatFilesPage.newFolderLocation', null, '位置')}：{mode === 'browse' && currentDir ? currentDir : '/'}
+                    {t('chatFilesPage.newFolderLocation', null, 'Location')}：{mode === 'browse' && currentDir ? currentDir : '/'}
                 </Text>
                 <Input
                     value={mkdir?.name || ''}
                     onChange={value => setMkdir({ name: value })}
-                    placeholder={t('chatFilesPage.newFolderNamePlaceholder', null, '仅名称，不含 /')}
+                    placeholder={t('chatFilesPage.newFolderNamePlaceholder', null, 'Name only, no slashes')}
                     style={{ marginTop: 8 }}
                 />
             </Drawer>

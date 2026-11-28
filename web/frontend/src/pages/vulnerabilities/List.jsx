@@ -1,4 +1,4 @@
-/** 漏洞列表：服务端分页表格 + 行内操作 + 多选。 */
+/** Vulnerability list: server-paginated table + row actions + multi-select. */
 import { Button, Select, Tag, Typography } from '@douyinfe/semi-ui';
 import { formatDateTime } from '../../lib/format';
 import { DataTable, SeverityTag, StatusTag } from '../../components/ui';
@@ -34,32 +34,32 @@ export default function VulnTable({
 }) {
     const columns = [
         {
-            title: t('vulnerabilityPage.tableTitle', null, '漏洞名称'),
+            title: t('vulnerabilityPage.tableTitle', null, 'Finding'),
             dataIndex: 'title',
             render: (_, record) => (
                 <div className="vulnerability-title-cell">
                     <span className="vulnerability-title-text" title={record.title}>{record.title || '—'}</span>
                     <span className="vulnerability-title-meta">
                         {record.type || '—'}
-                        {record.case_id ? ` · ${t('vulnerabilityPage.mergedRecord', null, '已归并')}` : ''}
+                        {record.case_id ? ` · ${t('vulnerabilityPage.mergedRecord', null, 'Merged')}` : ''}
                     </span>
                 </div>
             )
         },
         {
-            title: t('vulnerabilityPage.tableSeverity', null, '严重度'),
+            title: t('vulnerabilityPage.tableSeverity', null, 'Severity'),
             dataIndex: 'severity',
             width: 92,
             render: severity => <SeverityTag severity={severity} />
         },
         {
-            title: t('vulnerabilityPage.tableStatus', null, '状态'),
+            title: t('vulnerabilityPage.tableStatus', null, 'Status'),
             dataIndex: 'status',
             width: 100,
             render: status => <StatusTag status={status} label={statusText(t, status)} />
         },
         {
-            title: t('vulnerabilityPage.detailTarget', null, '目标 / 宿主'),
+            title: t('vulnerabilityPage.detailTarget', null, 'Target'),
             dataIndex: 'target',
             width: 220,
             render: (_, record) => {
@@ -78,32 +78,32 @@ export default function VulnTable({
             }
         },
         {
-            title: t('vulnerabilityPage.tableSource', null, '来源'),
+            title: t('vulnerabilityPage.tableSource', null, 'Source'),
             dataIndex: 'conversation_tag',
             width: 170,
             render: (_, record) => <SourceCell record={record} />
         },
         {
-            title: t('vulnerabilityPage.tableDate', null, '创建时间'),
+            title: t('vulnerabilityPage.tableDate', null, 'Discovered'),
             dataIndex: 'created_at',
             width: 180,
             render: value => <span className="vulnerability-time">{formatDateTime(value)}</span>
         },
         {
-            title: t('vulnerabilityPage.tableActions', null, '操作'),
+            title: t('vulnerabilityPage.tableActions', null, 'Actions'),
             dataIndex: 'id',
             width: 200,
             render: (_, record) => (
                 <div className="vulnerability-row-actions">
                     <Button size="small" theme="borderless" onClick={event => { event.stopPropagation(); onOpen(record.id); }}>
-                        {t('vulnerabilityPage.rowView', null, '详情')}
+                        {t('vulnerabilityPage.rowView', null, 'Details')}
                     </Button>
                     <Button
                         size="small"
                         theme="borderless"
                         onClick={event => { event.stopPropagation(); onDownload(record); }}
                     >
-                        {t('vulnerabilityPage.tableDownload', null, '下载')}
+                        {t('vulnerabilityPage.tableDownload', null, 'Download')}
                     </Button>
                     {canWrite && (
                         <Button
@@ -111,7 +111,7 @@ export default function VulnTable({
                             theme="borderless"
                             onClick={event => { event.stopPropagation(); onEdit(record); }}
                         >
-                            {t('common.edit', null, '编辑')}
+                            {t('common.edit', null, 'Edit')}
                         </Button>
                     )}
                     {canDelete && (
@@ -121,7 +121,7 @@ export default function VulnTable({
                             type="danger"
                             onClick={event => { event.stopPropagation(); onDelete(record); }}
                         >
-                            {t('common.delete', null, '删除')}
+                            {t('common.delete', null, 'Delete')}
                         </Button>
                     )}
                 </div>
@@ -150,7 +150,7 @@ export default function VulnTable({
             rowKey="id"
             toolbar={tableToolbar}
             onRefresh={onRefresh}
-            emptyText={t('vulnerabilityPage.noRecords', null, '暂无漏洞记录')}
+            emptyText={t('vulnerabilityPage.noRecords', null, 'No vulnerability records')}
             scroll={{ x: 1200 }}
             rowSelection={canDelete ? {
                 selectedRowKeys: selection,

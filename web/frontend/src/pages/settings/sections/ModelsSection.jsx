@@ -1,4 +1,4 @@
-/** 模型与工具：通道配置、模型连接探测和工具开关。 */
+/** Models and tools: channel configuration, model connection probing and tool switches. */
 import { useCallback } from 'react';
 import { api } from '../../../lib/http';
 import { useAuth } from '../../../lib/auth';
@@ -17,7 +17,7 @@ export default function ModelsSection() {
     const config = useResource(loader, [canRead], { skip: !canRead });
 
     if (!canRead) {
-        return <PermissionBanner permission="config:read" label={t('settings.nav.models', null, '读取模型与工具配置')} />;
+        return <PermissionBanner permission="config:read" label={t('settings.nav.models', null, 'Models & tools')} />;
     }
 
     return (

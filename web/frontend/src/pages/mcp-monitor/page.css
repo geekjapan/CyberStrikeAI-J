@@ -1,4 +1,4 @@
-/* MCP 状态监控页私有布局样式（颜色只用 Semi 变量）。 */
+/* Private layout styles for the MCP status monitor page (colors use Semi variables only). */
 
 .mcp-monitor-page { display: flex; flex-direction: column; }
 

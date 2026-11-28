@@ -40,6 +40,7 @@ public final class AuthRegressionTest {
         try {
             CyberStrikeAIClient client = new CyberStrikeAIClient();
             String base = "http://127.0.0.1:" + server.getAddress().getPort();
+            // Chinese stays: non-ASCII credentials must be sent and escaped correctly.
             for (String username : new String[]{"admin", "analyst", "研究员\"\\"}) {
                 String password = "  p\"\\\n密码  ";
                 String token = client.loginAndValidate(new CyberStrikeAIClient.Config(base, " " + username + " ", password));

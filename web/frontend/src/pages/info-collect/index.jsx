@@ -1,4 +1,4 @@
-/** 信息收集：FOFA/ZoomEye/Quake/Shodan 检索、分页、结果入库、自然语言解析。 */
+/** Recon: FOFA/ZoomEye/Quake/Shodan search, pagination, saving results, natural language parsing. */
 import { useEffect, useMemo, useState } from 'react';
 import {
     Banner, Button, Empty, Input, InputNumber, Pagination, Select, SideSheet, Space,
@@ -65,7 +65,7 @@ export default function InfoCollectPage() {
     }, [hasPermission]);
 
     useEffect(() => {
-        // provider 切换后字段模板与数量上限需要跟随，避免残留其他 provider 的字段。
+        // Field template and count limit must follow the provider switch so fields of another provider do not linger.
         setVisibleFields([]);
         setSelectedKeys([]);
         setResult(null);
@@ -88,12 +88,12 @@ export default function InfoCollectPage() {
 
     const runSearch = async (page = 1, queryOverride) => {
         if (!canSearch) {
-            toastWarning(t('infoCollect.permissionDenied', null, '当前账号没有 fofa:execute 权限'));
+            toastWarning(t('infoCollect.permissionDenied', null, 'The current account lacks the fofa:execute permission'));
             return;
         }
         const query = String(queryOverride ?? form.query ?? '').trim();
         if (!query) {
-            toastWarning(t('infoCollect.enterFofaQuery', null, '请输入查询语法'));
+            toastWarning(t('infoCollect.enterFofaQuery', null, 'Enter FOFA query syntax'));
             return;
         }
         setLoading(true);
@@ -136,11 +136,11 @@ export default function InfoCollectPage() {
     const importSelected = async () => {
         if (importing) return;
         if (!canImport) {
-            toastWarning(t('infoCollect.noImportPermission', null, '当前账号没有 asset:write 权限'));
+            toastWarning(t('infoCollect.noImportPermission', null, 'The current account lacks the asset:write permission'));
             return;
         }
         if (!selectedKeys.length) {
-            toastWarning(t('infoCollect.selectRowsFirst', null, '请先选择需要入库的结果'));
+            toastWarning(t('infoCollect.selectRowsFirst', null, 'Select rows to scan first'));
             return;
         }
         const rows = rowsForIndexes(results, selectedKeys);
@@ -153,19 +153,19 @@ export default function InfoCollectPage() {
                 projectId
             });
             if (!outcome.assets.length) {
-                toastWarning(t('assets.noValidImportTarget', null, '所选结果中没有可入库的有效资产目标'));
+                toastWarning(t('assets.noValidImportTarget', null, 'None of the selected results has a valid asset target'));
                 return;
             }
             const message = outcome.invalidCount
                 ? t('assets.importDoneWithInvalid', {
                     created: outcome.created, updated: outcome.updated, invalid: outcome.invalidCount
-                }, `已新增 ${outcome.created} 条，更新 ${outcome.updated} 条，跳过 ${outcome.invalidCount} 条无有效目标的结果`)
+                }, 'Created {{created}}, updated {{updated}}, skipped {{invalid}} results without valid targets')
                 : t('assets.importDone', { created: outcome.created, updated: outcome.updated },
-                    `已新增 ${outcome.created} 条，更新 ${outcome.updated} 条`);
+                    'Created {{created}}, updated {{updated}}');
             toastSuccess(message);
             setSelectedKeys([]);
         } catch (importError) {
-            toastError(importError, t('assets.importFailed', null, '资产入库失败'));
+            toastError(importError, t('assets.importFailed', null, 'Failed to import assets'));
         } finally {
             setImporting(false);
         }
@@ -189,20 +189,20 @@ export default function InfoCollectPage() {
     const metaText = result
         ? t('infoCollect.resultsMeta', {
             total, count: results.length, page: currentPage, size: pageSize
-        }, `${providerLabel} · 共 ${total} 条 · 第 ${currentPage} 页 · 每页 ${pageSize} 条 · 返回 ${results.length} 条`)
+        }, 'Total {{total}} · This page {{count}} · page={{page}} · size={{size}}')
         : '';
 
     return (
         <div className="info-collect-page">
             <PageHeader
-                title={t('infoCollectPage.title', null, '信息收集')}
-                description="使用 FOFA 等空间测绘语法检索资产，并把结果直接入库。"
+                title={t('infoCollectPage.title', null, 'Recon')}
+                description={t('ui.infoCollect.pageDescription', null, 'Search assets with FOFA and other cyberspace mapping syntax, and import the results directly.')}
                 extra={(
                     <Space>
                         <Button icon={<IconRefresh />} onClick={() => { if (result) runSearch(currentPage); }}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
-                        <Button onClick={reset}>{t('infoCollectPage.reset', null, '重置')}</Button>
+                        <Button onClick={reset}>{t('infoCollectPage.reset', null, 'Reset')}</Button>
                     </Space>
                 )}
             />
@@ -212,12 +212,12 @@ export default function InfoCollectPage() {
                     bordered
                     closeIcon={null}
                     className="info-collect-permission"
-                    description={t('infoCollect.permissionDeniedHint', null, '当前账号没有 fofa:execute 权限：查询、列字段与入库操作不可用，请联系管理员授权。')}
+                    description={t('infoCollect.permissionDeniedHint', null, 'The current account lacks the fofa:execute permission: search, field listing, and import are unavailable. Contact an administrator for access.')}
                 />
             )}
             <ErrorBanner error={error} onRetry={() => runSearch(currentPage)} />
 
-            <SectionCard title={t('infoCollectPage.fofaQuerySyntax', null, '查询语法')}>
+            <SectionCard title={t('infoCollectPage.fofaQuerySyntax', null, 'FOFA query syntax')}>
                 <div className="info-collect-form">
                     <Space className="info-collect-form-row">
                         <Select
@@ -227,7 +227,7 @@ export default function InfoCollectPage() {
                             style={{ width: 150 }}
                         />
                         <span className="info-collect-size">
-                            <Text type="tertiary" size="small">{t('infoCollectPage.returnCount', null, '返回数量')}</Text>
+                            <Text type="tertiary" size="small">{t('infoCollectPage.returnCount', null, 'Return count')}</Text>
                             <InputNumber
                                 value={effectiveSize}
                                 min={1}
@@ -243,14 +243,14 @@ export default function InfoCollectPage() {
                         />
                         <Text type="tertiary" size="small">full</Text>
                         <Button theme="solid" type="primary" icon={<IconSearch />} onClick={() => runSearch(1)} loading={loading} disabled={!canSearch}>
-                            {t('infoCollectPage.confirm', null, '查询')}
+                            {t('infoCollectPage.confirm', null, 'OK')}
                         </Button>
                         <Button
                             disabled={!naturalText.trim() || !canSearch}
                             onClick={() => setParseOpen(true)}
-                            title={t('infoCollectPage.parseBtnTitle', null, '将自然语言解析为查询语法')}
+                            title={t('infoCollectPage.parseBtnTitle', null, 'Parse natural language to FOFA query')}
                         >
-                            {t('infoCollectPage.parseBtn', null, 'AI 解析')}
+                            {t('infoCollectPage.parseBtn', null, 'AI parse')}
                         </Button>
                     </Space>
 
@@ -263,7 +263,7 @@ export default function InfoCollectPage() {
                     />
 
                     <Space wrap className="info-collect-presets">
-                        <Text type="tertiary" size="small">{t('infoCollectPage.fillExample', null, '示例')}：</Text>
+                        <Text type="tertiary" size="small">{t('infoCollectPage.fillExample', null, 'Fill example')}：</Text>
                         {config.queryPresets.map(([label, query]) => (
                             <Button key={label} size="small" theme="borderless" onClick={() => update({ query })}>
                                 {label}
@@ -272,7 +272,7 @@ export default function InfoCollectPage() {
                     </Space>
 
                     <Space className="info-collect-form-row">
-                        <Text type="tertiary" size="small">{t('infoCollectPage.returnFields', null, '返回字段')}</Text>
+                        <Text type="tertiary" size="small">{t('infoCollectPage.returnFields', null, 'Return fields (comma-separated)')}</Text>
                         <Input
                             value={form.fields}
                             onChange={value => update({ fields: value })}
@@ -289,8 +289,8 @@ export default function InfoCollectPage() {
                     <Space className="info-collect-form-row">
                         <Select
                             value={projectId}
-                            optionList={[{ value: '', label: '不归入项目' }, ...projects.map(item => ({ value: item.id, label: item.name || item.id }))]}
-                            placeholder="归入项目"
+                            optionList={[{ value: '', label: t('ui.infoCollect.noProject', null, 'No project') }, ...projects.map(item => ({ value: item.id, label: item.name || item.id }))]}
+                            placeholder={t('ui.infoCollect.assignProject', null, 'Add to project')}
                             style={{ width: 220 }}
                             onChange={value => setProjectId(value || '')}
                         />
@@ -299,7 +299,7 @@ export default function InfoCollectPage() {
                     <TextArea
                         value={naturalText}
                         rows={2}
-                        placeholder={t('infoCollectPage.nlPlaceholder', null, '自然语言：例如 找中国 Apache 站点，标题包含登录')}
+                        placeholder={t('infoCollectPage.nlPlaceholder', null, 'e.g. Apache sites in Missouri, US, title contains Home')}
                         className="info-collect-natural"
                         onChange={setNaturalText}
                     />
@@ -308,7 +308,7 @@ export default function InfoCollectPage() {
 
             <SectionCard
                 className="info-collect-results"
-                title={t('infoCollectPage.queryResults', null, '查询结果')}
+                title={t('infoCollectPage.queryResults', null, 'Query results')}
                 extra={(
                     <Space className="info-collect-results-actions" wrap>
                         <Text type="tertiary" size="small">{metaText}</Text>
@@ -317,13 +317,13 @@ export default function InfoCollectPage() {
                             value={visibleFields}
                             optionList={fields.map(field => ({ value: field, label: field }))}
                             disabled={!fields.length}
-                            placeholder={t('infoCollectPage.showColumns', null, '显示字段')}
+                            placeholder={t('infoCollectPage.showColumns', null, 'Show columns')}
                             maxTagCount={FOFA_RESULT_FIELD_LIMIT}
                             style={{ minWidth: 220 }}
                             onChange={values => {
                                 const next = (values || []).slice(0, FOFA_RESULT_FIELD_LIMIT);
                                 if ((values || []).length > FOFA_RESULT_FIELD_LIMIT) {
-                                    toastWarning(`最多显示 ${FOFA_RESULT_FIELD_LIMIT} 个字段`);
+                                    toastWarning(t('ui.infoCollect.maxFields', { limit: FOFA_RESULT_FIELD_LIMIT }, 'Show at most {{limit}} fields'));
                                 }
                                 setVisibleFields(next);
                             }}
@@ -334,7 +334,7 @@ export default function InfoCollectPage() {
                             loading={importing}
                             onClick={importSelected}
                         >
-                            {t('assets.importSelected', null, '入库所选')}
+                            {t('assets.importSelected', null, 'Import selected')}
                         </Button>
                     </Space>
                 )}
@@ -350,8 +350,10 @@ export default function InfoCollectPage() {
                 )}
                 {!result && !loading && !error ? (
                     <Empty
-                        title={t('infoCollect.noResults', null, '暂无结果')}
-                        description={canSearch ? '输入查询语法后点击“查询”。' : '当前账号缺少 fofa:execute 权限。'}
+                        title={t('infoCollect.noResults', null, 'No results')}
+                        description={canSearch
+                            ? t('ui.infoCollect.emptyHint', null, 'Enter a query and click "Search".')
+                            : t('ui.infoCollect.emptyNoPermission', null, 'This account lacks the fofa:execute permission.')}
                         style={{ padding: 40 }}
                     />
                 ) : (
@@ -378,7 +380,7 @@ export default function InfoCollectPage() {
                 )}
                 {result && (
                     <Text type="tertiary" size="small" className="info-collect-selected-meta">
-                        {t('infoCollectPage.selectedRows', { count: selectedKeys.length }, `已选择 ${selectedKeys.length} 条`)}
+                        {t('infoCollectPage.selectedRows', { count: selectedKeys.length }, '{{count}} selected')}
                     </Text>
                 )}
             </SectionCard>
@@ -386,7 +388,7 @@ export default function InfoCollectPage() {
             <SideSheet
                 visible={Boolean(detailRow)}
                 onCancel={() => setDetailRow(null)}
-                title={t('infoCollect.detailTitle', null, '结果详情')}
+                title={t('infoCollect.detailTitle', null, 'Result details')}
                 width={600}
                 placement="right"
             >
@@ -394,7 +396,7 @@ export default function InfoCollectPage() {
                     <div className="info-collect-detail">
                         <Text strong>{inferTarget(detailRow, fields) || '—'}</Text>
                         <KeyValueList items={detailItems} columns={1} />
-                        <JsonViewer value={detailRow} title="原始 JSON" />
+                        <JsonViewer value={detailRow} title={t('ui.infoCollect.rawJson', null, 'Raw JSON')} />
                     </div>
                 )}
             </SideSheet>

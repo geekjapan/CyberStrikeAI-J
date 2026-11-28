@@ -3,7 +3,7 @@ package openai
 import "testing"
 
 func TestNormalizeStreamingDelta_RepeatedCharBoundary(t *testing.T) {
-	// 流式在重复数字边界分片：不得把 "43" 的首字符与 "194" 尾字符误合并。
+	// Streaming chunks split at a repeated-digit boundary: the first character of "43" must not be wrongly merged with the last character of "194".
 	cur, d := normalizeStreamingDelta("https://x:194", "43")
 	if want := "https://x:19443"; cur != want {
 		t.Fatalf("next: want %q got %q", want, cur)
@@ -13,6 +13,7 @@ func TestNormalizeStreamingDelta_RepeatedCharBoundary(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_CumulativePrefix(t *testing.T) {
 	cur, d := normalizeStreamingDelta("今天", "今天天气")
 	if cur != "今天天气" || d != "天气" {
@@ -20,6 +21,7 @@ func TestNormalizeStreamingDelta_CumulativePrefix(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_FullRetransmit(t *testing.T) {
 	cur, d := normalizeStreamingDelta("今天", "今天")
 	if d != "" || cur != "今天" {
@@ -27,6 +29,7 @@ func TestNormalizeStreamingDelta_FullRetransmit(t *testing.T) {
 	}
 }
 
+// Chinese stays: multi-byte characters must be compared as whole characters.
 func TestNormalizeStreamingDelta_SingleRuneRepeated(t *testing.T) {
 	cur, d := normalizeStreamingDelta("呀", "呀")
 	if want := "呀呀"; cur != want {
@@ -45,7 +48,7 @@ func TestNormalizeStreamingDelta_SingleRuneRepeated(t *testing.T) {
 }
 
 func TestNormalizeStreamingDelta_CumulativeExtendsNumber(t *testing.T) {
-	// 已缓冲 "194" 后收到累计串 "19443"（注意 "1943" 并非 "19443" 的前缀，不能靠误写的中间态测 HasPrefix）。
+	// After "194" is buffered, the cumulative string "19443" arrives (note "1943" is not a prefix of "19443", so HasPrefix cannot be tested with a mis-typed intermediate state).
 	cur, d := normalizeStreamingDelta("194", "19443")
 	if want := "19443"; cur != want {
 		t.Fatalf("next: want %q got %q", want, cur)

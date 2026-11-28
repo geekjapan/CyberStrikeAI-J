@@ -1,5 +1,5 @@
 /**
- * C2 会话终端：下发 shell 任务并轮询任务结果，输出回显到本地终端视图。
+ * C2 session terminal: dispatch shell tasks and poll task results, echoing output into the local terminal view.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button, Input, Space, Tag } from '@douyinfe/semi-ui';
@@ -51,7 +51,7 @@ export default function SessionTerminal({ session, canWrite, onTaskCreated }) {
         const cmd = String(raw ?? command).trim();
         if (!cmd) return;
         if (!canWrite) {
-            toastWarning(t('c2.sessions.writeRequired', null, '当前账号没有下发任务的权限'));
+            toastWarning(t('c2.sessions.writeRequired', null, 'The current account is not allowed to send tasks'));
             return;
         }
         setCommand('');
@@ -64,21 +64,21 @@ export default function SessionTerminal({ session, canWrite, onTaskCreated }) {
             });
             const taskId = created?.task?.id;
             if (!taskId) {
-                append({ kind: 'err', text: t('c2.sessions.termNoSession', null, '下发失败：未返回任务 ID') });
+                append({ kind: 'err', text: t('c2.sessions.termNoSession', null, 'Error: no session selected') });
                 return;
             }
             setCurrentTaskId(taskId);
             onTaskCreated?.();
             const task = await waitResult(taskId);
             if (!task) {
-                append({ kind: 'warn', text: t('c2.sessions.termWaitTimeout', null, '[等待结果超时]') });
+                append({ kind: 'warn', text: t('c2.sessions.termWaitTimeout', null, '[Timed out waiting for result]') });
                 return;
             }
             if (task.resultText) append({ kind: task.status === 'success' ? 'out' : 'warn', text: task.resultText });
             if (task.error) append({ kind: 'err', text: task.error });
-            if (task.status === 'cancelled') append({ kind: 'warn', text: t('c2.tasks.cancelled', null, '已取消') });
+            if (task.status === 'cancelled') append({ kind: 'warn', text: t('c2.tasks.cancelled', null, 'Cancelled') });
         } catch (error) {
-            append({ kind: 'err', text: error?.message || t('c2.sessions.termStatusErr', null, '执行失败') });
+            append({ kind: 'err', text: error?.message || t('c2.sessions.termStatusErr', null, 'Error') });
             toastError(error);
         } finally {
             if (alive.current) {
@@ -92,7 +92,7 @@ export default function SessionTerminal({ session, canWrite, onTaskCreated }) {
         if (!currentTaskId) return;
         try {
             await c2.cancelTask(currentTaskId);
-            append({ kind: 'warn', text: t('c2.tasks.toastCancelled', null, '任务已取消') });
+            append({ kind: 'warn', text: t('c2.tasks.toastCancelled', null, 'Task cancelled') });
         } catch (err) {
             toastError(err);
         }
@@ -103,15 +103,15 @@ export default function SessionTerminal({ session, canWrite, onTaskCreated }) {
             <div className="c2-terminal-bar">
                 <Space spacing={8}>
                     <Tag size="small" color={running ? 'amber' : 'green'}>
-                        {running ? t('c2.sessions.termStatusExec', null, '执行中…') : t('c2.sessions.termStatusReady', null, '就绪')}
+                        {running ? t('c2.sessions.termStatusExec', null, 'Executing…') : t('c2.sessions.termStatusReady', null, 'Ready')}
                     </Tag>
-                    <Button size="small" theme="borderless" onClick={() => setEntries([])}>{t('c2.sessions.clearTerminal', null, '清屏')}</Button>
-                    {running && currentTaskId && <Button size="small" theme="borderless" type="danger" onClick={cancel}>{t('c2.tasks.cancelBtn', null, '取消')}</Button>}
+                    <Button size="small" theme="borderless" onClick={() => setEntries([])}>{t('c2.sessions.clearTerminal', null, 'Clear')}</Button>
+                    {running && currentTaskId && <Button size="small" theme="borderless" type="danger" onClick={cancel}>{t('c2.tasks.cancelBtn', null, 'Cancel')}</Button>}
                 </Space>
             </div>
             <div className="c2-terminal-log" ref={logRef}>
                 <div className="c2-terminal-welcome">
-                    {t('c2.sessions.terminalWelcome', null, 'C2 终端 — 回车执行；命令以 shell 任务下发并等待结果')}
+                    {t('c2.sessions.terminalWelcome', null, 'CyberStrikeAI C2 Terminal — Enter to run; ↑↓ history; Ctrl+L clear; Ctrl+C cancel input')}
                 </div>
                 {entries.map(entry => (
                     <pre key={entry.id} className={`c2-terminal-line kind-${entry.kind}`}>
@@ -123,13 +123,13 @@ export default function SessionTerminal({ session, canWrite, onTaskCreated }) {
                 <Input
                     value={command}
                     onChange={setCommand}
-                    onEnterPress={() => (running ? toastWarning(t('c2.sessions.termWaitFinish', null, '请等待当前命令执行完成')) : run())}
-                    placeholder={t('c2.sessions.commandPlaceholder', null, '输入命令后回车下发')}
+                    onEnterPress={() => (running ? toastWarning(t('c2.sessions.termWaitFinish', null, 'Please wait for the current command to finish')) : run())}
+                    placeholder={t('c2.sessions.commandPlaceholder', null, 'Type a command and press Enter to send')}
                     disabled={running || !canWrite}
                     prefix="$"
                 />
                 <Button theme="solid" type="primary" icon={<IconSend />} loading={running} disabled={!canWrite} onClick={() => run()}>
-                    {t('c2.sessions.execute', null, '执行命令')}
+                    {t('c2.sessions.execute', null, 'Execute Command')}
                 </Button>
             </div>
         </div>

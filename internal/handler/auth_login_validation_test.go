@@ -21,6 +21,7 @@ func TestLoginRejectsMissingAndLongUsernameBeforeAuthentication(t *testing.T) {
 	h := &AuthHandler{}
 	r := gin.New()
 	r.POST("/login", h.Login)
+	// Chinese stays (multi-byte handling): 65 multi-byte characters are over the limit.
 	for _, username := range []string{"", "  ", strings.Repeat("x", 65), strings.Repeat("中", 65)} {
 		body, _ := json.Marshal(map[string]string{"username": username, "password": "test-only-password"})
 		w := httptest.NewRecorder()
@@ -30,6 +31,34 @@ func TestLoginRejectsMissingAndLongUsernameBeforeAuthentication(t *testing.T) {
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("username %q: %d", username, w.Code)
 		}
+	}
+}
+
+// The username limit counts characters, not bytes: 64 multi-byte characters
+// (192 bytes) pass the length check and reach authentication, which then
+// fails with 401 instead of the 400 of the length check.
+func TestLoginCountsUsernameCharactersNotBytes(t *testing.T) {
+	db, err := database.NewDB(filepath.Join(t.TempDir(), "auth-length.db"), zap.NewNop())
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = db.Close() })
+	manager := security.NewAuthManager(12)
+	if _, err := manager.AttachRBACStore(db); err != nil {
+		t.Fatal(err)
+	}
+	h := NewAuthHandler(manager, &config.Config{}, "", zap.NewNop())
+	r := gin.New()
+	r.POST("/login", h.Login)
+	// Chinese stays (multi-byte handling): 64 characters, 192 bytes.
+	username := strings.Repeat("中", 64)
+	body, _ := json.Marshal(map[string]string{"username": username, "password": "test-only-password"})
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/login", bytes.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	r.ServeHTTP(w, req)
+	if w.Code != http.StatusUnauthorized {
+		t.Fatalf("64-character multi-byte username: status %d, want %d (length check must pass)", w.Code, http.StatusUnauthorized)
 	}
 }
 

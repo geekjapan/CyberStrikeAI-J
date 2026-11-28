@@ -3,16 +3,21 @@ package multiagent
 import "testing"
 
 func TestIsEmptyResponseResult(t *testing.T) {
-	empty := &RunResult{
-		Response: "(Pi single-agent session completed but no assistant text was captured. Check process details or logs.) " +
-			"（Pi 单代理会话已完成，但未捕获到助手文本输出。请查看过程详情或日志。）",
+	cases := []struct {
+		name     string
+		response string
+		want     bool
+	}{
+		{"english placeholder", "(Pi single-agent session completed but no assistant text was captured. Check process details or logs.)", true},
+		// Chinese stays: the placeholder stored by earlier versions; it alone must match.
+		{"legacy chinese placeholder", "（Pi 单代理会话已完成，但未捕获到助手文本输出。请查看过程详情或日志。）", true},
+		{"real response", "Scan complete; found 2 open ports.", false},
+		{"blank", "  \n", false},
 	}
-	if !IsEmptyResponseResult(empty) {
-		t.Fatal("expected empty placeholder response")
-	}
-	ok := &RunResult{Response: "扫描完成，发现 2 个开放端口。"}
-	if IsEmptyResponseResult(ok) {
-		t.Fatalf("expected real response, got placeholder match")
+	for _, c := range cases {
+		if got := IsEmptyResponseResult(&RunResult{Response: c.response}); got != c.want {
+			t.Errorf("%s: got %v, want %v", c.name, got, c.want)
+		}
 	}
 	if IsEmptyResponseResult(nil) {
 		t.Fatal("nil result should be false")

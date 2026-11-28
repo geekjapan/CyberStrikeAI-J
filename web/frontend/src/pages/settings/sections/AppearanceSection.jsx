@@ -1,4 +1,4 @@
-/** 外观：主题（system/light/dark，useTheme）与界面语言（useI18n.setLanguage）。 */
+/** Appearance: theme (system/light/dark, useTheme) and interface language (useI18n.setLanguage). */
 import { RadioGroup, Radio, Select, Space, Tag, Typography } from '@douyinfe/semi-ui';
 import { useTheme } from '../../../lib/theme';
 import { LANGUAGES, useI18n, useT } from '../../../lib/i18n';
@@ -15,29 +15,29 @@ export default function AppearanceSection() {
     return (
         <>
             <SectionCard
-                title={t('theme.titleSystem', null, '外观主题')}
-                description={t('settings.appearanceThemeDesc', null, '主题与语言只保存在当前浏览器（localStorage），不会写入服务端配置。')}
+                title={t('theme.titleSystem', null, 'Current: system theme. Click to switch to light.')}
+                description={t('settings.appearanceThemeDesc', null, 'Theme and language are saved only in this browser (localStorage), not in the server configuration.')}
             >
                 <RadioGroup
                     value={preference}
                     onChange={event => setPreference(event.target.value)}
                     direction="horizontal"
                 >
-                    <Radio value="system">{t('theme.system', null, '跟随系统')}</Radio>
-                    <Radio value="light">{t('theme.light', null, '浅色')}</Radio>
-                    <Radio value="dark">{t('theme.dark', null, '暗色')}</Radio>
+                    <Radio value="system">{t('theme.system', null, 'System')}</Radio>
+                    <Radio value="light">{t('theme.light', null, 'Light')}</Radio>
+                    <Radio value="dark">{t('theme.dark', null, 'Dark')}</Radio>
                 </RadioGroup>
                 <Space spacing={8} className="settings-appearance-status">
                     <Tag size="small" color="blue">
-                        {t('settings.currentTheme', null, '当前生效')}：{theme === 'dark' ? t('theme.dark', null, '暗色') : t('theme.light', null, '浅色')}
+                        {t('settings.currentTheme', null, 'In effect')}：{theme === 'dark' ? t('theme.dark', null, 'Dark') : t('theme.light', null, 'Light')}
                     </Tag>
                     <Hint>{`preference = ${preference}`}</Hint>
                 </Space>
             </SectionCard>
 
             <SectionCard
-                title={t('settings.languageTitle', null, '界面语言')}
-                description={t('settings.languageDesc', null, '切换到独立语言包；缺失词条回落到中文。')}
+                title={t('settings.languageTitle', null, 'Interface language')}
+                description={t('settings.languageDesc', null, 'Switch to a separate language pack; missing entries fall back to English.')}
             >
                 <Space spacing={12} align="center">
                     <Select

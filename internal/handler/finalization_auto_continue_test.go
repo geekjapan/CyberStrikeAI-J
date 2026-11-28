@@ -101,7 +101,7 @@ func TestCleanupPendingToolsDoesNotCompleteRun(t *testing.T) {
 		t.Fatalf("expected background wait result, result=%#v execID=%q", result, execID)
 	}
 
-	run := &multiagent.RunResult{Response: "基于已完成信息的阶段性总结。", MCPExecutionIDs: []string{execID}}
+	run := &multiagent.RunResult{Response: "Interim summary based on the completed information.", MCPExecutionIDs: []string{execID}}
 	var eventType string
 	decision, cancelled := h.decideAgentRunForDeliveryAndCleanup(context.Background(), "conv-cleanup", "", "single", run, run.MCPExecutionIDs, false, func(et, _ string, _ interface{}) {
 		eventType = et

@@ -99,7 +99,7 @@ sudo whoami && printf '%s\n' 'unexpected-command-success'
 
 func TestStreamingShell_StderrWhileStdoutBlocks(t *testing.T) {
 	shell := NewStreamingShell()
-	// 模拟 sudo：stderr 先有输出，stdout 侧进程仍挂起；旧 eino local 在首包 stderr 前不会向流写任何内容。
+	// Simulates sudo: stderr produces output first while the stdout-side process is still hanging; the old eino local wrote nothing to the stream before the first stderr packet.
 	cmd := PrepareNonInteractiveShellCommand(`echo "password prompt" >&2; sleep 30`)
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -135,7 +135,7 @@ func TestStreamingShell_StderrWhileStdoutBlocks(t *testing.T) {
 	}
 }
 
-// TestStreamingShell_BackgroundJobDoesNotHoldPipe 模拟 cmd & 后继续前台逻辑：重定向后应快速结束。
+// TestStreamingShell_BackgroundJobDoesNotHoldPipe simulates continuing foreground logic after cmd &: should finish quickly after redirection.
 func TestStreamingShell_BackgroundJobDoesNotHoldPipe(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping shell integration in -short")

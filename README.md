@@ -5,7 +5,7 @@
 # CyberStrikeAI
 
 
-[中文](README_CN.md) | [English](README.md)
+[English](README.md) | [日本語](README_JA.md)
 
 **The system of action for AI-native cybersecurity—where intent becomes governed execution, evidence becomes operational memory, and every operation improves the next.**
 
@@ -135,7 +135,7 @@ CyberStrikeAI connects planning, execution, human oversight, evidence, and repla
 
 - 📁 **Conversation management** provides pinning, renaming, and batch organization.
 - 📂 **Projects and attack chains** connect cross-session facts, risk scoring, graph views, and step-by-step replay.
-- 🗂️ **Asset management** normalizes and deduplicates domains, IP addresses, ports, and services; supports XLSX/CSV import and export, advanced filters and saved views, ownership and business metadata, cross-page bulk maintenance, and duplicate merging; and tracks scan coverage, linked vulnerabilities, and risk state. See the [Asset Management guide](docs/en-US/asset-management.md).
+- 🗂️ **Asset management** normalizes and deduplicates domains, IP addresses, ports, and services; supports CSV import and export, advanced filters and saved views, ownership and business metadata, cross-page bulk maintenance, and duplicate merging; and tracks scan coverage, linked vulnerabilities, and risk state. See the [Asset Management guide](docs/en-US/asset-management.md).
 - 🛡️ **Vulnerability management** provides severity classification, lifecycle tracking, filtering, and statistics.
 - 📋 **Batch tasks** provide queued execution, editing, status tracking, and retained results.
 - 📱 **Chatbots** connect Personal WeChat, WeCom, DingTalk, Lark, Telegram, Slack, Discord, and QQ Bot.
@@ -158,7 +158,7 @@ CyberStrikeAI includes optional integrations under `plugins/`.
   Capture Network traffic in DevTools and send it to CyberStrikeAI for AI-assisted security testing—aligned with the Burp plugin.  
   Install: `chrome://extensions/` → Load unpacked → F12 → **CyberStrikeAI** tab  
   Package output: `plugins/browser-extension/cyberstrikeai-browser-extension/dist/cyberstrikeai-browser-extension.zip`  
-  Docs: `plugins/browser-extension/cyberstrikeai-browser-extension/README.md` / `README.zh-CN.md`
+  Docs: `plugins/browser-extension/cyberstrikeai-browser-extension/README.md`
 
 ## Tool Overview
 
@@ -185,7 +185,7 @@ CyberStrikeAI ships with 100+ curated tools covering the whole kill chain:
 
 </details>
 
-See [tools/README_EN.md](tools/README_EN.md) for tool definitions, customization, and usage notes.
+See [tools/README.md](tools/README.md) for tool definitions, customization, and usage notes.
 
 ## Basic Usage
 
@@ -334,7 +334,7 @@ ai:
 - **Operators:** [Configuration profiles](docs/en-US/configuration-profiles.md) → [Security hardening](docs/en-US/security-hardening.md) → [Runbooks](docs/en-US/runbooks.md)
 - **Integrators:** [API reference](docs/en-US/api-reference.md) → [API recipes](docs/en-US/api-recipes.md) → [MCP federation](docs/en-US/mcp-federation.md)
 - **Contributors:** [Developer guide](docs/en-US/developer-guide.md) → [Testing](docs/en-US/testing.md) → [Contributing](docs/en-US/contributing-guide.md)
-- **All topics:** [English documentation](docs/en-US/README.md) · [Bilingual documentation index](docs/README.md)
+- **All topics:** [English documentation](docs/en-US/README.md) · [Documentation index](docs/README.md)
 
 ## Project Layout
 

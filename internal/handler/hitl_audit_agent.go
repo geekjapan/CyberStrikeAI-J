@@ -18,8 +18,8 @@ import (
 	"go.uber.org/zap"
 )
 
-// auditAgentReview 在 reviewer=audit_agent 时由 LLM 代行审批。
-// 白名单工具在 shouldInterrupt 阶段已跳过，到达此处的一律需要裁决。
+// auditAgentReview: when reviewer=audit_agent, the LLM acts as the approver.
+// Whitelisted tools are already skipped at the shouldInterrupt stage; anything reaching here must be adjudicated.
 func (h *AgentHandler) auditAgentReview(ctx context.Context, hitlMode, toolName string, payload map[string]interface{}) hitlDecision {
 	if h == nil {
 		return hitlDecision{Decision: "reject", Comment: "audit agent: handler unavailable"}
@@ -34,7 +34,7 @@ func (h *AgentHandler) auditAgentReview(ctx context.Context, hitlMode, toolName 
 	}
 	llmCfg := h.auditLLMConfig()
 	if strings.TrimSpace(llmCfg.APIKey) == "" || strings.TrimSpace(llmCfg.Model) == "" {
-		return hitlDecision{Decision: "reject", Comment: "audit agent: LLM 未配置"}
+		return hitlDecision{Decision: "reject", Comment: "audit agent: LLM not configured"}
 	}
 	if ctx == nil {
 		ctx = context.Background()
@@ -66,14 +66,14 @@ func (h *AgentHandler) auditAgentReview(ctx context.Context, hitlMode, toolName 
 	}
 	client := openai.NewClient(&llmCfg, nil, h.logger)
 	if err := client.ChatCompletion(callCtx, requestBody, &apiResponse); err != nil {
-		h.logger.Warn("审计 Agent LLM 调用失败", zap.Error(err), zap.String("tool", toolName))
+		h.logger.Warn("Audit agent LLM call failed", zap.Error(err), zap.String("tool", toolName))
 		return hitlDecision{
 			Decision: "reject",
-			Comment:  "audit agent: LLM 调用失败，保守拒绝",
+			Comment:  "audit agent: LLM call failed, rejecting conservatively",
 		}
 	}
 	if len(apiResponse.Choices) == 0 {
-		return hitlDecision{Decision: "reject", Comment: "audit agent: LLM 无有效响应，保守拒绝"}
+		return hitlDecision{Decision: "reject", Comment: "audit agent: LLM returned no valid response, rejecting conservatively"}
 	}
 	msg := apiResponse.Choices[0].Message
 	raw := strings.TrimSpace(msg.Content)
@@ -86,16 +86,16 @@ func (h *AgentHandler) auditAgentReview(ctx context.Context, hitlMode, toolName 
 		if len(snippet) > 240 {
 			snippet = snippet[:240] + "..."
 		}
-		h.logger.Warn("审计 Agent 响应解析失败",
+		h.logger.Warn("Failed to parse audit agent response",
 			zap.Error(err),
 			zap.String("tool", toolName),
 			zap.String("mode", mode),
 			zap.String("snippet", snippet),
 		)
-		return hitlDecision{Decision: "reject", Comment: "audit agent: 响应无法解析，保守拒绝"}
+		return hitlDecision{Decision: "reject", Comment: "audit agent: response cannot be parsed, rejecting conservatively"}
 	}
 	if mode != "review_edit" && len(dec.EditedArguments) > 0 {
-		h.logger.Warn("审计 Agent 在审批模式下返回 editedArguments，已忽略",
+		h.logger.Warn("Audit agent returned editedArguments in approval mode, ignored",
 			zap.String("tool", toolName),
 		)
 		dec.EditedArguments = nil
@@ -117,11 +117,11 @@ func (h *AgentHandler) auditLLMConfig() config.OpenAIConfig {
 
 func (h *AgentHandler) auditAgentReviewTypeSafe(ctx context.Context, hitlMode, toolName string, payload map[string]interface{}) hitlDecision {
 	if h == nil || h.config == nil {
-		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe 未配置"}
+		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe not configured"}
 	}
 	baseURL, apiKey, model := h.config.Hitl.TypeSafeConfigEffective()
 	if apiKey == "" {
-		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe API Key 未配置"}
+		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe API Key not configured"}
 	}
 	if ctx == nil {
 		ctx = context.Background()
@@ -133,8 +133,8 @@ func (h *AgentHandler) auditAgentReviewTypeSafe(ctx context.Context, hitlMode, t
 	policy := h.config.Hitl.JevOperatorPolicy(hitlMode)
 	result, err := client.SystemOne(callCtx, hitl.BuildJevState(hitlMode, toolName, payload, policy), hitl.JevAuditQuestions(policy))
 	if err != nil {
-		h.logger.Warn("审计 Agent TypeSafe 调用失败", zap.Error(err), zap.String("tool", toolName))
-		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe 调用失败，保守拒绝"}
+		h.logger.Warn("Audit agent TypeSafe call failed", zap.Error(err), zap.String("tool", toolName))
+		return hitlDecision{Decision: "reject", Comment: "audit agent: TypeSafe call failed, rejecting conservatively"}
 	}
 	decision, comment := hitl.DecideJev(result)
 	if comment == "" {
@@ -352,7 +352,7 @@ func (h *AgentHandler) GetHITLAuditStrategy(c *gin.Context) {
 
 func (h *AgentHandler) UpdateHITLAuditStrategy(c *gin.Context) {
 	if h.hitlStrategySaver == nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "HITL 策略持久化不可用"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "HITL policy persistence is unavailable"})
 		return
 	}
 	var req hitlAuditStrategyReq
@@ -363,12 +363,12 @@ func (h *AgentHandler) UpdateHITLAuditStrategy(c *gin.Context) {
 	approvalPrompt := strings.TrimSpace(req.AuditAgentPrompt)
 	reviewEditPrompt := strings.TrimSpace(req.AuditAgentPromptReviewEdit)
 	if err := h.hitlStrategySaver.UpdateHitlAuditAgentStrategy(approvalPrompt, reviewEditPrompt); err != nil {
-		h.logger.Warn("保存审计 Agent 提示词失败", zap.Error(err))
+		h.logger.Warn("Failed to save audit agent prompt", zap.Error(err))
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	if h.audit != nil {
-		h.audit.RecordOK(c, "hitl", "audit_strategy_update", "HITL 审计策略更新", "hitl_config", "audit_agent_prompt", nil)
+		h.audit.RecordOK(c, "hitl", "audit_strategy_update", "HITL audit strategy updated", "hitl_config", "audit_agent_prompt", nil)
 	}
 	if h.config != nil {
 		h.config.Hitl.AuditAgentPrompt = approvalPrompt
@@ -383,12 +383,12 @@ func (h *AgentHandler) UpdateHITLAuditStrategy(c *gin.Context) {
 	})
 }
 
-// HitlAuditStrategySaver 持久化审计 Agent 提示词到 config.yaml。
+// HitlAuditStrategySaver persists the audit agent prompts to config.yaml.
 type HitlAuditStrategySaver interface {
 	UpdateHitlAuditAgentStrategy(approvalPrompt, reviewEditPrompt string) error
 }
 
-// SetHitlAuditStrategySaver 设置审计策略落盘。
+// SetHitlAuditStrategySaver sets the persistence for the audit strategy.
 func (h *AgentHandler) SetHitlAuditStrategySaver(s HitlAuditStrategySaver) {
 	h.hitlStrategySaver = s
 }

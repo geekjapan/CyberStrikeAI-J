@@ -20,7 +20,7 @@ func TestUpsertProjectFact_preservesBodyOnEmptyUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const body = "## 攻击链\n1. step\n```http\nGET / HTTP/1.1\n```\n"
+	const body = "## Attack chain\n1. step\n```http\nGET / HTTP/1.1\n```\n"
 	_, err = db.UpsertProjectFact(&ProjectFact{
 		ProjectID: proj.ID,
 		FactKey:   "finding/sqli-login",

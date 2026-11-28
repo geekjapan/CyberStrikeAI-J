@@ -30,7 +30,7 @@ final class CyberStrikeAITab implements ITab {
     private final JTextArea finalRawArea = new JTextArea(); // raw final stream / final response
     private JScrollPane progressScrollPane;
     private JScrollPane finalRawScrollPane;
-    /** 距底部在此像素内视为「跟随滚动」，否则用户上拉阅读时不抢滚动条 */
+    /** Within this many pixels of the bottom counts as "follow scroll"; otherwise the scrollbar is left alone while the user scrolls up to read */
     private static final int SCROLL_FOLLOW_THRESHOLD_PX = 48;
     private final JEditorPane markdownPane = new JEditorPane("text/html", "");
     private final CardLayout outputCardsLayout = new CardLayout();

@@ -1,52 +1,54 @@
 /**
- * 项目页私有工具：分类/置信度字典、错误文本归一化、图谱配色。
- * 仅本项目目录内使用，不进入公共模块。
+ * Project page private helpers: category/confidence dictionaries, error text normalization, graph colors.
+ * Used only inside this project directory; not part of the shared modules.
  */
 
+import { lazyLabels, translate } from '../../lib/i18n';
+
 export const FACT_CATEGORIES = [
-    { value: 'target', label: 'target（目标）' },
-    { value: 'auth', label: 'auth（认证）' },
-    { value: 'infra', label: 'infra（基础设施）' },
-    { value: 'business', label: 'business（业务）' },
-    { value: 'finding', label: 'finding（发现）' },
-    { value: 'chain', label: 'chain（攻击链）' },
-    { value: 'exploit', label: 'exploit（利用）' },
-    { value: 'poc', label: 'poc（POC）' },
-    { value: 'note', label: 'note（备注）' }
+    { value: 'target', get label() { return translate('ui.projectsHelpers.categoryOption.target', null, 'target'); } },
+    { value: 'auth', get label() { return translate('ui.projectsHelpers.categoryOption.auth', null, 'auth'); } },
+    { value: 'infra', get label() { return translate('ui.projectsHelpers.categoryOption.infra', null, 'infra'); } },
+    { value: 'business', get label() { return translate('ui.projectsHelpers.categoryOption.business', null, 'business'); } },
+    { value: 'finding', get label() { return translate('ui.projectsHelpers.categoryOption.finding', null, 'finding'); } },
+    { value: 'chain', get label() { return translate('ui.projectsHelpers.categoryOption.chain', null, 'chain'); } },
+    { value: 'exploit', get label() { return translate('ui.projectsHelpers.categoryOption.exploit', null, 'exploit'); } },
+    { value: 'poc', get label() { return translate('ui.projectsHelpers.categoryOption.poc', null, 'poc（POC）'); } },
+    { value: 'note', get label() { return translate('ui.projectsHelpers.categoryOption.note', null, 'note'); } }
 ];
 
-export const CATEGORY_LABEL = {
-    target: '目标',
-    auth: '认证',
-    infra: '基础设施',
-    business: '业务',
-    finding: '发现',
-    chain: '攻击链',
-    exploit: '利用',
+export const CATEGORY_LABEL = lazyLabels('ui.projectsHelpers.category', {
+    target: 'Target',
+    auth: 'Authentication',
+    infra: 'Infrastructure',
+    business: 'Business',
+    finding: 'Finding',
+    chain: 'Attack chain',
+    exploit: 'Exploit',
     poc: 'POC',
-    note: '备注',
-    vuln: '漏洞',
-    missing: '缺失'
-};
+    note: 'Note',
+    vuln: 'Vulnerability',
+    missing: 'Missing'
+});
 
 export const CONFIDENCE_OPTIONS = [
-    { value: 'tentative', label: '待确认' },
-    { value: 'confirmed', label: '已确认' },
-    { value: 'deprecated', label: '已废弃' }
+    { value: 'tentative', get label() { return translate('ui.projectsHelpers.confTentative', null, 'Unconfirmed'); } },
+    { value: 'confirmed', get label() { return translate('ui.projectsHelpers.confConfirmed', null, 'Confirmed'); } },
+    { value: 'deprecated', get label() { return translate('ui.projectsHelpers.confDeprecated', null, 'Deprecated'); } }
 ];
 
 export const CONFIDENCE_META = {
-    confirmed: { label: '已确认', color: 'green' },
-    tentative: { label: '待确认', color: 'amber' },
-    deprecated: { label: '已废弃', color: 'grey' }
+    confirmed: { get label() { return translate('ui.projectsHelpers.confConfirmed', null, 'Confirmed'); }, color: 'green' },
+    tentative: { get label() { return translate('ui.projectsHelpers.confTentative', null, 'Unconfirmed'); }, color: 'amber' },
+    deprecated: { get label() { return translate('ui.projectsHelpers.confDeprecated', null, 'Deprecated'); }, color: 'grey' }
 };
 
 export const PROJECT_STATUS = [
-    { value: 'active', label: '进行中' },
-    { value: 'archived', label: '已归档' }
+    { value: 'active', get label() { return translate('ui.projectsHelpers.statusActive', null, 'Active'); } },
+    { value: 'archived', get label() { return translate('ui.projectsHelpers.statusArchived', null, 'Archived'); } }
 ];
 
-/** 图谱节点配色：与后端 GraphNodeType 对齐。 */
+/** Graph node colors: aligned with the backend GraphNodeType. */
 export const NODE_COLORS = {
     target: '#2563eb',
     auth: '#0891b2',
@@ -60,26 +62,26 @@ export const NODE_COLORS = {
     missing: '#94a3b8'
 };
 
-export const NODE_TYPE_LABEL = {
-    target: 'TARGET · 目标',
-    auth: 'AUTH · 认证',
-    infra: 'INFRA · 基础设施',
-    finding: 'FINDING · 发现',
-    chain: 'CHAIN · 攻击链',
-    exploit: 'EXPLOIT · 利用',
-    poc: 'POC · 验证',
-    vulnerability: 'VULN · 漏洞',
-    note: 'NOTE · 备注',
-    missing: 'MISSING · 缺失'
-};
+export const NODE_TYPE_LABEL = lazyLabels('ui.projectsHelpers.nodeType', {
+    target: 'TARGET · Target',
+    auth: 'AUTH · Authentication',
+    infra: 'INFRA · Infrastructure',
+    finding: 'FINDING · Finding',
+    chain: 'CHAIN · Attack chain',
+    exploit: 'EXPLOIT · Exploit',
+    poc: 'POC · Verification',
+    vulnerability: 'VULN · Vulnerability',
+    note: 'NOTE · Note',
+    missing: 'MISSING · Missing'
+});
 
 export const EDGE_TYPE_HINTS = ['discovered_on', 'depends_on', 'leads_to', 'enables', 'exploits'];
 
 /**
- * ApiError 的 message 可能是对象（工作流包等接口返回 {error:{code,message}}）。
- * 统一压成可展示字符串，避免把对象塞进 Banner/Toast。
+ * The ApiError message may be an object (workflow package endpoints return {error:{code,message}}).
+ * Flatten it into a displayable string so objects are not put into Banner/Toast.
  */
-export function errText(error, fallback = '操作失败') {
+export function errText(error, fallback = translate('ui.projectsHelpers.opFailed', null, 'Operation failed')) {
     if (!error) return fallback;
     if (typeof error === 'string') return error;
     const payload = error.payload;
@@ -97,8 +99,8 @@ export function errText(error, fallback = '操作失败') {
     return fallback;
 }
 
-/** ErrorBanner 只接受带 message 的错误对象。 */
-export function errorProp(error, fallback = '加载失败') {
+/** ErrorBanner only accepts error objects that carry a message. */
+export function errorProp(error, fallback = translate('ui.projectsHelpers.loadFailed', null, 'Failed to load')) {
     if (!error) return null;
     return { message: errText(error, fallback) };
 }
@@ -111,7 +113,7 @@ export function isDeprecated(record) {
     return String(record?.confidence || '').toLowerCase() === 'deprecated';
 }
 
-/** 关系边（入边）文本框：每行 `type: source_fact_key`。 */
+/** Relation edge (incoming) textarea: one `type: source_fact_key` per line. */
 export function formatIncomingLinks(links) {
     if (!Array.isArray(links) || !links.length) return '';
     return links

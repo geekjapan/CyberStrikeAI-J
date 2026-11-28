@@ -2,17 +2,17 @@ package project
 
 import "strings"
 
-// FactIndexSectionHeading 黑板索引可读标题行前缀（块内保留，供 Agent 阅读）。
-const FactIndexSectionHeading = "## 项目黑板索引"
+// FactIndexSectionHeading is the readable heading line prefix of the blackboard index (kept within the block for the Agent to read).
+const FactIndexSectionHeading = "## Project blackboard index"
 
-// FactIndexSectionStartMarker / EndMarker：HTML 注释边界，供程序化替换；对模型无指令语义。
+// FactIndexSectionStartMarker / EndMarker: HTML comment boundaries for programmatic replacement; no instruction meaning for the model.
 const (
 	FactIndexSectionStartMarker = "<!-- fact-index-start -->"
 	FactIndexSectionEndMarker   = "<!-- fact-index-end -->"
 )
 
-// ReplaceFactIndexSection 用 freshIndex 替换 content 中已有的项目黑板索引段。
-// freshIndex 须为 BuildFactIndexBlock 的完整输出。起止 HTML 注释缺失时返回 (_, false)。
+// ReplaceFactIndexSection replaces the existing project blackboard index section in content with freshIndex.
+// freshIndex must be the complete output of BuildFactIndexBlock. Returns (_, false) if the start or end HTML comment is missing.
 func ReplaceFactIndexSection(content, freshIndex string) (string, bool) {
 	freshIndex = strings.TrimSpace(freshIndex)
 	if freshIndex == "" {
@@ -43,14 +43,14 @@ func RemoveFactIndexSection(content string) (string, bool) {
 	return content[:start] + content[end:], true
 }
 
-// wrapFactIndexBlock 为 BuildFactIndexBlock 正文加上统一起止 HTML 注释边界。
+// wrapFactIndexBlock adds the unified start and end HTML comment boundaries around the BuildFactIndexBlock body.
 func wrapFactIndexBlock(content string) string {
 	content = strings.TrimSpace(content)
 	return FactIndexSectionStartMarker + "\n" + content + "\n" + FactIndexSectionEndMarker + "\n"
 }
 
-// factIndexSafeText 去掉事实文本里的宿主定界符。索引块按字面量定位起止，内容里
-// 出现同名注释会提前闭合块，把其余索引内容甩到系统提示的块外。
+// factIndexSafeText removes host delimiters from fact text. The index block is located by literal start and end markers, so if the content
+// contains a same-named comment it would close the block early and push the rest of the index outside the system prompt block.
 func factIndexSafeText(s string) string {
 	s = strings.ReplaceAll(s, FactIndexSectionStartMarker, "")
 	return strings.ReplaceAll(s, FactIndexSectionEndMarker, "")

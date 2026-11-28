@@ -1,4 +1,4 @@
-/** 审核策略：全局默认配置、审计 Agent 策略、会话配置查询。 */
+/** Review strategy: global default config, audit Agent strategy, session config lookup. */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Button, Input, Radio, RadioGroup, Select, Space, Tag, TextArea, Typography
@@ -67,7 +67,7 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                 reviewer,
                 timeoutSeconds: Math.max(0, Number.parseInt(timeoutText, 10) || 0)
             });
-            toastSuccess(t('hitl.pageReviewerSaved', null, '默认审批配置已保存'));
+            toastSuccess(t('hitl.pageReviewerSaved', null, 'Reviewer saved.'));
             config.reload({ silent: true });
             if (payload) {
                 setMode(normalizeMode(payload.defaultMode));
@@ -75,7 +75,7 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                 setTimeoutText(String(payload.defaultTimeoutSeconds ?? 0));
             }
         } catch (error) {
-            toastError(error, '保存默认配置失败');
+            toastError(error, t('ui.hitlStrategy.saveConfigFailed', null, 'Failed to save default configuration'));
         } finally {
             setSavingConfig(false);
         }
@@ -85,11 +85,11 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
         setSavingReviewer(true);
         try {
             await api.put('/hitl/default-reviewer', { reviewer });
-            toastSuccess(t('hitl.pageReviewerSaved', null, '默认审批方已保存'));
+            toastSuccess(t('hitl.pageReviewerSaved', null, 'Reviewer saved.'));
             reviewerRes.reload({ silent: true });
             config.reload({ silent: true });
         } catch (error) {
-            toastError(error, '保存默认审批方失败');
+            toastError(error, t('ui.hitlStrategy.saveReviewerFailed', null, 'Failed to save default reviewer'));
         } finally {
             setSavingReviewer(false);
         }
@@ -102,10 +102,10 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                 auditAgentPrompt: approvalPrompt,
                 auditAgentPromptReviewEdit: reviewPrompt
             });
-            toastSuccess(t('hitl.strategySaved', null, '审计策略已保存'));
+            toastSuccess(t('hitl.strategySaved', null, 'Audit strategy saved.'));
             strategy.reload({ silent: true });
         } catch (error) {
-            toastError(error, t('hitl.strategySaveFailed', null, '保存审计策略失败'));
+            toastError(error, t('hitl.strategySaveFailed', null, 'Failed to save audit strategy'));
         } finally {
             setSavingStrategy(false);
         }
@@ -144,15 +144,15 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
     return (
         <div className="hitl-strategy-panel">
             <SectionCard
-                title={t('hitl.strategyLabel', null, '审计策略')}
-                description="作用于全局默认配置；会话级配置在对话侧栏覆盖这里的选择。"
+                title={t('hitl.strategyLabel', null, 'Audit strategy (prompt)')}
+                description={t('ui.hitlStrategy.globalDescription', null, 'Applies to the global default configuration. Conversation-level settings in the chat sidebar override these choices.')}
                 extra={(
                     <Space spacing={8}>
                         <Button size="small" icon={<IconRefresh />} theme="borderless" onClick={() => config.reload()} loading={config.loading}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button size="small" disabled={!canWrite} loading={savingConfig} onClick={saveConfig}>
-                            {t('common.save', null, '保存')}
+                            {t('common.save', null, 'Save')}
                         </Button>
                     </Space>
                 )}
@@ -160,7 +160,7 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                 <ErrorBanner error={config.error} onRetry={() => config.reload()} />
                 <div className="hitl-strategy-form">
                     <label className="hitl-field">
-                        <span className="hitl-field-label">默认模式</span>
+                        <span className="hitl-field-label">{t('ui.hitlStrategy.defaultMode', null, 'Default mode')}</span>
                         <Select
                             value={mode}
                             style={{ width: 220 }}
@@ -173,24 +173,24 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                         </Text>
                     </label>
                     <div className="hitl-field hitl-field-wide">
-                        <span className="hitl-field-label">默认审批方</span>
+                        <span className="hitl-field-label">{t('ui.hitlStrategy.defaultReviewer', null, 'Default reviewer')}</span>
                         <Space spacing={10} wrap>
                             <RadioGroup
                                 value={reviewer}
                                 disabled={!canWrite}
                                 onChange={event => setReviewer(event.target.value)}
                             >
-                                <Radio value="human">人工审批</Radio>
-                                <Radio value="audit_agent">审计 Agent</Radio>
+                                <Radio value="human">{t('ui.hitlStrategy.reviewerHuman', null, 'Human approval')}</Radio>
+                                <Radio value="audit_agent">{t('ui.hitlStrategy.reviewerAuditAgent', null, 'Audit Agent')}</Radio>
                             </RadioGroup>
                             <Button size="small" theme="light" disabled={!canWrite} loading={savingReviewer} onClick={saveReviewer}>
-                                保存审批方
+                                {t('ui.hitlStrategy.saveReviewer', null, 'Save reviewer')}
                             </Button>
                         </Space>
-                        <Text type="tertiary" size="small">{`当前：${reviewerLabel(reviewer)}（PUT /hitl/default-reviewer）`}</Text>
+                        <Text type="tertiary" size="small">{t('ui.hitlStrategy.currentReviewer', { reviewer: reviewerLabel(reviewer) }, 'Current: {{reviewer}} (PUT /hitl/default-reviewer)')}</Text>
                     </div>
                     <label className="hitl-field">
-                        <span className="hitl-field-label">审批超时（秒，0 = 无限等待）</span>
+                        <span className="hitl-field-label">{t('ui.hitlStrategy.timeoutLabel', null, 'Approval timeout (seconds, 0 = wait indefinitely)')}</span>
                         <Input
                             value={timeoutText}
                             style={{ width: 160 }}
@@ -200,28 +200,28 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                     </label>
                     {engineLabel && (
                         <div className="hitl-field">
-                            <span className="hitl-field-label">审计引擎</span>
+                            <span className="hitl-field-label">{t('ui.hitlStrategy.auditEngine', null, 'Audit engine')}</span>
                             <Tag size="small" color="blue">{engineLabel}</Tag>
                         </div>
                     )}
                 </div>
                 {Array.isArray(config.data?.hitlGlobalToolWhitelist) && (
                     <p className="hitl-strategy-hint">
-                        {`全局免审批工具 ${config.data.hitlGlobalToolWhitelist.length} 项；白名单在「白名单」页签维护。`}
+                        {t('ui.hitlStrategy.globalWhitelistHint', { count: config.data.hitlGlobalToolWhitelist.length }, '{{count}} tools are exempt from approval globally. Manage the allowlist on the "Allowlist" tab.')}
                     </p>
                 )}
             </SectionCard>
 
             <SectionCard
-                title="审计 Agent 提示词"
-                description={t('hitl.strategyHintApproval', null, '白名单内工具免审批；审批模式下审计 Agent 仅裁决通过/拒绝。')}
+                title={t('ui.hitlStrategy.promptTitle', null, 'Audit Agent prompts')}
+                description={t('hitl.strategyHintApproval', null, 'Whitelisted tools skip approval. In approval mode the Audit Agent only approves or rejects.')}
                 extra={(
                     <Space spacing={8}>
                         <Button size="small" theme="borderless" disabled={!canWrite} onClick={resetPrompts}>
-                            {t('hitl.strategyReset', null, '恢复默认')}
+                            {t('hitl.strategyReset', null, 'Reset to default')}
                         </Button>
                         <Button size="small" disabled={!canWrite} loading={savingStrategy} onClick={saveStrategy}>
-                            {t('common.save', null, '保存')}
+                            {t('common.save', null, 'Save')}
                         </Button>
                     </Space>
                 )}
@@ -230,8 +230,8 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                 <div className="hitl-prompt-grid">
                     <div className="hitl-prompt-field">
                         <div className="hitl-prompt-head">
-                            <Text strong>{t('hitl.strategyTabApproval', null, '审批模式')}</Text>
-                            {strategy.data?.auditAgentPromptCustom && <Tag size="small" color="amber">自定义</Tag>}
+                            <Text strong>{t('hitl.strategyTabApproval', null, 'Approval mode')}</Text>
+                            {strategy.data?.auditAgentPromptCustom && <Tag size="small" color="amber">{t('ui.hitlStrategy.custom', null, 'Custom')}</Tag>}
                         </div>
                         <TextArea
                             rows={12}
@@ -244,8 +244,8 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                     </div>
                     <div className="hitl-prompt-field">
                         <div className="hitl-prompt-head">
-                            <Text strong>{t('hitl.strategyTabReviewEdit', null, '审查编辑模式')}</Text>
-                            {strategy.data?.auditAgentPromptReviewEditCustom && <Tag size="small" color="amber">自定义</Tag>}
+                            <Text strong>{t('hitl.strategyTabReviewEdit', null, 'Review & edit mode')}</Text>
+                            {strategy.data?.auditAgentPromptReviewEditCustom && <Tag size="small" color="amber">{t('ui.hitlStrategy.custom', null, 'Custom')}</Tag>}
                         </div>
                         <TextArea
                             rows={12}
@@ -258,25 +258,25 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                     </div>
                 </div>
                 <p className="hitl-strategy-hint">
-                    {t('hitl.strategyHintReviewEdit', null, '审查编辑模式下审计 Agent 可通过 editedArguments 收窄参数后放行；无法安全改参时应拒绝。')}
+                    {t('hitl.strategyHintReviewEdit', null, 'In review & edit mode the Audit Agent may narrow parameters via editedArguments before approve; reject if parameters cannot be safely adjusted.')}
                 </p>
             </SectionCard>
 
             <SectionCard
-                title="会话配置查询"
-                description={`GET /hitl/config/:conversationId · 当前默认 ${modeLabel(mode)} / ${reviewerLabel(reviewer)}`}
+                title={t('ui.hitlStrategy.convQueryTitle', null, 'Conversation configuration lookup')}
+                description={t('ui.hitlStrategy.convQueryDescription', { mode: modeLabel(mode), reviewer: reviewerLabel(reviewer) }, 'GET /hitl/config/:conversationId · Current default {{mode}} / {{reviewer}}')}
             >
                 <div className="hitl-conv-query">
                     <Input
                         prefix={<IconSearch />}
                         value={convId}
                         style={{ width: 360 }}
-                        placeholder="输入会话 ID 查询该会话的 HITL 配置"
+                        placeholder={t('ui.hitlStrategy.convQueryPlaceholder', null, 'Enter a conversation ID to look up its HITL configuration')}
                         onChange={value => setConvId(value)}
                         onEnterPress={() => loadConversation(convId)}
                     />
                     <Button size="small" loading={convLoading} onClick={() => loadConversation(convId)}>
-                        查询
+                        {t('ui.hitlStrategy.query', null, 'Search')}
                     </Button>
                 </div>
                 <ErrorBanner error={convError} onRetry={() => loadConversation(convId)} />
@@ -285,19 +285,19 @@ export default function StrategyPanel({ canWrite, initialConversationId = '', re
                         <KeyValueList
                             columns={2}
                             items={[
-                                { label: '会话 ID', value: <span className="hitl-mono">{convData.conversationId}</span> },
-                                { label: '启用', value: hitlConfig.enabled ? '是' : '否' },
-                                { label: '模式', value: modeLabel(hitlConfig.mode) },
-                                { label: '审批方', value: reviewerLabel(hitlConfig.reviewer) },
-                                { label: '超时（秒）', value: String(hitlConfig.timeoutSeconds ?? 0) },
+                                { label: t('ui.hitlStrategy.fieldConvId', null, 'Conversation ID'), value: <span className="hitl-mono">{convData.conversationId}</span> },
+                                { label: t('ui.hitlStrategy.fieldEnabled', null, 'Enabled'), value: hitlConfig.enabled ? t('ui.hitlStrategy.yes', null, 'Yes') : t('ui.hitlStrategy.no', null, 'No') },
+                                { label: t('ui.hitlStrategy.fieldMode', null, 'Mode'), value: modeLabel(hitlConfig.mode) },
+                                { label: t('ui.hitlStrategy.fieldReviewer', null, 'Reviewer'), value: reviewerLabel(hitlConfig.reviewer) },
+                                { label: t('ui.hitlStrategy.fieldTimeout', null, 'Timeout (seconds)'), value: String(hitlConfig.timeoutSeconds ?? 0) },
                                 {
-                                    label: '会话白名单',
+                                    label: t('ui.hitlStrategy.fieldConvWhitelist', null, 'Conversation allowlist'),
                                     value: Array.isArray(hitlConfig.sensitiveTools) && hitlConfig.sensitiveTools.length
                                         ? hitlConfig.sensitiveTools.join(', ')
                                         : '—'
                                 },
-                                { label: '全局默认模式', value: modeLabel(convData.defaultMode) },
-                                { label: '全局默认审批方', value: reviewerLabel(convData.defaultReviewer) }
+                                { label: t('ui.hitlStrategy.fieldGlobalMode', null, 'Global default mode'), value: modeLabel(convData.defaultMode) },
+                                { label: t('ui.hitlStrategy.fieldGlobalReviewer', null, 'Global default reviewer'), value: reviewerLabel(convData.defaultReviewer) }
                             ]}
                         />
                     </div>

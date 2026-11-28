@@ -1,6 +1,6 @@
 # CyberStrikeAI RBAC Administration Guide
 
-[中文](../zh-CN/rbac.md)
+[日本語](../ja-JP/rbac.md)
 
 CyberStrikeAI can execute Agents, MCP tools, WebShell operations, C2 actions, and batch jobs. RBAC therefore applies beyond navigation visibility: it is enforced across HTTP APIs, resource queries, Agent contexts, built-in and external MCP tools, background jobs, and chatbot execution.
 
@@ -191,7 +191,7 @@ Assigning a project therefore usually avoids assigning each conversation and vul
 2. Create a user with username, display name, an eight-character-or-longer password, and enabled status.
 3. Assign one or more platform roles.
 4. For `assigned` roles, configure resource assignments.
-5. Have the user sign in again and verify roles, permission count, and scope in the top-right user menu.
+5. Have the user sign in again and verify the result. An administrator sees the user's roles in the **Platform users** tab of Platform permissions, and each role's data scope and permission count in the **Role permissions** tab. The user can read their own roles, permissions, and scope with `GET /api/rbac/me` (or `GET /api/auth/validate`). The top-right user menu does not show them. It offers only Change password, Refresh session permissions, and Sign out.
 
 ### Create a custom role
 

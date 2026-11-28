@@ -1,9 +1,10 @@
-/** 漏洞详情抽屉：概览 / 复现与证据 / 关联 / 下载报告（GET /:id/context 提供上下文）。 */
+/** Vulnerability detail drawer: overview / reproduction and evidence / related items / report download (GET /:id/context provides the context). */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Collapse, Radio, RadioGroup, SideSheet, Space, Spin, Tabs, Timeline, Typography } from '@douyinfe/semi-ui';
 import { IconDelete, IconEdit, IconPlay, IconRefresh } from '@douyinfe/semi-icons';
 import { api, downloadFile } from '../../lib/http';
+import { useT } from '../../lib/i18n';
 import { formatDateTime } from '../../lib/format';
 import { useResource } from '../../components/hooks';
 import {
@@ -27,6 +28,7 @@ function Section({ title, extra, children }) {
 }
 
 function RelatedFacts({ vulnerability }) {
+    const t = useT();
     const navigate = useNavigate();
     const [facts, setFacts] = useState([]);
     useEffect(() => {
@@ -42,7 +44,7 @@ function RelatedFacts({ vulnerability }) {
     }, [vulnerability?.project_id, vulnerability?.id]);
     if (!facts.length) return null;
     return (
-        <Section title="同一项目事实">
+        <Section title={t('ui.vulnerabilitiesDetailDrawer.sameProjectFacts', null, 'Facts from the same project')}>
             {facts.map(fact => (
                 <div key={fact.id} className="vulnerability-history-item">
                     <Text>{fact.summary || fact.fact_key}</Text>
@@ -52,7 +54,7 @@ function RelatedFacts({ vulnerability }) {
                             theme="borderless"
                             onClick={() => navigate(`/chat?conversation=${encodeURIComponent(fact.source_conversation_id)}`)}
                         >
-                            打开来源会话
+                            {t('ui.vulnerabilitiesDetailDrawer.openSourceConversation', null, 'Open source conversation')}
                         </Button>
                     ) : null}
                 </div>
@@ -99,7 +101,7 @@ export default function DetailDrawer({
         setFormat('docx');
     }, [vulnId]);
 
-    // 只接受与当前 id 匹配的载荷，避免切换记录时闪现上一条详情。
+    // Only accept a payload matching the current id, so the previous record's details do not flash when switching records.
     const payload = context.data?.vulnerability?.id === vulnId ? context.data : null;
     const vuln = payload?.vulnerability || null;
     const history = Array.isArray(payload?.history) ? payload.history : [];
@@ -117,9 +119,9 @@ export default function DetailDrawer({
         setDownloading(true);
         try {
             const name = await downloadFile(`/vulnerabilities/${encodeURIComponent(vuln.id)}/download`, { query: { format } });
-            toastSuccess(`${t('vulnerabilityPage.downloadOkTitle', null, '下载成功')}${name ? ` · ${name}` : ''}`);
+            toastSuccess(`${t('vulnerabilityPage.downloadOkTitle', null, 'Downloaded')}${name ? ` · ${name}` : ''}`);
         } catch (error) {
-            toastError(error, t('vulnerabilityPage.downloadFailed', null, '下载失败'));
+            toastError(error, t('vulnerabilityPage.downloadFailed', null, 'Download failed'));
         } finally {
             setDownloading(false);
         }
@@ -127,37 +129,37 @@ export default function DetailDrawer({
 
     const overviewItems = vuln ? [
         {
-            label: t('vulnerabilityPage.detailVulnId', null, '漏洞ID'),
+            label: t('vulnerabilityPage.detailVulnId', null, 'Vuln ID'),
             value: <span className="vulnerability-inline-code">{vuln.id}</span>
         },
         {
-            label: t('vulnerabilityPage.tableSeverity', null, '严重度'),
+            label: t('vulnerabilityPage.tableSeverity', null, 'Severity'),
             value: <SeverityTag severity={vuln.severity} />
         },
         {
-            label: t('vulnerabilityPage.status', null, '状态'),
+            label: t('vulnerabilityPage.status', null, 'Status'),
             value: <StatusTag status={vuln.status} label={statusText(t, vuln.status)} />
         },
-        vuln.type ? { label: t('vulnerabilityPage.detailType', null, '类型'), value: vuln.type } : null,
-        vuln.target ? { label: t('vulnerabilityPage.detailTarget', null, '目标'), value: <span className="vulnerability-inline-code">{vuln.target}</span> } : null,
+        vuln.type ? { label: t('vulnerabilityPage.detailType', null, 'Type'), value: vuln.type } : null,
+        vuln.target ? { label: t('vulnerabilityPage.detailTarget', null, 'Target'), value: <span className="vulnerability-inline-code">{vuln.target}</span> } : null,
         hostText(vuln) && hostText(vuln) !== vuln.target
-            ? { label: t('vulnerabilityPage.detailHost', null, '宿主'), value: <span className="vulnerability-inline-code">{hostText(vuln)}</span> }
+            ? { label: t('vulnerabilityPage.detailHost', null, 'Host'), value: <span className="vulnerability-inline-code">{hostText(vuln)}</span> }
             : null,
         {
-            label: t('vulnerabilityPage.detailProject', null, '所属项目'),
-            value: projectName || t('vulnerabilityPage.projectUnbound', null, '未绑定项目')
+            label: t('vulnerabilityPage.detailProject', null, 'Project'),
+            value: projectName || t('vulnerabilityPage.projectUnbound', null, 'No project')
         },
-        vuln.conversation_tag ? { label: t('vulnerabilityPage.detailConversationTag', null, '对话标签'), value: vuln.conversation_tag } : null,
+        vuln.conversation_tag ? { label: t('vulnerabilityPage.detailConversationTag', null, 'Conversation tag'), value: vuln.conversation_tag } : null,
         vuln.conversation_id ? {
-            label: t('vulnerabilityPage.detailConversationId', null, '会话ID'),
+            label: t('vulnerabilityPage.detailConversationId', null, 'Conversation ID'),
             value: <span className="vulnerability-inline-code">{vuln.conversation_id}</span>
         } : null,
-        vuln.task_tag ? { label: t('vulnerabilityPage.detailTaskTag', null, '任务标签'), value: vuln.task_tag } : null,
-        vuln.task_id ? { label: t('vulnerabilityPage.detailTaskId', null, '任务ID'), value: <span className="vulnerability-inline-code">{vuln.task_id}</span> } : null,
-        vuln.task_queue_id ? { label: t('vulnerabilityPage.detailTaskQueueId', null, '任务队列ID'), value: <span className="vulnerability-inline-code">{vuln.task_queue_id}</span> } : null,
-        vuln.case_id ? { label: t('vulnerabilityPage.mergedRecord', null, '已归并'), value: vuln.case_title || shortId(vuln.case_id, 12) } : null,
-        { label: t('vulnerabilityMd.labelCreated', null, '创建时间'), value: formatDateTime(vuln.created_at) },
-        { label: t('vulnerabilityMd.labelUpdated', null, '更新时间'), value: formatDateTime(vuln.updated_at) }
+        vuln.task_tag ? { label: t('vulnerabilityPage.detailTaskTag', null, 'Task tag'), value: vuln.task_tag } : null,
+        vuln.task_id ? { label: t('vulnerabilityPage.detailTaskId', null, 'Task ID'), value: <span className="vulnerability-inline-code">{vuln.task_id}</span> } : null,
+        vuln.task_queue_id ? { label: t('vulnerabilityPage.detailTaskQueueId', null, 'Task queue ID'), value: <span className="vulnerability-inline-code">{vuln.task_queue_id}</span> } : null,
+        vuln.case_id ? { label: t('vulnerabilityPage.mergedRecord', null, 'Merged'), value: vuln.case_title || shortId(vuln.case_id, 12) } : null,
+        { label: t('vulnerabilityMd.labelCreated', null, 'Created at'), value: formatDateTime(vuln.created_at) },
+        { label: t('vulnerabilityMd.labelUpdated', null, 'Updated at'), value: formatDateTime(vuln.updated_at) }
     ].filter(Boolean) : [];
 
     const targetList = Array.isArray(vuln?.targets) ? vuln.targets : [];
@@ -171,7 +173,7 @@ export default function DetailDrawer({
             title={(
                 <div className="vulnerability-drawer-title">
                     <span className="vulnerability-drawer-title-text" title={vuln?.title}>
-                        {vuln?.title || t('vulnerabilityPage.inspectorTitle', null, '漏洞工作台')}
+                        {vuln?.title || t('vulnerabilityPage.inspectorTitle', null, 'Finding workspace')}
                     </span>
                     {vuln && (
                         <span className="vulnerability-drawer-meta">
@@ -184,9 +186,9 @@ export default function DetailDrawer({
             )}
             footer={(
                 <Space>
-                    <Button onClick={onClose}>{t('common.close', null, '关闭')}</Button>
+                    <Button onClick={onClose}>{t('common.close', null, 'Close')}</Button>
                     <Button icon={<IconRefresh />} onClick={() => context.reload()} loading={context.loading}>
-                        {t('common.refresh', null, '刷新')}
+                        {t('common.refresh', null, 'Refresh')}
                     </Button>
                     {canWrite && (
                         <Button
@@ -196,17 +198,17 @@ export default function DetailDrawer({
                             disabled={!vuln || !vuln.conversation_id}
                             onClick={() => setRetestOpen(true)}
                         >
-                            {t('vulnerabilityRetest.button', null, '复测')}
+                            {t('vulnerabilityRetest.button', null, 'Retest')}
                         </Button>
                     )}
                     {canWrite && (
                         <Button icon={<IconEdit />} disabled={!vuln} onClick={() => onEdit(vuln)}>
-                            {t('common.edit', null, '编辑')}
+                            {t('common.edit', null, 'Edit')}
                         </Button>
                     )}
                     {canDelete && (
                         <Button type="danger" icon={<IconDelete />} disabled={!vuln} onClick={() => onDelete(vuln)}>
-                            {t('common.delete', null, '删除')}
+                            {t('common.delete', null, 'Delete')}
                         </Button>
                     )}
                 </Space>
@@ -218,21 +220,21 @@ export default function DetailDrawer({
             )}
             {vuln && (
                 <Tabs type="line" activeKey={tab} onChange={key => setTab(key)}>
-                    <Tabs.TabPane tab={t('vulnerabilityPage.inspector_overview', null, '概览')} itemKey="overview">
+                    <Tabs.TabPane tab={t('vulnerabilityPage.inspector_overview', null, 'Overview')} itemKey="overview">
                         <KeyValueList items={overviewItems} columns={2} />
-                        <Narrative title={t('vulnerabilityMd.headingDescription', null, '描述')} content={vuln.description} />
-                        <Narrative title={t('vulnerabilityPage.detailImpact', null, '影响')} content={vuln.impact} />
-                        <Narrative title={t('vulnerabilityPage.detailRecommendation', null, '修复建议')} content={vuln.recommendation} />
+                        <Narrative title={t('vulnerabilityMd.headingDescription', null, 'Description')} content={vuln.description} />
+                        <Narrative title={t('vulnerabilityPage.detailImpact', null, 'Impact')} content={vuln.impact} />
+                        <Narrative title={t('vulnerabilityPage.detailRecommendation', null, 'Remediation')} content={vuln.recommendation} />
                     </Tabs.TabPane>
 
-                    <Tabs.TabPane tab={t('vulnerabilityPage.inspector_evidence', null, '复现与证据')} itemKey="evidence">
-                        <Narrative title={t('vulnerabilityPage.detailPreconditions', null, '前置条件')} content={vuln.preconditions} />
-                        <Narrative title={t('vulnerabilityPage.detailReproductionSteps', null, '复现步骤')} content={vuln.reproduction_steps} />
-                        <Narrative title={t('vulnerabilityPage.detailEvidence', null, '证据 / POC')} content={vuln.evidence} code />
-                        <Narrative title={t('vulnerabilityPage.detailRetestNotes', null, '复测方式')} content={vuln.retest_notes} />
-                        <Narrative title={t('vulnerabilityPage.detailRetestLog', null, '复测记录')} content={vuln.retest_log} code />
+                    <Tabs.TabPane tab={t('vulnerabilityPage.inspector_evidence', null, 'Evidence')} itemKey="evidence">
+                        <Narrative title={t('vulnerabilityPage.detailPreconditions', null, 'Preconditions')} content={vuln.preconditions} />
+                        <Narrative title={t('vulnerabilityPage.detailReproductionSteps', null, 'Reproduction steps')} content={vuln.reproduction_steps} />
+                        <Narrative title={t('vulnerabilityPage.detailEvidence', null, 'Evidence / POC')} content={vuln.evidence} code />
+                        <Narrative title={t('vulnerabilityPage.detailRetestNotes', null, 'Retest method')} content={vuln.retest_notes} />
+                        <Narrative title={t('vulnerabilityPage.detailRetestLog', null, 'Retest log')} content={vuln.retest_log} code />
                         <RelatedFacts vulnerability={vuln} />
-                        <Section title={t('vulnerabilityPage.inspector_history', null, '处置历史')}>
+                        <Section title={t('vulnerabilityPage.inspector_history', null, 'History')}>
                             {history.length ? (
                                 <Timeline>
                                     {history.map((item, index) => (
@@ -250,15 +252,15 @@ export default function DetailDrawer({
                                                 {item.evidence ? <pre className="vulnerability-code">{item.evidence}</pre> : null}
                                                 {item.snapshot ? (
                                                     <Collapse className="vulnerability-snapshot">
-                                                        <Collapse.Panel header={t('vulnerabilityPage.retestSnapshot', null, '复测时的证据快照')} itemKey="snapshot">
-                                                            <Narrative title={t('vulnerabilityPage.detailReproductionSteps', null, '复现步骤')} content={item.snapshot.reproduction_steps} />
-                                                            <Narrative title={t('vulnerabilityPage.detailEvidence', null, '证据 / POC')} content={item.snapshot.evidence} code />
+                                                        <Collapse.Panel header={t('vulnerabilityPage.retestSnapshot', null, 'Evidence snapshot at retest')} itemKey="snapshot">
+                                                            <Narrative title={t('vulnerabilityPage.detailReproductionSteps', null, 'Reproduction steps')} content={item.snapshot.reproduction_steps} />
+                                                            <Narrative title={t('vulnerabilityPage.detailEvidence', null, 'Evidence / POC')} content={item.snapshot.evidence} code />
                                                         </Collapse.Panel>
                                                     </Collapse>
                                                 ) : null}
                                                 {item.conversation_id ? (
                                                     <Button size="small" theme="borderless" onClick={() => openConversation(item.conversation_id)}>
-                                                        {t('vulnerabilityPage.openRetestChat', null, '打开复测对话')}
+                                                        {t('vulnerabilityPage.openRetestChat', null, 'Open retest chat')}
                                                     </Button>
                                                 ) : null}
                                             </div>
@@ -266,24 +268,24 @@ export default function DetailDrawer({
                                     ))}
                                 </Timeline>
                             ) : (
-                                <Paragraph type="tertiary">{t('vulnerabilityPage.noHistory', null, '暂无结构化处置记录')}</Paragraph>
+                                <Paragraph type="tertiary">{t('vulnerabilityPage.noHistory', null, 'No structured history yet')}</Paragraph>
                             )}
                         </Section>
                     </Tabs.TabPane>
 
-                    <Tabs.TabPane tab={t('vulnerabilityPage.detailRelations', null, '关联')} itemKey="relations">
-                        <Section title={t('vulnerabilityPage.detailProject', null, '所属项目')}>
+                    <Tabs.TabPane tab={t('vulnerabilityPage.detailRelations', null, 'Relations')} itemKey="relations">
+                        <Section title={t('vulnerabilityPage.detailProject', null, 'Project')}>
                             {vuln.project_id ? (
                                 <div className="vulnerability-related-row">
                                     <Text>{projectName}</Text>
                                     <Text type="tertiary" className="vulnerability-inline-code">{vuln.project_id}</Text>
                                 </div>
                             ) : (
-                                <Paragraph type="tertiary">{t('vulnerabilityPage.projectUnbound', null, '未绑定项目')}</Paragraph>
+                                <Paragraph type="tertiary">{t('vulnerabilityPage.projectUnbound', null, 'No project')}</Paragraph>
                             )}
                         </Section>
 
-                        <Section title={t('vulnerabilityPage.affectedTargets', null, '受影响目标')}>
+                        <Section title={t('vulnerabilityPage.affectedTargets', null, 'Affected targets')}>
                             {targetList.length ? (
                                 <ul className="vulnerability-related-list">
                                     {targetList.map(target => (
@@ -300,7 +302,7 @@ export default function DetailDrawer({
                             )}
                         </Section>
 
-                        <Section title={t('vulnerabilityPage.linkedAssets', null, '资产库匹配')}>
+                        <Section title={t('vulnerabilityPage.linkedAssets', null, 'Matching inventory assets')}>
                             {assets.length ? (
                                 <ul className="vulnerability-related-list">
                                     {assets.map(asset => (
@@ -311,31 +313,31 @@ export default function DetailDrawer({
                                     ))}
                                 </ul>
                             ) : (
-                                <Paragraph type="tertiary">{t('vulnerabilityPage.noLinkedAssets', null, '未匹配到资产库记录')}</Paragraph>
+                                <Paragraph type="tertiary">{t('vulnerabilityPage.noLinkedAssets', null, 'No matching record in the asset library')}</Paragraph>
                             )}
                         </Section>
 
-                        <Section title={t('vulnerabilityPage.detailConversationId', null, '会话')}>
+                        <Section title={t('vulnerabilityPage.detailConversationId', null, 'Conversation ID')}>
                             {vuln.conversation_id ? (
                                 <div className="vulnerability-related-row">
                                     <span className="vulnerability-inline-code">{vuln.conversation_id}</span>
                                     <Button size="small" theme="borderless" onClick={() => openConversation(vuln.conversation_id)}>
-                                        {t('vulnerabilityPage.openConversation', null, '查看对话')}
+                                        {t('vulnerabilityPage.openConversation', null, 'View conversation')}
                                     </Button>
                                 </div>
                             ) : (
-                                <Paragraph type="tertiary">{t('vulnerabilityPage.standaloneRecord', null, '独立记录（无关联会话）')}</Paragraph>
+                                <Paragraph type="tertiary">{t('vulnerabilityPage.standaloneRecord', null, 'Standalone record (no linked conversation)')}</Paragraph>
                             )}
                             {vuln.task_id || vuln.task_queue_id ? (
                                 <div className="vulnerability-related-row">
-                                    <Text type="tertiary">{t('vulnerabilityPage.detailTaskId', null, '任务ID')}</Text>
+                                    <Text type="tertiary">{t('vulnerabilityPage.detailTaskId', null, 'Task ID')}</Text>
                                     <span className="vulnerability-inline-code">{vuln.task_id || vuln.task_queue_id}</span>
                                 </div>
                             ) : null}
                         </Section>
 
                         {members.length ? (
-                            <Section title={vuln.case_title || t('vulnerabilityPage.mergedRecord', null, '已归并')}>
+                            <Section title={vuln.case_title || t('vulnerabilityPage.mergedRecord', null, 'Merged')}>
                                 <div className="vulnerability-member-list">
                                     {members.map(member => (
                                         <Button
@@ -353,20 +355,20 @@ export default function DetailDrawer({
                         ) : null}
                     </Tabs.TabPane>
 
-                    <Tabs.TabPane tab={t('vulnerabilityDownload.title', null, '下载报告')} itemKey="download">
+                    <Tabs.TabPane tab={t('vulnerabilityDownload.title', null, 'Download vulnerability report')} itemKey="download">
                         <div className="vulnerability-download-panel">
                             <Paragraph type="tertiary">
-                                {t('vulnerabilityDownload.hint', null, '请选择下载格式')}
+                                {t('vulnerabilityDownload.hint', null, 'Choose a file format')}
                             </Paragraph>
                             <RadioGroup value={format} onChange={event => setFormat(event.target.value)}>
                                 <Radio value="docx">{t('vulnerabilityDownload.word', null, 'Word（.docx）')}</Radio>
                                 <Radio value="md">{t('vulnerabilityDownload.markdown', null, 'Markdown（.md）')}</Radio>
                             </RadioGroup>
                             <Button theme="solid" type="primary" loading={downloading} onClick={handleDownload}>
-                                {t('vulnerabilityDownload.download', null, '下载漏洞报告')}
+                                {t('vulnerabilityDownload.download', null, 'Download vulnerability report')}
                             </Button>
                             <Text type="tertiary">
-                                {t('vulnerabilityPage.downloadHint', null, '报告由服务端按当前记录生成，包含描述、证据与修复建议。')}
+                                {t('vulnerabilityPage.downloadHint', null, 'The report is generated by the server from the current record and includes the description, evidence, and remediation advice.')}
                             </Text>
                         </div>
                     </Tabs.TabPane>

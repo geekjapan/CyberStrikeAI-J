@@ -1,5 +1,5 @@
 /**
- * 附件预览 Drawer：文本走 /chat-uploads/content，图片走 /chat-uploads/download 二进制。
+ * Attachment preview Drawer: text uses /chat-uploads/content, images use /chat-uploads/download binary.
  */
 import { useEffect, useState } from 'react';
 import { Button, SideSheet, Spin, Typography } from '@douyinfe/semi-ui';
@@ -62,7 +62,7 @@ export default function PreviewDrawer({ item, onClose }) {
             } catch (err) {
                 if (!cancelled) {
                     setError(err);
-                    // 文本接口拒绝二进制内容时退化为提示下载
+                    // Fall back to a download hint when the text endpoint rejects binary content
                     if (kind === 'text') setMode('binary');
                 }
             } finally {
@@ -81,18 +81,18 @@ export default function PreviewDrawer({ item, onClose }) {
         try {
             await downloadFileByPath(item.relativePath, item.name);
         } catch (err) {
-            toastError(err, t('chatFilesPage.errorGeneric', null, '操作失败，请稍后重试。'));
+            toastError(err, t('chatFilesPage.errorGeneric', null, 'Something went wrong. Please try again.'));
         }
     };
 
     return (
         <SideSheet
             visible={Boolean(item)}
-            title={item?.name || t('chatFilesPage.previewTitle', null, '文件预览')}
+            title={item?.name || t('chatFilesPage.previewTitle', null, 'File preview')}
             width={720}
             onCancel={onClose}
             footer={(
-                <Button onClick={download}>{t('chatFilesPage.download', null, '下载')}</Button>
+                <Button onClick={download}>{t('chatFilesPage.download', null, 'Download')}</Button>
             )}
         >
             {item && (
@@ -100,7 +100,7 @@ export default function PreviewDrawer({ item, onClose }) {
                     <div className="chat-files-preview-meta">
                         <Text type="tertiary" size="small">{formatBytes(item.size)}</Text>
                         <Text type="tertiary" size="small" className="chat-files-mono">{item.relativePath}</Text>
-                        <CopyButton text={item.relativePath} label={t('chatFilesPage.copyPath', null, '复制路径')} size="small" />
+                        <CopyButton text={item.relativePath} label={t('chatFilesPage.copyPath', null, 'Copy path')} size="small" />
                     </div>
 
                     <ErrorBanner error={mode === 'binary' ? null : error} />
@@ -115,7 +115,7 @@ export default function PreviewDrawer({ item, onClose }) {
                     )}
                     {!loading && mode === 'binary' && (
                         <Text type="tertiary">
-                            {t('chatFilesPage.editBinaryHint', null, '图片、压缩包等二进制文件无法在此以文本方式编辑，请使用「下载」后在本地查看或处理。')}
+                            {t('chatFilesPage.editBinaryHint', null, 'Binary files (images, archives, etc.) cannot be edited as text here. Use Download and open locally.')}
                         </Text>
                     )}
                 </div>

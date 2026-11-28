@@ -17,7 +17,7 @@ func TestExecutionServiceBackgroundWaitResultCompletesWaitTool(t *testing.T) {
   "status": "running"
 }
 
-本次等待已到达 timeout_seconds，上述 execution 仍未完成。可继续等待、取消，或采用其他步骤。`}},
+This wait reached timeout_seconds and the execution above has not finished. You can keep waiting, cancel it, or take other steps.`}},
 				IsError: true,
 			}, nil
 		},

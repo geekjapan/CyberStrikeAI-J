@@ -1,49 +1,51 @@
-/** 任务页私有工具：状态字典、进度计算、错误文本归一化。 */
+/** Task page private helpers: status dictionary, progress calculation, error text normalization. */
+import { currentLocale } from '../../lib/format';
+import { translate } from '../../lib/i18n';
 
 export const QUEUE_STATUS = {
-    pending: { label: '待执行', color: 'amber' },
-    running: { label: '执行中', color: 'blue' },
-    paused: { label: '已暂停', color: 'grey' },
-    completed: { label: '已完成', color: 'green' },
-    cancelled: { label: '已取消', color: 'grey' }
+    pending: { get label() { return translate('ui.tasksHelpers.queueStatusPending', null, 'Pending'); }, color: 'amber' },
+    running: { get label() { return translate('ui.tasksHelpers.queueStatusRunning', null, 'Running'); }, color: 'blue' },
+    paused: { get label() { return translate('ui.tasksHelpers.queueStatusPaused', null, 'Paused'); }, color: 'grey' },
+    completed: { get label() { return translate('ui.tasksHelpers.queueStatusCompleted', null, 'Completed'); }, color: 'green' },
+    cancelled: { get label() { return translate('ui.tasksHelpers.queueStatusCancelled', null, 'Cancelled'); }, color: 'grey' }
 };
 
 export const TASK_STATUS = {
-    pending: { label: '待执行', color: 'amber' },
-    running: { label: '执行中', color: 'blue' },
-    completed: { label: '已完成', color: 'green' },
-    failed: { label: '失败', color: 'red' },
-    cancelled: { label: '已取消', color: 'grey' },
-    blocked: { label: '受阻', color: 'orange' }
+    pending: { get label() { return translate('ui.tasksHelpers.taskStatusPending', null, 'Pending'); }, color: 'amber' },
+    running: { get label() { return translate('ui.tasksHelpers.taskStatusRunning', null, 'Running'); }, color: 'blue' },
+    completed: { get label() { return translate('ui.tasksHelpers.taskStatusCompleted', null, 'Completed'); }, color: 'green' },
+    failed: { get label() { return translate('ui.tasksHelpers.taskStatusFailed', null, 'Failed'); }, color: 'red' },
+    cancelled: { get label() { return translate('ui.tasksHelpers.taskStatusCancelled', null, 'Cancelled'); }, color: 'grey' },
+    blocked: { get label() { return translate('ui.tasksHelpers.taskStatusBlocked', null, 'Blocked'); }, color: 'orange' }
 };
 
 export const AGENT_MODES = [
-    { value: 'single', label: '单代理（Pi SDK）' },
-    { value: 'deep', label: 'Deep（DeepAgent）' },
+    { value: 'single', get label() { return translate('ui.tasksHelpers.agentModeSingle', null, 'Single agent (Pi SDK)'); } },
+    { value: 'deep', label: 'Deep (DeepAgent)' },
     { value: 'plan_execute', label: 'Plan-Execute' },
-    { value: 'supervisor', label: 'Supervisor（专家路由）' }
+    { value: 'supervisor', get label() { return translate('ui.tasksHelpers.agentModeSupervisor', null, 'Supervisor (expert routing)'); } }
 ];
 
 export const HITL_POLICIES = [
-    { value: '', label: '沿用全局设置' },
-    { value: 'off', label: '关闭审批' },
-    { value: 'human', label: '人工审批' },
-    { value: 'audit_agent', label: 'Agent 审批' },
-    { value: 'review_edit', label: 'Agent 审查编辑' }
+    { value: '', get label() { return translate('ui.tasksHelpers.hitlInherit', null, 'Use global setting'); } },
+    { value: 'off', get label() { return translate('ui.tasksHelpers.hitlOff', null, 'Approval off'); } },
+    { value: 'human', get label() { return translate('ui.tasksHelpers.hitlHuman', null, 'Human approval'); } },
+    { value: 'audit_agent', get label() { return translate('ui.tasksHelpers.hitlAuditAgent', null, 'Agent approval'); } },
+    { value: 'review_edit', get label() { return translate('ui.tasksHelpers.hitlReviewEdit', null, 'Agent review and edit'); } }
 ];
 
 export const SCHEDULE_MODES = [
-    { value: 'manual', label: '手工执行' },
-    { value: 'cron', label: 'Cron 调度' }
+    { value: 'manual', get label() { return translate('ui.tasksHelpers.scheduleManual', null, 'Manual'); } },
+    { value: 'cron', get label() { return translate('ui.tasksHelpers.scheduleCron', null, 'Cron schedule'); } }
 ];
 
 export const QUEUE_STATUS_FILTERS = [
-    { value: 'all', label: '全部状态' },
-    { value: 'pending', label: '待执行' },
-    { value: 'running', label: '执行中' },
-    { value: 'paused', label: '已暂停' },
-    { value: 'completed', label: '已完成' },
-    { value: 'cancelled', label: '已取消' }
+    { value: 'all', get label() { return translate('ui.tasksHelpers.filterAll', null, 'All statuses'); } },
+    { value: 'pending', get label() { return translate('ui.tasksHelpers.queueStatusPending', null, 'Pending'); } },
+    { value: 'running', get label() { return translate('ui.tasksHelpers.queueStatusRunning', null, 'Running'); } },
+    { value: 'paused', get label() { return translate('ui.tasksHelpers.queueStatusPaused', null, 'Paused'); } },
+    { value: 'completed', get label() { return translate('ui.tasksHelpers.queueStatusCompleted', null, 'Completed'); } },
+    { value: 'cancelled', get label() { return translate('ui.tasksHelpers.queueStatusCancelled', null, 'Cancelled'); } }
 ];
 
 export function queueStats(queue) {
@@ -64,36 +66,38 @@ export function agentModeLabel(mode) {
     return (AGENT_MODES.find(item => item.value === String(mode || 'single')) || AGENT_MODES[0]).label;
 }
 
-/** 状态展示：Cron 队列在「本轮完成」时强调循环调度，底层 status 不变。 */
+/** Status display: a Cron queue stresses cyclic scheduling when "round finished"; the underlying status is unchanged. */
 export function queueStatusView(queue) {
     const base = QUEUE_STATUS[String(queue?.status || '')] || { label: queue?.status || '—', color: 'grey' };
     const cronOn = queue?.scheduleMode === 'cron' && queue?.scheduleEnabled !== false;
     const nextRun = queue?.nextRunAt ? new Date(queue.nextRunAt) : null;
-    const nextText = nextRun && Number.isFinite(nextRun.getTime()) ? nextRun.toLocaleString('zh-CN', { hour12: false }) : '';
+    const nextText = nextRun && Number.isFinite(nextRun.getTime()) ? nextRun.toLocaleString(currentLocale(), { hourCycle: 'h23' }) : '';
     const stats = queueStats(queue);
-    const blockedNote = stats.blocked > 0 ? (queue?.lastRunError || `${stats.blocked} 项受阻`) : '';
+    const blockedNote = stats.blocked > 0 ? (queue?.lastRunError || translate('ui.tasksHelpers.blockedCount', { count: stats.blocked }, '{{count}} blocked')) : '';
     if (stats.blocked > 0 && stats.completed === 0 && stats.failed === 0) {
-        return { ...base, label: `受阻（${stats.blocked} 项）`, color: 'orange', sublabel: blockedNote };
+        return { ...base, label: translate('ui.tasksHelpers.blockedLabel', { count: stats.blocked }, 'Blocked ({{count}})'), color: 'orange', sublabel: blockedNote };
     }
     if (cronOn && queue?.status === 'completed') {
         const unfinished = stats.failed > 0 || stats.blocked > 0;
         return {
             ...base,
-            label: unfinished ? '本轮已结束 · 定时循环中' : '本轮已完成 · 定时循环中',
+            label: unfinished
+                ? translate('ui.tasksHelpers.cronRoundEnded', null, 'Round ended · cron loop active')
+                : translate('ui.tasksHelpers.cronRoundCompleted', null, 'Round completed · cron loop active'),
             color: stats.failed > 0 ? 'red' : (stats.blocked > 0 ? 'orange' : base.color),
-            sublabel: blockedNote || (nextText ? `下次执行：${nextText}` : ''),
-            note: '定时队列：子任务已跑完，到点将自动下一轮'
+            sublabel: blockedNote || (nextText ? translate('ui.tasksHelpers.nextRun', { time: nextText }, 'Next run: {{time}}') : ''),
+            note: translate('ui.tasksHelpers.cronQueueNote', null, 'Scheduled queue: all subtasks have finished; the next round starts automatically on schedule')
         };
     }
     if (cronOn && queue?.status === 'pending' && nextText) {
-        return { ...base, sublabel: `Cron 已排程 · 下次 ${nextText}` };
+        return { ...base, sublabel: translate('ui.tasksHelpers.cronScheduled', { time: nextText }, 'Cron scheduled · next {{time}}') };
     }
     if (queue?.status === 'completed' && stats.failed > 0) {
-        const blockedText = stats.blocked > 0 ? `，${stats.blocked} 项受阻` : '';
-        return { ...base, label: `已结束（${stats.failed} 项失败${blockedText}）`, color: 'red', sublabel: blockedNote };
+        const blockedText = stats.blocked > 0 ? translate('ui.tasksHelpers.blockedSuffix', { count: stats.blocked }, ', {{count}} blocked') : '';
+        return { ...base, label: translate('ui.tasksHelpers.endedFailed', { failed: stats.failed, blocked: blockedText }, 'Ended ({{failed}} failed{{blocked}})'), color: 'red', sublabel: blockedNote };
     }
     if (queue?.status === 'completed' && stats.blocked > 0) {
-        return { ...base, label: `已结束（${stats.blocked} 项受阻）`, color: 'orange', sublabel: blockedNote };
+        return { ...base, label: translate('ui.tasksHelpers.endedBlocked', { count: stats.blocked }, 'Ended ({{count}} blocked)'), color: 'orange', sublabel: blockedNote };
     }
     return { ...base, sublabel: '' };
 }
@@ -104,12 +108,12 @@ export function durationText(start, end) {
     const to = end ? new Date(end).getTime() : Date.now();
     if (!Number.isFinite(from) || !Number.isFinite(to) || to < from) return '—';
     const seconds = Math.round((to - from) / 1000);
-    if (seconds < 60) return `${seconds} 秒`;
-    if (seconds < 3600) return `${Math.floor(seconds / 60)} 分 ${seconds % 60} 秒`;
-    return `${Math.floor(seconds / 3600)} 小时 ${Math.floor((seconds % 3600) / 60)} 分`;
+    if (seconds < 60) return translate('ui.tasksHelpers.durSeconds', { s: seconds }, '{{s}} s');
+    if (seconds < 3600) return translate('ui.tasksHelpers.durMinSec', { m: Math.floor(seconds / 60), s: seconds % 60 }, '{{m}} min {{s}} s');
+    return translate('ui.tasksHelpers.durHourMin', { h: Math.floor(seconds / 3600), m: Math.floor((seconds % 3600) / 60) }, '{{h}} h {{m}} min');
 }
 
-export function errText(error, fallback = '操作失败') {
+export function errText(error, fallback = translate('ui.tasksHelpers.opFailed', null, 'Operation failed')) {
     if (!error) return fallback;
     if (typeof error === 'string') return error;
     const payload = error.payload;
@@ -119,7 +123,7 @@ export function errText(error, fallback = '操作失败') {
         if (body && typeof body === 'object') {
             const message = typeof body.message === 'string' ? body.message : '';
             const code = typeof body.code === 'string' ? body.code : '';
-            if (message) return code ? `${message}（${code}）` : message;
+            if (message) return code ? `${message} (${code})` : message;
         }
         if (typeof payload.message === 'string' && payload.message) return payload.message;
     }
@@ -127,7 +131,7 @@ export function errText(error, fallback = '操作失败') {
     return fallback;
 }
 
-export function errorProp(error, fallback = '加载失败') {
+export function errorProp(error, fallback = translate('ui.tasksHelpers.loadFailed', null, 'Failed to load')) {
     if (!error) return null;
     return { message: errText(error, fallback) };
 }

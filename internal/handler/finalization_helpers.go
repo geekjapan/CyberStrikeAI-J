@@ -100,7 +100,7 @@ func (h *AgentHandler) persistFinalizationDecision(
 	_ = h.db.AddProcessDetail(assistantMessageID, conversationID, "finalization_check", finalizationCheckMessage(decision), decision)
 	if decision.Finalizable {
 		if err := h.db.UpdateAssistantMessageFinalize(assistantMessageID, decision.FinalText, mcpExecutionIDs, reasoningContent); err != nil && h.logger != nil {
-			h.logger.Warn("更新最终助手消息失败", zap.Error(err), zap.String("conversationId", conversationID), zap.String("agentMode", agentMode))
+			h.logger.Warn("Failed to update final assistant message", zap.Error(err), zap.String("conversationId", conversationID), zap.String("agentMode", agentMode))
 		}
 		return
 	}
@@ -144,7 +144,7 @@ func (h *AgentHandler) finalizeCandidateForDeliveryWithPolicy(
 	_ = h.db.AddProcessDetail(assistantMessageID, conversationID, "finalization_check", finalizationCheckMessage(decision), decision)
 	if decision.Finalizable {
 		if err := h.db.UpdateAssistantMessageFinalize(assistantMessageID, decision.FinalText, mcpExecutionIDs, reasoningContent); err != nil && h.logger != nil {
-			h.logger.Warn("更新最终助手消息失败", zap.Error(err), zap.String("conversationId", conversationID), zap.String("agentMode", agentMode))
+			h.logger.Warn("Failed to update final assistant message", zap.Error(err), zap.String("conversationId", conversationID), zap.String("agentMode", agentMode))
 		}
 		return decision
 	}
@@ -154,7 +154,7 @@ func (h *AgentHandler) finalizeCandidateForDeliveryWithPolicy(
 
 func finalizationCheckMessage(d agentfinalizer.Decision) string {
 	if d.Finalizable {
-		return "已交付本轮回复。"
+		return "Reply for this turn delivered."
 	}
 	return finalizationBlockedMessage(d)
 }
@@ -166,23 +166,23 @@ func finalizationBlockedMessage(d agentfinalizer.Decision) string {
 	var notice string
 	switch d.CompletionReason {
 	case agentfinalizer.ReasonPendingToolsCancelled:
-		notice = "收尾时取消了仍在运行的工具，任务未完成。"
+		notice = "Tools that were still running were cancelled during finalization; the task is not complete."
 	case multiagent.ReasonUnfinishedPlan:
-		notice = "本轮计划仍有标记为「待执行」或「进行中」的步骤，最终回复暂未交付。请核对计划中的步骤状态。"
+		notice = "The plan for this turn still has steps marked \"pending\" or \"in progress\", so the final reply has not been delivered yet. Check the step statuses in the plan."
 	case multiagent.ReasonModelOutputTruncated:
-		notice = "模型输出达到长度上限，本轮回复未完成。"
+		notice = "Model output reached the length limit; the reply for this turn is incomplete."
 	default:
-		notice = "任务尚未达到最终回复条件，暂不生成成功结论。"
+		notice = "The task has not met the conditions for a final reply, so no success conclusion is generated."
 	}
 	parts := []string{notice}
 	if d.CompletionReason != "" {
-		parts = append(parts, "原因: "+d.CompletionReason)
+		parts = append(parts, "Reason: "+d.CompletionReason)
 	}
 	if len(d.PendingExecutionIDs) > 0 {
-		parts = append(parts, fmt.Sprintf("仍有 %d 个工具执行未结束: %s", len(d.PendingExecutionIDs), strings.Join(d.PendingExecutionIDs, ", ")))
+		parts = append(parts, fmt.Sprintf("%d tool executions have not finished: %s", len(d.PendingExecutionIDs), strings.Join(d.PendingExecutionIDs, ", ")))
 	}
 	if len(d.MissingChecks) > 0 {
-		parts = append(parts, "缺失检查: "+strings.Join(d.MissingChecks, "; "))
+		parts = append(parts, "Missing checks: "+strings.Join(d.MissingChecks, "; "))
 	}
 	return strings.Join(parts, "\n")
 }

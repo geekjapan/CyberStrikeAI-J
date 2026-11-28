@@ -1,6 +1,6 @@
 /**
- * 调用拦截（tool-guard）：GET /tool-guard（ETag 版本）读取规则，PUT /tool-guard 保存，
- * POST /tool-guard/test 试匹配。保存必须带 If-Match；409 表示他人已改，需要重新加载。
+ * Call interception (tool-guard): GET /tool-guard (ETag version) reads rules, PUT /tool-guard saves,
+ * POST /tool-guard/test tries a match. Saving must carry If-Match; 409 means someone else changed it and a reload is needed.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -67,9 +67,9 @@ export default function ToolGuardPage() {
     const reloadSafely = () => {
         if (!dirty) { load(); return; }
         confirmAction({
-            title: t('toolGuard.reloadTitle', null, '重新加载拦截配置'),
-            content: t('toolGuard.reloadConfirm', null, '当前有未保存修改，重新加载会丢弃这些修改。确认继续？'),
-            okText: t('common.confirm', null, '确定'),
+            title: t('toolGuard.reloadTitle', null, 'Reload guard configuration'),
+            content: t('toolGuard.reloadConfirm', null, 'There are unsaved changes; reloading discards them. Continue?'),
+            okText: t('common.confirm', null, 'Confirm'),
             onOk: load
         });
     };
@@ -86,7 +86,7 @@ export default function ToolGuardPage() {
     const addRule = () => {
         if (!canWrite || !config) return;
         if (config.rules.length >= MAX_RULES) {
-            toastError(t('toolGuard.tooManyRules', null, `最多可配置 ${MAX_RULES} 条拦截规则`));
+            toastError(t('toolGuard.tooManyRules', null, 'You can configure up to 100 blocking rules.'));
             return;
         }
         const id = newRuleId();
@@ -99,7 +99,7 @@ export default function ToolGuardPage() {
                     name: '',
                     enabled: true,
                     pattern: '',
-                    message: t('toolGuard.defaultMessage', null, '识别到 {match}，调用被规则「{rule}」拦截。请检查目标与操作后重试。')
+                    message: t('toolGuard.defaultMessage', null, 'Detected {match}. Rule “{rule}” blocked this call. Review the target and operation before trying again.')
                 }
             ]
         }));
@@ -138,7 +138,7 @@ export default function ToolGuardPage() {
             return;
         }
         if (!etag) {
-            setActionError(new Error(t('toolGuard.versionRequired', null, '缺少调用拦截配置版本，请刷新页面后重试。')));
+            setActionError(new Error(t('toolGuard.versionRequired', null, 'The call interception configuration version is missing. Refresh the page and try again.')));
             return;
         }
         setSaving(true);
@@ -156,7 +156,7 @@ export default function ToolGuardPage() {
             setConfig(normalized);
             setSaved(clone(normalized));
             setEtag(nextEtag);
-            toastSuccess(t('toolGuard.saveSuccess', null, '调用拦截配置已保存，后续工具调用将使用新配置。'));
+            toastSuccess(t('toolGuard.saveSuccess', null, 'Call blocking configuration saved. Subsequent tool calls will use the new configuration.'));
         } catch (error) {
             const code = error?.payload?.code;
             if (code === 'tool_guard_conflict' || code === 'tool_guard_version_required') {
@@ -165,7 +165,7 @@ export default function ToolGuardPage() {
             } else {
                 setActionError(error);
             }
-            toastError(error, t('toolGuard.saveFailed', null, '保存失败'));
+            toastError(error, t('toolGuard.saveFailed', null, 'Save failed'));
         } finally {
             setSaving(false);
         }
@@ -181,8 +181,8 @@ export default function ToolGuardPage() {
     if (!canRead) {
         return (
             <div className="tool-guard-page">
-                <PageHeader title={t('toolGuard.title', null, '调用拦截')} />
-                <ErrorBanner error={new Error(t('toolGuard.noPermission', null, '当前账号缺少 config:read 权限，无法读取拦截配置。'))} />
+                <PageHeader title={t('toolGuard.title', null, 'Call blocking')} />
+                <ErrorBanner error={new Error(t('toolGuard.noPermission', null, 'The current account lacks the config:read permission and cannot read the guard configuration.'))} />
             </div>
         );
     }
@@ -190,22 +190,22 @@ export default function ToolGuardPage() {
     return (
         <div className="tool-guard-page">
             <PageHeader
-                title={t('toolGuard.title', null, '调用拦截')}
-                description={t('toolGuard.description', null, '在 MCP 工具执行前检查工具名称和参数，命中规则立即阻止调用。人机协同审批和工具白名单不会跳过此检查。')}
+                title={t('toolGuard.title', null, 'Call blocking')}
+                description={t('toolGuard.description', null, 'Check MCP tool names and arguments before execution and stop matching calls. Human-in-the-loop approvals and tool whitelists do not bypass these checks.')}
                 extra={(
                     <Space>
                         <Tag size="small" color={dirty ? 'amber' : 'green'}>
                             {saving
-                                ? t('toolGuard.loading', null, '处理中…')
+                                ? t('toolGuard.loading', null, 'Processing…')
                                 : dirty
-                                    ? t('toolGuard.unsaved', null, '有未保存修改')
-                                    : t('toolGuard.savedState', null, '已与服务端同步')}
+                                    ? t('toolGuard.unsaved', null, 'Unsaved changes')
+                                    : t('toolGuard.savedState', null, 'Synced with server')}
                         </Tag>
                         <Button onClick={reset} disabled={!canWrite || !dirty || saving}>
-                            {t('toolGuard.reset', null, '撤销修改')}
+                            {t('toolGuard.reset', null, 'Discard changes')}
                         </Button>
                         <Button icon={<IconRefresh />} onClick={reloadSafely} loading={loading} disabled={saving}>
-                            {t('common.refresh', null, '刷新')}
+                            {t('common.refresh', null, 'Refresh')}
                         </Button>
                         <Button
                             theme="solid"
@@ -215,21 +215,21 @@ export default function ToolGuardPage() {
                             disabled={!canWrite || !dirty}
                             onClick={save}
                         >
-                            {t('toolGuard.save', null, '保存并生效')}
+                            {t('toolGuard.save', null, 'Save and apply')}
                         </Button>
                     </Space>
                 )}
             />
 
-            {loading && !config && <SectionCard title={t('toolGuard.loading', null, '处理中…')}><Text type="tertiary">…</Text></SectionCard>}
+            {loading && !config && <SectionCard title={t('toolGuard.loading', null, 'Processing…')}><Text type="tertiary">…</Text></SectionCard>}
             <ErrorBanner error={loadError} onRetry={load} />
             <ErrorBanner error={actionError} onRetry={conflict ? reloadSafely : undefined} />
 
             {config && (
                 <>
                     <SectionCard
-                        title={t('toolGuard.policyTitle', null, '拦截策略')}
-                        description={t('toolGuard.enableHint', null, '在工具执行前检查风险，修改后保存生效。')}
+                        title={t('toolGuard.policyTitle', null, 'Blocking policy')}
+                        description={t('toolGuard.enableHint', null, 'Checks for risks before tool execution. Save to apply changes.')}
                     >
                         <div className="tool-guard-policy">
                             <Space spacing={10} align="center">
@@ -237,37 +237,37 @@ export default function ToolGuardPage() {
                                     checked={config.enabled}
                                     disabled={!canWrite || saving}
                                     onChange={next => { setConfig(current => ({ ...current, enabled: next })); setActionError(null); }}
-                                    aria-label={t('toolGuard.enabled', null, '启用调用拦截')}
+                                    aria-label={t('toolGuard.enabled', null, 'Enable call blocking')}
                                 />
-                                <Text strong>{t('toolGuard.enabled', null, '启用调用拦截')}</Text>
+                                <Text strong>{t('toolGuard.enabled', null, 'Enable call blocking')}</Text>
                                 <Tag size="small" color={config.enabled ? 'green' : 'grey'}>
                                     {config.enabled
-                                        ? t('toolGuard.protectionOn', null, '调用拦截已开启')
-                                        : t('toolGuard.protectionOff', null, '调用拦截已关闭')}
+                                        ? t('toolGuard.protectionOn', null, 'Call blocking is on')
+                                        : t('toolGuard.protectionOff', null, 'Call blocking is off')}
                                 </Tag>
                                 <Tag size="small" color="blue">
-                                    {t('toolGuard.ruleCount', { enabled: enabledCount, total: ruleCount }, `${enabledCount} / ${ruleCount} 条规则已启用`)}
+                                    {t('toolGuard.ruleCount', { enabled: enabledCount, total: ruleCount }, '{{enabled}} of {{total}} rules enabled')}
                                 </Tag>
                             </Space>
-                            <Text type="tertiary" size="small">{t('toolGuard.scopeHint', null, '正则仅检查调用中可见的文本；不会解析 IP 归属、重定向目标或工具读取的文件内容。')}</Text>
+                            <Text type="tertiary" size="small">{t('toolGuard.scopeHint', null, 'Rules inspect visible call text only. They do not resolve IP ownership, redirect destinations, or file contents read by tools. Domain rules cannot cover every indirect access.')}</Text>
                         </div>
                     </SectionCard>
 
                     <SectionCard
-                        title={t('toolGuard.rulesTitle', null, '拦截规则')}
-                        description={t('toolGuard.rulesHint', null, '按顺序匹配已启用的规则，使用首条命中规则的提醒。正则采用 RE2 语法，保存和试运行时由服务端校验。')}
+                        title={t('toolGuard.rulesTitle', null, 'Blocking rules')}
+                        description={t('toolGuard.rulesHint', null, 'Enabled rules are checked in order; the first match supplies the blocking message. Patterns use RE2 syntax and are validated by the server when saved or tested.')}
                         extra={(
                             <Button
                                 icon={<IconPlus />}
                                 disabled={!canWrite || saving || ruleCount >= MAX_RULES}
                                 onClick={addRule}
                             >
-                                {t('toolGuard.addRule', null, '添加规则')}
+                                {t('toolGuard.addRule', null, 'Add rule')}
                             </Button>
                         )}
                     >
                         {ruleCount === 0 && (
-                            <Text type="tertiary">{t('toolGuard.emptyRules', null, '暂无规则。添加规则后保存，即可启用对应的拦截措施。')}</Text>
+                            <Text type="tertiary">{t('toolGuard.emptyRules', null, 'No rules yet. Add and save a rule to enable its checks.')}</Text>
                         )}
                         {ruleCount > 0 && (
                             <Collapse
@@ -282,15 +282,15 @@ export default function ToolGuardPage() {
                                         header={(
                                             <Space spacing={8} align="center">
                                                 <span className="tool-guard-rule-number">{String(index + 1).padStart(2, '0')}</span>
-                                                <Text strong>{rule.name.trim() || t('toolGuard.unnamedRule', null, '未命名规则')}</Text>
+                                                <Text strong>{rule.name.trim() || t('toolGuard.unnamedRule', null, 'Untitled rule')}</Text>
                                                 <Tag size="small" color={rule.enabled ? 'green' : 'grey'}>
-                                                    {rule.enabled ? t('toolGuard.ruleOn', null, '已启用') : t('toolGuard.ruleOff', null, '已停用')}
+                                                    {rule.enabled ? t('toolGuard.ruleOn', null, 'Enabled') : t('toolGuard.ruleOff', null, 'Disabled')}
                                                 </Tag>
                                                 {(() => {
                                                     const savedRule = saved?.rules?.find(item => item.id === rule.id);
-                                                    if (!savedRule) return <Tag size="small" color="blue">{t('toolGuard.ruleNew', null, '新增')}</Tag>;
+                                                    if (!savedRule) return <Tag size="small" color="blue">{t('toolGuard.ruleNew', null, 'New')}</Tag>;
                                                     if (JSON.stringify(savedRule) !== JSON.stringify(rule)) {
-                                                        return <Tag size="small" color="amber">{t('toolGuard.ruleModified', null, '已修改')}</Tag>;
+                                                        return <Tag size="small" color="amber">{t('toolGuard.ruleModified', null, 'Modified')}</Tag>;
                                                     }
                                                     return null;
                                                 })()}
@@ -311,12 +311,12 @@ export default function ToolGuardPage() {
                                 ))}
                             </Collapse>
                         )}
-                        <Text type="tertiary" size="small">{t('toolGuard.listHint', null, '点击规则查看和编辑，按列表顺序匹配。')}</Text>
+                        <Text type="tertiary" size="small">{t('toolGuard.listHint', null, 'Select a rule to view or edit. Rules are checked in list order.')}</Text>
                     </SectionCard>
 
                     <SectionCard
-                        title={t('toolGuard.testTitle', null, '全部规则验证')}
-                        description={t('toolGuard.testHint', null, '使用页面上的当前配置（包括未保存修改），仅检查匹配结果，不执行任何工具。')}
+                        title={t('toolGuard.testTitle', null, 'Test all rules')}
+                        description={t('toolGuard.testHint', null, 'Check the current page configuration, including unsaved changes. This test does not execute any tools.')}
                     >
                         <TestPanel config={config} disabled={saving} />
                     </SectionCard>

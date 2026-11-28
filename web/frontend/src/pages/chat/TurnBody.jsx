@@ -1,28 +1,31 @@
-/** 单轮输出：执行过程与事件在前，助手最终正文在末尾独立展示。 */
+/** Single-turn output: execution process and events first, the assistant's final text shown separately at the end. */
 import { useState } from 'react';
 import { Collapse, Tag, Typography } from '@douyinfe/semi-ui';
 import { MarkdownView, JsonViewer } from '../../components/ui';
 import { formatNumber } from '../../lib/format';
-import { useI18n } from '../../lib/i18n';
+import { translate, useI18n } from '../../lib/i18n';
 import { prettyJson, truncateText } from './stream';
 
 const { Text } = Typography;
 
 const STATUS_TAG = {
-    running: { color: 'blue', label: '执行中' },
-    success: { color: 'green', label: '完成' },
-    failed: { color: 'red', label: '失败' },
-    cancelled: { color: 'grey', label: '已取消' },
-    blocked: { color: 'orange', label: '已拦截' }
+    running: { color: 'blue', get label() { return translate('ui.turnBody.statusRunning', null, 'Running'); } },
+    success: { color: 'green', get label() { return translate('ui.turnBody.statusSuccess', null, 'Done'); } },
+    failed: { color: 'red', get label() { return translate('ui.turnBody.statusFailed', null, 'Failed'); } },
+    cancelled: { color: 'grey', get label() { return translate('ui.turnBody.statusCancelled', null, 'Cancelled'); } },
+    blocked: { color: 'orange', get label() { return translate('ui.turnBody.statusBlocked', null, 'Blocked'); } }
 };
 
 function ReasoningBlock({ block, defaultOpen }) {
+    const { t } = useI18n();
     const text = block.text || '';
     if (!text.trim()) return null;
-    const title = block.label === 'reasoning_chain' ? '🔗 推理过程' : '🤔 思考过程';
+    const title = block.label === 'reasoning_chain'
+        ? t('ui.turnBody.reasoningChain', null, '🔗 Reasoning chain')
+        : t('ui.turnBody.thinkingProcess', null, '🤔 Thinking');
     return (
         <Collapse className="chat-block-collapse" defaultActiveKey={defaultOpen ? ['1'] : []}>
-            <Collapse.Panel itemKey="1" header={<span className="chat-block-title">{title} · {text.length} 字符</span>}>
+            <Collapse.Panel itemKey="1" header={<span className="chat-block-title">{title} · {t('ui.turnBody.charCount', { count: text.length }, '{{count}} characters')}</span>}>
                 <pre className="chat-pre">{truncateText(text)}</pre>
             </Collapse.Panel>
         </Collapse>
@@ -35,12 +38,12 @@ function ToolBlock({ block, index, total }) {
     const argsText = prettyJson(block.args);
     const resultText = block.result || '';
     const hasBody = Boolean(argsText || resultText);
-    const name = block.toolName || t('chat.unknownTool', null, '未知工具');
+    const name = block.toolName || t('chat.unknownTool', null, 'Unknown tool');
     const header = (
         <span className="chat-tool-head">
             <span className="chat-tool-name">
                 {block.agentName ? `${block.agentName} · ` : ''}
-                {t('chat.callTool', { name, index, total }, `调用工具: ${name} (${index}/${total})`)}
+                {t('chat.callTool', { name, index, total }, 'Call tool: {{name}} ({{index}}/{{total}})')}
             </span>
             <Tag size="small" color={meta.color} shape="circle">{meta.label}</Tag>
         </span>
@@ -54,13 +57,13 @@ function ToolBlock({ block, index, total }) {
                 <Collapse.Panel itemKey="1" header={header}>
                     {argsText && (
                         <>
-                            <Text type="tertiary" size="small">参数</Text>
+                            <Text type="tertiary" size="small">{t('ui.turnBody.args', null, 'Arguments')}</Text>
                             <pre className="chat-pre">{argsText}</pre>
                         </>
                     )}
                     {resultText && (
                         <>
-                            <Text type="tertiary" size="small">结果</Text>
+                            <Text type="tertiary" size="small">{t('ui.turnBody.result', null, 'Result')}</Text>
                             <pre className="chat-pre">{resultText}</pre>
                         </>
                     )}
@@ -71,6 +74,7 @@ function ToolBlock({ block, index, total }) {
 }
 
 function NoteBlock({ block }) {
+    const { t } = useI18n();
     const [open, setOpen] = useState(false);
     const tone = block.tone || 'info';
     return (
@@ -79,12 +83,12 @@ function NoteBlock({ block }) {
                 <span className="chat-note-title">{block.title}</span>
                 {block.data && (
                     <button type="button" className="chat-link-btn" onClick={() => setOpen(!open)}>
-                        {open ? '收起 JSON' : '查看 JSON'}
+                        {open ? t('ui.turnBody.hideJson', null, 'Hide JSON') : t('ui.turnBody.showJson', null, 'View JSON')}
                     </button>
                 )}
             </div>
             {block.message && <div className="chat-note-body">{block.message}</div>}
-            {open && block.data && <JsonViewer value={block.data} collapsed={false} title="事件数据" />}
+            {open && block.data && <JsonViewer value={block.data} collapsed={false} title={t('ui.turnBody.eventData', null, 'Event data')} />}
         </div>
     );
 }
@@ -116,10 +120,11 @@ function UsageSummaryBlock({ data }) {
 }
 
 function EventLog({ events }) {
+    const { t } = useI18n();
     if (!events || !events.length) return null;
     return (
         <Collapse className="chat-block-collapse chat-event-log">
-            <Collapse.Panel itemKey="1" header={<span className="chat-block-title">🧾 原始事件 · {events.length} 条</span>}>
+            <Collapse.Panel itemKey="1" header={<span className="chat-block-title">{t('ui.turnBody.rawEvents', { count: events.length }, '🧾 Raw events · {{count}}')}</span>}>
                 <pre className="chat-pre">
                     {events.map((event, index) => `${index + 1}. ${JSON.stringify(event)}`).join('\n')}
                 </pre>
@@ -177,7 +182,7 @@ export default function TurnBody({
             ) : streaming ? (
                 <pre className="chat-pre chat-stream-text">{body}</pre>
             ) : <MarkdownView content={body} />)}
-            {!body.trim() && streaming && <div className="chat-stream-placeholder">正在生成…</div>}
+            {!body.trim() && streaming && <div className="chat-stream-placeholder">{t('ui.turnBody.generating', null, 'Generating…')}</div>}
         </div>
     );
 }

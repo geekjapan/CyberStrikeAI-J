@@ -1,4 +1,4 @@
-/** 批量绑定项目：PUT /assets/project-binding，支持解绑（project_id 置空）。 */
+/** Bulk project binding: PUT /assets/project-binding; supports unbinding (empty project_id). */
 import { useEffect, useMemo, useState } from 'react';
 import { Banner, Select, Space, Switch, Typography } from '@douyinfe/semi-ui';
 import { api, errorMessage } from '../../../lib/http';
@@ -32,7 +32,7 @@ export default function AssetProjectModal({ visible, projects, assetIds, onClose
     const submit = async () => {
         if (busy || !ids.length) return;
         if (!unbind && !projectId) {
-            setError(t('assets.selectProjectRequired', null, '请选择要绑定的项目'));
+            setError(t('assets.selectProjectRequired', null, 'Choose a project to bind'));
             return;
         }
         setBusy(true);
@@ -42,11 +42,11 @@ export default function AssetProjectModal({ visible, projects, assetIds, onClose
                 asset_ids: ids,
                 project_id: unbind ? '' : projectId
             });
-            toastSuccess(t('assets.bindProjectDone', { count: ids.length }, `已更新 ${ids.length} 个资产`));
+            toastSuccess(t('assets.bindProjectDone', { count: ids.length }, 'Bound {{count}} assets'));
             onDone?.();
             onClose?.();
         } catch (submitError) {
-            setError(errorMessage(submitError, t('assets.bindProjectFailed', null, '绑定项目失败')));
+            setError(errorMessage(submitError, t('assets.bindProjectFailed', null, 'Failed to bind project')));
         } finally {
             setBusy(false);
         }
@@ -55,16 +55,16 @@ export default function AssetProjectModal({ visible, projects, assetIds, onClose
     return (
         <Drawer
             visible={visible}
-            title={t('assets.bindProjectTitle', null, '绑定项目')}
+            title={t('assets.bindProjectTitle', null, 'Bind project')}
             width={520}
             onCancel={onClose}
             onOk={submit}
-            okText={unbind ? t('assets.unbindProject', null, '解除绑定') : t('assets.confirmBinding', null, '确认绑定')}
+            okText={unbind ? t('assets.unbindProject', null, 'Unbind project') : t('assets.confirmBinding', null, 'Confirm')}
             confirmLoading={busy}
         >
             <Space vertical align="start" spacing={10} style={{ width: '100%' }}>
                 <Text type="tertiary">
-                    {t('assets.bindProjectCount', { count: ids.length }, `将更新 ${ids.length} 个资产`)}
+                    {t('assets.bindProjectCount', { count: ids.length }, 'Update {{count}} assets')}
                 </Text>
                 <Select
                     value={projectId || undefined}
@@ -72,15 +72,15 @@ export default function AssetProjectModal({ visible, projects, assetIds, onClose
                     filter
                     showClear
                     disabled={unbind}
-                    placeholder={t('assets.chooseProject', null, '请选择项目')}
+                    placeholder={t('assets.chooseProject', null, 'Choose a project')}
                     onChange={value => setProjectId(value || '')}
                     style={{ width: '100%' }}
                 />
                 <Space>
                     <Switch checked={unbind} onChange={setUnbind} size="small" />
-                    <Text size="small">{t('assets.unbindProject', null, '解除项目绑定')}</Text>
+                    <Text size="small">{t('assets.unbindProject', null, 'Unbind project')}</Text>
                 </Space>
-                <Text type="tertiary" size="small">{t('assets.bindProjectHint', null, '所选资产将统一更新为该项目归属。')}</Text>
+                <Text type="tertiary" size="small">{t('assets.bindProjectHint', null, 'All selected assets will be bound to this project.')}</Text>
             </Space>
             {error && <Banner type="danger" bordered closeIcon={null} description={error} className="asset-library-form-error" />}
         </Drawer>

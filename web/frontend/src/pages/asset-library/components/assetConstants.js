@@ -1,48 +1,49 @@
 /**
- * 资产共用常量：枚举文案、筛选项、导入表头别名。
- * 仅被 asset-overview / asset-library / info-collect 三个页面目录引用。
+ * Shared asset constants: enum labels, filter options, import header aliases.
+ * Only used by the asset-overview / asset-library / info-collect page directories.
  */
+import { lazyLabels, translate } from '../../../lib/i18n';
 
 export const ASSET_PAGE_SIZE_OPTIONS = [10, 20, 50, 100];
 export const ASSET_DEFAULT_PAGE_SIZE = 20;
 
-export const STATUS_LABELS = { active: '活跃', inactive: '停用' };
+export const STATUS_LABELS = lazyLabels('ui.assetConstants.status', { active: 'Active', inactive: 'Inactive' });
 
 export const STATUS_OPTIONS = [
-    { value: 'active', label: STATUS_LABELS.active },
-    { value: 'inactive', label: STATUS_LABELS.inactive }
+    { value: 'active', get label() { return STATUS_LABELS.active; } },
+    { value: 'inactive', get label() { return STATUS_LABELS.inactive; } }
 ];
 
-export const ENVIRONMENT_LABELS = {
-    production: '生产',
-    staging: '预发布',
-    testing: '测试',
-    development: '开发',
-    other: '其他'
-};
+export const ENVIRONMENT_LABELS = lazyLabels('ui.assetConstants.environment', {
+    production: 'Production',
+    staging: 'Staging',
+    testing: 'Testing',
+    development: 'Development',
+    other: 'Other'
+});
 
-export const ENVIRONMENT_OPTIONS = Object.entries(ENVIRONMENT_LABELS)
-    .map(([value, label]) => ({ value, label }));
+export const ENVIRONMENT_OPTIONS = Object.keys(ENVIRONMENT_LABELS)
+    .map(value => ({ value, get label() { return ENVIRONMENT_LABELS[value]; } }));
 
-export const CRITICALITY_LABELS = {
-    critical: '核心',
-    high: '重要',
-    medium: '一般',
-    low: '低'
-};
+export const CRITICALITY_LABELS = lazyLabels('ui.assetConstants.criticality', {
+    critical: 'Core',
+    high: 'Important',
+    medium: 'Normal',
+    low: 'Low'
+});
 
-export const CRITICALITY_OPTIONS = Object.entries(CRITICALITY_LABELS)
-    .map(([value, label]) => ({ value, label }));
+export const CRITICALITY_OPTIONS = Object.keys(CRITICALITY_LABELS)
+    .map(value => ({ value, get label() { return CRITICALITY_LABELS[value]; } }));
 
-export const RISK_LABELS = {
-    critical: '严重',
-    high: '高危',
-    medium: '中危',
-    low: '低危',
-    info: '提示',
-    normal: '正常',
-    unassessed: '未评估'
-};
+export const RISK_LABELS = lazyLabels('ui.assetConstants.risk', {
+    critical: 'Critical',
+    high: 'High',
+    medium: 'Medium',
+    low: 'Low',
+    info: 'Info',
+    normal: 'Normal',
+    unassessed: 'Not assessed'
+});
 
 export const RISK_COLORS = {
     critical: 'red',
@@ -54,8 +55,8 @@ export const RISK_COLORS = {
     unassessed: 'grey'
 };
 
-export const RISK_OPTIONS = Object.entries(RISK_LABELS)
-    .map(([value, label]) => ({ value, label }));
+export const RISK_OPTIONS = Object.keys(RISK_LABELS)
+    .map(value => ({ value, get label() { return RISK_LABELS[value]; } }));
 
 export function riskLevelOf(asset) {
     const level = String(asset?.risk_level || '').toLowerCase();
@@ -66,32 +67,32 @@ export function riskLabel(level) {
     return RISK_LABELS[String(level || '').toLowerCase()] || RISK_LABELS.unassessed;
 }
 
-/** 常见协议（FOFA/资产库里的 protocol 字段值）。 */
+/** Common protocols (values of the protocol field in FOFA / the asset library). */
 export const PROTOCOL_OPTIONS = [
     'http', 'https', 'ssh', 'ftp', 'smtp', 'dns', 'ldap', 'smb',
     'telnet', 'rdp', 'mysql', 'postgresql', 'mssql', 'redis', 'mongodb'
 ].map(value => ({ value, label: value }));
 
 export const SORT_OPTIONS = [
-    { value: 'last_seen_at:desc', label: '最近发现（新到旧）' },
-    { value: 'last_seen_at:asc', label: '最近发现（旧到新）' },
-    { value: 'last_scan_at:asc', label: '最久未扫描优先' },
-    { value: 'last_scan_at:desc', label: '最近扫描优先' },
-    { value: 'risk_level:desc', label: '风险从高到低' },
-    { value: 'vulnerability_count:desc', label: '漏洞数量从多到少' },
-    { value: 'first_seen_at:desc', label: '首次发现（新到旧）' },
-    { value: 'host:asc', label: '目标名称' },
-    { value: 'port:asc', label: '端口' }
+    { value: 'last_seen_at:desc', get label() { return translate('ui.assetConstants.sortLastSeenDesc', null, 'Last seen (newest first)'); } },
+    { value: 'last_seen_at:asc', get label() { return translate('ui.assetConstants.sortLastSeenAsc', null, 'Last seen (oldest first)'); } },
+    { value: 'last_scan_at:asc', get label() { return translate('ui.assetConstants.sortLastScanAsc', null, 'Longest unscanned first'); } },
+    { value: 'last_scan_at:desc', get label() { return translate('ui.assetConstants.sortLastScanDesc', null, 'Most recently scanned first'); } },
+    { value: 'risk_level:desc', get label() { return translate('ui.assetConstants.sortRiskDesc', null, 'Risk (high to low)'); } },
+    { value: 'vulnerability_count:desc', get label() { return translate('ui.assetConstants.sortVulnCountDesc', null, 'Vulnerabilities (most first)'); } },
+    { value: 'first_seen_at:desc', get label() { return translate('ui.assetConstants.sortFirstSeenDesc', null, 'First seen (newest first)'); } },
+    { value: 'host:asc', get label() { return translate('ui.assetConstants.sortHostAsc', null, 'Target name'); } },
+    { value: 'port:asc', get label() { return translate('ui.assetConstants.sortPortAsc', null, 'Port'); } }
 ];
 
-/** 扫描状态筛选：never / scanned / overdue:N，对应 handler 的 scan_state 与 scan_overdue_days。 */
+/** Scan-state filter: never / scanned / overdue:N, mapped to the handler's scan_state and scan_overdue_days. */
 export const SCAN_STATE_OPTIONS = [
-    { value: '', label: '全部' },
-    { value: 'never', label: '从未扫描' },
-    { value: 'scanned', label: '已扫描' },
-    { value: 'overdue:30', label: '30 天未扫描' },
-    { value: 'overdue:60', label: '60 天未扫描' },
-    { value: 'overdue:90', label: '90 天未扫描' }
+    { value: '', get label() { return translate('ui.assetConstants.scanAll', null, 'All'); } },
+    { value: 'never', get label() { return translate('ui.assetConstants.scanNever', null, 'Never scanned'); } },
+    { value: 'scanned', get label() { return translate('ui.assetConstants.scanScanned', null, 'Scanned'); } },
+    { value: 'overdue:30', get label() { return translate('ui.assetConstants.scanOverdue30', null, 'Not scanned in 30 days'); } },
+    { value: 'overdue:60', get label() { return translate('ui.assetConstants.scanOverdue60', null, 'Not scanned in 60 days'); } },
+    { value: 'overdue:90', get label() { return translate('ui.assetConstants.scanOverdue90', null, 'Not scanned in 90 days'); } }
 ];
 
 export function applyScanStateParam(query, value) {
@@ -102,48 +103,54 @@ export function applyScanStateParam(query, value) {
     return { ...query, scan_state: raw };
 }
 
-/** 批量导入列（与旧版模板一致）。 */
+/** Bulk-import columns (same as the legacy template). */
 export const IMPORT_COLUMNS = [
     'target', 'project', 'tags', 'host', 'ip', 'domain', 'port', 'protocol', 'title',
     'server', 'country', 'province', 'city', 'responsible_person', 'department',
     'business_system', 'environment', 'criticality', 'status'
 ];
 
+// Language-neutral aliases; headers in every loaded UI language are matched via translateAll(EXPORT_COLUMNS key) in assetCsv.js.
 export const IMPORT_HEADER_ALIASES = {
-    target: ['target', 'asset', 'assetaddress', '目标', '资产', '资产地址'],
-    project: ['project', 'projectname', 'projectid', '项目', '项目名称', '项目id', '所属项目'],
-    tags: ['tags', 'tag', '标签'],
-    host: ['host', 'url', '完整url', '完整urlhost', '主机'],
-    ip: ['ip', 'ipaddress', 'ip地址'],
-    domain: ['domain', '域名'],
-    port: ['port', '端口'],
-    protocol: ['protocol', 'scheme', '协议'],
-    title: ['title', 'pagetitle', '标题', '页面标题', '标题指纹'],
-    server: ['server', 'service', 'product', '服务', '产品', '服务指纹'],
-    country: ['country', 'countryregion', '国家', '国家地区'],
-    province: ['province', 'state', '省份', '省份州', '州'],
-    city: ['city', '城市'],
-    responsible_person: ['responsibleperson', 'owner', '负责人', '责任人'],
-    department: ['department', '部门'],
-    business_system: ['businesssystem', 'system', '业务系统', '系统'],
-    environment: ['environment', 'env', '环境'],
-    source: ['source', '来源'],
-    criticality: ['criticality', 'importance', '重要性', '重要等级'],
-    status: ['status', '状态']
+    target: ['target', 'asset', 'assetaddress'],
+    project: ['project', 'projectname', 'projectid'],
+    tags: ['tags', 'tag'],
+    host: ['host', 'url'],
+    ip: ['ip', 'ipaddress'],
+    domain: ['domain'],
+    port: ['port'],
+    protocol: ['protocol', 'scheme'],
+    title: ['title', 'pagetitle'],
+    server: ['server', 'service', 'product'],
+    country: ['country', 'countryregion'],
+    province: ['province', 'state'],
+    city: ['city'],
+    responsible_person: ['responsibleperson', 'owner'],
+    department: ['department'],
+    business_system: ['businesssystem', 'system'],
+    environment: ['environment', 'env'],
+    source: ['source'],
+    criticality: ['criticality', 'importance'],
+    status: ['status']
 };
 
 export const MAX_IMPORT_ROWS = 100000;
 
-/** 导出列与表头（CSV 全字段）。 */
+/** Export columns: [column, i18n key of the CSV header, English fallback]. */
 export const EXPORT_COLUMNS = [
-    ['target', '目标'], ['host', '完整 URL / Host'], ['ip', 'IP 地址'], ['domain', '域名'],
-    ['port', '端口'], ['protocol', '协议'], ['title', '标题/指纹'], ['server', '服务指纹'],
-    ['project', '所属项目'], ['responsible_person', '负责人'], ['department', '部门'],
-    ['business_system', '业务系统'], ['environment', '环境'], ['criticality', '重要性'],
-    ['country', '国家/地区'], ['province', '省份/州'], ['city', '城市'], ['source', '来源'],
-    ['status', '状态'], ['tags', '标签'], ['risk_level', '风险等级'],
-    ['vulnerability_count', '漏洞数量'], ['first_seen_at', '首次发现'],
-    ['last_seen_at', '最近发现'], ['last_scan_at', '上次扫描']
+    ['target', 'assets.target', 'Target'], ['host', 'assets.hostUrl', 'Full URL / Host'],
+    ['ip', 'assets.exportIP', 'IP address'], ['domain', 'assets.domain', 'Domain'],
+    ['port', 'assets.port', 'Port'], ['protocol', 'assets.protocol', 'Protocol'],
+    ['title', 'assets.title', 'Title / fingerprint'], ['server', 'assets.server', 'Server fingerprint'],
+    ['project', 'assets.project', 'Project'], ['responsible_person', 'assets.responsiblePerson', 'Owner'],
+    ['department', 'assets.department', 'Department'], ['business_system', 'assets.businessSystem', 'Business system'],
+    ['environment', 'assets.environment', 'Environment'], ['criticality', 'assets.criticality', 'Criticality'],
+    ['country', 'assets.country', 'Country / region'], ['province', 'assets.province', 'Province / state'],
+    ['city', 'assets.city', 'City'], ['source', 'assets.source', 'Source'],
+    ['status', 'assets.status', 'Status'], ['tags', 'assets.tagsLabel', 'Tags'],
+    ['risk_level', 'assets.riskLevel', 'Risk'], ['vulnerability_count', 'assets.exportVulnerabilityCount', 'Vulnerability count'],
+    ['first_seen_at', 'assets.firstSeen', 'First seen'], ['last_seen_at', 'assets.lastSeen', 'Last seen'],
+    ['last_scan_at', 'assets.lastScan', 'Last scan']
 ];
 
 export function environmentLabel(value) {

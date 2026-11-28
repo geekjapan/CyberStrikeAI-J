@@ -1,4 +1,4 @@
-/* 任务管理页私有样式：仅布局与间距，颜色全部取 Semi 变量。 */
+/* Private styles for the task management page: layout and spacing only, all colors from Semi variables. */
 
 .task-toolbar {
     display: flex;

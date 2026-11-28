@@ -76,30 +76,32 @@ function countList(value, ...keys) {
 }
 
 function DashboardEmpty({ loading, unavailable, title, description }) {
+    const t = useT();
     return (
         <Empty
             className="dashboard-empty"
-            title={loading ? '正在加载数据' : unavailable ? '数据暂不可用' : title}
-            description={loading ? '正在读取最新记录，请稍候。' : unavailable ? '未能取得数据，请稍后刷新重试。' : description}
+            title={loading ? t('ui.dashboardPage.loadingTitle', null, 'Loading data') : unavailable ? t('ui.dashboardPage.unavailableTitle', null, 'Data unavailable') : title}
+            description={loading ? t('ui.dashboardPage.loadingDesc', null, 'Reading the latest records. Please wait.') : unavailable ? t('ui.dashboardPage.unavailableDesc', null, 'Could not retrieve the data. Please refresh and try again later.') : description}
         />
     );
 }
 
 function RecentVulnerabilities({ data, loading, onOpen }) {
+    const t = useT();
     const list = getList(data, 'vulnerabilities');
     return (
         <List
             className="dashboard-list dashboard-feed"
             loading={loading}
             dataSource={list || []}
-            emptyContent={<DashboardEmpty loading={loading} unavailable={list === null} title="暂无漏洞记录" description="测评发现的漏洞会汇集到这里，便于跟进与复核。" />}
+            emptyContent={<DashboardEmpty loading={loading} unavailable={list === null} title={t('ui.dashboardPage.vulnEmptyTitle', null, 'No vulnerability records')} description={t('ui.dashboardPage.vulnEmptyDesc', null, 'Vulnerabilities found during assessments are collected here for follow-up and review.')} />}
             renderItem={item => (
                 <List.Item
                     key={item.id}
                     main={(
                         <div className="dashboard-record">
                             <Button theme="borderless" className="dashboard-record-link" onClick={() => onOpen(item.id)}>
-                                {item.title || item.name || '未命名漏洞'}
+                                {item.title || item.name || t('ui.dashboardPage.vulnUntitled', null, 'Untitled vulnerability')}
                             </Button>
                             <Text type="tertiary" size="small" className="dashboard-meta">
                                 {item.host || item.target || '—'} · {formatDateTime(item.created_at)}
@@ -114,6 +116,7 @@ function RecentVulnerabilities({ data, loading, onOpen }) {
 }
 
 function RecentFacts({ summary, loading, onOpen }) {
+    const t = useT();
     const facts = getList(summary, 'recent_facts', 'facts');
     return (
         <List
@@ -121,13 +124,13 @@ function RecentFacts({ summary, loading, onOpen }) {
             split={false}
             loading={loading}
             dataSource={facts || []}
-            emptyContent={<DashboardEmpty loading={loading} unavailable={facts === null} title="暂无近期事实" description="项目沉淀的事实与证据将在这里展示。" />}
+            emptyContent={<DashboardEmpty loading={loading} unavailable={facts === null} title={t('ui.dashboardPage.factsEmptyTitle', null, 'No recent facts')} description={t('ui.dashboardPage.factsEmptyDesc', null, 'Facts and evidence collected in projects will appear here.')} />}
             renderItem={(fact, index) => (
                 <List.Item
                     key={fact.id || fact.key || fact.fact_key || index}
                     main={(
                         <div className="dashboard-record">
-                            <Text strong className="dashboard-fact-title">{fact.title || fact.summary || fact.key || fact.fact_key || fact.subject || '事实'}</Text>
+                            <Text strong className="dashboard-fact-title">{fact.title || fact.summary || fact.key || fact.fact_key || fact.subject || t('ui.dashboardPage.fact', null, 'Fact')}</Text>
                             <Text type="tertiary" size="small" className="dashboard-meta">
                                 {fact.project_name || fact.projectName || fact.value || '—'}
                             </Text>
@@ -137,7 +140,7 @@ function RecentFacts({ summary, loading, onOpen }) {
                         <Space spacing={8}>
                             {fact.status && <Tag size="small">{fact.status}</Tag>}
                             {fact.project_id && (
-                                <Button theme="borderless" icon={<IconArrowRight />} aria-label="查看所属项目" onClick={() => onOpen(fact.project_id)} />
+                                <Button theme="borderless" icon={<IconArrowRight />} aria-label={t('ui.dashboardPage.openProject', null, 'View project')} onClick={() => onOpen(fact.project_id)} />
                             )}
                         </Space>
                     )}
@@ -168,77 +171,77 @@ export default function DashboardPage() {
         return [
             {
                 id: 'tasks',
-                label: t('dashboard.runningConversations', null, '运行中任务'),
+                label: t('dashboard.runningConversations', null, 'Running conversations'),
                 value: displayCount(runningAgents),
-                detail: `运行中批量队列 ${displayCount(batchRunning)}`,
+                detail: t('ui.dashboardPage.runningBatchQueues', { count: displayCount(batchRunning) }, 'Running batch queues {{count}}'),
                 icon: <IconCheckList />,
                 onClick: () => navigate('/tasks')
             },
             {
                 id: 'vulnerabilities',
-                label: t('dashboard.vulnTotal', null, '漏洞总数'),
+                label: t('dashboard.vulnTotal', null, 'Total vulnerabilities'),
                 value: displayCount(data?.vulnStats?.total),
-                detail: t('dashboard.openHighCountLabel', { count: displayCount(pendingHigh) }, `待处理高危 ${displayCount(pendingHigh)}`),
+                detail: t('dashboard.openHighCountLabel', { count: displayCount(pendingHigh) }, 'Open high {{count}}'),
                 tone: critical > 0 ? 'danger' : undefined,
                 icon: <IconShield />,
                 onClick: () => navigate('/vulnerabilities')
             },
             {
                 id: 'calls',
-                label: t('dashboard.toolCalls', null, '工具调用'),
+                label: t('dashboard.toolCalls', null, 'Tool invocations'),
                 value: displayCount(summary?.totalCalls),
-                detail: `涉及工具 ${displayCount(summary?.toolCount)}`,
+                detail: t('ui.dashboardPage.toolsInvolved', { count: displayCount(summary?.toolCount) }, 'Tools involved {{count}}'),
                 icon: <IconTerminal />,
                 onClick: () => navigate('/mcp-monitor')
             },
             {
                 id: 'rate',
-                label: t('dashboard.successRate', null, '执行成功率'),
+                label: t('dashboard.successRate', null, 'Tool success rate'),
                 value: rate === null ? '—' : formatPercent(rate),
-                detail: effective === null ? '执行结果暂不可用' : effective === 0 ? '尚无已完成调用' : `失败 ${displayCount(failedCalls)} 次`,
+                detail: effective === null ? t('ui.dashboardPage.resultUnavailable', null, 'Execution results unavailable') : effective === 0 ? t('ui.dashboardPage.noFinishedCalls', null, 'No completed calls yet') : t('ui.dashboardPage.failedTimes', { count: displayCount(failedCalls) }, 'Failed {{count}} times'),
                 tone: rate !== null && rate < 0.8 ? 'warning' : undefined,
                 icon: <IconCheckCircleStroked />,
                 onClick: () => navigate('/mcp-monitor')
             },
             {
                 id: 'tokens',
-                label: t('dashboard.tokenUsage', null, 'Token 用量（7 天）'),
+                label: t('dashboard.tokenUsage', null, 'Token usage'),
                 value: tokenCount >= 1_000_000 ? compactNumber.format(tokenCount) : displayCount(tokenCount),
                 valueTitle: tokenCount >= 1_000_000 ? displayCount(tokenCount) : undefined,
-                detail: `调用次数 ${displayCount(data?.tokenUsage?.summary?.modelCalls ?? data?.tokenUsage?.summary?.calls)}`,
+                detail: t('ui.dashboardPage.callCount', { count: displayCount(data?.tokenUsage?.summary?.modelCalls ?? data?.tokenUsage?.summary?.calls) }, 'Calls {{count}}'),
                 icon: <IconBolt />,
                 onClick: () => navigate('/settings?section=token-usage')
             }
-        ].map(metric => ({ ...metric, loading, detail: loading ? '正在刷新数据' : metric.detail }));
+        ].map(metric => ({ ...metric, loading, detail: loading ? t('ui.dashboardPage.refreshing', null, 'Refreshing data') : metric.detail }));
     }, [data, loading, navigate, t]);
 
     const alerts = useMemo(() => {
         const list = [];
         const critical = severityCount(data?.vulnStats, 'critical');
-        if (critical > 0) list.push({ id: 'critical', text: `${displayCount(critical)} 条严重漏洞`, page: '/vulnerabilities' });
+        if (critical > 0) list.push({ id: 'critical', text: t('ui.dashboardPage.alertCritical', { count: displayCount(critical) }, '{{count}} critical vulnerabilities'), page: '/vulnerabilities' });
         const pending = countList(data?.hitlPending, 'items', 'pending');
-        if (pending > 0) list.push({ id: 'pending', text: `${displayCount(pending)} 项审批待处理`, page: '/hitl' });
+        if (pending > 0) list.push({ id: 'pending', text: t('ui.dashboardPage.alertPending', { count: displayCount(pending) }, '{{count}} approvals pending'), page: '/hitl' });
         const failed = asCount(data?.monitorStats?.summary?.failedCalls);
-        if (failed > 0) list.push({ id: 'failed', text: `工具调用失败 ${displayCount(failed)} 次`, page: '/mcp-monitor' });
+        if (failed > 0) list.push({ id: 'failed', text: t('ui.dashboardPage.alertFailed', { count: displayCount(failed) }, 'Tool calls failed {{count}} times'), page: '/mcp-monitor' });
         const mcpTotal = asCount(data?.externalMcp?.total);
         const mcpConnected = asCount(data?.externalMcp?.connected);
         if (mcpTotal !== null && mcpConnected !== null && mcpTotal > mcpConnected) {
-            list.push({ id: 'mcp', text: `${displayCount(mcpTotal - mcpConnected)} 个外部 MCP 未连接`, page: '/mcp-management' });
+            list.push({ id: 'mcp', text: t('ui.dashboardPage.alertMcp', { count: displayCount(mcpTotal - mcpConnected) }, '{{count}} external MCP servers not connected'), page: '/mcp-management' });
         }
         return list;
-    }, [data]);
+    }, [data, t]);
 
     const capability = useMemo(() => [
-        { id: 'tools', label: 'MCP 工具', value: data?.toolsConfig?.total, page: '/mcp-management' },
-        { id: 'knowledge', label: '知识条目', value: data?.knowledgeStats?.total_items, page: '/knowledge-management' },
-        { id: 'skills', label: '技能', value: data?.skillsStats?.total_skills, page: '/skills-management' },
-        { id: 'roles', label: '角色', value: countList(data?.roles, 'roles'), page: '/roles-management' },
-        { id: 'agents', label: '智能体', value: countList(data?.agents, 'agents'), page: '/agents-management' },
-        { id: 'webshell', label: 'WebShell 连接', value: countList(data?.webshell, 'connections'), page: '/webshell' },
-        { id: 'listeners', label: 'C2 监听器', value: countList(data?.c2Listeners, 'listeners'), page: '/c2-listeners' },
-        { id: 'sessions', label: 'C2 会话', value: countList(data?.c2Sessions, 'sessions', 'items'), page: '/c2-sessions' }
+        { id: 'tools', label: t('ui.dashboardPage.capTools', null, 'MCP tools'), value: data?.toolsConfig?.total, page: '/mcp-management' },
+        { id: 'knowledge', label: t('ui.dashboardPage.capKnowledge', null, 'Knowledge items'), value: data?.knowledgeStats?.total_items, page: '/knowledge-management' },
+        { id: 'skills', label: t('ui.dashboardPage.capSkills', null, 'Skills'), value: data?.skillsStats?.total_skills, page: '/skills-management' },
+        { id: 'roles', label: t('ui.dashboardPage.capRoles', null, 'Roles'), value: countList(data?.roles, 'roles'), page: '/roles-management' },
+        { id: 'agents', label: t('ui.dashboardPage.capAgents', null, 'Agents'), value: countList(data?.agents, 'agents'), page: '/agents-management' },
+        { id: 'webshell', label: t('ui.dashboardPage.capWebshell', null, 'WebShell connections'), value: countList(data?.webshell, 'connections'), page: '/webshell' },
+        { id: 'listeners', label: t('ui.dashboardPage.capListeners', null, 'C2 listeners'), value: countList(data?.c2Listeners, 'listeners'), page: '/c2-listeners' },
+        { id: 'sessions', label: t('ui.dashboardPage.capSessions', null, 'C2 sessions'), value: countList(data?.c2Sessions, 'sessions', 'items'), page: '/c2-sessions' }
     ].filter(item => (item.id !== 'listeners' || data?.c2Listeners?.enabled !== false)
-        && (item.id !== 'sessions' || data?.c2Sessions?.enabled !== false)), [data]);
+        && (item.id !== 'sessions' || data?.c2Sessions?.enabled !== false)), [data, t]);
 
     const lastUpdated = data?.loadedAt ? formatDateTime(data.loadedAt) : '—';
     const openProject = id => navigate(`/projects?id=${encodeURIComponent(id)}`);
@@ -246,11 +249,11 @@ export default function DashboardPage() {
     return (
         <div className="dashboard-page" aria-busy={loading}>
             <PageHeader
-                title={t('dashboard.title', null, '仪表盘')}
-                description={`最近刷新 ${lastUpdated} · 每 60 秒自动刷新`}
+                title={t('dashboard.title', null, 'Dashboard')}
+                description={t('ui.dashboardPage.lastRefresh', { time: lastUpdated }, 'Last refreshed {{time}} · auto-refreshes every 60 seconds')}
                 extra={<>
-                    <Button icon={<IconRefresh />} onClick={() => reload()} loading={loading}>{t('common.refresh', null, '刷新')}</Button>
-                    <Button theme="solid" icon={<IconComment />} onClick={() => navigate('/chat')}>进入对话</Button>
+                    <Button icon={<IconRefresh />} onClick={() => reload()} loading={loading}>{t('common.refresh', null, 'Refresh')}</Button>
+                    <Button theme="solid" icon={<IconComment />} onClick={() => navigate('/chat')}>{t('ui.dashboardPage.enterChat', null, 'Open conversation')}</Button>
                 </>}
             />
             <StatGrid metrics={metrics} columns={5} />
@@ -262,10 +265,10 @@ export default function DashboardPage() {
                     type="info"
                     fullMode={false}
                     closeIcon={null}
-                    title={data.unavailableCount === data.sourceCount ? '数据暂不可用' : '部分数据不可用'}
+                    title={data.unavailableCount === data.sourceCount ? t('ui.dashboardPage.unavailableTitle', null, 'Data unavailable') : t('ui.dashboardPage.partialTitle', null, 'Some data unavailable')}
                     description={data.unavailableCount === data.sourceCount
-                        ? '本次未能取得仪表盘数据，请检查服务连接后刷新重试。'
-                        : `${data.unavailableCount} 项数据源未能加载，相关数值以 — 显示。已返回的数据仍可查看，请稍后刷新重试。`}
+                        ? t('ui.dashboardPage.allFailedDesc', null, 'Could not retrieve dashboard data. Check the service connection, then refresh and try again.')
+                        : t('ui.dashboardPage.partialDesc', { count: data.unavailableCount }, '{{count}} data sources failed to load; the related values are shown as —. Data that was returned is still available. Please refresh and try again later.')}
                 />
             )}
             {alerts.length > 0 && (
@@ -276,7 +279,7 @@ export default function DashboardPage() {
                     closeIcon={null}
                     description={(
                         <Space wrap spacing={8}>
-                            <Text strong>需要关注</Text>
+                            <Text strong>{t('ui.dashboardPage.attention', null, 'Needs attention')}</Text>
                             {alerts.map(item => (
                                 <Button key={item.id} theme="borderless" type="warning" icon={<IconArrowRight />} iconPosition="right" onClick={() => navigate(item.page)}>
                                     {item.text}
@@ -297,29 +300,29 @@ export default function DashboardPage() {
                         loading={loading}
                     />
                     <SectionCard
-                        title={t('dashboard.recentVulns', null, '最近漏洞')}
-                        extra={<Button theme="borderless" size="small" icon={<IconArrowRight />} iconPosition="right" onClick={() => navigate('/vulnerabilities')}>查看全部</Button>}
+                        title={t('dashboard.recentVulns', null, 'Recent vulnerabilities')}
+                        extra={<Button theme="borderless" size="small" icon={<IconArrowRight />} iconPosition="right" onClick={() => navigate('/vulnerabilities')}>{t('ui.dashboardPage.viewAll', null, 'View all')}</Button>}
                     >
                         <RecentVulnerabilities data={data?.vulnList} loading={loading} onOpen={id => navigate(`/vulnerabilities?id=${encodeURIComponent(id)}`)} />
                     </SectionCard>
                 </div>
                 <div className="dashboard-column">
                     <SectionCard
-                        title={t('dashboard.projects', null, '项目概览')}
-                        extra={<Button theme="borderless" size="small" icon={<IconArrowRight />} iconPosition="right" onClick={() => navigate('/projects')}>全部项目</Button>}
+                        title={t('dashboard.projects', null, 'Project overview')}
+                        extra={<Button theme="borderless" size="small" icon={<IconArrowRight />} iconPosition="right" onClick={() => navigate('/projects')}>{t('ui.dashboardPage.allProjects', null, 'All projects')}</Button>}
                     >
                         <ProjectSummary summary={data?.projectSummary} loading={loading} onOpen={openProject} />
                     </SectionCard>
                     <SectionCard
-                        title={t('dashboard.toolsTop', null, '工具调用 Top')}
-                        extra={<Button theme="borderless" size="small" onClick={() => navigate('/mcp-monitor')}>调用监控</Button>}
+                        title={t('dashboard.toolsTop', null, 'Top tool calls')}
+                        extra={<Button theme="borderless" size="small" onClick={() => navigate('/mcp-monitor')}>{t('ui.dashboardPage.callMonitor', null, 'Call monitor')}</Button>}
                     >
                         <TopTools data={data?.monitorStats} loading={loading} />
                     </SectionCard>
                     <SectionCard
                         className="dashboard-capability-card"
                         bodyClassName="dashboard-capability-body"
-                        title={t('dashboard.capability', null, '能力与运行态')}
+                        title={t('dashboard.capability', null, 'Capabilities and runtime')}
                     >
                         <List
                             className="dashboard-capabilities"
@@ -337,7 +340,7 @@ export default function DashboardPage() {
                     </SectionCard>
                 </div>
             </div>
-            <SectionCard className="dashboard-facts-card" title={t('dashboard.recentFacts', null, '近期事实')}>
+            <SectionCard className="dashboard-facts-card" title={t('dashboard.recentFacts', null, 'Recent facts')}>
                 <RecentFacts summary={data?.projectSummary} loading={loading} onOpen={openProject} />
             </SectionCard>
         </div>
@@ -345,9 +348,10 @@ export default function DashboardPage() {
 }
 
 function TopTools({ data, loading }) {
+    const t = useT();
     const tools = getList(data, 'topTools');
     const items = tools?.slice(0, 8).map(tool => ({
-        name: tool.name || tool.toolName || '未命名工具',
+        name: tool.name || tool.toolName || t('ui.dashboardPage.toolUntitled', null, 'Unnamed tool'),
         count: asCount(tool.count ?? tool.calls ?? tool.totalCalls)
     })) || [];
     const max = Math.max(...items.map(tool => tool.count ?? 0), 1);
@@ -356,17 +360,17 @@ function TopTools({ data, loading }) {
             className="dashboard-list"
             loading={loading}
             dataSource={items}
-            emptyContent={<DashboardEmpty loading={loading} unavailable={tools === null} title="暂无工具调用" description="执行任务后，可在这里查看使用最多的工具。" />}
+            emptyContent={<DashboardEmpty loading={loading} unavailable={tools === null} title={t('ui.dashboardPage.toolsEmptyTitle', null, 'No tool calls')} description={t('ui.dashboardPage.toolsEmptyDesc', null, 'After tasks run, the most-used tools appear here.')} />}
             renderItem={(tool, index) => (
                 <List.Item key={`${tool.name}-${index}`} className="dashboard-tool-row">
                     <Text type="tertiary" size="small" className="dashboard-tool-rank">{index + 1}</Text>
                     <div className="dashboard-record">
                         <div className="dashboard-tool-heading">
                             <Text className="dashboard-tool-name" title={tool.name}>{tool.name}</Text>
-                            <Text type="secondary" size="small" className="dashboard-count">{displayCount(tool.count)} 次</Text>
+                            <Text type="secondary" size="small" className="dashboard-count">{t('ui.dashboardPage.times', { count: displayCount(tool.count) }, '{{count}} times')}</Text>
                         </div>
                         {tool.count !== null && (
-                            <Progress percent={Math.round((tool.count / max) * 100)} showInfo={false} size="small" stroke="var(--semi-color-primary)" aria-label={`${tool.name}调用次数`} aria-valuetext={`${displayCount(tool.count)} 次`} />
+                            <Progress percent={Math.round((tool.count / max) * 100)} showInfo={false} size="small" stroke="var(--semi-color-primary)" aria-label={t('ui.dashboardPage.callsAria', { name: tool.name }, '{{name}} call count')} aria-valuetext={t('ui.dashboardPage.times', { count: displayCount(tool.count) }, '{{count}} times')} />
                         )}
                     </div>
                 </List.Item>
@@ -376,13 +380,14 @@ function TopTools({ data, loading }) {
 }
 
 function ProjectSummary({ summary, loading, onOpen }) {
+    const t = useT();
     const projects = getList(summary, 'projects');
     const facts = getList(summary, 'recent_facts', 'facts');
     const totalsSource = summary?.totals || summary;
     const totals = [
-        ['活跃项目', totalsSource?.active_projects ?? totalsSource?.activeProjects],
-        ['事实总数', totalsSource?.total_facts ?? totalsSource?.totalFacts],
-        ['最近事实', facts?.length]
+        [t('ui.dashboardPage.activeProjects', null, 'Active projects'), totalsSource?.active_projects ?? totalsSource?.activeProjects],
+        [t('ui.dashboardPage.totalFacts', null, 'Total facts'), totalsSource?.total_facts ?? totalsSource?.totalFacts],
+        [t('ui.dashboardPage.recentFacts', null, 'Recent facts'), facts?.length]
     ];
     return (
         <div>
@@ -402,8 +407,8 @@ function ProjectSummary({ summary, loading, onOpen }) {
                     <DashboardEmpty
                         loading={loading}
                         unavailable={!summary}
-                        title={projects === null ? '在项目中继续工作' : '暂无项目'}
-                        description={projects === null ? '当前摘要提供项目与事实统计，完整列表请查看全部项目。' : '创建项目后，在这里跟进项目进展。'}
+                        title={projects === null ? t('ui.dashboardPage.continueInProjects', null, 'Continue in projects') : t('ui.dashboardPage.noProjects', null, 'No projects')}
+                        description={projects === null ? t('ui.dashboardPage.summaryOnlyDesc', null, 'The current summary provides project and fact statistics. See All projects for the full list.') : t('ui.dashboardPage.noProjectsDesc', null, 'After you create a project, follow its progress here.')}
                     />
                 )}
                 renderItem={project => (
@@ -411,7 +416,7 @@ function ProjectSummary({ summary, loading, onOpen }) {
                         key={project.id}
                         main={(
                             <div className="dashboard-record">
-                                <Button theme="borderless" className="dashboard-record-link" onClick={() => onOpen(project.id)}>{project.name || '未命名项目'}</Button>
+                                <Button theme="borderless" className="dashboard-record-link" onClick={() => onOpen(project.id)}>{project.name || t('ui.dashboardPage.projectUntitled', null, 'Untitled project')}</Button>
                                 <Text type="tertiary" size="small" className="dashboard-meta">
                                     {project.status || '—'} · {formatDateTime(project.updated_at)}
                                 </Text>

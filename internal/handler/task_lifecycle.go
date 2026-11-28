@@ -21,7 +21,7 @@ func (h *AgentHandler) ShutdownTasks() {
 		h.asyncWorkers.Wait()
 		if h.logger != nil {
 			for _, task := range h.tasks.GetActiveTasks() {
-				h.logger.Warn("服务关闭时任务仍有未完成的清理", zap.String("runId", task.RunID), zap.String("cleanupError", task.CleanupError))
+				h.logger.Warn("Task still had unfinished cleanup at service shutdown", zap.String("runId", task.RunID), zap.String("cleanupError", task.CleanupError))
 			}
 		}
 	}
@@ -97,13 +97,13 @@ func taskCleanupStatus(err error) string {
 func taskCleanupMessage(err error) string {
 	switch {
 	case errors.Is(err, security.ErrCleanupUnconfirmed) && errors.Is(err, runlease.ErrUnconfirmed):
-		return "本地残留进程处于不可中断状态，远端 MCP 停止状态待确认"
+		return "Leftover local process is in an uninterruptible state; remote MCP stop status is pending confirmation"
 	case errors.Is(err, security.ErrCleanupUnconfirmed):
-		return "本地残留进程处于不可中断状态，待主机解除阻塞后回收"
+		return "Leftover local process is in an uninterruptible state; it will be reclaimed once the host clears the block"
 	case errors.Is(err, runlease.ErrUnconfirmed):
-		return "本地执行已结束，远端 MCP 停止状态待确认"
+		return "Local execution has ended; remote MCP stop status is pending confirmation"
 	default:
-		return "任务资源清理失败，将自动重试"
+		return "Task resource cleanup failed and will be retried automatically"
 	}
 }
 

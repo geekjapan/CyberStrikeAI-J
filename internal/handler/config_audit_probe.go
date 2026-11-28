@@ -24,13 +24,13 @@ type TestAuditModelRequest struct {
 func (h *ConfigHandler) TestAuditModel(c *gin.Context) {
 	var req TestAuditModelRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的请求参数: " + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request parameters: " + err.Error()})
 		return
 	}
 	h.mu.RLock()
 	if h.config == nil {
 		h.mu.RUnlock()
-		c.JSON(http.StatusBadRequest, gin.H{"error": "审计模型未配置"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Audit model is not configured"})
 		return
 	}
 	hitl, main := h.config.Hitl, h.config.OpenAI
@@ -57,7 +57,7 @@ func (h *ConfigHandler) TestAuditModel(c *gin.Context) {
 	if raw := strings.TrimSpace(model.BaseURL); raw != "" {
 		u, err := url.Parse(raw)
 		if err != nil || (u.Scheme != "https" && u.Scheme != "http") || u.Host == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "API 地址必须是包含 https:// 或 http:// 的完整 URL"})
+			c.JSON(http.StatusBadRequest, gin.H{"error": "API URL must be a complete URL including https:// or http://"})
 			return
 		}
 	}

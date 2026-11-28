@@ -1,6 +1,6 @@
 # API Reference
 
-[中文](../zh-CN/api-reference.md)
+[日本語](../ja-JP/api-reference.md)
 
 CyberStrikeAI exposes built-in OpenAPI docs:
 
@@ -117,7 +117,7 @@ Asset endpoints:
 
 Time parameters accept RFC3339 or `YYYY-MM-DD`. Supported `sort_by` values are `last_seen_at`, `last_scan_at`, `first_seen_at`, `created_at`, `updated_at`, `host`, `port`, `risk_level`, and `vulnerability_count`.
 
-`POST /api/assets/import` accepts JSON, not an XLSX/CSV upload. The Web UI parses the template in the browser, previews it, and converts valid rows to this request:
+`POST /api/assets/import` accepts JSON, not a CSV file upload. The Web UI parses the template in the browser, previews it, and converts valid rows to this request:
 
 ```http
 POST /api/assets/import
@@ -126,7 +126,7 @@ Content-Type: application/json
 
 {
   "source": "manual-import",
-  "source_query": "asset-import-2026-07.xlsx",
+  "source_query": "asset-import-2026-07.csv",
   "assets": [
     {
       "host": "https://app.example.com:443",

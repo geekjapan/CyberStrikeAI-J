@@ -4,9 +4,9 @@ import "context"
 
 type hitlRunCtxKey struct{}
 
-// WithHITLRunContext 将 runCtx（通常为整条 Agent / SSE 请求生命周期）挂到传入的 ctx 上。
-// MCP 工具 handler 收到的 ctx 可能是带单次工具超时的子 context，在工具 return 时会被 cancel；
-// 危险任务 HITL 应通过 HITLUserContext 使用 runCtx 等待人工审批。
+// WithHITLRunContext attaches runCtx (typically spanning the full Agent/SSE request lifecycle) onto ctx.
+// MCP tool handlers may receive a child context with a per-tool timeout that is canceled when the tool returns;
+// dangerous task HITL approvals should use runCtx via HITLUserContext while awaiting human review.
 func WithHITLRunContext(ctx, runCtx context.Context) context.Context {
 	if ctx == nil || runCtx == nil {
 		return ctx
@@ -14,8 +14,8 @@ func WithHITLRunContext(ctx, runCtx context.Context) context.Context {
 	return context.WithValue(ctx, hitlRunCtxKey{}, runCtx)
 }
 
-// HITLUserContext 返回用于 C2 危险任务 HITL 等待的 context：
-// 若曾用 WithHITLRunContext 注入更长寿命的 runCtx 则返回之，否则返回 ctx。
+// HITLUserContext returns the context used to wait for C2 dangerous-task HITL approval:
+// if a longer-lived runCtx was injected with WithHITLRunContext it is returned; otherwise ctx is returned.
 func HITLUserContext(ctx context.Context) context.Context {
 	if ctx == nil {
 		return context.Background()

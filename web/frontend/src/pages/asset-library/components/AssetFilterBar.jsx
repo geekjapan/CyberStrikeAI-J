@@ -1,4 +1,4 @@
-/** 资产库筛选栏：常用条件平铺，其余条件收进“高级筛选”。 */
+/** Asset library filter bar: common filters inline, the rest collapsed under "Advanced filters". */
 import { useEffect, useId, useState } from 'react';
 import { Button, Collapse, Input, Select } from '@douyinfe/semi-ui';
 import { IconSearch } from '@douyinfe/semi-icons';
@@ -31,7 +31,7 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
     return (
         <div className="asset-library-filters">
             <div className="asset-library-filter-row">
-                <span id={scopeLabelId} hidden>{t('assets.scopeLabel', null, '资产范围')}</span>
+                <span id={scopeLabelId} hidden>{t('assets.scopeLabel', null, 'Asset scope')}</span>
                 <Select
                     aria-labelledby={scopeLabelId}
                     value={scope.value}
@@ -46,13 +46,13 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                     prefix={<IconSearch />}
                     value={keyword}
                     disabled={disabled}
-                    placeholder={t('assets.searchPlaceholder', null, '搜索主机、IP、域名、标题、服务或标签')}
+                    placeholder={t('assets.searchPlaceholder', null, 'Search host, IP, domain, title, service, or tag')}
                     onChange={value => { setKeyword(value); onChange({ q: value }); }}
                     showClear
                 />
                 <Select
                     value={filters.protocol || undefined}
-                    placeholder={t('assets.assetType', null, '类型 / 协议')}
+                    placeholder={t('assets.assetType', null, 'Type / protocol')}
                     optionList={PROTOCOL_OPTIONS}
                     filter
                     allowCreate
@@ -62,32 +62,32 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                 />
                 <Input
                     value={filters.source}
-                    placeholder={t('assets.source', null, '来源')}
+                    placeholder={t('assets.source', null, 'Source')}
                     disabled={disabled}
                     onChange={value => onChange({ source: value })}
                     showClear
                 />
                 <Input
                     value={filters.tag}
-                    placeholder={t('assets.tagsLabel', null, '标签')}
+                    placeholder={t('assets.tagsLabel', null, 'Tags')}
                     disabled={disabled}
                     onChange={value => onChange({ tag: value })}
                     showClear
                 />
                 <Button onClick={onReset} disabled={disabled}>
-                    {t('assets.resetFilters', null, '重置')}
+                    {t('assets.resetFilters', null, 'Reset')}
                 </Button>
             </div>
 
             <Collapse className="asset-library-filter-advanced" keepDOM={false}>
                 <Collapse.Panel
                     itemKey="advanced"
-                    header={`${t('assets.advancedFilters', null, '高级筛选')}${advancedCount ? `（${advancedCount}）` : ''}`}
+                    header={`${t('assets.advancedFilters', null, 'Advanced filters')}${advancedCount ? `（${advancedCount}）` : ''}`}
                 >
                     <div className="asset-library-filter-grid">
                         <Select
                             value={filters.status || undefined}
-                            placeholder={t('assets.allStatuses', null, '全部状态')}
+                            placeholder={t('assets.allStatuses', null, 'All statuses')}
                             optionList={STATUS_OPTIONS}
                             showClear
                             disabled={disabled}
@@ -95,7 +95,7 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                         />
                         <Select
                             value={filters.risk_level || undefined}
-                            placeholder={t('assets.allRisks', null, '全部风险')}
+                            placeholder={t('assets.allRisks', null, 'All risk levels')}
                             optionList={RISK_OPTIONS}
                             showClear
                             disabled={disabled}
@@ -103,7 +103,7 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                         />
                         <Select
                             value={filters.environment || undefined}
-                            placeholder={t('assets.allEnvironments', null, '全部环境')}
+                            placeholder={t('assets.allEnvironments', null, 'All environments')}
                             optionList={ENVIRONMENT_OPTIONS}
                             showClear
                             disabled={disabled}
@@ -111,7 +111,7 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                         />
                         <Select
                             value={filters.criticality || undefined}
-                            placeholder={t('assets.allCriticalities', null, '全部级别')}
+                            placeholder={t('assets.allCriticalities', null, 'All criticalities')}
                             optionList={CRITICALITY_OPTIONS}
                             showClear
                             disabled={disabled}
@@ -126,21 +126,21 @@ export default function AssetFilterBar({ scope, filters, onChange, onReset, disa
                         />
                         <Input
                             value={filters.domain}
-                            placeholder={t('assets.domain', null, '域名')}
+                            placeholder={t('assets.domain', null, 'Domain')}
                             disabled={disabled}
                             onChange={value => onChange({ domain: value })}
                             showClear
                         />
                         <Input
                             value={filters.port}
-                            placeholder={t('assets.port', null, '端口')}
+                            placeholder={t('assets.port', null, 'Port')}
                             disabled={disabled}
                             onChange={value => onChange({ port: String(value || '').replace(/[^\d]/g, '') })}
                             showClear
                         />
                         <Select
                             value={filters.scan || ''}
-                            placeholder={t('assets.scanState', null, '扫描状态')}
+                            placeholder={t('assets.scanState', null, 'Scan status')}
                             optionList={SCAN_STATE_OPTIONS}
                             disabled={disabled}
                             onChange={value => onChange({ scan: value || '' })}

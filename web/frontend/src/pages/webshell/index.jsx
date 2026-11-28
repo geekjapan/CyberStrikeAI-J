@@ -1,5 +1,5 @@
 /**
- * WebShell 管理：左侧连接列表，右侧按连接展示终端、文件、命令历史与 AI 会话。
+ * WebShell management: connection list on the left; terminal, files, command history and AI conversations per connection on the right.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -21,7 +21,7 @@ import './page.css';
 
 const { Text } = Typography;
 
-const encodingLabel = { auto: '自动', 'utf-8': 'UTF-8', gbk: 'GBK', gb18030: 'GB18030' };
+const encodingLabel = { auto: 'Auto', 'utf-8': 'UTF-8', gbk: 'GBK', gb18030: 'GB18030' };
 
 function statusColor(state) {
     if (state === 'online') return 'green';
@@ -68,7 +68,7 @@ export default function WebshellPage() {
         setSearchParams(next, { replace: true });
     };
 
-    /** 状态持久化（备忘录 + 命令历史），仅在客户端改动后写回。 */
+    /** State persistence (memo + command history), written back only after client-side changes. */
     const persist = useCallback(payload => {
         if (!canWrite || !selectedId) return;
         if (persistTimer.current) clearTimeout(persistTimer.current);
@@ -89,7 +89,7 @@ export default function WebshellPage() {
                 setMemo(typeof state.memo === 'string' ? state.memo : '');
                 setHistory(Array.isArray(state.commands) ? state.commands : []);
             })
-            .catch(() => { /* 状态读取失败不影响主流程 */ });
+            .catch(() => { /* A failed state read does not affect the main flow */ });
         return () => { cancelled = true; };
     }, [selectedId]);
 
@@ -112,8 +112,8 @@ export default function WebshellPage() {
 
     const clearHistory = () => {
         confirmAction({
-            title: t('webshell.clearHistory', null, '清空历史'),
-            content: t('webshell.clearHistoryConfirm', null, '确定清空该连接的命令历史？'),
+            title: t('webshell.clearHistory', null, 'Clear history'),
+            content: t('webshell.clearHistoryConfirm', null, 'Clear the command history of this connection?'),
             onOk: () => {
                 setHistory([]);
                 persist({ memo, commands: [] });
@@ -135,12 +135,12 @@ export default function WebshellPage() {
 
     const probeAll = async () => {
         if (!connections.length) {
-            toastWarning(t('webshell.probeNoConnections', null, '暂无可探活连接'));
+            toastWarning(t('webshell.probeNoConnections', null, 'No connections to probe'));
             return;
         }
         setProbingAll(true);
         for (const connection of connections) {
-            // 逐条探活，避免瞬间打满目标 Shell
+            // Probe one by one to avoid saturating the target shell at once
             await probe(connection);
         }
         setProbingAll(false);
@@ -151,16 +151,16 @@ export default function WebshellPage() {
         try {
             if (form.record?.id) {
                 await shellApi.updateConnection(form.record.id, values);
-                toastSuccess(t('webshell.toastUpdated', null, '连接已更新'));
+                toastSuccess(t('webshell.toastUpdated', null, 'Connection updated'));
             } else {
                 const created = await shellApi.createConnection(values);
-                toastSuccess(t('webshell.toastCreated', null, '连接已创建'));
+                toastSuccess(t('webshell.toastCreated', null, 'Connection created'));
                 if (created?.id) select(created.id);
             }
             setForm({ visible: false, record: null });
             reload();
         } catch (err) {
-            toastError(err, t('webshell.saveFailed', null, '保存失败'));
+            toastError(err, t('webshell.saveFailed', null, 'Save failed'));
         } finally {
             setSubmitting(false);
         }
@@ -168,12 +168,12 @@ export default function WebshellPage() {
 
     const remove = connection => {
         confirmAction({
-            title: t('webshell.deleteConfirm', null, '确定要删除该连接吗？'),
+            title: t('webshell.deleteConfirm', null, 'Delete this connection?'),
             content: connection.url,
             onOk: async () => {
                 try {
                     await shellApi.deleteConnection(connection.id);
-                    toastSuccess(t('webshell.toastDeleted', null, '连接已删除'));
+                    toastSuccess(t('webshell.toastDeleted', null, 'Connection deleted'));
                     if (connection.id === selectedId) select('');
                     reload();
                 } catch (err) {
@@ -193,19 +193,19 @@ export default function WebshellPage() {
 
     const tabs = [
         {
-            tab: t('webshell.tabTerminal', null, '虚拟终端'),
+            tab: t('webshell.tabTerminal', null, 'Virtual terminal'),
             itemKey: 'terminal',
             children: selected
                 ? <TerminalTab connection={selected} canWrite={canWrite} onRecordCommand={recordCommand} />
                 : null
         },
         {
-            tab: t('webshell.tabFileManager', null, '文件管理'),
+            tab: t('webshell.tabFileManager', null, 'File manager'),
             itemKey: 'files',
             children: selected ? <FilesTab connection={selected} canWrite={canWrite} /> : null
         },
         {
-            tab: t('webshell.tabHistory', null, '命令历史'),
+            tab: t('webshell.tabHistory', null, 'Command history'),
             itemKey: 'history',
             children: (
                 <HistoryTab
@@ -217,19 +217,19 @@ export default function WebshellPage() {
             )
         },
         {
-            tab: t('webshell.tabAiSessions', null, 'AI 会话'),
+            tab: t('webshell.tabAiSessions', null, 'AI conversations'),
             itemKey: 'ai',
             children: selected ? <AiTab connection={selected} /> : null
         },
         {
-            tab: t('webshell.tabMemo', null, '备忘录'),
+            tab: t('webshell.tabMemo', null, 'Memo'),
             itemKey: 'memo',
             children: (
                 <TextArea
                     value={memo}
                     onChange={updateMemo}
                     autosize={{ minRows: 10, maxRows: 20 }}
-                    placeholder={t('webshell.aiMemoPlaceholder', null, '记录关键命令、测试思路、复现步骤...')}
+                    placeholder={t('webshell.aiMemoPlaceholder', null, 'Save key commands, testing ideas, and repro steps...')}
                     disabled={!canWrite}
                 />
             )
@@ -239,14 +239,14 @@ export default function WebshellPage() {
     return (
         <div className="webshell-page" id="page-webshell">
             <PageHeader
-                title={t('webshell.title', null, 'WebShell 管理')}
-                description={t('webshell.pageDesc', null, '统一管理 WebShell 连接，代理执行命令并浏览目标文件')}
+                title={t('webshell.title', null, 'WebShell Management')}
+                description={t('webshell.pageDesc', null, 'Manage WebShell connections in one place, run commands through the proxy, and browse target files')}
                 extra={[
                     <Button key="refresh" icon={<IconRefresh />} onClick={reload} loading={loading}>
-                        {t('webshell.refresh', null, '刷新')}
+                        {t('webshell.refresh', null, 'Refresh')}
                     </Button>,
                     <Button key="add" theme="solid" type="primary" icon={<IconPlus />} disabled={!canWrite} onClick={() => setForm({ visible: true, record: null })}>
-                        {t('webshell.addConnection', null, '添加连接')}
+                        {t('webshell.addConnection', null, 'Add connection')}
                     </Button>
                 ]}
             />
@@ -256,24 +256,24 @@ export default function WebshellPage() {
             <div className="webshell-layout">
                 <aside className="webshell-sidebar">
                     <div className="webshell-sidebar-head">
-                        <Text strong>{t('webshell.connections', null, '连接列表')}</Text>
+                        <Text strong>{t('webshell.connections', null, 'Connections')}</Text>
                         <Tag size="small">{connections.length}</Tag>
                     </div>
                     <Input
                         value={keyword}
                         onChange={setKeyword}
                         prefix={<IconSearch />}
-                        placeholder={t('webshell.searchPlaceholder', null, '搜索连接...')}
+                        placeholder={t('webshell.searchPlaceholder', null, 'Search connections...')}
                         size="small"
                     />
                     <Button size="small" theme="borderless" loading={probingAll} onClick={probeAll} disabled={!connections.length}>
-                        {t('webshell.batchProbe', null, '一键批量探活')}
+                        {t('webshell.batchProbe', null, 'Batch probe')}
                     </Button>
                     <div className="webshell-conn-list">
                         {loading && !connections.length && <div className="webshell-conn-loading"><Spin /></div>}
                         {!loading && filtered.length === 0 && (
                             <Text type="tertiary" className="webshell-conn-empty">
-                                {connections.length ? t('webshell.noMatchConnections', null, '暂无匹配连接') : t('webshell.noConnections', null, '暂无连接，请点击「添加连接」')}
+                                {connections.length ? t('webshell.noMatchConnections', null, 'No matching connections') : t('webshell.noConnections', null, 'No connections. Click "Add connection" to add one.')}
                             </Text>
                         )}
                         {filtered.map(item => (
@@ -289,10 +289,10 @@ export default function WebshellPage() {
                                     {probeState[item.id] && (
                                         <Tag size="small" color={statusColor(probeState[item.id])}>
                                             {probeState[item.id] === 'online'
-                                                ? t('webshell.probeOnline', null, '在线')
+                                                ? t('webshell.probeOnline', null, 'Online')
                                                 : probeState[item.id] === 'probing'
-                                                    ? t('webshell.probeRunning', null, '探活中')
-                                                    : t('webshell.probeOffline', null, '离线')}
+                                                    ? t('webshell.probeRunning', null, 'Probing')
+                                                    : t('webshell.probeOffline', null, 'Offline')}
                                         </Tag>
                                     )}
                                 </span>
@@ -304,7 +304,7 @@ export default function WebshellPage() {
                 <section className="webshell-main">
                     {!selected ? (
                         <Empty
-                            title={t('webshell.selectOrAdd', null, '请从左侧选择连接，或添加新的 WebShell 连接')}
+                            title={t('webshell.selectOrAdd', null, 'Select a connection from the list or add a new WebShell connection.')}
                             description={null}
                             style={{ padding: 64 }}
                         />
@@ -316,20 +316,20 @@ export default function WebshellPage() {
                                     <Space spacing={6} wrap>
                                         <Tag size="small" color="blue">{String(selected.type || 'php').toUpperCase()}</Tag>
                                         <Tag size="small">{String(selected.method || 'post').toUpperCase()}</Tag>
-                                        <Tag size="small">{encodingLabel[selected.encoding] || '自动'}</Tag>
-                                        <Tag size="small">{selected.os === 'windows' ? 'Windows' : selected.os === 'linux' ? 'Linux' : 'OS 自动'}</Tag>
+                                        <Tag size="small">{selected.encoding && selected.encoding !== 'auto' && encodingLabel[selected.encoding] || t('ui.webshell.encodingAuto', null, 'Auto')}</Tag>
+                                        <Tag size="small">{selected.os === 'windows' ? 'Windows' : selected.os === 'linux' ? 'Linux' : t('ui.webshell.osAuto', null, 'OS auto')}</Tag>
                                         {selected.remark && <Text type="tertiary" size="small">{selected.remark}</Text>}
                                     </Space>
                                 </div>
                                 <Space spacing={8}>
                                     <Button size="small" loading={probeState[selected.id] === 'probing'} onClick={() => probe(selected)}>
-                                        {t('webshell.testConnectivity', null, '测试连通性')}
+                                        {t('webshell.testConnectivity', null, 'Test connectivity')}
                                     </Button>
                                     <Button size="small" disabled={!canWrite} onClick={() => setForm({ visible: true, record: selected })}>
-                                        {t('webshell.editConnection', null, '编辑')}
+                                        {t('webshell.editConnection', null, 'Edit')}
                                     </Button>
                                     <Button size="small" type="danger" disabled={!canDelete} onClick={() => remove(selected)}>
-                                        {t('webshell.deleteFile', null, '删除')}
+                                        {t('webshell.deleteFile', null, 'Delete')}
                                     </Button>
                                 </Space>
                             </div>

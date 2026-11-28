@@ -1,9 +1,9 @@
 /**
- * WebShell 连接表单：新建 / 编辑，支持一次探活测试。
+ * WebShell connection form: create / edit, with a one-shot liveness test.
  */
 import { useState } from 'react';
 import { Form, Button, Space, Typography } from '@douyinfe/semi-ui';
-import { useT } from '../../lib/i18n';
+import { useT, translate } from '../../lib/i18n';
 import { Drawer, toastError, toastSuccess, toastWarning } from '../../components/ui';
 import { probeConnection, MASKED_SECRET } from './api';
 
@@ -14,7 +14,7 @@ const TYPE_OPTIONS = [
     { value: 'asp', label: 'ASP' },
     { value: 'aspx', label: 'ASPX' },
     { value: 'jsp', label: 'JSP' },
-    { value: 'custom', label: '自定义' }
+    { value: 'custom', get label() { return translate('ui.webshellForm.typeCustom', null, 'Custom'); } }
 ];
 
 const METHOD_OPTIONS = [
@@ -23,14 +23,14 @@ const METHOD_OPTIONS = [
 ];
 
 const ENCODING_OPTIONS = [
-    { value: 'auto', label: '自动检测' },
+    { value: 'auto', get label() { return translate('ui.webshellForm.encodingAuto', null, 'Auto-detect'); } },
     { value: 'utf-8', label: 'UTF-8' },
-    { value: 'gbk', label: 'GBK（中文 Windows）' },
+    { value: 'gbk', get label() { return translate('ui.webshellForm.encodingGbk', null, 'GBK (Chinese Windows)'); } },
     { value: 'gb18030', label: 'GB18030' }
 ];
 
 const OS_OPTIONS = [
-    { value: 'auto', label: '自动（按 Shell 类型推断）' },
+    { value: 'auto', get label() { return translate('ui.webshellForm.osAuto', null, 'Auto (inferred from the shell type)'); } },
     { value: 'linux', label: 'Linux / Unix' },
     { value: 'windows', label: 'Windows' }
 ];
@@ -64,11 +64,11 @@ export default function ConnectionForm({ visible, record, projects, submitting, 
         const values = formApi?.getValues?.() || {};
         const url = String(values.url || '').trim();
         if (!url) {
-            toastWarning(t('webshell.url', null, '请填写 Shell 地址'));
+            toastWarning(t('webshell.url', null, 'Shell URL'));
             return;
         }
         if (values.password === MASKED_SECRET) {
-            toastWarning(t('webshell.testNoExpectedOutput', null, '已保存口令不可用于新建测试，请填写口令'));
+            toastWarning(t('webshell.testNoExpectedOutput', null, 'Shell responded but expected output was not found. Check password and command parameter name.'));
             return;
         }
         setTesting(true);
@@ -83,10 +83,10 @@ export default function ConnectionForm({ visible, record, projects, submitting, 
                 encoding: values.encoding || 'auto',
                 os: values.os || 'auto'
             });
-            if (result.ok) toastSuccess(t('webshell.testSuccess', null, '连通性正常，Shell 可访问'));
-            else toastError(result.error || t('webshell.testFailed', null, '连通性测试失败'));
+            if (result.ok) toastSuccess(t('webshell.testSuccess', null, 'Connection OK, shell is reachable'));
+            else toastError(result.error || t('webshell.testFailed', null, 'Connectivity test failed'));
         } catch (error) {
-            toastError(error, t('webshell.testFailed', null, '连通性测试失败'));
+            toastError(error, t('webshell.testFailed', null, 'Connectivity test failed'));
         } finally {
             setTesting(false);
         }
@@ -109,13 +109,13 @@ export default function ConnectionForm({ visible, record, projects, submitting, 
     return (
         <Drawer
             visible={visible}
-            title={record ? t('webshell.editConnectionTitle', null, '编辑连接') : t('webshell.addConnection', null, '添加连接')}
+            title={record ? t('webshell.editConnectionTitle', null, 'Edit connection') : t('webshell.addConnection', null, 'Add connection')}
             footer={(
                 <Space>
-                    <Button onClick={handleTest} loading={testing}>{t('webshell.testConnectivity', null, '测试连通性')}</Button>
-                    <Button onClick={onCancel}>{t('webshell.cancelEdit', null, '取消')}</Button>
+                    <Button onClick={handleTest} loading={testing}>{t('webshell.testConnectivity', null, 'Test connectivity')}</Button>
+                    <Button onClick={onCancel}>{t('webshell.cancelEdit', null, 'Cancel')}</Button>
                     <Button theme="solid" type="primary" loading={submitting} onClick={() => formApi?.submitForm()}>
-                        {record ? t('webshell.saveFile', null, '保存') : t('webshell.addConnection', null, '添加连接')}
+                        {record ? t('webshell.saveFile', null, 'Save') : t('webshell.addConnection', null, 'Add connection')}
                     </Button>
                 </Space>
             )}
@@ -131,36 +131,36 @@ export default function ConnectionForm({ visible, record, projects, submitting, 
             >
                 <Form.Input
                     field="url"
-                    label={t('webshell.url', null, 'Shell 地址')}
+                    label={t('webshell.url', null, 'Shell URL')}
                     placeholder="http(s)://target.com/shell.php"
-                    rules={[{ required: true, message: t('webshell.url', null, '请填写 Shell 地址') }]}
+                    rules={[{ required: true, message: t('webshell.url', null, 'Shell URL') }]}
                 />
                 <Form.Input
                     field="password"
-                    label={t('webshell.password', null, '连接密码/密钥')}
-                    placeholder={t('webshell.passwordPlaceholder', null, '如冰蝎/蚁剑的连接密码')}
+                    label={t('webshell.password', null, 'Password / Key')}
+                    placeholder={t('webshell.passwordPlaceholder', null, 'e.g. IceSword/AntSword connection password')}
                 />
                 <div className="webshell-form-row">
-                    <Form.Select field="type" label={t('webshell.type', null, 'Shell 类型')} optionList={TYPE_OPTIONS} style={{ width: '100%' }} />
-                    <Form.Select field="method" label={t('webshell.method', null, '请求方式')} optionList={METHOD_OPTIONS} style={{ width: '100%' }} />
+                    <Form.Select field="type" label={t('webshell.type', null, 'Shell type')} optionList={TYPE_OPTIONS} style={{ width: '100%' }} />
+                    <Form.Select field="method" label={t('webshell.method', null, 'Request method')} optionList={METHOD_OPTIONS} style={{ width: '100%' }} />
                 </div>
                 <div className="webshell-form-row">
-                    <Form.Input field="cmd_param" label={t('webshell.cmdParam', null, '命令参数名')} placeholder="cmd" />
-                    <Form.Select field="encoding" label={t('webshell.encoding', null, '响应编码')} optionList={ENCODING_OPTIONS} style={{ width: '100%' }} />
+                    <Form.Input field="cmd_param" label={t('webshell.cmdParam', null, 'Command parameter name')} placeholder="cmd" />
+                    <Form.Select field="encoding" label={t('webshell.encoding', null, 'Response encoding')} optionList={ENCODING_OPTIONS} style={{ width: '100%' }} />
                 </div>
                 <div className="webshell-form-row">
-                    <Form.Select field="os" label={t('webshell.os', null, '目标系统')} optionList={OS_OPTIONS} style={{ width: '100%' }} />
+                    <Form.Select field="os" label={t('webshell.os', null, 'Target OS')} optionList={OS_OPTIONS} style={{ width: '100%' }} />
                     <Form.Select
                         field="project_id"
-                        label={t('webshell.project', null, '所属项目')}
+                        label={t('webshell.project', null, 'Project')}
                         optionList={projects.map(item => ({ value: item.id, label: item.name || item.id }))}
                         showClear
                         style={{ width: '100%' }}
-                        placeholder="可选"
+                        placeholder={t('ui.webshellForm.optional', null, 'Optional')}
                     />
                 </div>
-                <Form.Input field="remark" label={t('webshell.remark', null, '备注')} placeholder={t('webshell.remarkPlaceholder', null, '便于识别的备注名')} />
-                <Text type="tertiary" size="small">{t('webshell.encodingHint', null, '中文 Windows 目标若出现乱码，请切换为 GBK 或 GB18030')}</Text>
+                <Form.Input field="remark" label={t('webshell.remark', null, 'Remark')} placeholder={t('webshell.remarkPlaceholder', null, 'Friendly name for this connection')} />
+                <Text type="tertiary" size="small">{t('webshell.encodingHint', null, 'Switch to GBK or GB18030 if the Simplified Chinese Windows target shows garbled output.')}</Text>
             </Form>
         </Drawer>
     );
